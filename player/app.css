@@ -14,3 +14,8 @@ html,body{height:100%;overflow:hidden}.app{height:100svh;display:grid;grid-templ
 .drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(33,25,20,.43);z-index:29}.drawer-backdrop.show{display:block}
 @media(max-width:840px){html,body{overflow:hidden}.app{grid-template-columns:1fr}.sidebar{position:fixed;left:0;top:0;width:min(84vw,300px);transform:translateX(-105%);transition:transform .2s ease;box-shadow:var(--shadow)}.sidebar.open{transform:translateX(0)}.topbar{display:flex}.main{padding:12px 10px 10px}.view{max-width:none}.module-view.active{height:100%}.module-head{margin:0 2px 8px}.module-head .eyebrow{display:none}.module-head h1{font-size:18px}.module-frame-wrap{border-radius:10px}.span-8,.span-6,.span-4{grid-column:1/-1}.page-head{margin-top:4px}.update-notice{flex-wrap:wrap}}
 @media(max-width:520px){.panel{padding:15px}.page-head{display:block}.card-heading{align-items:flex-start}.card-heading .btn{flex:0 0 auto}.module-version{font-size:11px}}
+
+.character-nav-status{padding:9px 13px 10px 40px;color:#bba990;font-size:.78rem;line-height:1.45}
+.character-nav-status.error{color:#efaaa2}
+.character-nav-status.empty{color:#cbbca8}
+.character-nav-btn{width:100%;text-align:left}

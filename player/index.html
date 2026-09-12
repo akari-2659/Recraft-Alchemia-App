@@ -23,8 +23,7 @@
           <span class="nav-icon">♙</span><span>キャラクターシート</span><span class="nav-caret">▾</span>
         </button>
         <div class="character-nav-list" id="characterNavList">
-          <button class="character-nav-btn" type="button" data-character-id="char-a">キャラクターA</button>
-          <button class="character-nav-btn" type="button" data-character-id="char-b">キャラクターB</button>
+          <div class="character-nav-status" id="characterNavStatus">キャラクター一覧を読み込み中…</div>
         </div>
       </section>
 
@@ -82,14 +81,14 @@
             <ul class="check-list">
               <li>PCでは左サイドバーを常設</li>
               <li>スマホでは☰からドロワー表示</li>
-              <li>キャラクターシートと施設は初めて開いた時だけ読み込み</li>
-              <li>一度開いた画面は切り替えても状態を保持</li>
+              <li>キャラクター名は紐づけ済みプレイヤーキーから自動取得</li>
+              <li>キャラシ・施設内ではプレイヤーキーを再入力しない</li>
             </ul>
           </article>
 
           <article class="card panel span-6">
             <h2>現時点では仮の部分</h2>
-            <p class="note">共通ログインと2つの旧プレイヤーキーのサーバー紐づけはまだダミーです。今回の目的は、既存機能を削らずPlayerアプリの枠へ収めた時の操作感確認です。</p>
+            <p class="note">共通ログインのアカウント認証とサーバー側キー紐づけだけはまだ試作用です。ログイン後のPlayerアプリでは、紐づけ済みキーを自動利用します。</p>
           </article>
         </div>
       </section>
@@ -98,13 +97,13 @@
         <div class="module-head">
           <div>
             <div class="eyebrow">CHARACTER SHEET</div>
-            <h1 id="characterViewName">キャラクターA</h1>
+            <h1 id="characterViewName">キャラクター</h1>
           </div>
-          <span class="module-version">現行データ移植予定</span>
+          <span class="module-version">現行 v90.8.767 データ接続</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
           <div class="frame-loading">キャラクターシートを読み込んでいます…</div>
-          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html"></iframe>
+          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1"></iframe>
         </div>
       </section>
 
@@ -118,7 +117,7 @@
         </div>
         <div class="module-frame-wrap" data-loading-for="facility">
           <div class="frame-loading">施設を読み込んでいます…</div>
-          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html"></iframe>
+          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1"></iframe>
         </div>
       </section>
     </main>

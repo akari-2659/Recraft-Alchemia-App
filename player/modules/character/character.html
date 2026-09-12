@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded')}catch(_){}</script>
 <title>リクラフト・アルケミア キャラクター作成ツール v90.8.767</title>
 <style>
   :root {
@@ -1149,15 +1150,6 @@ body.public-view .loadout-preset-panel{display:none!important}
   .loadout-preset-row .button-row>button{flex:1 1 auto!important}
 }
 
-</style>
-
-<link rel="stylesheet" href="https://akari-2659.github.io/Recraft-Alchemia/ra-design-system.css?v=90.8.767-boss-affinity-20260911">
-
-<style id="ra-player-shell-embed">
-/* Prototype integration only: functionality/data sections are untouched. */
-body > header{display:none!important}
-body.ra-app > main, main{width:min(1180px,calc(100% - 16px))!important;margin:8px auto 28px!important}
-@media(max-width:840px){body.ra-app > main,main{width:calc(100% - 8px)!important;margin:4px auto 20px!important;padding-left:10px!important;padding-right:10px!important}}
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
@@ -10185,5 +10177,35 @@ function run(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
 </script>
+
+<style id="raEmbeddedPlayerPatchStyle">
+html.ra-embedded body{background:#f6f0e7}
+html.ra-embedded body>header{display:none!important}
+html.ra-embedded #homeView,html.ra-embedded #listView{display:none!important}
+html.ra-embedded #backHomeBtn,html.ra-embedded #changeCloudKeyBtn{display:none!important}
+html.ra-embedded .field:has(#playerKey),html.ra-embedded .field:has(#newPlayerKey){display:none!important}
+html.ra-embedded main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
+@media(max-width:720px){html.ra-embedded main{width:100%;margin:0;padding:0 4px 20px}html.ra-embedded section,html.ra-embedded .panel,html.ra-embedded details.big-section{border-radius:10px}}
+</style>
+<script id="raEmbeddedPlayerPatchScript">
+(()=>{
+  'use strict';
+  if(new URLSearchParams(location.search).get('embedded')!=='1')return;
+  document.documentElement.classList.add('ra-embedded');
+  function ctx(){try{return window.parent&&window.parent!==window?(window.parent.RA_PLAYER_CONTEXT||{}):{}}catch(_){return{}}}
+  function applyKey(){const c=ctx();const key=String(c.charKey||'').trim();if(!key)return'';currentCloudPlayerKey=key;if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=key;if($('playerKey'))$('playerKey').value=key;if($('newPlayerKey'))$('newPlayerKey').value='';return key}
+  async function openId(id){
+    const key=applyKey();
+    if(!key){const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent='ログイン時のキャラクターシート用プレイヤーキー紐づけが見つかりません。';}return;}
+    if(!id)return;
+    try{const data=await loadItem(id);openEditor('edit',data);}
+    catch(e){const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=e.message||String(e);}}
+  }
+  window.addEventListener('message',ev=>{if(ev.origin!==location.origin)return;if(ev.data?.type==='RA_OPEN_CHARACTER')openId(String(ev.data.characterId||''));});
+  const start=()=>{const c=ctx();applyKey();openId(String(c.characterId||''));};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0),{once:true});else setTimeout(start,0);
+})();
+</script>
+
 </body>
 </html>
