@@ -17,7 +17,17 @@
     </div>
     <nav class="nav-group">
       <button class="nav-btn active" data-view="home"><span class="nav-icon">⌂</span><span>総合画面</span></button>
-      <button class="nav-btn" data-view="character"><span class="nav-icon">♙</span><span>キャラクターシート</span></button>
+
+      <section class="nav-category open" id="characterCategory">
+        <button class="nav-category-toggle" id="characterCategoryToggle" type="button" aria-expanded="true">
+          <span class="nav-icon">♙</span><span>キャラクターシート</span><span class="nav-caret">▾</span>
+        </button>
+        <div class="character-nav-list" id="characterNavList">
+          <button class="character-nav-btn" type="button" data-character-id="char-a">キャラクターA</button>
+          <button class="character-nav-btn" type="button" data-character-id="char-b">キャラクターB</button>
+        </div>
+      </section>
+
       <button class="nav-btn" data-view="facility"><span class="nav-icon">⚒</span><span>施設</span></button>
     </nav>
     <div class="side-footer">Based on RA v90.8.767<br>統合構造確認用の仮作成版</div>
@@ -55,9 +65,9 @@
                 <div class="eyebrow">CHARACTER</div>
                 <h2>キャラクターシート</h2>
               </div>
-              <button class="btn primary" type="button" data-go="character">開く</button>
+              <span class="badge">サイドバーから選択</span>
             </div>
-            <p class="note">現行v90.8.767のキャラクターシート本体を、そのままPlayerアプリ内へ組み込んだ試作です。能力値・技能・装備・所持品・倉庫などの情報を省略していません。</p>
+            <p class="note">サイドバーの「キャラクターシート」を開くと、このアカウントに紐づいたキャラクターが一覧表示されます。キャラクター名を押すと直接そのシートを開きます。</p>
           </article>
 
           <article class="card panel span-4">
@@ -88,9 +98,9 @@
         <div class="module-head">
           <div>
             <div class="eyebrow">CHARACTER SHEET</div>
-            <h1>キャラクターシート</h1>
+            <h1 id="characterViewName">キャラクターA</h1>
           </div>
-          <span class="module-version">現行 v90.8.767</span>
+          <span class="module-version">現行データ移植予定</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
           <div class="frame-loading">キャラクターシートを読み込んでいます…</div>

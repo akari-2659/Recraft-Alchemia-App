@@ -1,4 +1,4 @@
-const CACHE='ra-player-prototype-v2';
+const CACHE='ra-player-prototype-v4';
 const SHELL=['./','./index.html','./app.css','./app.js','../assets/common.css','./manifest.webmanifest','../icons/player-192.png','../icons/player-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE&&key.startsWith('ra-player-prototype')).map(key=>caches.delete(key))))) });
