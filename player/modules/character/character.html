@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<script>try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded')}catch(_){}</script>
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.767</title>
+<title>リクラフト・アルケミア キャラクター作成ツール v90.8.772</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -1151,9 +1150,25 @@ body.public-view .loadout-preset-panel{display:none!important}
 }
 
 </style>
+
+<link rel="stylesheet" href="ra-design-system.css?v=90.8.772-weapon-branch-function-diff-20260912">
+
+<script id="raEmbeddedPlayerEarlyClass">
+try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded')}catch(_){}
+</script>
+<style id="raEmbeddedPlayerPatchStyle">
+html.ra-embedded body{background:#f6f0e7}
+html.ra-embedded body>header{display:none!important}
+html.ra-embedded #homeView,html.ra-embedded #listView{display:none!important}
+html.ra-embedded #backHomeBtn,html.ra-embedded #changeCloudKeyBtn{display:none!important}
+html.ra-embedded .field:has(#playerKey),html.ra-embedded .field:has(#newPlayerKey),html.ra-embedded .cloud-key-field{display:none!important}
+html.ra-embedded main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
+@media(max-width:720px){html.ra-embedded main{width:100%;margin:0;padding:0 4px 20px}html.ra-embedded section,html.ra-embedded .panel,html.ra-embedded details.big-section{border-radius:10px}}
+</style>
+
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.767 / 最終更新日：2026年9月11日</div>
+<div class="ra-build-info">Version：v90.8.772 / 最終更新日：2026年9月12日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -10178,15 +10193,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
-<style id="raEmbeddedPlayerPatchStyle">
-html.ra-embedded body{background:#f6f0e7}
-html.ra-embedded body>header{display:none!important}
-html.ra-embedded #homeView,html.ra-embedded #listView{display:none!important}
-html.ra-embedded #backHomeBtn,html.ra-embedded #changeCloudKeyBtn{display:none!important}
-html.ra-embedded .field:has(#playerKey),html.ra-embedded .field:has(#newPlayerKey){display:none!important}
-html.ra-embedded main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
-@media(max-width:720px){html.ra-embedded main{width:100%;margin:0;padding:0 4px 20px}html.ra-embedded section,html.ra-embedded .panel,html.ra-embedded details.big-section{border-radius:10px}}
-</style>
 <script id="raEmbeddedPlayerPatchScript">
 (()=>{
   'use strict';

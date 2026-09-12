@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='0.5.0';
+  const APP_VERSION='0.6.0';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar');
   const backdrop=document.querySelector('#backdrop');
@@ -79,7 +79,7 @@
     characterNavList.innerHTML='<div class="character-nav-status">キャラクター一覧を読み込み中…</div>';
     try{
       const res=await jsonp('list',{playerKey:key});
-      characters=Array.isArray(res)?res:(Array.isArray(res.items)?res.items:[]);
+      characters=Array.isArray(res)?res:(Array.isArray(res.items)?res.items:(Array.isArray(res.data?.items)?res.data.items:[]));
       renderCharacterNav();
       routeFromHash();
     }catch(e){

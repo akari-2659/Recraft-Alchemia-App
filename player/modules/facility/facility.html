@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.767</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.772</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -205,6 +205,8 @@ button.weapon-material-part:hover{background:#e2f2f5;transform:none}
 @media(max-width:620px){.facility-unlock-grid{grid-template-columns:1fr auto}.facility-unlock-grid .field{grid-column:1/2}.facility-unlock-grid button{width:auto}.facility-unlock-grid #resetKey{grid-column:1/3;justify-self:start}}
 </style>
 
+<link rel="stylesheet" href="ra-design-system.css?v=90.8.772-weapon-branch-function-diff-20260912">
+
 <style id="raFortuneCommunityV474">
 .community-rule{grid-column:1/-1;border:1px solid var(--line);border-radius:14px;background:#fffaf3;padding:12px;line-height:1.7}
 .community-card .community-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.community-status{font-size:12px;font-weight:900;border:1px solid var(--line);border-radius:999px;padding:3px 8px;background:#f5ead8}.community-status.complete{background:#f0fff6;color:#356346;border-color:#9bcdad}
@@ -300,7 +302,7 @@ body.ra-facility .accessory-branch-node button:hover{background:#f5e6d1!importan
 </style>
 
 <style id="raWeaponBranchNodeCompactV763">
-/* v90.8.767: 派生ノードは 244×76 を維持しつつ、異名加工チップを「● 異名加工可能」表記でノード左上へ固定。武器名は中央揃え。 */
+/* v90.8.772: 派生ノードは 244×76 を維持しつつ、異名加工チップを「● 異名加工可能」表記でノード左上へ固定。武器名は中央揃え。 */
 .branch-graph-node{
   width:244px!important;
   height:76px!important;
@@ -380,9 +382,61 @@ body.ra-facility .accessory-branch-node button:hover{background:#f5e6d1!importan
   .branch-graph-node.has-named-processing .branch-graph-node-named-badge{font-size:10px!important;line-height:1.03!important}
 }
 </style>
+
+<style id="raWeaponBranchGraphTightFixV772">
+/* v90.8.772 UI fix: 派生図のノードとグリッド余白を圧縮。接続線は矢印手前で止め、矢印を別描画して重なりを防止。 */
+.branch-graph-canvas{
+  gap:8px 14px!important;
+  padding:8px 26px 22px 6px!important;
+}
+.branch-graph-node{
+  width:210px!important;
+  height:56px!important;
+  min-height:56px!important;
+}
+.branch-graph-node-trigger,.branch-graph-node-locked-label{
+  height:100%!important;
+  min-height:56px!important;
+  padding:3px 10px!important;
+}
+.branch-graph-node.has-named-processing,
+.branch-graph-node.has-named-processing .branch-graph-node-trigger{
+  height:56px!important;
+  min-height:56px!important;
+}
+.branch-graph-node-name-inline{
+  font-size:13px!important;
+  line-height:1.12!important;
+}
+.branch-graph-node.has-named-processing .branch-graph-node-named-badge{
+  font-size:9px!important;
+  line-height:1!important;
+}
+.branch-graph-edge{stroke-width:2.5}
+.branch-graph-arrow{fill:#496675;filter:drop-shadow(0 1px 0 #fff)}
+@media(max-width:720px){
+  .branch-graph-canvas{gap:7px 13px!important;padding:7px 20px 18px 5px!important}
+  .branch-graph-node{width:194px!important;height:54px!important;min-height:54px!important}
+  .branch-graph-node-trigger,.branch-graph-node-locked-label{height:100%!important;min-height:54px!important;padding:3px 8px!important}
+  .branch-graph-node.has-named-processing,.branch-graph-node.has-named-processing .branch-graph-node-trigger{height:54px!important;min-height:54px!important}
+  .branch-graph-node-name-inline{font-size:12px!important;line-height:1.1!important}
+  .branch-graph-node.has-named-processing .branch-graph-node-named-badge{font-size:8.5px!important}
+}
+</style>
+
+<script id="raEmbeddedFacilityEarlyClass">
+try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded-facility')}catch(_){}
+</script>
+<style id="raEmbeddedFacilityPatchStyle">
+html.ra-embedded-facility .player-key-field{display:none!important}
+html.ra-embedded-facility #loadState{display:none!important}
+html.ra-embedded-facility body>header{display:none!important}
+html.ra-embedded-facility main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
+</style>
+
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.767 / 最終更新日：2026年9月11日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.772 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -608,7 +662,7 @@ async function jsonpAction(action,params={},options={}){const attempts=Math.max(
 function facilityPostAction(action,params={},timeoutMs=30000){return new Promise((resolve,reject)=>{const token='raFacilityPost_'+Date.now()+'_'+Math.random().toString(36).slice(2),frame=document.createElement('iframe'),frameName='raFacilityFrame_'+Date.now()+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');form.method='POST';const actionUrl=new URL(DEFAULT_GAS_WEB_APP_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';const payloadField=document.createElement('textarea');payloadField.name='payload';payloadField.value=JSON.stringify({...params,token});payloadField.style.display='none';form.appendChild(payloadField);let settled=false;const timer=setTimeout(()=>finishReject(new Error('施設データの保存応答がタイムアウトしました。')),timeoutMs);function cleanup(){clearTimeout(timer);window.removeEventListener('message',onMessage);setTimeout(()=>{try{form.remove();frame.remove();}catch(_e){}},0);}function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}function onMessage(event){if(event.source!==frame.contentWindow)return;const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'施設保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'施設データの保存に失敗しました。'));return;}finishResolve(result);}window.addEventListener('message',onMessage);document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(e){finishReject(e);}});}
 
 const GITHUB_COMMON_DB_BASE='https://akari-2659.github.io/Recraft-Alchemia-Manager/data/public/';
-const FACILITY_EXPECTED_DB_VERSION='v90.8.767';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.772';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}
@@ -1741,16 +1795,17 @@ function drawBranchConnections(){
       if(!childrenByParent.has(parentName))childrenByParent.set(parentName,{parent,children:[]});
       childrenByParent.get(parentName).children.push(child);
     });
-    const paths=[],routePaths=[],nodeGap=14,rowTolerance=7,markerId=`branchArrow_${canvasIndex}`;
+    const paths=[],arrows=[],routePaths=[],nodeGap=9,arrowWidth=9,arrowHalfHeight=5,rowTolerance=7;
+    const arrowSvg=(tipX,y)=>{const baseX=tipX-arrowWidth;return `<path class="branch-graph-arrow" d="M ${baseX} ${y-arrowHalfHeight} L ${tipX} ${y} L ${baseX} ${y+arrowHalfHeight} Z"></path>`;};
     childrenByParent.forEach(({parent,children},parentName)=>{
       const right=parent.offsetLeft+parent.offsetWidth,sy=parent.offsetTop+parent.offsetHeight/2;
-      const points=children.map(child=>({child,ey:child.offsetTop+child.offsetHeight/2,endX:child.offsetLeft-nodeGap})).sort((a,b)=>a.ey-b.ey||a.endX-b.endX);
+      const points=children.map(child=>({child,ey:child.offsetTop+child.offsetHeight/2,tipX:child.offsetLeft-nodeGap})).sort((a,b)=>a.ey-b.ey||a.tipX-b.tipX);
       const same=points.filter(p=>Math.abs(p.ey-sy)<=rowTolerance),above=points.filter(p=>p.ey<sy-rowTolerance),below=points.filter(p=>p.ey>sy+rowTolerance);
-      same.forEach(({child,endX})=>{const childName=String(child.dataset.weaponNode||'').trim(),d=`M ${right} ${sy} H ${endX}`;paths.push(`<path class="branch-graph-edge branch-graph-branch" d="${d}" marker-end="url(#${markerId})"></path>`);routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="${d}"></path>`);});
-      function drawGroup(group){if(!group.length)return;const trunkX=right+12,endY=group[0].ey<sy?Math.min(...group.map(p=>p.ey)):Math.max(...group.map(p=>p.ey));paths.push(`<path class="branch-graph-edge branch-graph-trunk" d="M ${right} ${sy} H ${trunkX} V ${endY}"></path>`);group.forEach(({child,ey,endX})=>{const childName=String(child.dataset.weaponNode||'').trim();paths.push(`<path class="branch-graph-edge branch-graph-branch" d="M ${trunkX} ${ey} H ${endX}" marker-end="url(#${markerId})"></path>`);routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${trunkX} V ${ey} H ${endX}"></path>`);});}
+      same.forEach(({child,tipX})=>{const childName=String(child.dataset.weaponNode||'').trim(),lineEnd=tipX-arrowWidth-1,d=`M ${right} ${sy} H ${lineEnd}`;paths.push(`<path class="branch-graph-edge branch-graph-branch" d="${d}"></path>`);arrows.push(arrowSvg(tipX,sy));routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${tipX}"></path>`);});
+      function drawGroup(group){if(!group.length)return;const trunkX=right+12,endY=group[0].ey<sy?Math.min(...group.map(p=>p.ey)):Math.max(...group.map(p=>p.ey));paths.push(`<path class="branch-graph-edge branch-graph-trunk" d="M ${right} ${sy} H ${trunkX} V ${endY}"></path>`);group.forEach(({child,ey,tipX})=>{const childName=String(child.dataset.weaponNode||'').trim(),lineEnd=tipX-arrowWidth-1;paths.push(`<path class="branch-graph-edge branch-graph-branch" d="M ${trunkX} ${ey} H ${lineEnd}"></path>`);arrows.push(arrowSvg(tipX,ey));routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${trunkX} V ${ey} H ${tipX}"></path>`);});}
       drawGroup(above);drawGroup(below);
     });
-    svg.innerHTML=`<defs><marker id="${markerId}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#496675"></path></marker></defs>${paths.join('')}${routePaths.join('')}`;
+    svg.innerHTML=`${paths.join('')}${arrows.join('')}${routePaths.join('')}`;
   });
 }
 function scheduleBranchConnections(){
@@ -2436,12 +2491,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<style id="raEmbeddedFacilityPatchStyle">
-html.ra-embedded-facility .player-key-field{display:none!important}
-html.ra-embedded-facility #loadState{display:none!important}
-html.ra-embedded-facility body>header{display:none!important}
-html.ra-embedded-facility main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
-</style>
 <script id="raEmbeddedFacilityPatchScript">
 (()=>{
   'use strict';
