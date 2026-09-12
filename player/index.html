@@ -23,13 +23,13 @@
           <span class="nav-icon">♙</span><span>キャラクターシート</span><span class="nav-caret">▾</span>
         </button>
         <div class="character-nav-list" id="characterNavList">
-          <div class="character-nav-status" id="characterNavStatus">キャラクター一覧を読み込み中…</div>
+          <div class="character-nav-status loading" id="characterNavStatus"><span class="mini-spinner" aria-hidden="true"></span><span>読み込み中</span></div>
         </div>
       </section>
 
       <button class="nav-btn" data-view="facility"><span class="nav-icon">⚒</span><span>施設</span></button>
     </nav>
-    <div class="side-footer">Based on RA v90.8.772<br>統合構造確認用の仮作成版</div>
+    <div class="side-footer">Based on RA v90.8.775<br>統合構造確認用の仮作成版</div>
   </aside>
 
   <div id="backdrop" class="drawer-backdrop"></div>
@@ -99,10 +99,10 @@
             <div class="eyebrow">CHARACTER SHEET</div>
             <h1 id="characterViewName">キャラクター</h1>
           </div>
-          <span class="module-version">現行 v90.8.772 データ接続</span>
+          <span class="module-version">現行 v90.8.775 データ接続</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
-          <div class="frame-loading">キャラクターシートを読み込んでいます…</div>
+          <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span></div></div>
           <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1"></iframe>
         </div>
       </section>
@@ -113,10 +113,10 @@
             <div class="eyebrow">FACILITIES</div>
             <h1>施設</h1>
           </div>
-          <span class="module-version">現行 v90.8.772</span>
+          <span class="module-version">現行 v90.8.775</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="facility">
-          <div class="frame-loading">施設を読み込んでいます…</div>
+          <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span></div></div>
           <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1"></iframe>
         </div>
       </section>

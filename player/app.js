@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='0.6.0';
+  const APP_VERSION='0.8.0';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar');
   const backdrop=document.querySelector('#backdrop');
@@ -27,11 +27,34 @@
 
   function closeDrawer(){sidebar.classList.remove('open');backdrop.classList.remove('show')}
   function characterButtons(){return [...document.querySelectorAll('.character-nav-btn')]}
+  const frameTimers=new Map();
+  function setFrameLoading(name,text='読み込み中'){
+    const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;
+    wrap.classList.remove('loaded','load-error');
+    const label=wrap.querySelector('.frame-loading-text');if(label)label.textContent=text||'読み込み中';
+    clearTimeout(frameTimers.get(name));
+    frameTimers.set(name,setTimeout(()=>{
+      if(wrap.classList.contains('loaded'))return;
+      wrap.classList.add('load-error');
+      const late=wrap.querySelector('.frame-loading-text');if(late)late.textContent='読み込みに時間がかかっています';
+    },45000));
+  }
+  function setFrameReady(name){
+    const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;
+    clearTimeout(frameTimers.get(name));frameTimers.delete(name);
+    wrap.classList.remove('load-error');wrap.classList.add('loaded');
+  }
+  function setFrameError(name,text='読み込みに失敗しました'){
+    const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;
+    clearTimeout(frameTimers.get(name));frameTimers.delete(name);
+    wrap.classList.remove('loaded');wrap.classList.add('load-error');
+    const label=wrap.querySelector('.frame-loading-text');if(label)label.textContent=text;
+  }
   function ensureFrame(name){
     const frame=frames[name];
     if(!frame||frame.dataset.loaded==='1')return;
-    frame.dataset.loaded='1';
-    frame.addEventListener('load',()=>frame.closest('.module-frame-wrap')?.classList.add('loaded'),{once:true});
+    frame.dataset.loaded='1';setFrameLoading(name,'読み込み中');
+    frame.addEventListener('load',()=>{const wrap=frame.closest('.module-frame-wrap');if(!wrap?.classList.contains('loaded')){const label=wrap?.querySelector('.frame-loading-text');if(label)label.textContent='データを読み込み中';}}, {once:true});
     frame.src=frame.dataset.src;
   }
   function show(name,{writeHash=true}={}){
@@ -76,7 +99,7 @@
       characterNavList.innerHTML='<div class="character-nav-status error">ログイン時のキャラクターシート用プレイヤーキー紐づけが見つかりません。</div>';
       return;
     }
-    characterNavList.innerHTML='<div class="character-nav-status">キャラクター一覧を読み込み中…</div>';
+    characterNavList.innerHTML='<div class="character-nav-status loading"><span class="mini-spinner" aria-hidden="true"></span><span>読み込み中</span></div>';
     try{
       const res=await jsonp('list',{playerKey:key});
       characters=Array.isArray(res)?res:(Array.isArray(res.items)?res.items:(Array.isArray(res.data?.items)?res.data.items:[]));
@@ -100,6 +123,17 @@
     try{frames.character?.contentWindow?.postMessage({type:'RA_OPEN_CHARACTER',characterId:selectedCharacterId},location.origin)}catch(_){}
     if(writeHash)history.pushState(null,'','#character/'+encodeURIComponent(selectedCharacterId));
   }
+
+
+  window.addEventListener('message',ev=>{
+    if(ev.origin!==location.origin)return;
+    const name=Object.entries(frames).find(([,frame])=>frame?.contentWindow===ev.source)?.[0];
+    if(!name)return;
+    const type=String(ev.data?.type||'');
+    if(type==='RA_MODULE_LOADING')setFrameLoading(name,String(ev.data?.text||'読み込み中'));
+    else if(type==='RA_MODULE_READY')setFrameReady(name);
+    else if(type==='RA_MODULE_ERROR')setFrameError(name,String(ev.data?.text||'読み込みに失敗しました'));
+  });
 
   characterToggle?.addEventListener('click',()=>{
     const open=characterCategory.classList.toggle('open');
