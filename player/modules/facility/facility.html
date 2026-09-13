@@ -443,6 +443,41 @@ html.ra-embedded-facility .branch-group>summary,html.ra-embedded-facility .recip
 }
 </style>
 
+
+<style id="raWeaponBranchNodeFrameV014">
+/* v0.14: ノード枠をセル内で完結。内側要素が枠を覆わず、上下左右の枠が欠けて見えないようにする。 */
+.branch-graph-scroll{padding:3px!important;box-sizing:border-box!important}
+.branch-graph-canvas{padding:14px 34px 30px 12px!important;row-gap:14px!important}
+.branch-graph-node{
+  position:relative!important;
+  z-index:3!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  border-radius:13px!important;
+  background-clip:padding-box!important;
+  margin:3px 0!important;
+}
+.branch-graph-node .branch-graph-node-trigger,
+.branch-graph-node .branch-graph-node-locked-label{
+  position:relative!important;
+  z-index:1!important;
+  box-sizing:border-box!important;
+  max-width:100%!important;
+  border-radius:9px!important;
+  overflow:hidden!important;
+}
+.branch-graph-node.has-named-processing{
+  outline:none!important;
+  border:3px solid #8b3f2e!important;
+  box-shadow:0 3px 10px rgba(80,50,20,.12),inset 0 0 0 1px rgba(255,247,220,.92)!important;
+}
+.branch-graph-svg{z-index:1!important}
+.branch-graph-edge{stroke-linecap:butt!important;stroke-linejoin:round!important}
+@media(max-width:720px){
+  .branch-graph-canvas{padding:12px 28px 24px 10px!important;row-gap:12px!important}
+}
+</style>
+
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.775 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>

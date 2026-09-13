@@ -1,16 +1,35 @@
-const CACHE='ra-gm-prototype-v13';
-const SHELL=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','../assets/common.css','../icons/gm-192.png','../icons/gm-512.png'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)))});
-self.addEventListener('activate',event=>{event.waitUntil(Promise.all([
-  caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE&&key.startsWith('ra-gm-prototype')).map(key=>caches.delete(key)))),
-  self.clients.claim()
-]))});
-self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
+const APP_VERSION='0.14.0';
+const CACHE=`ra-gm-app-v${APP_VERSION}`;
+const PREFIX='ra-gm-app-v';
+const APP_FILES=["./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "../assets/common.css", "../icons/gm-192.png", "../icons/gm-512.png", "./modules/manager/database_admin.html", "./modules/manager/progress_manager.html", "./modules/manager/help.html", "./modules/manager/data/recraft_alchemia_initial_data.json", "./modules/manager/data/public/manifest.json", "./modules/manager/data/public/recraft_alchemia_master.json", "./modules/manager/assets/vendor/jszip.min.js", "./modules/manager/assets/vendor/JSZip_LICENSE.md"];
+
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_FILES.map(path=>new Request(path,{cache:'reload'})))));
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(Promise.all([
+    caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith(PREFIX)&&key!==CACHE).map(key=>caches.delete(key)))),
+    self.clients.claim()
+  ]));
+});
+self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting();});
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
-  const url=new URL(event.request.url);if(url.origin!==location.origin)return;
+  const url=new URL(event.request.url);
+  if(url.origin!==location.origin)return;
   if(url.pathname.endsWith('/gm/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
-  const isModule=url.pathname.includes('/gm/modules/');
-  if(isModule){event.respondWith(fetch(event.request,{cache:'no-cache'}).then(response=>{const clone=response.clone();caches.open(CACHE).then(c=>c.put(event.request,clone));return response}).catch(()=>caches.match(event.request)));return;}
-  event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{if(response.ok)caches.open(CACHE).then(c=>c.put(event.request,response.clone()));return response})));
+  event.respondWith((async()=>{
+    const cache=await caches.open(CACHE);
+    const cached=await cache.match(event.request,{ignoreSearch:true});
+    if(cached)return cached;
+    try{
+      const response=await fetch(event.request);
+      if(response.ok)cache.put(event.request,response.clone());
+      return response;
+    }catch(error){
+      const fallback=await caches.match(event.request,{ignoreSearch:true});
+      if(fallback)return fallback;
+      throw error;
+    }
+  })());
 });

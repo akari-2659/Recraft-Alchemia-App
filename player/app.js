@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='0.13.0';
+  const APP_VERSION='0.14.0';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar');
   const backdrop=document.querySelector('#backdrop');
@@ -164,7 +164,7 @@
       const data=await res.json();
       const published=String(data.version||'');
       if(published&&published!==APP_VERSION){
-        if(noticeText)noticeText.textContent=`新しい試作版 ${published} があります（現在 ${APP_VERSION}）。`;
+        if(noticeText)noticeText.textContent=`Playerアプリの新しいバージョン ${published} があります（現在 ${APP_VERSION}）。`;
         notice.hidden=false;
         await swRegistration?.update().catch(()=>{});
       }

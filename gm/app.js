@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='0.13.0';
+const APP_VERSION='0.14.0';
 const role=sessionStorage.getItem('ra-proto-role')||'';
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 if(role!=='gm'){authError.classList.remove('hidden');return;}app.classList.remove('hidden');
@@ -21,7 +21,7 @@ if(currentVersionLabel)currentVersionLabel.textContent=APP_VERSION;
 function setVersionState(text,kind=''){if(!versionState)return;versionState.textContent=text;versionState.dataset.state=kind;}
 function showAvailableUpdate(version){
   notice.dataset.mode='available';
-  noticeText.textContent=`新しい試作版 ${version} があります（現在 ${APP_VERSION}）。`;
+  noticeText.textContent=`GMアプリの新しいバージョン ${version} があります（現在 ${APP_VERSION}）。`;
   applyUpdateBtn.hidden=false;dismissUpdateBtn.textContent='あとで';notice.hidden=false;
   setVersionState(`v${version}あり`,'update');
 }
@@ -42,7 +42,7 @@ async function checkVersion(){
   }catch(_){setVersionState('確認失敗','error');}
 }
 async function applyUpdate(){
-  applyUpdateBtn.disabled=true;applyUpdateBtn.textContent='更新中…';
+  applyUpdateBtn.disabled=true;applyUpdateBtn.textContent='アプリ更新中…';
   try{
     if(swRegistration){
       await swRegistration.update();
@@ -62,7 +62,7 @@ if('serviceWorker'in navigator){
   navigator.serviceWorker.register('./sw.js').then(reg=>{
     swRegistration=reg;
     if(reg.waiting&&navigator.serviceWorker.controller){showAvailableUpdate('更新準備済み');}
-    reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){noticeText.textContent='新しいGMアプリを取得しました。更新して切り替えられます。';applyUpdateBtn.hidden=false;dismissUpdateBtn.textContent='あとで';notice.hidden=false;setVersionState('更新あり','update');}});});
+    reg.addEventListener('updatefound',()=>{const w=reg.installing;if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){noticeText.textContent='GMアプリ一式の新しいバージョンを取得しました。更新して切り替えられます。';applyUpdateBtn.hidden=false;dismissUpdateBtn.textContent='あとで';notice.hidden=false;setVersionState('更新あり','update');}});});
     reg.update().catch(()=>{});
   }).catch(()=>setVersionState('SW未登録','error'));
   let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});
