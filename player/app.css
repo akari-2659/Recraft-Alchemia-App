@@ -19,3 +19,17 @@ html,body{height:100%;overflow:hidden}.app{height:100svh;display:grid;grid-templ
 .character-nav-status.error{color:#efaaa2}
 .character-nav-status.empty{color:#cbbca8}
 .character-nav-btn{width:100%;text-align:left}
+
+
+/* Web app usability refinement v0.11 */
+:root{--sidebar:244px}
+.main{padding:18px}
+.page-head{margin-bottom:16px;gap:14px}
+.grid{gap:12px}
+.panel{padding:16px}
+.module-head{margin-bottom:8px}
+.module-frame-wrap{border-radius:11px}
+.nav-btn,.nav-category-toggle{min-height:42px;padding:9px 11px;border-radius:9px}
+.character-nav-btn{min-height:36px;padding:7px 9px}
+.quick-actions{gap:10px}.quick{padding:14px;border-radius:12px}.quick button{min-height:34px;padding:6px 10px;font-size:.86rem}
+@media(max-width:840px){.main{padding:10px 8px 8px}.module-frame-wrap{border-radius:8px}.page-head{margin-bottom:12px}.panel{padding:14px}}

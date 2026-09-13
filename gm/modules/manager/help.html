@@ -51,6 +51,30 @@ button,.tab,.subtab,.tab-btn{
 </style>
 <style id="raHelpAlignmentV174">body,input,textarea,summary,.help-body,.notice{text-align:left!important}button,.tags span{text-align:center!important}.toolbar{justify-content:flex-start!important}</style><style id="raMaintenanceV287">.ra-build-info{font-size:12px;padding:6px 12px;text-align:right;color:var(--muted)}header{padding-top:10px!important;padding-bottom:8px!important}.title-card{padding:14px!important}.title-card h1{font-size:clamp(21px,3vw,30px)!important}.panel>.toolbar{position:sticky;top:0;z-index:30;padding:8px;background:rgba(247,242,232,.97);border-radius:12px;box-shadow:0 4px 12px rgba(80,50,20,.06)}@media(max-width:600px){.ra-build-info{text-align:left}.title-card .subtitle{display:none}.panel>.toolbar{display:grid!important;grid-template-columns:1fr 1fr}.panel>.toolbar input{grid-column:1/-1;min-width:0}}</style>
 <link rel="stylesheet" href="https://akari-2659.github.io/Recraft-Alchemia-Manager/ra-design-system.css?v=90.8.775-area-event-full-audit-20260912">
+
+<script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
+
+<style id="raWebAppUsabilityV011">
+html.ra-web-embedded body{background:#f6f0e7}
+html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{display:none!important}
+html.ra-web-embedded main{max-width:1320px;margin:0 auto;padding:10px 12px 34px}
+html.ra-web-embedded .panel{padding:14px;border-radius:13px}
+html.ra-web-embedded .panel>.toolbar{gap:6px!important;padding:9px 10px!important;margin-bottom:10px!important;border:1px solid var(--line);border-radius:11px}
+html.ra-web-embedded .panel>.toolbar button{min-height:34px!important;padding:7px 10px!important;font-size:13.5px!important;border-radius:9px!important}
+html.ra-web-embedded .panel>.toolbar input{min-height:40px;padding:8px 10px}
+html.ra-web-embedded .help-layout{gap:8px}
+html.ra-web-embedded .help-card{border-radius:11px}
+html.ra-web-embedded .help-card summary{padding:10px 12px}
+html.ra-web-embedded .help-body{padding:10px 12px;font-size:13.5px;line-height:1.7}
+@media(max-width:600px){
+ html.ra-web-embedded main{padding:6px 7px 28px}
+ html.ra-web-embedded .panel>.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
+ html.ra-web-embedded .panel>.toolbar input{grid-column:1/-1}
+ html.ra-web-embedded .panel>.toolbar button{width:100%!important;min-height:38px!important;font-size:14px!important}
+ html.ra-web-embedded .help-card summary{grid-template-columns:1fr;gap:6px}.tags{justify-content:flex-start}
+}
+</style>
+
 </head><body class="ra-app ra-manager ra-help">
 <div class="ra-build-info">Version：v90.8.775 / 最終更新日：2026年9月12日</div>
 <header><div class="title-card"><h1>リクラフト・アルケミア ヘルプ</h1><p class="subtitle">確定済みのシステム仕様を確認するページ。未確定案、変更履歴、作業メモは含めない。</p></div></header><main><section class="panel"><div class="toolbar"><input id="search" placeholder="防御・かばう・矢筒・装備強化などで検索" type="search"/><button class="ghost" id="openAll" type="button">すべて開く</button><button class="ghost" id="closeAll" type="button">すべて閉じる</button><button id="copyAll" type="button">全文コピー</button></div><p class="notice">探索エリア画面の各エリアカードに解放キーを表示し、コピーできます。編集画面ではランダム再生成も可能です。<br>各項目は折り畳み式。検索すると該当項目だけ表示。</p><div class="help-layout" id="helpLayout"><details class="help-card">
