@@ -478,6 +478,46 @@ html.ra-embedded-facility .branch-group>summary,html.ra-embedded-facility .recip
 }
 </style>
 
+
+<style id="raWebAppBranchGraphFixV019">
+/* v0.19: ランク帯は専用ヘッダー行だけに置き、ノード内ボタンが外枠を覆わないようにする。 */
+.branch-rank-band{
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  min-width:0!important;
+  height:30px!important;
+  padding:0 6px!important;
+  box-sizing:border-box!important;
+  pointer-events:none!important;
+  color:#3d2d20!important;
+  font-weight:1000!important;
+  line-height:1!important;
+}
+.branch-rank-band>span{display:block!important;white-space:nowrap!important}
+/* 244x76（スマホ226x74）の外寸に対して、内側ボタンの旧min-heightが枠を越えていたため解除。 */
+.branch-graph-node-trigger,
+.branch-graph-node-locked-label,
+.branch-graph-node.has-named-processing .branch-graph-node-trigger{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+}
+.branch-graph-node.has-named-processing .branch-graph-node-trigger{
+  border-radius:9px!important;
+  background-clip:padding-box!important;
+}
+/* ノードの影・3px枠のための実余白。セル自体はクリップしない。 */
+.branch-graph-canvas{padding-left:12px!important;padding-right:34px!important;padding-top:12px!important;padding-bottom:28px!important}
+@media(max-width:720px){
+  .branch-graph-canvas{padding-left:10px!important;padding-right:28px!important;padding-top:11px!important;padding-bottom:24px!important}
+}
+</style>
+
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.775 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
@@ -1516,7 +1556,7 @@ function accessoryUpgradeCatalog(rows=[]){
   const minColumnWidth=176,columnGap=30,horizontalPadding=48;
   const minCanvasWidth=totalNodeCols*minColumnWidth+Math.max(0,totalNodeCols-1)*columnGap+horizontalPadding;
   const style=`min-width:${minCanvasWidth}px;grid-template-columns:repeat(${totalNodeCols},minmax(${minColumnWidth}px,1fr));grid-template-rows:30px repeat(${totalRows},minmax(88px,auto))`;
-  const rankBands=visibleRanks.map(rank=>{const start=rankStart.get(rank)||1,span=rankSlots.get(rank)||1;return `<div class="branch-rank-band" style="grid-column:${start} / span ${span};grid-row:1 / ${totalRows+2}"><span>★${rank}</span></div>`;}).join('');
+  const rankBands=visibleRanks.map(rank=>{const start=rankStart.get(rank)||1,span=rankSlots.get(rank)||1;return `<div class="branch-rank-band" style="grid-column:${start} / span ${span};grid-row:1"><span>★${rank}</span></div>`;}).join('');
   const nodes=placements.map(p=>{const r=p.entry,name=entryName(r),parent=String(r.baseItem||'').trim(),parentVisible=parent&&byResult.has(parent);const col=(rankStart.get(p.rank)||1)+p.slot;return `<article class="accessory-branch-node" style="grid-column:${col};grid-row:${p.row}" data-accessory-node="${esc(name)}" ${parentVisible?`data-parent-accessory="${esc(parent)}"`:''}><button type="button" data-open-accessory-upgrade="${esc(name)}" aria-label="${esc(`${name}の詳細を開く`)}"><span class="accessory-branch-rank">${esc(rankLabel(r.rank))}</span><span class="accessory-branch-name">${esc(name)}</span>${r.effect?`<span class="accessory-branch-effect">${esc(r.effect)}</span>`:''}</button></article>`;}).join('');
   return `<div class="accessory-branch-scroll"><div class="accessory-branch-canvas" style="${style}">${rankBands}<svg class="accessory-branch-svg" aria-hidden="true"></svg>${nodes}</div></div>`;
 }
@@ -1800,7 +1840,7 @@ function branchGraphCatalog(current){
   const rankBands=visibleRanks.map(rank=>{
     const start=rankStart.get(rank)||2;
     const span=rankSlots.get(rank)||1;
-    return `<div class="branch-rank-band" style="grid-column:${start} / span ${span};grid-row:1 / ${totalRows+2}"><span>★${rank}</span></div>`;
+    return `<div class="branch-rank-band" style="grid-column:${start} / span ${span};grid-row:1"><span>★${rank}</span></div>`;
   }).join('');
   const nodes=placements.map(p=>graphNodeHtml(p.entry,p.row,(rankStart.get(p.rank)||2)+p.slot,{base:p.row===2})).join('');
   const toggleIcon=branchLabelsCollapsed?'◀':'▶';
