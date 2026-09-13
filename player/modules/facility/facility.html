@@ -383,37 +383,6 @@ body.ra-facility .accessory-branch-node button:hover{background:#f5e6d1!importan
 }
 </style>
 
-<style id="raWeaponBranchGraphTightFixV775">
-/* Webアプリ派生図調整: ノード・列・行・左派生名欄を同一スケールへ。異名加工表示は武器名と領域を分離。 */
-.branch-graph-canvas{
-  --branch-node-col-width:210px;
-  --branch-row-height:68px;
-  --branch-label-width:116px;
-  gap:8px 14px!important;
-  padding:8px 26px 22px 6px!important;
-}
-.branch-graph-label{padding:4px 6px!important;font-size:10.5px!important;line-height:1.25!important;border-radius:0 8px 8px 0!important}
-.branch-graph-label>span{max-width:100%;white-space:normal!important;overflow-wrap:anywhere!important;word-break:keep-all!important;text-align:center}
-.branch-graph-node{width:210px!important;height:64px!important;min-height:64px!important}
-.branch-graph-node-trigger,.branch-graph-node-locked-label{height:100%!important;min-height:64px!important;padding:5px 10px!important}
-.branch-graph-node.has-named-processing,.branch-graph-node.has-named-processing .branch-graph-node-trigger{height:64px!important;min-height:64px!important}
-.branch-graph-node.has-named-processing .branch-graph-node-trigger{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:6px!important;text-align:left!important}
-.branch-graph-node-named-wrap{position:static!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:6px!important;width:100%!important;height:auto!important;max-width:100%!important}
-.branch-graph-node.has-named-processing .branch-graph-node-named-badge{position:static!important;display:block!important;margin:0!important;padding:0!important;font-size:9px!important;line-height:1!important;white-space:nowrap!important}
-.branch-graph-node.has-named-processing .branch-graph-node-name-inline{display:block!important;width:100%!important;margin:0!important;padding:0!important;text-align:center!important;font-size:13px!important;line-height:1.12!important;white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;word-break:normal!important}
-.branch-graph-node:not(.has-named-processing) .branch-graph-node-name-inline{font-size:13px!important;line-height:1.12!important}
-.branch-graph-edge{stroke-width:2.5}.branch-graph-arrow{fill:#496675;filter:drop-shadow(0 1px 0 #fff)}
-@media(max-width:720px){
-  .branch-graph-canvas{--branch-node-col-width:194px;--branch-row-height:66px;--branch-label-width:102px;gap:7px 13px!important;padding:7px 20px 18px 5px!important}
-  .branch-graph-label{padding:4px!important;font-size:10px!important}
-  .branch-graph-node{width:194px!important;height:62px!important;min-height:62px!important}
-  .branch-graph-node-trigger,.branch-graph-node-locked-label{height:100%!important;min-height:62px!important;padding:4px 8px!important}
-  .branch-graph-node.has-named-processing,.branch-graph-node.has-named-processing .branch-graph-node-trigger{height:62px!important;min-height:62px!important}
-  .branch-graph-node.has-named-processing .branch-graph-node-trigger,.branch-graph-node-named-wrap{gap:5px!important}
-  .branch-graph-node.has-named-processing .branch-graph-node-named-badge{font-size:8.5px!important}
-  .branch-graph-node.has-named-processing .branch-graph-node-name-inline,.branch-graph-node:not(.has-named-processing) .branch-graph-node-name-inline{font-size:12px!important;line-height:1.1!important}
-}
-</style>
 
 <script id="raEmbeddedFacilityEarlyClass">
 try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded-facility')}catch(_){}
@@ -426,6 +395,20 @@ html.ra-embedded-facility body>header{display:none!important}
 html.ra-embedded-facility main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
 </style>
 
+<style id="raWeaponBranchGraphOuterAdjustV776">
+/* Webアプリ側では元v90.8.775のノード描画をそのまま使用し、周辺だけ調整する。 */
+.branch-graph-canvas{--branch-label-width:124px;gap:8px 18px!important;padding:8px 28px 22px 6px!important}
+.branch-graph-label{padding:5px 5px!important;font-size:11px!important;line-height:1.25!important;border-radius:0 9px 9px 0!important}
+.branch-graph-label>span{max-width:100%;white-space:normal!important;overflow-wrap:anywhere!important;word-break:keep-all!important;text-align:center}
+.branch-graph-edge{stroke-width:2.5}.branch-graph-arrow{fill:#496675;filter:drop-shadow(0 1px 0 #fff)}
+/* 元版の左上バッジ方式は維持しつつ、武器名との最低間隔だけ確保。 */
+.branch-graph-node.has-named-processing .branch-graph-node-name-inline{padding-top:10px!important}
+@media(max-width:720px){
+  .branch-graph-canvas{--branch-label-width:108px;gap:7px 16px!important;padding:7px 22px 18px 5px!important}
+  .branch-graph-label{padding:4px!important;font-size:10px!important}
+  .branch-graph-node.has-named-processing .branch-graph-node-name-inline{padding-top:9px!important}
+}
+</style>
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.775 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
@@ -1742,7 +1725,7 @@ function branchGraphCatalog(current){
   let cursor=2;
   visibleRanks.forEach(rank=>{rankStart.set(rank,cursor);cursor+=rankSlots.get(rank)||1;});
   const totalNodeCols=Math.max(1,cursor-2),totalRows=ordered.length+1;
-  const style=`grid-template-columns:var(--branch-label-width) repeat(${totalNodeCols},var(--branch-node-col-width));grid-template-rows:30px repeat(${totalRows},minmax(var(--branch-row-height),auto))`;
+  const style=`grid-template-columns:var(--branch-label-width) repeat(${totalNodeCols},252px);grid-template-rows:30px repeat(${totalRows},minmax(82px,auto))`;
   const labels=[`<div class="branch-graph-label base" style="grid-column:1;grid-row:2"><span>基礎武器</span></div>`];
   ordered.forEach((meta,index)=>labels.push(`<div class="branch-graph-label ${meta.branch.isBossBranch?'boss':''}" style="grid-column:1;grid-row:${index+3}"><span>${esc(meta.branch.label||'？？？')}派生</span></div>`));
   const rankBands=visibleRanks.map(rank=>{
