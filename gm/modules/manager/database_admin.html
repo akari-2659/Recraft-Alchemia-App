@@ -674,15 +674,18 @@ button,.tab,.subtab,.tab-btn,.quest-category-btn,.facility-chip{
 /* v90.8.176: 管理画面全体を用途別に整理。素材・魔物のコンパクト操作は維持。 */
 :root{--nav-bg:#f4e7d6;--nav-active:#9d6734;--action-bg:#fffdf8;--db-bg:#f3eee6}
 
-/* 大カテゴリは横に引き伸ばさず、まとまりのあるナビゲーションとして表示 */
+/* 大カテゴリは文字量に合わせた自然なタブ幅で並べ、枠内にも余白を持たせる */
 .major-tabs{
-  display:grid!important;
-  grid-template-columns:repeat(5,minmax(104px,128px))!important;
-  gap:7px!important;
-  width:max-content!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  width:100%!important;
   max-width:100%!important;
-  padding:7px!important;
-  margin:0!important;
+  padding:10px 12px!important;
+  margin:0 0 2px!important;
+  box-sizing:border-box!important;
   position:sticky;
   top:0;
   border:1px solid #dfcbb2;
@@ -691,13 +694,16 @@ button,.tab,.subtab,.tab-btn,.quest-category-btn,.facility-chip{
   box-shadow:0 6px 16px rgba(75,50,28,.06);
 }
 .major-tabs>.tab{
-  width:100%!important;
-  min-height:39px;
-  padding:8px 11px!important;
-  border-radius:10px!important;
-  display:flex;
+  width:auto!important;
+  min-width:max-content!important;
+  min-height:40px;
+  padding:9px 18px!important;
+  border-radius:11px!important;
+  display:inline-flex!important;
   align-items:center;
-  justify-content:flex-start;
+  justify-content:center;
+  flex:0 0 auto!important;
+  text-align:center!important;
 }
 
 /* 小カテゴリは内容幅のチップ型。長い一覧でも自然に折り返す */
@@ -1241,11 +1247,11 @@ html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{displa
 html.ra-web-embedded main{max-width:1460px;margin:0 auto;padding:10px 12px 34px}
 html.ra-web-embedded .panel{padding:14px;margin:9px 0;border-radius:13px}
 html.ra-web-embedded button,html.ra-web-embedded .tab,html.ra-web-embedded .subtab,html.ra-web-embedded .facility-inner-tab,html.ra-web-embedded .facility-weapon-category-tab{min-height:34px!important;padding:7px 10px!important;font-size:13.5px!important;line-height:1.25!important;border-radius:9px!important}
-html.ra-web-embedded .major-tabs{display:flex!important;flex-wrap:wrap!important;width:100%!important;max-width:100%!important;gap:6px!important;padding:9px 10px!important;margin:0 0 8px!important;border-radius:12px!important}
-html.ra-web-embedded .major-tabs>.tab{width:auto!important;min-width:0!important;flex:0 1 auto!important;min-height:34px!important;padding:7px 10px!important}
+html.ra-web-embedded .major-tabs{display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;align-items:center!important;width:100%!important;max-width:100%!important;gap:8px!important;padding:10px 12px!important;margin:0 0 8px!important;border-radius:12px!important;box-sizing:border-box!important}
+html.ra-web-embedded .major-tabs>.tab{width:auto!important;min-width:max-content!important;flex:0 0 auto!important;min-height:36px!important;padding:8px 16px!important;text-align:center!important;justify-content:center!important}
 html.ra-web-embedded .subnav-block{padding:9px 10px!important;margin:8px 0!important;border-radius:12px!important}
-html.ra-web-embedded .section-subtabs{gap:6px!important}
-html.ra-web-embedded .section-subtabs>.subtab{min-height:32px!important;padding:6px 9px!important;font-size:13px!important}
+html.ra-web-embedded .section-subtabs{display:flex!important;flex-wrap:wrap!important;gap:7px!important;padding:2px 0!important}
+html.ra-web-embedded .section-subtabs>.subtab{width:auto!important;min-width:max-content!important;flex:0 0 auto!important;min-height:33px!important;padding:6px 10px!important;font-size:13px!important}
 html.ra-web-embedded .tab-label{margin-bottom:5px;font-size:11px}
 html.ra-web-embedded .toolbar-screen-actions,html.ra-web-embedded .toolbar-db-actions,html.ra-web-embedded .global-db-maintenance,html.ra-web-embedded .global-db-write{padding:23px 9px 9px;border-radius:11px;gap:6px!important}
 html.ra-web-embedded .toolbar-screen-actions>button,html.ra-web-embedded .toolbar-db-actions>button,html.ra-web-embedded .global-db-maintenance>button,html.ra-web-embedded .global-db-write>button{min-height:32px!important;padding:6px 9px!important;font-size:13px!important}
@@ -1259,14 +1265,34 @@ html.ra-web-embedded .responsive-data-table .row-actions button{min-height:29px!
 @media(max-width:720px){
  html.ra-web-embedded main{padding:6px 7px 28px}
  html.ra-web-embedded button,html.ra-web-embedded .tab,html.ra-web-embedded .subtab{min-height:38px!important;padding:8px 10px!important;font-size:14px!important}
- html.ra-web-embedded .major-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
- html.ra-web-embedded .major-tabs>.tab{width:100%!important}
- html.ra-web-embedded .section-subtabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
- html.ra-web-embedded .section-subtabs>.subtab{width:100%!important}
+ html.ra-web-embedded .major-tabs{display:flex!important;flex-wrap:wrap!important;gap:7px!important;padding:8px 9px!important}
+ html.ra-web-embedded .major-tabs>.tab{width:auto!important;min-width:max-content!important;flex:0 0 auto!important}
+ html.ra-web-embedded .section-subtabs{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+ html.ra-web-embedded .section-subtabs>.subtab{width:auto!important;min-width:max-content!important;flex:0 0 auto!important}
 }
 @media(max-width:420px){html.ra-web-embedded .major-tabs,html.ra-web-embedded .section-subtabs{grid-template-columns:1fr!important}}
 </style>
 
+
+<style id="raWebAppLayoutV013">
+/* v0.13: GM埋め込み時の情報密度と階層を再整理 */
+html.ra-web-embedded main{max-width:1500px!important;padding:8px 10px 30px!important}
+html.ra-web-embedded main>section.panel:first-of-type{padding:9px 10px!important}
+html.ra-web-embedded .stats{display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin:8px 0!important}
+html.ra-web-embedded .stat{flex:0 0 auto!important;min-width:92px!important;padding:6px 9px!important;border-radius:10px!important}
+html.ra-web-embedded .stat b{font-size:1rem!important}.stat span{font-size:.72rem!important}
+html.ra-web-embedded .tab-block{margin:8px 0!important;box-shadow:0 3px 9px rgba(80,50,20,.05)!important}
+html.ra-web-embedded .major-tabs{gap:8px!important;padding:9px 11px!important}
+html.ra-web-embedded .major-tabs>.tab{min-height:35px!important;padding:7px 14px!important}
+html.ra-web-embedded .subnav-block{padding:8px 10px!important}
+html.ra-web-embedded .section-subtabs{gap:6px!important}
+html.ra-web-embedded .section-subtabs>.subtab{min-height:32px!important;padding:6px 9px!important}
+html.ra-web-embedded .record-toolbar,html.ra-web-embedded .global-db-toolbar{gap:7px!important}
+html.ra-web-embedded .toolbar-screen-actions,html.ra-web-embedded .toolbar-db-actions,html.ra-web-embedded .global-db-maintenance,html.ra-web-embedded .global-db-write{padding:22px 8px 8px!important}
+html.ra-web-embedded .ra-admin-fold{margin:6px 0!important;border-radius:11px!important}html.ra-web-embedded .ra-admin-fold>summary{padding:9px 11px!important}html.ra-web-embedded .ra-admin-fold-body{padding:8px!important}
+html.ra-web-embedded .responsive-data-table{margin-top:7px!important}
+@media(max-width:720px){html.ra-web-embedded main{padding:5px 5px 24px!important}html.ra-web-embedded .stat{min-width:82px!important}html.ra-web-embedded .major-tabs>.tab,html.ra-web-embedded .section-subtabs>.subtab{min-height:36px!important}}
+</style>
 </head>
 <body class="ra-app ra-manager ra-database">
 <div class="ra-build-info">Version：v90.8.775 / 最終更新日：2026年9月12日</div>

@@ -1,1 +1,16 @@
-const CACHE='ra-gm-prototype-v11';const ASSETS=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','./version.json','../assets/common.css','../icons/gm-192.png','../icons/gm-512.png'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ra-gm-prototype-')&&k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting()});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.pathname.endsWith('/version.json')){e.respondWith(fetch(e.request,{cache:'no-store'}));return;}e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});
+const CACHE='ra-gm-prototype-v13';
+const SHELL=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','../assets/common.css','../icons/gm-192.png','../icons/gm-512.png'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)))});
+self.addEventListener('activate',event=>{event.waitUntil(Promise.all([
+  caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE&&key.startsWith('ra-gm-prototype')).map(key=>caches.delete(key)))),
+  self.clients.claim()
+]))});
+self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);if(url.origin!==location.origin)return;
+  if(url.pathname.endsWith('/gm/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
+  const isModule=url.pathname.includes('/gm/modules/');
+  if(isModule){event.respondWith(fetch(event.request,{cache:'no-cache'}).then(response=>{const clone=response.clone();caches.open(CACHE).then(c=>c.put(event.request,clone));return response}).catch(()=>caches.match(event.request)));return;}
+  event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{if(response.ok)caches.open(CACHE).then(c=>c.put(event.request,response.clone()));return response})));
+});

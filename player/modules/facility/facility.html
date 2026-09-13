@@ -396,11 +396,11 @@ html.ra-embedded-facility main{width:min(1180px,calc(100% - 12px));margin:6px au
 </style>
 
 <style id="raWeaponBranchGraphOuterAdjustV776">
-/* Webアプリ側では元v90.8.775のノード描画をそのまま使用し、周辺だけ調整する。 */
+/* Webアプリ側では元v90.8.775のノード描画をそのまま使用し、周辺だけ調整する。接続線は▶を使わずノードへ直接つなぐ。 */
 .branch-graph-canvas{--branch-label-width:124px;gap:8px 18px!important;padding:8px 28px 22px 6px!important}
 .branch-graph-label{padding:5px 5px!important;font-size:11px!important;line-height:1.25!important;border-radius:0 9px 9px 0!important}
 .branch-graph-label>span{max-width:100%;white-space:normal!important;overflow-wrap:anywhere!important;word-break:keep-all!important;text-align:center}
-.branch-graph-edge{stroke-width:2.5}.branch-graph-arrow{fill:#496675;filter:drop-shadow(0 1px 0 #fff)}
+.branch-graph-edge{stroke-width:2.5}
 /* 元版の左上バッジ方式は維持しつつ、武器名との最低間隔だけ確保。 */
 .branch-graph-node.has-named-processing .branch-graph-node-name-inline{padding-top:10px!important}
 @media(max-width:720px){
@@ -408,6 +408,15 @@ html.ra-embedded-facility main{width:min(1180px,calc(100% - 12px));margin:6px au
   .branch-graph-label{padding:4px!important;font-size:10px!important}
   .branch-graph-node.has-named-processing .branch-graph-node-name-inline{padding-top:9px!important}
 }
+</style>
+<style id="raWeaponBranchNodeFrameV013">
+/* v0.13: 固定セル外へ出るoutlineを廃止し、枠をノード自身の内側で完結させる。 */
+.branch-graph-node{box-sizing:border-box!important;overflow:visible!important;isolation:isolate!important}
+.branch-graph-node.has-named-processing{outline:none!important;border:3px solid #8b3f2e!important;box-shadow:0 5px 14px rgba(80,50,20,.14),inset 0 0 0 1px rgba(255,247,220,.9)!important}
+.branch-graph-node.has-named-processing .branch-graph-node-trigger{box-sizing:border-box!important;width:100%!important;max-width:100%!important;border-radius:9px!important}
+.branch-graph-edge{stroke-linecap:butt!important}
+.branch-graph-canvas{padding-top:10px!important;padding-bottom:24px!important}
+@media(max-width:720px){.branch-graph-canvas{padding-top:9px!important;padding-bottom:20px!important}}
 </style>
 
 <style id="raWebAppUsabilityV011">
@@ -1795,17 +1804,16 @@ function drawBranchConnections(){
       if(!childrenByParent.has(parentName))childrenByParent.set(parentName,{parent,children:[]});
       childrenByParent.get(parentName).children.push(child);
     });
-    const paths=[],arrows=[],routePaths=[],nodeGap=9,arrowWidth=9,arrowHalfHeight=5,rowTolerance=7;
-    const arrowSvg=(tipX,y)=>{const baseX=tipX-arrowWidth;return `<path class="branch-graph-arrow" d="M ${baseX} ${y-arrowHalfHeight} L ${tipX} ${y} L ${baseX} ${y+arrowHalfHeight} Z"></path>`;};
+    const paths=[],routePaths=[],rowTolerance=7;
     childrenByParent.forEach(({parent,children},parentName)=>{
       const right=parent.offsetLeft+parent.offsetWidth,sy=parent.offsetTop+parent.offsetHeight/2;
-      const points=children.map(child=>({child,ey:child.offsetTop+child.offsetHeight/2,tipX:child.offsetLeft-nodeGap})).sort((a,b)=>a.ey-b.ey||a.tipX-b.tipX);
+      const points=children.map(child=>({child,ey:child.offsetTop+child.offsetHeight/2,targetX:child.offsetLeft})).sort((a,b)=>a.ey-b.ey||a.targetX-b.targetX);
       const same=points.filter(p=>Math.abs(p.ey-sy)<=rowTolerance),above=points.filter(p=>p.ey<sy-rowTolerance),below=points.filter(p=>p.ey>sy+rowTolerance);
-      same.forEach(({child,tipX})=>{const childName=String(child.dataset.weaponNode||'').trim(),lineEnd=tipX-arrowWidth-1,d=`M ${right} ${sy} H ${lineEnd}`;paths.push(`<path class="branch-graph-edge branch-graph-branch" d="${d}"></path>`);arrows.push(arrowSvg(tipX,sy));routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${tipX}"></path>`);});
-      function drawGroup(group){if(!group.length)return;const trunkX=right+12,endY=group[0].ey<sy?Math.min(...group.map(p=>p.ey)):Math.max(...group.map(p=>p.ey));paths.push(`<path class="branch-graph-edge branch-graph-trunk" d="M ${right} ${sy} H ${trunkX} V ${endY}"></path>`);group.forEach(({child,ey,tipX})=>{const childName=String(child.dataset.weaponNode||'').trim(),lineEnd=tipX-arrowWidth-1;paths.push(`<path class="branch-graph-edge branch-graph-branch" d="M ${trunkX} ${ey} H ${lineEnd}"></path>`);arrows.push(arrowSvg(tipX,ey));routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${trunkX} V ${ey} H ${tipX}"></path>`);});}
+      same.forEach(({child,targetX})=>{const childName=String(child.dataset.weaponNode||'').trim(),d=`M ${right} ${sy} H ${targetX}`;paths.push(`<path class="branch-graph-edge branch-graph-branch" d="${d}"></path>`);routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${targetX}"></path>`);});
+      function drawGroup(group){if(!group.length)return;const trunkX=right+12,endY=group[0].ey<sy?Math.min(...group.map(p=>p.ey)):Math.max(...group.map(p=>p.ey));paths.push(`<path class="branch-graph-edge branch-graph-trunk" d="M ${right} ${sy} H ${trunkX} V ${endY}"></path>`);group.forEach(({child,ey,targetX})=>{const childName=String(child.dataset.weaponNode||'').trim();paths.push(`<path class="branch-graph-edge branch-graph-branch" d="M ${trunkX} ${ey} H ${targetX}"></path>`);routePaths.push(`<path class="branch-graph-edge branch-graph-edge-route" data-edge-from="${esc(parentName)}" data-edge-to="${esc(childName)}" d="M ${right} ${sy} H ${trunkX} V ${ey} H ${targetX}"></path>`);});}
       drawGroup(above);drawGroup(below);
     });
-    svg.innerHTML=`${paths.join('')}${arrows.join('')}${routePaths.join('')}`;
+    svg.innerHTML=`${paths.join('')}${routePaths.join('')}`;
   });
 }
 function scheduleBranchConnections(){

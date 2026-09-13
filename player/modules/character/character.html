@@ -1171,12 +1171,12 @@ html.ra-embedded main{width:min(1180px,calc(100% - 12px));margin:6px auto 28px}
 /* Webアプリ内での視認性・操作密度調整。データ/機能は変更しない。 */
 html.ra-embedded main{width:min(1320px,calc(100% - 18px));margin:8px auto 30px}
 html.ra-embedded button{min-height:34px;padding:7px 10px;font-size:.88rem;line-height:1.28;border-radius:9px}
-html.ra-embedded .button-row,html.ra-embedded .inventory-toolbar,html.ra-embedded .editor-action-inner{gap:6px!important}
+html.ra-embedded .button-row,html.ra-embedded .inventory-toolbar,html.ra-embedded .editor-action-inner{gap:7px!important}
 html.ra-embedded .button-row{margin-top:8px}
 html.ra-embedded #editorView>section:first-child{padding:10px 12px;margin-bottom:8px;border-radius:12px}
 html.ra-embedded #editorView>section:first-child .topbar{gap:8px}
-html.ra-embedded .editor-tabs{gap:6px!important;padding:8px 10px!important;border-radius:12px!important;margin:0 0 8px}
-html.ra-embedded .editor-tabs>.editor-tab-btn{flex:0 1 auto!important;width:auto!important;min-height:34px!important;padding:7px 10px!important;font-size:.88rem!important}
+html.ra-embedded .editor-tabs{display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:7px!important;padding:10px 12px!important;border-radius:12px!important;margin:0 0 8px}
+html.ra-embedded .editor-tabs>.editor-tab-btn{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:35px!important;padding:8px 12px!important;font-size:.88rem!important;text-align:center!important;justify-content:center!important}
 html.ra-embedded .editor-tab-page{max-width:1280px;margin:0 auto}
 html.ra-embedded details.big-section{margin-bottom:9px;border-radius:12px}
 html.ra-embedded details.big-section>summary{padding:9px 12px!important;font-size:.98rem;line-height:1.3}
@@ -1189,7 +1189,7 @@ html.ra-embedded .resource-grid{gap:8px}
 html.ra-embedded .resource-card{padding:11px;border-radius:11px}
 html.ra-embedded .equipment-grid,html.ra-embedded .inventory-list,html.ra-embedded .carry-item-list{gap:8px}
 html.ra-embedded .equipment-card,html.ra-embedded .inventory-card{border-radius:11px}
-html.ra-embedded .inventory-toolbar{padding:8px 10px!important;border-radius:11px!important;margin:8px 0}
+html.ra-embedded .inventory-toolbar{display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;padding:10px 12px!important;border-radius:11px!important;margin:8px 0;gap:7px!important}
 html.ra-embedded .inventory-filter-panel,html.ra-embedded .inventory-search-panel{padding:10px;border-radius:11px}
 html.ra-embedded .loadout-preset-panel{padding:10px;border-radius:11px}
 @media(min-width:980px){
@@ -1199,13 +1199,31 @@ html.ra-embedded .loadout-preset-panel{padding:10px;border-radius:11px}
 @media(max-width:620px){
   html.ra-embedded main{width:100%;margin:0;padding:0 5px 24px}
   html.ra-embedded button{min-height:38px;padding:8px 10px;font-size:.9rem}
-  html.ra-embedded .editor-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
-  html.ra-embedded .editor-tabs>.editor-tab-btn{width:100%!important;text-align:center!important;justify-content:center!important}
+  html.ra-embedded .editor-tabs{display:flex!important;flex-wrap:wrap!important;gap:6px!important;padding:8px 9px!important}
+  html.ra-embedded .editor-tabs>.editor-tab-btn{width:auto!important;min-width:max-content!important;flex:0 0 auto!important;text-align:center!important;justify-content:center!important}
   html.ra-embedded .button-row,html.ra-embedded .inventory-toolbar{gap:7px!important}
   html.ra-embedded .section-body{padding:10px}
 }
 </style>
 
+
+<style id="raCharacterWebLayoutV013">
+/* v0.13: 情報量は維持しつつ、PCでの縦伸びを抑えて視線移動を整理 */
+html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px!important}
+html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body>.mini-card{margin:0!important}
+html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body>h3,html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body>#abilityOutput,html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body>#derivedCombatStats,html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body>#statInputs{grid-column:1/-1}
+html.ra-embedded #tabAbility .ability-grid{grid-template-columns:repeat(auto-fit,minmax(138px,1fr))!important;gap:6px!important}
+html.ra-embedded #tabAbility .ability-card{padding:8px!important}
+html.ra-embedded #tabSkills details:first-child>.section-body{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}
+html.ra-embedded #tabSkills details:first-child>.section-body>.mini-card{margin:0!important}
+html.ra-embedded .inventory-list,html.ra-embedded .carry-item-list{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))!important;align-items:start}
+html.ra-embedded .inventory-card{padding:10px!important}
+html.ra-embedded .inventory-list-heading{margin:12px 0 4px!important;padding-top:10px!important}
+html.ra-embedded .editor-tab-page>details.big-section{margin-bottom:7px!important}
+html.ra-embedded .section-body{padding:9px 11px 11px!important}
+html.ra-embedded .formula-note{margin-top:4px!important;line-height:1.35!important}
+@media(max-width:760px){html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body,html.ra-embedded #tabSkills details:first-child>.section-body{grid-template-columns:1fr!important}html.ra-embedded .inventory-list,html.ra-embedded .carry-item-list{grid-template-columns:1fr!important}}
+</style>
 </head>
 <body class="ra-app ra-player ra-character">
 <div class="ra-build-info">Version：v90.8.775 / 最終更新日：2026年9月12日</div>

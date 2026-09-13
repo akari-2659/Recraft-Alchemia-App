@@ -279,6 +279,17 @@ html.ra-web-embedded .progress-modal-card button{min-height:34px!important;paddi
 @media(max-width:420px){html.ra-web-embedded #progressTabNav,html.ra-web-embedded .quest-category-bar,html.ra-web-embedded .buttons,html.ra-web-embedded .quest-tools{grid-template-columns:1fr!important}}
 </style>
 
+<script>try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
+<style id="raProgressWebLayoutV013">
+html.ra-web-embedded header{display:none!important}html.ra-web-embedded main{width:min(1500px,calc(100% - 16px))!important;margin:7px auto 28px!important}
+html.ra-web-embedded .panel,html.ra-web-embedded .tab-panel{padding:11px 12px!important;margin:8px 0!important;border-radius:11px!important}
+html.ra-web-embedded #progressTabNav,html.ra-web-embedded .tab-nav,html.ra-web-embedded .quest-category-bar{display:flex!important;flex-wrap:wrap!important;gap:6px!important;padding:8px 10px!important}
+html.ra-web-embedded #progressTabNav>button,html.ra-web-embedded .tab-nav>button,html.ra-web-embedded .quest-category-bar>button{width:auto!important;min-width:max-content!important;flex:0 0 auto!important;min-height:34px!important;padding:7px 10px!important}
+html.ra-web-embedded .buttons,html.ra-web-embedded .quest-tools{display:flex!important;flex-wrap:wrap!important;gap:6px!important;padding:7px 8px!important}
+html.ra-web-embedded .buttons>button,html.ra-web-embedded .quest-tools>button{width:auto!important;min-width:max-content!important;flex:0 0 auto!important}
+html.ra-web-embedded .day-status-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(118px,1fr))!important;gap:7px!important}.day-stat{padding:8px!important}
+@media(max-width:620px){html.ra-web-embedded main{width:100%!important;margin:0!important;padding:0 5px 24px!important}html.ra-web-embedded #progressTabNav>button,html.ra-web-embedded .tab-nav>button,html.ra-web-embedded .quest-category-bar>button{min-height:38px!important}html.ra-web-embedded .day-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
 </head>
 <body class="ra-app ra-manager ra-progress">
 <div class="ra-build-info">Version：v90.8.775 / 最終更新日：2026年9月12日</div>
