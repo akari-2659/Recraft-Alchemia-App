@@ -84,6 +84,13 @@ button,.tab,.subtab,.tab-btn,.quest-category-btn{white-space:normal!important;ov
 @media(max-width:460px){
   .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{grid-template-columns:1fr!important}
 }
+
+/* v1.0.8: 時間帯は4ボタンではなく、常設の切り替え式セレクトで統一 */
+.time-slot-control{display:flex;align-items:center;gap:10px;margin:10px 0 12px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper,#fffaf2)}
+.time-slot-control .time-slot-label{flex:0 0 auto;margin:0;font-weight:800;color:var(--ink)}
+.time-slot-switch-select{flex:0 0 132px;width:132px!important;min-width:112px;max-width:160px!important;margin:0!important;padding:7px 34px 7px 10px!important;font-weight:800;color:var(--ink)!important;background-color:var(--paper2,#f6eee2)!important;border:1px solid var(--line)!important;border-radius:9px!important}
+.time-slot-control.hidden{display:none!important}
+@media(max-width:620px){.time-slot-control{justify-content:space-between}.time-slot-switch-select{flex:0 1 150px;width:min(150px,52vw)!important}}
 </style>
 
 <style id="raBuildInfoStyle">
@@ -357,9 +364,6 @@ html.ra-web-embedded .day-status-grid{display:grid!important;grid-template-colum
             <option value="7">7人</option>
           </select>
         </label>
-        <label id="questTimeSlotWrap">時間帯
-          <select id="questTimeSlotSelect"><option value="朝">朝</option><option value="昼">昼</option><option value="夕">夕</option><option value="夜">夜</option></select>
-        </label>
         <label id="questShowOffWrap"><input type="checkbox" id="questShowDisabledImportant"><span>OFFの重要クエストも表示</span></label>
         <button class="secondary" type="button" id="copyImportantQuestListBtn">未クリア重要クエストをコピー</button>
         <button class="secondary" type="button" id="copyDailyQuestListBtn">デイリークエストをコピー</button>
@@ -386,6 +390,10 @@ html.ra-web-embedded .day-status-grid{display:grid!important;grid-template-colum
       </details>
       <label>クエスト</label>
       <select id="questSelect"></select>
+      <label id="questTimeSlotWrap" class="time-slot-control hidden" for="questTimeSlotSelect">
+        <span class="time-slot-label">時間帯</span>
+        <select id="questTimeSlotSelect" class="time-slot-switch-select" aria-label="クエスト時間帯"><option value="朝">朝</option><option value="昼">昼</option><option value="夕">夕</option><option value="夜">夜</option></select>
+      </label>
       <div id="questDetail" class="card muted">DB読込後、クエストを選択してください。</div>
       <h3>進行度</h3>
       <div class="progress-wrap"><div id="questBar" class="progress-bar"></div><div id="questLabel" class="progress-label">0%</div></div>
@@ -420,6 +428,10 @@ html.ra-web-embedded .day-status-grid{display:grid!important;grid-template-colum
       <h2>エリア探索 <span class="copy-note" id="areaCopyNote">コピーしました</span></h2>
       <label>探索エリア</label>
       <select id="areaSelect"></select>
+      <label id="areaTimeSlotWrap" class="time-slot-control hidden" for="areaTimeSlotSelect">
+        <span class="time-slot-label">時間帯</span>
+        <select id="areaTimeSlotSelect" class="time-slot-switch-select" aria-label="探索時間帯"><option value="朝">朝</option><option value="昼">昼</option><option value="夕">夕</option><option value="夜">夜</option></select>
+      </label>
       <div id="areaDetail" class="card muted">DB読込後、エリアを選択してください。</div>
       <div class="weather-manager" id="weatherManager">
         <h3>今日の天気 <span class="copy-note" id="weatherCopyNote">コピーしました</span></h3>
@@ -447,10 +459,6 @@ html.ra-web-embedded .day-status-grid{display:grid!important;grid-template-colum
             <select id="partySizeSelect">
               <option value="1">1人</option><option value="2">2人</option><option value="3">3人</option><option value="4" selected>4人</option><option value="5">5人</option><option value="6">6人</option><option value="7">7人</option>
             </select>
-          </div>
-          <div id="areaTimeSlotWrap">
-            <label>時間帯</label>
-            <select id="areaTimeSlotSelect"><option value="朝">朝</option><option value="昼">昼</option><option value="夕">夕</option><option value="夜">夜</option></select>
           </div>
           <div>
             <label>今日の噂</label>
@@ -799,7 +807,7 @@ function tokenBuildInstances(encounter){
 function tokenCharacterId(){const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-',bytes=new Uint8Array(20);crypto.getRandomValues(bytes);return Array.from(bytes,b=>chars[b%chars.length]).join('');}
 function tokenCharacterData(instance,imageName,order){const row=instance.monster,hp=tokenCompact(row.hp),mp=tokenCompact(row.mp),status=[];if(hp!=='')status.push(tokenStatusEntry('HP',hp,hp));if(mp!=='')status.push(tokenStatusEntry('MP',mp,mp));status.push(tokenStatusEntry('補正',0,0),tokenStatusEntry('回避',row.evasionValue,row.evasionValue),tokenStatusEntry('抵抗',row.resistValue,row.resistValue),tokenStatusEntry('防御',row.defenseValue,row.defenseValue));return{name:instance.displayName,playerName:'',memo:'',initiative:instance.initiative,externalUrl:'',status,params:tokenAffinityParams(row),iconUrl:imageName,faces:[],x:instance.x,y:instance.y,z:0,angle:0,width:instance.width,height:instance.height,active:false,secret:false,invisible:false,hideStatus:false,color:'#888888',roomId:null,commands:tokenMonsterChatPalette(row),speaking:false,diceSkin:{},order};}
 async function tokenSha256Hex(bytes){const view=bytes instanceof Uint8Array?bytes:new Uint8Array(bytes),hash=await crypto.subtle.digest('SHA-256',view);return Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('');}
-async function tokenFetchMonsterImage(monster){const id=String(monster?.baseMonsterId||monster?.id||'').trim();if(!id)throw new Error(`${monster?.name||'魔物'} の画像IDを確認できません。`);const filename=`${id}.png`,subdir=tokenCompact(CCFOLIA_MONSTER_IMAGE_SUBDIR[id]||''),urls=[];try{if(subdir)urls.push(new URL(`./assets/monsters/${subdir}/${filename}`,window.location.href).toString());urls.push(new URL(`./assets/monsters/${filename}`,window.location.href).toString());}catch(_e){}if(subdir)urls.push(`${CCFOLIA_MONSTER_IMAGE_BASE}${subdir}/${filename}`);urls.push(`${CCFOLIA_MONSTER_IMAGE_BASE}${filename}`);let lastError='';for(const url of [...new Set(urls)]){try{const response=await fetch(url,{cache:'no-cache'});if(!response.ok){lastError=`HTTP ${response.status}`;continue;}return new Uint8Array(await response.arrayBuffer());}catch(e){lastError=e?.message||String(e);}}throw new Error(`${monster.name||id} の駒画像を取得できませんでした。${lastError?`（${lastError}）`:''}`);}
+async function tokenFetchMonsterImage(monster){const id=String(monster?.baseMonsterId||monster?.id||'').trim();if(!id)throw new Error(`${monster?.name||'魔物'} の画像IDを確認できません。`);const filename=`${id}.png`,subdir=tokenCompact(CCFOLIA_MONSTER_IMAGE_SUBDIR[id]||''),urls=[];if(subdir)urls.push(`${CCFOLIA_MONSTER_IMAGE_BASE}${subdir}/${filename}`);urls.push(`${CCFOLIA_MONSTER_IMAGE_BASE}${filename}`);let lastError='';for(const url of [...new Set(urls)]){try{const response=await fetch(url,{cache:'no-cache'});if(!response.ok){lastError=`HTTP ${response.status}`;continue;}return new Uint8Array(await response.arrayBuffer());}catch(e){lastError=e?.message||String(e);}}throw new Error(`${monster.name||id} の駒画像を取得できませんでした。${lastError?`（${lastError}）`:''}`);}
 function tokenSafeFilename(text='戦闘'){return String(text||'戦闘').replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim().slice(0,60)||'戦闘';}
 function tokenTimestamp(){const d=new Date(),pad=n=>String(n).padStart(2,'0');return`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;}
 async function exportCurrentEncounterTokens(scope='event',button=null){

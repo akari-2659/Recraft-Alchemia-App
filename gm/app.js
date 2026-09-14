@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='1.0.5';
+const APP_VERSION='1.0.8';
 const ACCOUNT=window.RA_ACCOUNT;
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');
@@ -51,7 +51,7 @@ let swRegistration=null;const timers=new Map();
         body.ra-app :is(.tab-nav,.tabs,.subtabs,.buttons,.quest-tools,.quest-category-bar,.toolbar,.section-actions,.filter-actions,.facility-actions,.help-actions,.monster-output-actions,.modal-foot,.facility-inner-tabs,.facility-weapon-category-tabs){background:var(--paper2)!important;border-color:var(--line)!important;color:var(--ink)!important}
         body.ra-app :is(input,select,textarea){background:var(--theme-input)!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:inset 0 1px 2px color-mix(in srgb,var(--app-deep) 8%,transparent)!important}
         body.ra-app :is(input,select,textarea):focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)!important}
-        body.ra-app button:not(.ghost):not(.danger):not(.secondary),body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab).active{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 82%,var(--app-deep) 18%))!important;border-color:color-mix(in srgb,var(--accent) 76%,var(--app-deep) 24%)!important;color:var(--theme-on-accent)!important;box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 62%,#000 38%),0 5px 12px color-mix(in srgb,var(--accent) 22%,transparent)!important;text-shadow:0 1px 0 rgba(0,0,0,.18)!important}
+        body.ra-app button:not(.ghost):not(.danger):not(.secondary):not(.branch-graph-node-trigger):not(.ra-branch-node-button),body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab).active{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 82%,var(--app-deep) 18%))!important;border-color:color-mix(in srgb,var(--accent) 76%,var(--app-deep) 24%)!important;color:var(--theme-on-accent)!important;box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 62%,#000 38%),0 5px 12px color-mix(in srgb,var(--accent) 22%,transparent)!important;text-shadow:0 1px 0 rgba(0,0,0,.18)!important}
         body.ra-app button.secondary,body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab):not(.active){background:linear-gradient(180deg,var(--theme-secondary),color-mix(in srgb,var(--theme-secondary) 82%,var(--app-deep) 18%))!important;border-color:color-mix(in srgb,var(--theme-secondary) 74%,var(--app-deep) 26%)!important;color:var(--theme-secondary-text)!important;box-shadow:0 2px 0 color-mix(in srgb,var(--theme-secondary) 62%,#000 38%),0 4px 10px color-mix(in srgb,var(--theme-secondary) 18%,transparent)!important;text-shadow:0 1px 0 rgba(0,0,0,.16)!important}
         body.ra-app button.ghost{background:var(--paper)!important;border-color:var(--accent)!important;color:var(--accent)!important;box-shadow:none!important;text-shadow:none!important}
         body.ra-app button.danger{background:linear-gradient(180deg,#b45656,#8e3333)!important;border-color:#6b2727!important;color:#fff!important}
@@ -77,7 +77,7 @@ let swRegistration=null;const timers=new Map();
         body.ra-app .status.bad{background:color-mix(in srgb,var(--paper) 84%,#e8b8b3 16%)!important}
         body.ra-app .status.warn,body.ra-app .event-card.fixed{background:color-mix(in srgb,var(--paper) 82%,var(--theme-highlight) 18%)!important}
 
-        /* v1.0.5: 派生図もカラーテーマの文字・紙面・枠色へ統一し、固定色による低コントラストを解消。 */
+        /* v1.0.8: 派生図もカラーテーマの文字・紙面・枠色へ統一し、固定色による低コントラストを解消。 */
         body.ra-app :is(.branch-graph-scroll,.branch-table-scroll,.accessory-branch-scroll){background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
         body.ra-app .branch-graph-panel:fullscreen{background:var(--bg)!important;color:var(--ink)!important}
         body.ra-app .branch-graph-panel:fullscreen .branch-graph-toolbar{background:color-mix(in srgb,var(--theme-topbar) 96%,transparent)!important;border-color:var(--line)!important;color:var(--ink)!important}
@@ -102,6 +102,21 @@ let swRegistration=null;const timers=new Map();
         body.ra-app .branch-table-label small{color:var(--muted)!important}
         body.ra-app .branch-table-cell.has-next::after,body.ra-app .branch-table-node+.branch-table-node::before{color:var(--accent)!important;background:var(--paper)!important}
         body.ra-app .accessory-branch-node button:hover,body.ra-app .accessory-branch-node button:focus-visible{background:var(--paper2)!important;color:var(--ink)!important}
+        /* v1.0.8: 派生図のノードは通常ボタン配色に巻き込ませない。常に明るい面＋濃い文字で読む。 */
+        body.ra-app .branch-graph-node > button.branch-graph-node-trigger:not(.ghost):not(.danger):not(.secondary),
+        body.ra-app .accessory-branch-node > button.ra-branch-node-button:not(.ghost):not(.danger):not(.secondary){background:var(--theme-input)!important;color:var(--ink)!important;border:0!important;box-shadow:none!important;text-shadow:none!important;filter:none!important;transform:none!important}
+        body.ra-app .branch-graph-node > .branch-graph-node-locked-label{background:var(--theme-input)!important;color:var(--ink)!important;text-shadow:none!important}
+        body.ra-app .branch-graph-node > button.branch-graph-node-trigger:hover,
+        body.ra-app .branch-graph-node > button.branch-graph-node-trigger:focus-visible,
+        body.ra-app .accessory-branch-node > button.ra-branch-node-button:hover,
+        body.ra-app .accessory-branch-node > button.ra-branch-node-button:focus-visible{background:color-mix(in srgb,var(--theme-input) 86%,var(--theme-soft) 14%)!important;color:var(--ink)!important;filter:none!important}
+        body.ra-app :is(.branch-graph-node-name-inline,.branch-graph-node-name,.branch-table-node-name,.accessory-branch-name){color:var(--ink)!important;font-weight:1000!important;text-shadow:none!important;letter-spacing:.01em!important}
+        body.ra-app .branch-graph-node-name-inline{font-size:15px!important;line-height:1.22!important}
+        body.ra-app .accessory-branch-name{font-size:14px!important;line-height:1.28!important}
+        body.ra-app :is(.branch-graph-node,.accessory-branch-node){border-color:color-mix(in srgb,var(--line) 62%,var(--ink) 38%)!important}
+        body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.42!important;filter:saturate(.70) brightness(1)!important}
+        body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node.route-focus{opacity:1!important;filter:none!important}
+        @media(max-width:720px){body.ra-app .branch-graph-node-name-inline{font-size:14px!important;line-height:1.2!important}body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.36!important}}
       `;
     }catch(_){ }
   }
