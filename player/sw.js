@@ -1,9 +1,9 @@
-const APP_VERSION='0.19.0';
+const APP_VERSION='0.20.0';
 const CACHE=`ra-player-app-v${APP_VERSION}`;
 const PREFIX='ra-player-app-v';
 const APP_FILES=[
   './','./index.html','./app.css','./app.js','./manifest.webmanifest',
-  '../assets/common.css','../icons/player-app-v2-180.png','../icons/player-app-v2-192.png','../icons/player-app-v2-512.png','../icons/player-app-v2.ico',
+  '../assets/common.css','../icons/player-app-v3-180.png','../icons/player-app-v3-192.png','../icons/player-app-v3-512.png','../icons/player-app-v3.ico',
   './modules/character/character.html','./modules/facility/facility.html'
 ];
 self.addEventListener('install',event=>{

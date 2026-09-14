@@ -480,7 +480,7 @@ html.ra-embedded-facility .branch-group>summary,html.ra-embedded-facility .recip
 
 
 <style id="raWebAppBranchGraphFixV019">
-/* v0.19: ランク帯は専用ヘッダー行だけに置き、ノード内ボタンが外枠を覆わないようにする。 */
+/* v0.20: ランク帯は専用ヘッダー行だけに置き、ノード内ボタンが外枠を覆わないようにする。 */
 .branch-rank-band{
   align-self:stretch!important;
   justify-self:stretch!important;
@@ -518,6 +518,18 @@ html.ra-embedded-facility .branch-group>summary,html.ra-embedded-facility .recip
 }
 </style>
 
+
+<style id="raBranchRouteFocusV020">
+/* v0.20: 派生図の経路強調。通常線を薄くし、選択ノードまでの祖先ノードと専用経路線だけを前面化する。 */
+.branch-graph-node,.branch-graph-edge{transition:opacity .14s ease,filter .14s ease,box-shadow .14s ease,border-color .14s ease}
+.branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.28;filter:saturate(.58) brightness(.98)}
+.branch-graph-scroll.has-route-focus .branch-graph-node.route-focus{opacity:1;filter:none;box-shadow:0 0 0 3px rgba(151,75,44,.18),0 7px 16px rgba(80,50,20,.14)!important}
+.branch-graph-scroll.has-route-focus .branch-graph-node.route-focus:not(.has-named-processing){border-color:#9a4b30!important}
+.branch-graph-scroll.has-route-focus .branch-graph-edge:not(.branch-graph-edge-route){opacity:.14!important}
+.branch-graph-edge-route{stroke:transparent!important;stroke-width:5!important;opacity:0!important;filter:none!important;pointer-events:none}
+.branch-graph-edge-route.route-focus{stroke:#9a4b30!important;stroke-width:5!important;opacity:1!important;filter:drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(154,75,48,.28))!important}
+@media(max-width:720px){.branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.22}.branch-graph-edge-route.route-focus{stroke-width:4.5!important}}
+</style>
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.775 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
@@ -625,7 +637,7 @@ let currentFacility='smith',currentSection='sales',currentPlayerKey='',currentUn
 const catalogCategoryByView=Object.create(null);
 const GM_ALL_AREAS_MARKER='__GM_ALL_AREAS__';
 const WEAPON_CATEGORY_STORAGE_KEY='recraft_alchemia.player_facility.weapon_category';
-let branchDetailIndex=Object.create(null),materialSourceIndex=Object.create(null),branchGraphFrame=0,weaponModalLastFocus=null,branchGraphResizeObserver=null,branchRouteHoverNode=null,branchRouteRestoredFocus=null,branchGraphZoom=1;
+let branchDetailIndex=Object.create(null),materialSourceIndex=Object.create(null),branchGraphFrame=0,weaponModalLastFocus=null,branchGraphResizeObserver=null,branchRouteHoverNode=null,branchRouteRestoredFocus=null,branchTouchRoutePinned=false,branchGraphZoom=1;
 const $=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function rankValue(v){return Math.max(1,Math.floor(Number(v)||1));}
@@ -1906,6 +1918,7 @@ function clearBranchRouteFocus(scroll=document.querySelector('.branch-graph-scro
   scroll.querySelectorAll('.route-focus').forEach(el=>el.classList.remove('route-focus'));
 }
 function clearAllBranchRouteFocus(){
+  branchTouchRoutePinned=false;
   document.querySelectorAll('.branch-graph-scroll').forEach(clearBranchRouteFocus);
 }
 function refreshBranchGraphAfterModal(){
@@ -2257,14 +2270,24 @@ $('resetKey').addEventListener('click',()=>{
   if(window.confirm('このプレイヤーキーに保存された解放状態を、初期エリアだけに戻しますか？'))loadCatalog(playerKey,{reset:true});
 });
 $('reloadDb').addEventListener('click',()=>loadCatalog(playerKeyValue(),{force:true}));
-// v90.8.407: 詳細モーダル開閉後の経路強調残留・線座標ずれをリセットする。
+// v0.20: 武器派生経路の強調表示を復元。
+// PCはマウスオーバー、スマホ/タブレットは長押しで「選択ノードまでの祖先経路」を強調する。
+let branchLongPressTimer=0,branchLongPressNode=null,branchLongPressPointerId=null;
+let branchLongPressStartX=0,branchLongPressStartY=0,branchSuppressClickUntil=0;
+function cancelBranchLongPress(){
+  if(branchLongPressTimer){clearTimeout(branchLongPressTimer);branchLongPressTimer=0;}
+  branchLongPressNode=null;branchLongPressPointerId=null;
+}
 document.addEventListener('pointerover',e=>{
+  if(e.pointerType==='touch')return;
   const node=e.target.closest('.branch-graph-node[data-weapon-node]');
   if(!node||node.contains(e.relatedTarget))return;
+  branchTouchRoutePinned=false;
   branchRouteHoverNode=node;
   focusBranchRoute(node);
 });
 document.addEventListener('pointerout',e=>{
+  if(e.pointerType==='touch')return;
   const node=e.target.closest('.branch-graph-node[data-weapon-node]');
   if(!node||node.contains(e.relatedTarget))return;
   if(branchRouteHoverNode===node)branchRouteHoverNode=null;
@@ -2276,6 +2299,36 @@ document.addEventListener('pointerout',e=>{
     :null;
   if(focused&&focused!==restoredNode)focusBranchRoute(focused);else clearBranchRouteFocus(node.closest('.branch-graph-scroll'));
 });
+document.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse')return;
+  const node=e.target.closest('.branch-graph-node[data-weapon-node]');
+  if(!node)return;
+  cancelBranchLongPress();
+  branchTouchRoutePinned=false;
+  branchLongPressNode=node;branchLongPressPointerId=e.pointerId;
+  branchLongPressStartX=e.clientX;branchLongPressStartY=e.clientY;
+  branchLongPressTimer=setTimeout(()=>{
+    branchLongPressTimer=0;
+    if(!branchLongPressNode)return;
+    branchTouchRoutePinned=true;
+    branchRouteHoverNode=null;
+    focusBranchRoute(branchLongPressNode);
+    branchSuppressClickUntil=Date.now()+900;
+    try{navigator.vibrate?.(12);}catch(_){ }
+  },420);
+},true);
+document.addEventListener('pointermove',e=>{
+  if(branchLongPressPointerId!==e.pointerId||!branchLongPressTimer)return;
+  if(Math.hypot(e.clientX-branchLongPressStartX,e.clientY-branchLongPressStartY)>12)cancelBranchLongPress();
+},true);
+document.addEventListener('pointerup',e=>{if(branchLongPressPointerId===e.pointerId)cancelBranchLongPress();},true);
+document.addEventListener('pointercancel',e=>{if(branchLongPressPointerId===e.pointerId)cancelBranchLongPress();},true);
+// 長押し直後に生成されるclickで詳細モーダルを開かない。
+document.addEventListener('click',e=>{
+  if(Date.now()<branchSuppressClickUntil&&e.target.closest('.branch-graph-node[data-weapon-node]')){
+    e.preventDefault();e.stopImmediatePropagation();
+  }
+},true);
 document.addEventListener('focusin',e=>{
   if(branchRouteHoverNode)return;
   const node=e.target.closest('.branch-graph-node[data-weapon-node]');
@@ -2287,13 +2340,13 @@ document.addEventListener('focusin',e=>{
 });
 document.addEventListener('focusout',e=>{
   const node=e.target.closest('.branch-graph-node[data-weapon-node]');
-  if(!node||node.contains(e.relatedTarget)||branchRouteHoverNode)return;
+  if(!node||node.contains(e.relatedTarget)||branchRouteHoverNode||branchTouchRoutePinned)return;
   const restoredNode=branchRouteRestoredFocus&&branchRouteRestoredFocus.closest
     ?branchRouteRestoredFocus.closest('.branch-graph-node[data-weapon-node]')
     :null;
   if(node===restoredNode)branchRouteRestoredFocus=null;
   requestAnimationFrame(()=>{
-    if(branchRouteHoverNode)return;
+    if(branchRouteHoverNode||branchTouchRoutePinned)return;
     const focused=document.activeElement&&document.activeElement.closest
       ?document.activeElement.closest('.branch-graph-node[data-weapon-node]')
       :null;
@@ -2455,9 +2508,9 @@ function run(){
 
  // 経路強調がポインター離脱後に残らないよう、グラフ外へ出た時点で必ずリセット。
  let keyboardMode=false;document.addEventListener('keydown',()=>{keyboardMode=true},true);document.addEventListener('pointerdown',()=>{keyboardMode=false},true);
- function hardClear(graph){if(!graph)return;try{branchRouteHoverNode=null;branchRouteRestoredFocus=null}catch(_){};try{clearBranchRouteFocus(graph)}catch(_){};if(!keyboardMode){const active=document.activeElement;if(active?.closest?.('.branch-graph-scroll')===graph)active.blur()}requestAnimationFrame(()=>{try{clearBranchRouteFocus(graph)}catch(_){}})}
- document.addEventListener('pointerleave',e=>{if(e.target?.matches?.('.branch-graph-scroll'))hardClear(e.target)},true);
- document.addEventListener('pointerout',e=>{const graph=e.target?.closest?.('.branch-graph-scroll');if(graph&&!graph.contains(e.relatedTarget))hardClear(graph)},true);
+ function hardClear(graph){if(!graph)return;try{branchRouteHoverNode=null;branchRouteRestoredFocus=null;branchTouchRoutePinned=false}catch(_){};try{clearBranchRouteFocus(graph)}catch(_){};if(!keyboardMode){const active=document.activeElement;if(active?.closest?.('.branch-graph-scroll')===graph)active.blur()}requestAnimationFrame(()=>{try{clearBranchRouteFocus(graph)}catch(_){}})}
+ document.addEventListener('pointerleave',e=>{if(e.pointerType==='touch'&&branchTouchRoutePinned)return;if(e.target?.matches?.('.branch-graph-scroll'))hardClear(e.target)},true);
+ document.addEventListener('pointerout',e=>{if(e.pointerType==='touch'&&branchTouchRoutePinned)return;const graph=e.target?.closest?.('.branch-graph-scroll');if(graph&&!graph.contains(e.relatedTarget))hardClear(graph)},true);
  document.addEventListener('click',e=>{if(!e.target.closest('.branch-graph-node'))document.querySelectorAll('.branch-graph-scroll').forEach(hardClear)},true);
  renderAreaControl();if(typeof render==='function')render();
 }
