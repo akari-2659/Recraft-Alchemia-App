@@ -1907,7 +1907,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
               </select>
             </div>
             <div>
-              <label for="facilitySmithToolRankInput">使用する細工道具（自作）</label>
+              <label for="facilitySmithToolRankInput">使用する鍛冶道具（自作）</label>
               <select id="facilitySmithToolRankInput"></select>
             </div>
             <div>
@@ -5341,7 +5341,7 @@ function normalizeToolRank(value='', fallback=3){
   return numericRankValueIncludingLegacyMaterialGrade(value,fallback);
 }
 function toolRowsForSelect(id=''){
-  const category=String(id).includes('Alchemy')?'調合':id==='facilitySmithToolRankInput'?'細工':String(id).includes('Smith')?'鍛冶':'';
+  const category=String(id).includes('Alchemy')?'調合':String(id).includes('Smith')?'鍛冶':'';
   return (state.items||[]).filter(r=>String(r.itemType||'').trim()==='道具' && (!category || String(r.itemCategory||'').trim()===category) && String(r.toolRank??'').trim()).sort((a,b)=>normalizeToolRank(a.toolRank,999)-normalizeToolRank(b.toolRank,999));
 }
 function toolRankOptionsHtml(selected=3,id=''){
@@ -6473,7 +6473,7 @@ function renderFacilityUpgradeResult(materialName=''){
     <div><b>強化定着剤による軽減：</b>－${escapeHtml(String(supportReduction))}（${escapeHtml(String(supportCount))}個消費）</div>
     <div><b>最終作成難易度：</b>${escapeHtml(String(finalTarget))}</div>
     <div><b>自作判定：</b>${selfCraftUsable?`2D6＋細工－${escapeHtml(String(difficulty))} &gt;= ${escapeHtml(String(finalTarget))}`:'使用する細工道具の対応上限不足、素材ランク不足、または強化枠不足'}</div>
-    <div><b>使用する細工道具（自作）：</b>${escapeHtml(selectedToolText('facilitySmithToolRankInput'))} / ${tool.usable?'使用可能':'素材ランクが対応上限を超過'}</div>
+    <div><b>使用する鍛冶道具（自作）：</b>${escapeHtml(selectedToolText('facilitySmithToolRankInput'))} / ${tool.usable?'使用可能':'素材ランクが対応上限を超過'}</div>
     <div><b>施設依頼成功率：</b>${facilityUsable?(guaranteeUsable?'100%（確定成功アイテム使用）':escapeHtml(String(successRate))+'%'):'強化不可'}</div>
     <div><b>確定成功アイテム：</b>${guarantee?`${escapeHtml(guarantee.name||'名称未設定')}（${escapeHtml(playerRankLabel(guaranteeCap))}以下） / ${guaranteeUsable?'使用可能':'対応上限外または他条件未達'}`:'使用しない'}</div>
     <div><b>施設依頼価格：</b>${facilityUsable?(price.total?`${escapeHtml(String(price.total))}G`:'未設定'):'素材ランク不足または強化枠不足のため算出対象外'}</div>

@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='0.28.0';
+const APP_VERSION='0.30.0';
 const role=sessionStorage.getItem('ra-proto-role')||'';
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');if(role!=='gm'){authError.classList.remove('hidden');return;}app.classList.remove('hidden');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');
