@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.775</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.778</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1237,7 +1237,7 @@ main>.subnav-block:not(.hidden){position:sticky;top:58px;z-index:59;padding-top:
 @media(max-width:720px){.ra-build-info{text-align:left}.title-card .subtitle,.dbid{display:none}header{padding:8px!important}.title-card{padding:10px!important}.title-card h1{font-size:1.25rem!important}.toolbar{gap:6px!important}.ra-admin-fold-body{padding:8px}main>.subnav-block:not(.hidden){top:52px}#recordInternalCategoryBlock:not(.hidden){top:104px}.tabs,.subtabs{max-height:106px}}
 </style>
 
-<link rel="stylesheet" href="https://akari-2659.github.io/Recraft-Alchemia-Manager/ra-design-system.css?v=90.8.775-area-event-full-audit-20260912">
+<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.778-monster-turn-band-audit-20260914">
 
 <script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
 
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.775 / 最終更新日：2026年9月12日</div>
+<div class="ra-build-info">Version：v90.8.778 / 最終更新日：2026年9月14日</div>
 
 <header>
   <div class="title-card">
@@ -1458,7 +1458,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
           <button class="secondary" id="btnExportGithubPublicDb">GitHub共通DB一式を書き出す</button>
         </div>
       </div>
-      <div class="github-public-db-path">配置先：Recraft-Alchemia-Manager / data / public /</div>
+      <div class="github-public-db-path">配置先：Recraft-Alchemia-App / data / public /</div>
       <p id="githubPublicDbStatus" class="github-public-db-status">未出力。先にGitHub共通DBまたは管理スプレのデータを管理画面へ読み込んでください。</p>
       <div class="small">
         出力ZIP内の <b>data/public</b> フォルダを、管理GitHubの同じ場所へアップロードします。
@@ -2145,7 +2145,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="https://akari-2659.github.io/Recraft-Alchemia-Manager/js/ra_skill_gacha_core.js"></script>
+<script src="../../../js/ra_skill_gacha_core.js"></script>
 <div class="modal-backdrop hidden" id="facilityGeneralAreaModal" aria-hidden="true">
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="facilityGeneralAreaModalTitle">
     <div class="modal-head"><div><h2 id="facilityGeneralAreaModalTitle">施設・解放エリア選択</h2><p>現在解放済みのエリアをチェックしてください。通常エリアと異界を個別にON/OFFできます。</p></div><button type="button" class="ghost" data-facility-general-area-cancel>閉じる</button></div>
@@ -2156,8 +2156,8 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.775';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.775';
+const RECRAFT_DB_VERSION = 'v90.8.778';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.778';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -2453,9 +2453,9 @@ function applySharedSearchToKey(key){ /* v90.8.735: 一覧検索は各一覧ご�
 const INITIAL_DATA_FORMAT = 'recraft-alchemia-initial-data';
 const GITHUB_COMMON_DATA_FORMAT = 'recraft-alchemia-github-master';
 const INITIAL_DATA_PATH = './data/recraft_alchemia_initial_data.json';
-const GITHUB_COMMON_DB_REMOTE_BASE = 'https://akari-2659.github.io/Recraft-Alchemia-Manager/data/public/';
+const GITHUB_COMMON_DB_REMOTE_BASE = new URL('../../../data/public/',window.location.href).toString();
 function githubCommonDbBaseCandidates(){
-  // 公開共通DBへフォールバックする場合も、Managerの公開DBだけを正本として参照する。
+  // 公開共通DBへフォールバックする場合も、Appの公開DBだけを正本として参照する。
   return [GITHUB_COMMON_DB_REMOTE_BASE];
 }
 let githubCommonMasterPromise = null;
@@ -3158,7 +3158,7 @@ const SYSTEM_HELP = [
       "鍛冶道具は野鍛冶の槌箱、焼入れ金床具、鋼噛み火ばさみ具、星鉄火ばさみ具、竜炉の鍛冶具。",
       "道具は★3、★6、★9、★12、★15以下のように複数ランクをまとめて扱う。レシピ側に要求道具ランクは設定しない。",
       "作成するレシピまたは装備強化に使う素材のランクが、道具の使用可能上限以下なら使用できる。上位道具による難易度軽減は通常の作成・加工・装備強化に適用する。",
-      "装備強化は、強化回数で自作目標値と施設依頼成功率、強化後の使用済み枠で施設依頼価格を算出する。自作用の道具補正は施設依頼成功率へ適用しない。",
+      "装備強化は、強化回数で自作目標値と施設依頼成功率を算出する。施設依頼価格は素材基準価格・今回消費枠・装備ランク・現在の使用済み枠から算出する。自作用の道具補正は施設依頼成功率へ適用しない。",
       "作成補助材は対応する自作判定で任意個数を追加消費し、1個につき作成難易度－2。調合安定剤＝調合、機巧調整剤＝設計、工作定着剤＝武装・装備強化以外の細工、武装融和剤＝武器作成・武器派生、強化定着剤＝装備強化。道具軽減と重複し、施設依頼には適用しない。",
       "調合道具は薬屋、鍛冶道具は鍛冶屋で扱う。"
     ]
@@ -5425,10 +5425,11 @@ function upgradeWorkPrice(material={}, rule=UPGRADE_STEP_RULES[0], equipment=nul
   const materialPrice=Number(String(material.sellPrice||'').trim());
   const base=Number.isFinite(materialPrice)&&materialPrice>0?materialPrice:rankBasePrice(material.rank);
   const rank=numericRankValueIncludingLegacyMaterialGrade(equipment?.rank,'');
-  const rankRate=equipmentRankPriceMultiplier(rank);
-  const stepRate=Math.max(1,Number(rule.usedSlots||0)+upgradeSlotCostForMaterial(material));
-  if(!base||!rankRate)return {base,total:0,rank,rankRate,stepRate};
-  return {base,total:Math.ceil(base*stepRate*rankRate),rank,rankRate,stepRate};
+  const currentSlots=Math.max(0,Number(rule.usedSlots||0));
+  const slotCost=Math.max(1,upgradeSlotCostForMaterial(material));
+  if(!base||!rank)return {base,total:0,rank,currentSlots,slotCost,raw:0};
+  const raw=(base*slotCost+50*Math.max(1,rank))*(1+0.2*currentSlots);
+  return {base,total:Math.ceil(raw/10)*10,rank,currentSlots,slotCost,raw};
 }
 
 const UPGRADE_REMOVAL_BASE_G=20;
@@ -6290,7 +6291,7 @@ function renderFacilityWorkPanel(){
   if(!show) return;
   if(kind==='smithy'){
     if(title) title.textContent='装備強化';
-    if(notice) notice.textContent='自作は細工道具＋素材、施設依頼は素材＋表示価格で行います。施設依頼の成功率には自作側の道具補正を適用しません。';
+    if(notice) notice.textContent='自作は鍛冶道具＋素材、施設依頼は素材＋表示価格で行います。施設依頼の成功率には自作側の道具補正を適用しません。';
     renderUpgradeCountSelect($('facilityUpgradeCountInput')?.value||'0'); renderUpgradeStepSelect($('facilityUpgradeStepInput')?.value||'1'); renderToolRankSelect('facilitySmithToolRankInput',$('facilitySmithToolRankInput')?.value||'3'); renderFacilityUpgradeEquipmentSelect(); renderFacilityUpgradeLookupList(); renderFacilityGuaranteeSelect(); renderFacilityUpgradeResult($('facilityUpgradeMaterialInput')?.value||''); renderFacilityRemovalCalculator();
   }else if(kind==='crystal'){
     if(title) title.textContent='スキルクリスタル強化';
@@ -6472,7 +6473,7 @@ function renderFacilityUpgradeResult(materialName=''){
     <div><b>任意の作成補助材：</b>強化定着剤（自作時のみ・任意個数）／1個につき作成難易度－2</div>
     <div><b>強化定着剤による軽減：</b>－${escapeHtml(String(supportReduction))}（${escapeHtml(String(supportCount))}個消費）</div>
     <div><b>最終作成難易度：</b>${escapeHtml(String(finalTarget))}</div>
-    <div><b>自作判定：</b>${selfCraftUsable?`2D6＋細工－${escapeHtml(String(difficulty))} &gt;= ${escapeHtml(String(finalTarget))}`:'使用する細工道具の対応上限不足、素材ランク不足、または強化枠不足'}</div>
+    <div><b>自作判定：</b>${selfCraftUsable?`2D6＋細工－${escapeHtml(String(difficulty))} &gt;= ${escapeHtml(String(finalTarget))}`:'使用する鍛冶道具の対応上限不足、素材ランク不足、または強化枠不足'}</div>
     <div><b>使用する鍛冶道具（自作）：</b>${escapeHtml(selectedToolText('facilitySmithToolRankInput'))} / ${tool.usable?'使用可能':'素材ランクが対応上限を超過'}</div>
     <div><b>施設依頼成功率：</b>${facilityUsable?(guaranteeUsable?'100%（確定成功アイテム使用）':escapeHtml(String(successRate))+'%'):'強化不可'}</div>
     <div><b>確定成功アイテム：</b>${guarantee?`${escapeHtml(guarantee.name||'名称未設定')}（${escapeHtml(playerRankLabel(guaranteeCap))}以下） / ${guaranteeUsable?'使用可能':'対応上限外または他条件未達'}`:'使用しない'}</div>
@@ -10843,7 +10844,7 @@ async function buildGithubPublicMaster(){
     version:GITHUB_PUBLIC_DB_VERSION,
     updatedAt:GITHUB_PUBLIC_DB_UPDATED_AT,
     encoding:'UTF-8',
-    sourceRepository:'akari-2659/Recraft-Alchemia-Manager',
+    sourceRepository:'akari-2659/Recraft-Alchemia-App',
     description:'Recraft-Alchemiaのキャラシ・施設・管理画面で共通参照する静的マスターデータ。エリア解放キーは平文を含めず、照合用SHA-256のみ収録する。',
     gmAllUnlockKeyHash:GITHUB_PUBLIC_GM_ALL_UNLOCK_KEY_HASH,
     recordCount:Object.values(data).reduce((sum,rows)=>sum+(Array.isArray(rows)?rows.length:0),0),
@@ -10966,7 +10967,7 @@ async function exportGithubPublicDb(){
       bytes:masterBytes.length,
       recordCount:master.recordCount,
       dataKeys:Object.keys(master.data),
-      publicBaseUrl:'https://akari-2659.github.io/Recraft-Alchemia-Manager/data/public/',
+      publicBaseUrl:'https://akari-2659.github.io/Recraft-Alchemia-App/data/public/',
       files:{master:{path:GITHUB_PUBLIC_DB_MASTER_FILENAME,sha256,bytes:masterBytes.length,recordCount:master.recordCount,dataKeys:Object.keys(master.data)}}
     };
     const manifestText=JSON.stringify(manifest,null,2)+'\n';
@@ -10974,11 +10975,11 @@ async function exportGithubPublicDb(){
       'Recraft-Alchemia GitHub共通DB 配置手順',
       '',
       '1. このZIPを展開します。',
-      '2. Recraft-Alchemia-Managerリポジトリを開きます。',
+      '2. Recraft-Alchemia-Appリポジトリを開きます。',
       '3. ZIP内の data/public/ にある2ファイルを、リポジトリの data/public/ へアップロードします。',
       '4. 既存のmanifest.jsonは上書きします。',
       '5. GitHub Pages反映後、次のURLを開いてversionを確認します。',
-      '   https://akari-2659.github.io/Recraft-Alchemia-Manager/data/public/manifest.json',
+      '   https://akari-2659.github.io/Recraft-Alchemia-App/data/public/manifest.json',
       '',
       `公開DBバージョン: ${GITHUB_PUBLIC_DB_VERSION}`,
       `収録件数: ${master.recordCount}件`,

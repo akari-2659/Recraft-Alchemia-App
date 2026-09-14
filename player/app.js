@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='0.30.0';
+  const APP_VERSION='1.0.2';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
   const views=[...document.querySelectorAll('.view')],nav=[...document.querySelectorAll('.nav-btn')];
@@ -81,9 +81,10 @@
     const select=document.querySelector('#themeColorSelect');if(select&&select.value!==key)select.value=key;
     Object.values(frames||{}).forEach(frame=>applyThemeToFrame(frame,theme,key));
   }
-
-  function readBinding(){const role=sessionStorage.getItem('ra-proto-role')||'player';const loginKey=String(sessionStorage.getItem('ra-proto-login-player-key')||'').trim();const accountKey=loginKey?`ra-proto-bind-account-${encodeURIComponent(loginKey)}`:'';const raw=(accountKey?localStorage.getItem(accountKey):'')||localStorage.getItem('ra-proto-bind-'+role)||localStorage.getItem('ra-proto-bind-player')||'';try{return raw?JSON.parse(raw):{};}catch(_){return{}}}
-  const binding=readBinding();window.RA_PLAYER_CONTEXT={charKey:String(binding.charKey||'').trim(),facilityKey:String(binding.facilityKey||'').trim(),characterId:''};
+  const ACCOUNT=window.RA_ACCOUNT;
+  const accountSession=ACCOUNT?.session?.()||{loginPlayerKey:'',role:'player'};
+  let binding=ACCOUNT?.readCachedBinding?.(accountSession.loginPlayerKey)||null;
+  window.RA_PLAYER_CONTEXT={charKey:String(binding?.charKey||'').trim(),facilityKey:String(binding?.facilityKey||'').trim(),characterId:'',loginPlayerKey:String(accountSession.loginPlayerKey||'').trim(),role:accountSession.role||'player'};
   function closeDrawer(){sidebar.classList.remove('open');backdrop.classList.remove('show')}
   function characterButtons(){return [...document.querySelectorAll('.character-nav-btn')]}
   const frameTimers=new Map();
@@ -122,5 +123,13 @@
   document.querySelector('#applyUpdate').onclick=applyUpdate;document.querySelector('#dismissUpdate').onclick=()=>{notice.hidden=true};
   if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(reg=>{swRegistration=reg;if(reg.waiting&&navigator.serviceWorker.controller){waitingWorker=reg.waiting;notice.hidden=false;}reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){waitingWorker=reg.waiting||worker;notice.hidden=false;}});});reg.update().catch(()=>{});}).catch(()=>{});let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});}
   addEventListener('focus',checkPublishedVersion);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkPublishedVersion()});setInterval(checkPublishedVersion,5*60*1000);
-  routeFromHash();loadCharacterList();checkPublishedVersion();
+  async function bootstrapAccount(){
+    const session=ACCOUNT?.session?.()||{};
+    if(!session.loginPlayerKey){location.replace('../');return false;}
+    const cached=ACCOUNT?.readCachedBinding?.(session.loginPlayerKey);
+    if(cached){binding=cached;window.RA_PLAYER_CONTEXT.charKey=String(cached.charKey||'').trim();window.RA_PLAYER_CONTEXT.facilityKey=String(cached.facilityKey||'').trim();window.RA_PLAYER_CONTEXT.loginPlayerKey=session.loginPlayerKey;window.RA_PLAYER_CONTEXT.role=cached.role||session.role||'player';}
+    try{const result=await ACCOUNT.getBinding(session.loginPlayerKey);if(!result.found||!result.binding){location.replace('../');return false;}binding=result.binding;window.RA_PLAYER_CONTEXT.charKey=String(binding.charKey||'').trim();window.RA_PLAYER_CONTEXT.facilityKey=String(binding.facilityKey||'').trim();window.RA_PLAYER_CONTEXT.loginPlayerKey=session.loginPlayerKey;window.RA_PLAYER_CONTEXT.role=result.role||'player';return true;}catch(error){if(cached?.charKey&&cached?.facilityKey){console.warn('アカウント確認に失敗したため、この端末の前回キャッシュで継続します。',error);return true;}location.replace('../');return false;}
+  }
+  function bindAccountKeyUi(){const dlg=document.querySelector('#accountKeyDialog'),open=document.querySelector('[data-open-account-key]'),close=document.querySelector('[data-close-account-key]'),btn=document.querySelector('#changeLoginPlayerKeyBtn'),input=document.querySelector('#newLoginPlayerKey'),status=document.querySelector('#accountKeyStatus'),current=document.querySelector('#currentLoginPlayerKey');open?.addEventListener('click',()=>{const s=ACCOUNT.session();current.textContent=s.loginPlayerKey||'-';input.value='';status.textContent='';status.className='account-key-status';dlg.showModal();input.focus();});close?.addEventListener('click',()=>dlg.close());dlg?.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});btn?.addEventListener('click',async()=>{const s=ACCOUNT.session(),next=String(input.value||'').trim();if(!next){status.textContent='新しいプレイヤーキーを入力してください。';status.className='account-key-status error';return;}btn.disabled=true;status.textContent='サーバーへ確認中…';status.className='account-key-status';try{const r=await ACCOUNT.changeLoginKey(s.loginPlayerKey,next);status.textContent=r.mode==='switch'?'既存のプレイヤーキーが見つかったため、そのアカウントへ切り替えます。':'プレイヤーキーを変更しました。';status.className='account-key-status ok';setTimeout(()=>location.reload(),650);}catch(e){status.textContent=e?.message||String(e);status.className='account-key-status error';}finally{btn.disabled=false;}});}
+  (async()=>{if(!await bootstrapAccount())return;bindAccountKeyUi();routeFromHash();loadCharacterList();checkPublishedVersion();})();
 })();
