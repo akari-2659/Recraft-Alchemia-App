@@ -1,6 +1,6 @@
 :root{
-  --bg:#f5eee4;--paper:#fff9ef;--paper2:#fbf1df;--ink:#34251d;--muted:#76685e;
-  --line:#ddcbb0;--accent:#8f542d;--accent2:#b98643;--green:#5f866d;--danger:#a55248;
+  --bg:#eee6da;--paper:#fff9ef;--paper2:#f4ead7;--ink:#34251d;--muted:#695b52;
+  --line:#d8c5a8;--accent:#83502e;--accent2:#3f5d58;--green:#5f866d;--danger:#a55248;
   --shadow:0 16px 40px rgba(70,46,24,.13);--radius:18px;--sidebar:252px;
   font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,system-ui,sans-serif;
   color:var(--ink);background:var(--bg);
@@ -19,7 +19,7 @@ button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
 
 
 /* v0.27 shared full-theme surface */
-:root{--theme-soft:#ecd9bd;--app-deep:#30231c;--app-active:#5a3b29;--app-hover:#4a3326}
+:root{--theme-soft:#e8d5b8;--app-deep:#2f231d;--app-active:#563a29;--app-hover:#493128;--theme-deep-muted:#eadfce}
 .card{background:linear-gradient(145deg,var(--paper),var(--paper2));border-color:var(--line);color:var(--ink)}
 .btn{background:var(--paper);border-color:var(--line);color:var(--ink)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.secondary{background:var(--paper2)}
 .input{background:var(--paper);border-color:var(--line);color:var(--ink)}
@@ -30,10 +30,15 @@ button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
 
 
 /* v0.27 complete palette themes: every surface/control participates in the selected palette. */
-:root{--theme-secondary:#5a7770;--theme-secondary-text:#fff;--theme-input:#fffdf8;--theme-topbar:#f6eddf;--theme-highlight:#d4e0da}
+:root{--theme-secondary:#53706a;--theme-secondary-text:#fff;--theme-input:#fffdf8;--theme-topbar:#f6eddf;--theme-highlight:#d4e0da;--theme-on-accent:#fff;--theme-on-deep:#fff}
 .btn{background:linear-gradient(180deg,var(--theme-input),var(--paper2));border-color:var(--line);color:var(--ink);box-shadow:0 2px 0 color-mix(in srgb,var(--line) 68%,var(--app-deep) 32%)}
-.btn.primary{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 82%,#fff 18%),var(--accent));border-color:color-mix(in srgb,var(--accent) 78%,var(--app-deep) 22%);color:#fff}
-.btn.secondary{background:linear-gradient(180deg,color-mix(in srgb,var(--theme-secondary) 82%,#fff 18%),var(--theme-secondary));border-color:color-mix(in srgb,var(--theme-secondary) 76%,var(--app-deep) 24%);color:var(--theme-secondary-text)}
+.btn.primary{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 82%,var(--app-deep) 18%));border-color:color-mix(in srgb,var(--accent) 76%,var(--app-deep) 24%);color:var(--theme-on-accent)}
+.btn.secondary{background:linear-gradient(180deg,var(--theme-secondary),color-mix(in srgb,var(--theme-secondary) 82%,var(--app-deep) 18%));border-color:color-mix(in srgb,var(--theme-secondary) 74%,var(--app-deep) 26%);color:var(--theme-secondary-text)}
 .btn.ghost{background:var(--paper);border-color:var(--accent);color:var(--accent)}
 .input{background:var(--theme-input);border-color:var(--line)}
 .launch-item,.card{background:linear-gradient(145deg,var(--paper),var(--paper2))}
+
+
+/* v1.0.4 theme readability: text contrast is part of the palette, not an afterthought. */
+.portal-copy,.portal-copy h1{color:var(--theme-on-deep)!important}.portal-copy .eyebrow,.portal-copy p,.portal-copy .note{color:var(--theme-deep-muted)!important}
+.btn.primary{color:var(--theme-on-accent)!important}.note{color:var(--muted)}.input::placeholder{color:var(--muted);opacity:.9}.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
