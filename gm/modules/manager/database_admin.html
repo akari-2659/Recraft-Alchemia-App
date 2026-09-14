@@ -11693,9 +11693,9 @@ document.addEventListener('click', (ev) => {
     const direct=Array.from(firstPanel.children);
     const firstToolbar=direct.find(el=>el.classList?.contains('toolbar')&&!el.classList.contains('initial-data-toolbar'));
     const firstNotice=direct.find(el=>el.classList?.contains('notice'));
-    fold([firstToolbar,firstNotice],'接続・DB保守・全体操作',false);
+    fold([firstToolbar,firstNotice],'高度な操作（接続・DB保守・全体操作）',false);
     fold([firstPanel.querySelector('.initial-data-toolbar')],'表示データ・再読込',false);
-    fold([firstPanel.querySelector('.github-public-db-panel')],'GitHub共通DB公開',false);
+    fold([firstPanel.querySelector('.github-public-db-panel')],'高度な操作（GitHub共通DB公開）',false);
     fold([firstPanel.querySelector('.stats')],'登録件数',false);
   });
 })();

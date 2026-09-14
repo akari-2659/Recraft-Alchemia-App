@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#30231c"><meta name="application-name" content="Recraft Alchemia Player">
   <title>Recraft Alchemia - Player Prototype</title>
-  <link rel="manifest" href="manifest.webmanifest?v=0.20.0"><link rel="icon" href="../icons/player-app-v3.ico?rev=3" sizes="any"><link rel="icon" href="../icons/player-app-v3-192.png?rev=3" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v3-180.png?rev=3"><meta name="msapplication-TileImage" content="../icons/player-app-v3-512.png?rev=3">
+  <link rel="manifest" href="manifest.webmanifest?v=0.25.0"><link rel="icon" href="../icons/player-app-v3.ico?rev=3" sizes="any"><link rel="icon" href="../icons/player-app-v3-192.png?rev=3" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v3-180.png?rev=3"><meta name="msapplication-TileImage" content="../icons/player-app-v3-512.png?rev=3">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
   <aside id="sidebar" class="sidebar" aria-label="メインメニュー">
     <div class="side-brand">
       <div class="brand">RECRAFT ALCHEMIA</div>
-      <small>Player Prototype</small>
+      <small>Player App</small>
     </div>
     <nav class="nav-group">
       <button class="nav-btn active" data-view="home"><span class="nav-icon">⌂</span><span>総合画面</span></button>
@@ -25,11 +25,16 @@
         <div class="character-nav-list" id="characterNavList">
           <div class="character-nav-status loading" id="characterNavStatus"><span class="mini-spinner" aria-hidden="true"></span><span>読み込み中</span></div>
         </div>
+        <button class="character-new-btn" id="newCharacterNavBtn" type="button">＋ 新規キャラクター</button>
       </section>
 
       <button class="nav-btn" data-view="facility"><span class="nav-icon">⚒</span><span>施設</span></button>
     </nav>
-    <div class="side-footer">Based on RA v90.8.775<br>統合構造確認用の仮作成版</div>
+    <div class="side-settings">
+      <label for="themeColorSelect">テーマカラー</label>
+      <select id="themeColorSelect" aria-label="テーマカラー"><option value="red">レッド</option><option value="blue">ブルー</option><option value="green">グリーン</option><option value="purple">パープル</option><option value="orange">オレンジ</option><option value="yellow">イエロー</option><option value="pink">ピンク</option><option value="cyan">シアン</option><option value="navy">ネイビー</option><option value="brown">ブラウン</option></select>
+    </div>
+    <div class="side-footer">Based on RA v90.8.775<br>App v0.25.0</div>
   </aside>
 
   <div id="backdrop" class="drawer-backdrop"></div>
@@ -54,42 +59,13 @@
             <h1>総合画面</h1>
             <p>Playerアプリの入口。機能の切り替えは共通サイドバーから行います。</p>
           </div>
-          <span class="badge ok">Player（仮）</span>
+          <span class="badge ok">Player</span>
         </div>
 
         <div class="grid">
-          <article class="card panel span-8">
-            <div class="card-heading">
-              <div>
-                <div class="eyebrow">CHARACTER</div>
-                <h2>キャラクターシート</h2>
-              </div>
-              <span class="badge">サイドバーから選択</span>
-            </div>
-            <p class="note">サイドバーの「キャラクターシート」を開くと、このアカウントに紐づいたキャラクターが一覧表示されます。キャラクター名を押すと直接そのシートを開きます。</p>
-          </article>
-
-          <article class="card panel span-4">
-            <h2>アカウント</h2>
-            <p class="note">キャラクターシート用プレイヤーキー：紐づけ済み（仮）</p>
-            <p class="note">施設用プレイヤーキー：紐づけ済み（仮）</p>
-            <span class="badge">Player</span>
-          </article>
-
-          <article class="card panel span-6">
-            <h2>この試作で確認すること</h2>
-            <ul class="check-list">
-              <li>PCでは左サイドバーを常設</li>
-              <li>スマホでは☰からドロワー表示</li>
-              <li>キャラクター名は紐づけ済みプレイヤーキーから自動取得</li>
-              <li>キャラシ・施設内ではプレイヤーキーを再入力しない</li>
-            </ul>
-          </article>
-
-          <article class="card panel span-6">
-            <h2>現時点では仮の部分</h2>
-            <p class="note">共通ログインのアカウント認証とサーバー側キー紐づけだけはまだ試作用です。ログイン後のPlayerアプリでは、紐づけ済みキーを自動利用します。</p>
-          </article>
+          <article class="card panel span-6"><div class="card-heading"><div><div class="eyebrow">CHARACTER</div><h2>キャラクターシート</h2></div><span class="badge">サイドバーから選択</span></div><p class="note">保存済みキャラクターは左の一覧から直接開けます。新規作成もサイドバーから行えます。</p></article>
+          <article class="card panel span-6"><div class="card-heading"><div><div class="eyebrow">FACILITY</div><h2>施設</h2></div><button class="btn secondary" type="button" data-open-view="facility">開く</button></div><p class="note">ログイン時に紐づけた施設用キーを自動で使用します。施設画面でプレイヤーキーを再入力する必要はありません。</p></article>
+          <article class="card panel span-12"><h2>アプリ設定</h2><p class="note">テーマカラーは左下の設定から変更できます。キャラクターシートと施設は一度読み込むと、画面を行き来してもその状態を保持します。</p><details class="app-advanced"><summary>トラブルシューティング</summary><div class="app-advanced-body"><p class="note">通常は操作不要です。共通DBの取得に失敗した場合や、初期倉庫データを修復したい場合だけ使用してください。</p><div class="app-advanced-actions"><button type="button" class="btn ghost" data-player-maintenance="character-db">キャラシ共通DBを再読込</button><button type="button" class="btn ghost" data-player-maintenance="initial-stock">初期倉庫をDB同期</button><button type="button" class="btn ghost" data-player-maintenance="facility-db">施設共通DBを再読込</button></div></div></details></article>
         </div>
       </section>
 
@@ -102,8 +78,8 @@
           <span class="module-version">現行 v90.8.775 データ接続</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
-          <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span></div></div>
-          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=0.20.0"></iframe>
+          <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="character">再読み込み</button></div></div>
+          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=0.25.0"></iframe>
         </div>
       </section>
 
@@ -116,8 +92,8 @@
           <span class="module-version">現行 v90.8.775</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="facility">
-          <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span></div></div>
-          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1&appv=0.20.0"></iframe>
+          <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="facility">再読み込み</button></div></div>
+          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1&appv=0.25.0"></iframe>
         </div>
       </section>
     </main>

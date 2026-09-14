@@ -530,6 +530,13 @@ html.ra-embedded-facility .branch-group>summary,html.ra-embedded-facility .recip
 .branch-graph-edge-route.route-focus{stroke:#9a4b30!important;stroke-width:5!important;opacity:1!important;filter:drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(154,75,48,.28))!important}
 @media(max-width:720px){.branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.22}.branch-graph-edge-route.route-focus{stroke-width:4.5!important}}
 </style>
+
+<style id="raFacilityEmbeddedCleanupV024">
+html.ra-embedded-facility .player-key-field,html.ra-embedded-facility #loadState,html.ra-embedded-facility #resetKey,html.ra-embedded-facility #reloadDb{display:none!important}
+html.ra-embedded-facility .facility-unlock-grid{grid-template-columns:minmax(220px,1fr) auto!important}
+html.ra-embedded-facility #unlockPanel summary span:first-child{font-size:0}
+html.ra-embedded-facility #unlockPanel summary span:first-child::after{content:'解放設定';font-size:14px}
+</style>
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.775 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
@@ -2642,6 +2649,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const input=document.getElementById('playerKey');if(input)input.value=key;
     try{if(typeof loadCatalog==='function')await loadCatalog(key,{force:false});}catch(e){if(typeof setStatus==='function')setStatus(e.message||String(e),'bad');}
   }
+  window.addEventListener('message',ev=>{if(ev.origin!==location.origin)return;if(ev.data?.type==='RA_RELOAD_FACILITY_DB')document.getElementById('reloadDb')?.click();});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0),{once:true});else setTimeout(start,0);
 })();
 </script>

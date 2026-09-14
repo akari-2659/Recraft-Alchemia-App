@@ -1224,6 +1224,13 @@ html.ra-embedded .section-body{padding:9px 11px 11px!important}
 html.ra-embedded .formula-note{margin-top:4px!important;line-height:1.35!important}
 @media(max-width:760px){html.ra-embedded #tabAbility details:nth-of-type(2)>.section-body,html.ra-embedded #tabSkills details:first-child>.section-body{grid-template-columns:1fr!important}html.ra-embedded .inventory-list,html.ra-embedded .carry-item-list{grid-template-columns:1fr!important}}
 </style>
+
+<style id="raEmbeddedCleanupV024">
+html.ra-embedded #homeView,html.ra-embedded #listView{display:none!important}
+html.ra-embedded .cloud-key-field,html.ra-embedded #backListBtn,html.ra-embedded #loadEquipmentCategoriesBtn,html.ra-embedded #addInitialWeaponSetBtn{display:none!important}
+html.ra-embedded #editorView>.view{display:block!important}
+html.ra-embedded .compact-toolbar:has(#loadEquipmentCategoriesBtn){justify-content:flex-start!important}
+</style>
 </head>
 <body class="ra-app ra-player ra-character">
 <div class="ra-build-info">Version：v90.8.775 / 最終更新日：2026年9月12日</div>
@@ -2119,7 +2126,9 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     const result=usePatch?await savePatchItem(currentCharacter.id,patch):await saveItem(data);
     if(usePatch){currentCharacter={...(currentCharacter||{}),...patch};}
     else{currentCharacter=data;autoSaveLastSavedHash=autoSaveContentHash(data);}
+    const listMayHaveChanged=currentMode==='new'||(!usePatch&&String(currentCharacter?.name||'')!==String(data?.name||''))||(usePatch&&Object.prototype.hasOwnProperty.call(patch||{},'name'));
     currentMode='edit';
+    if(listMayHaveChanged){try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_LIST_CHANGED'},location.origin)}catch(_){}}
     autoSaveDirty=autoSaveDirtySections.size>0;
     syncAutoSaveToggle();
     if(automatic)setAutoSaveStatus(`差分自動保存しました（${autoSaveTimeLabel()}）`,'ok');
@@ -7901,8 +7910,8 @@ function cloudJsonpRequest(action, payload={}) {
     const callback = 'recraftCharDbCb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
     const script = document.createElement('script');
     const timer = setTimeout(()=>{
-      cleanup(); reject(new Error('DB読み込みがタイムアウトしました。GASの再デプロイとWebアプリURLを確認してください。'));
-    }, 20000);
+      cleanup(); reject(new Error('DB読み込みに時間がかかっています。'));
+    }, 26000);
     function cleanup(){
       clearTimeout(timer);
       try { delete window[callback]; } catch(e) { window[callback] = undefined; }
@@ -7914,6 +7923,7 @@ function cloudJsonpRequest(action, payload={}) {
       u.searchParams.set('api','1');
       u.searchParams.set('action', action);
       u.searchParams.set('callback', callback);
+      u.searchParams.set('_t', Date.now());
       Object.entries(payload || {}).forEach(([k,v])=>{
         if (v === undefined || v === null) return;
         if (typeof v === 'object') u.searchParams.set(k, JSON.stringify(v));
@@ -7975,9 +7985,19 @@ async function cloudRequest(action, payload={}) {
   // CORS制限で POST の返答を取得できず Failed to fetch になることがあります。
   // 読み込み系はJSONP、保存/削除系は no-cors POST に寄せて回避します。
   if (CLOUD_JSONP_ACTIONS.has(action)) {
-    const json = await cloudJsonpRequest(action, payload);
-    if (!json.ok) throw new Error(json.error || 'DB読み込みに失敗しました。');
-    return json;
+    const attempts=(action==='list'||action==='load')?3:1;
+    let lastError=null;
+    for(let i=0;i<attempts;i++){
+      try{
+        const json = await cloudJsonpRequest(action, payload);
+        if (!json.ok) throw new Error(json.error || 'DB読み込みに失敗しました。');
+        return json;
+      }catch(error){
+        lastError=error;
+        if(i+1<attempts)await sleepMs([700,1800][i]||2500);
+      }
+    }
+    throw lastError||new Error('DB読み込みに失敗しました。');
   }
   if (action === 'save' || action === 'savePatch' || action === 'delete') {
     // v90.8.594: 1回の応答付きPOSTで完了する。旧no-cors経路は互換フォールバックのみ。
@@ -10259,16 +10279,22 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   function ctx(){try{return window.parent&&window.parent!==window?(window.parent.RA_PLAYER_CONTEXT||{}):{}}catch(_){return{}}}
   function notify(type,text=''){try{window.parent.postMessage({type,text},location.origin)}catch(_){}}
   function applyKey(){const c=ctx();const key=String(c.charKey||'').trim();if(!key)return'';currentCloudPlayerKey=key;if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=key;if($('playerKey'))$('playerKey').value=key;if($('newPlayerKey'))$('newPlayerKey').value='';return key}
-  async function openId(id){
-    notify('RA_MODULE_LOADING','読み込み中');
-    const key=applyKey();
+  let embeddedOpenCharacterId='',openingPromise=null;
+  async function resilientLoad(id){let last;for(let i=0;i<3;i++){try{return await loadItem(id)}catch(e){last=e;if(i<2){notify('RA_MODULE_LOADING',`通信を再試行しています（${i+2}/3）`);await sleepMs([800,2000][i]||2500);}}}throw last||new Error('キャラクターデータを読み込めませんでした。')}
+  async function openId(id,{force=false}={}){
+    const cleanId=String(id||''),key=applyKey();
     if(!key){const msg='ログイン時のキャラクターシート用プレイヤーキー紐づけが見つかりません。';const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);return;}
-    if(!id){notify('RA_MODULE_READY');return;}
-    try{const data=await loadItem(id);openEditor('edit',data);notify('RA_MODULE_READY');}
-    catch(e){const msg=e.message||String(e);const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);}
+    if(cleanId==='__new__'){openNew();return;}
+    if(!cleanId){notify('RA_MODULE_READY');return;}
+    if(!force&&embeddedOpenCharacterId===cleanId&&String(currentCharacter?.id||'')===cleanId){notify('RA_MODULE_READY');return;}
+    if(openingPromise&&!force)return openingPromise;
+    notify('RA_MODULE_LOADING','読み込み中');
+    openingPromise=(async()=>{try{const data=await resilientLoad(cleanId);openEditor('edit',data);embeddedOpenCharacterId=cleanId;notify('RA_MODULE_READY');}catch(e){const msg=e.message||String(e);const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);}finally{openingPromise=null;}})();
+    return openingPromise;
   }
-  window.addEventListener('message',ev=>{if(ev.origin!==location.origin)return;if(ev.data?.type==='RA_OPEN_CHARACTER')openId(String(ev.data.characterId||''));});
-  const start=()=>{const c=ctx();applyKey();openId(String(c.characterId||''));};
+  function openNew(){applyKey();embeddedOpenCharacterId='';openEditor('new',emptyCharacter());notify('RA_MODULE_READY');}
+  window.addEventListener('message',ev=>{if(ev.origin!==location.origin)return;const type=ev.data?.type;if(type==='RA_OPEN_CHARACTER')openId(String(ev.data.characterId||''),{force:ev.data?.force===true});if(type==='RA_NEW_CHARACTER')openNew();if(type==='RA_RELOAD_CHARACTER_DB')$('loadEquipmentCategoriesBtn')?.click();if(type==='RA_SYNC_INITIAL_WAREHOUSE')$('addInitialWeaponSetBtn')?.click();});
+  const start=()=>{const c=ctx();applyKey();const id=String(c.characterId||'');if(id==='__new__')openNew();else openId(id);};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0),{once:true});else setTimeout(start,0);
 })();
 </script>

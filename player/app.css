@@ -33,3 +33,39 @@ html,body{height:100%;overflow:hidden}.app{height:100svh;display:grid;grid-templ
 .character-nav-btn{min-height:36px;padding:7px 9px}
 .quick-actions{gap:10px}.quick{padding:14px;border-radius:12px}.quick button{min-height:34px;padding:6px 10px;font-size:.86rem}
 @media(max-width:840px){.main{padding:10px 8px 8px}.module-frame-wrap{border-radius:8px}.page-head{margin-bottom:12px}.panel{padding:14px}}
+
+/* v0.23: タイムアウト/読込失敗時の手動再読み込み */
+.frame-retry{display:none;align-items:center;justify-content:center;min-height:36px;padding:7px 14px;border-radius:9px;border:1px solid #8b4a41;background:#8b4a41;color:#fff;font:inherit;font-weight:900;cursor:pointer;box-shadow:0 2px 5px rgba(80,35,30,.16)}
+.module-frame-wrap.load-error .frame-retry{display:inline-flex}
+.frame-retry:hover{filter:brightness(1.08)}
+.frame-retry:active{transform:translateY(1px)}
+.character-nav-retry{margin-top:7px;min-height:30px;padding:5px 9px;border:1px solid rgba(239,170,162,.62);border-radius:8px;background:rgba(255,255,255,.08);color:#ffe5e1;font:inherit;font-weight:800;cursor:pointer}
+
+
+/* v0.24 app shell cleanup + theme color */
+:root{--app-deep:#30231c;--app-active:#5a3b29;--app-hover:#4a3326}
+.sidebar{background:var(--app-deep)!important}.nav-btn:hover,.nav-category-toggle:hover{background:var(--app-hover)!important}.nav-btn.active,.character-nav-btn:hover,.character-nav-btn.active{background:var(--app-active)!important}.side-brand,.side-footer{border-color:color-mix(in srgb,var(--accent) 55%,#fff 12%)!important}
+.character-new-btn{margin:3px 0 7px 33px;width:calc(100% - 33px);min-height:36px;border:1px dashed rgba(255,255,255,.34);border-radius:9px;background:rgba(255,255,255,.06);color:#f6eadd;text-align:left;padding:7px 10px;font-weight:800}.character-new-btn:hover{background:var(--app-active)}
+.side-settings{margin-top:18px;padding:12px;border-top:1px solid rgba(255,255,255,.14);display:grid;gap:6px}.side-settings label{font-size:11px;font-weight:900;color:#d7c5b4}.side-settings select{width:100%;min-height:36px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;padding:6px 8px;font:inherit}.side-settings select option{color:#2f241d;background:#fffaf0}
+.span-12{grid-column:span 12}
+@media(max-width:840px){.span-12{grid-column:1/-1}}
+
+.app-advanced{margin-top:12px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.32);overflow:hidden}.app-advanced>summary{cursor:pointer;padding:10px 12px;font-weight:900;color:var(--muted)}.app-advanced-body{padding:0 12px 12px}.app-advanced-actions{display:flex;flex-wrap:wrap;gap:8px}.app-advanced-actions .btn{min-height:36px;padding:7px 10px;font-size:.84rem}
+
+
+/* v0.25: 10種類の完全UIテーマ。アクセントだけでなく背景・紙面・枠・操作面まで一括変更。 */
+.app{background:radial-gradient(circle at 15% 8%,color-mix(in srgb,var(--accent2) 16%,transparent),transparent 30rem),linear-gradient(145deg,var(--bg),color-mix(in srgb,var(--bg) 88%,var(--accent) 12%))!important;color:var(--ink)}
+.workspace,.main{background:transparent;color:var(--ink)}
+.sidebar{color:#fff;border-right-color:color-mix(in srgb,var(--accent) 55%,var(--line) 45%)!important}
+.side-brand{border-color:color-mix(in srgb,var(--accent2) 35%,transparent)!important}.side-brand small,.side-footer,.side-settings label{color:color-mix(in srgb,#fff 74%,var(--accent2) 26%)!important}
+.nav-btn,.nav-category-toggle{color:#fff!important}.character-nav-btn{color:color-mix(in srgb,#fff 76%,var(--accent2) 24%)!important}.character-nav-btn.active,.character-nav-btn:hover{color:#fff!important}
+.topbar{background:color-mix(in srgb,var(--paper) 94%,transparent)!important;border-color:var(--line)!important;color:var(--ink)}
+.menu-btn{background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
+.page-head h1,.module-head h1,.panel h2,.panel h3,.quick h3,.top-title{color:var(--ink)!important}.page-head p,.note{color:var(--muted)!important}
+.card,.panel,.quick,.app-advanced{background:linear-gradient(145deg,var(--paper),var(--paper2))!important;border-color:var(--line)!important;color:var(--ink)!important;box-shadow:0 14px 34px color-mix(in srgb,var(--app-deep) 14%,transparent)!important}
+.quick{box-shadow:none!important}.badge{background:var(--paper2)!important;border-color:var(--line)!important;color:var(--muted)!important}.badge.ok{background:color-mix(in srgb,var(--paper) 78%,var(--accent2) 22%)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--accent2) 35%)!important}
+.module-frame-wrap,.module-frame{background:var(--paper2)!important;border-color:var(--line)!important}.frame-loading{background:color-mix(in srgb,var(--paper2) 96%,transparent)!important;color:var(--muted)!important}.loading-spinner,.mini-spinner{border-color:color-mix(in srgb,var(--accent) 20%,transparent)!important;border-top-color:var(--accent)!important}
+.update-notice{background:color-mix(in srgb,var(--paper2) 76%,var(--accent2) 24%)!important;border-color:var(--line)!important;color:var(--ink)!important}.update-notice button{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}.update-notice button.ghost{background:transparent!important;color:var(--ink)!important}
+.side-settings select{background:color-mix(in srgb,var(--app-deep) 82%,#fff 18%)!important;border-color:color-mix(in srgb,var(--accent2) 48%,transparent)!important;color:#fff!important}.side-settings select option{background:var(--paper)!important;color:var(--ink)!important}
+.character-new-btn{border-color:color-mix(in srgb,var(--accent2) 50%,transparent)!important;color:#fff!important}.app-advanced>summary{color:var(--ink)!important}.app-advanced-body{color:var(--ink)!important}
+.frame-retry{background:var(--accent)!important;border-color:var(--accent)!important}.character-nav-retry{border-color:color-mix(in srgb,var(--accent2) 62%,transparent)!important;color:#fff!important}

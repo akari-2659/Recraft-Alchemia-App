@@ -1,4 +1,4 @@
-const APP_VERSION='0.20.0';
+const APP_VERSION='0.25.0';
 const CACHE=`ra-player-app-v${APP_VERSION}`;
 const PREFIX='ra-player-app-v';
 const APP_FILES=[
