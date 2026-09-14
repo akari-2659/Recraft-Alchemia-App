@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.8';
+  const APP_VERSION='1.0.9';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
   const views=[...document.querySelectorAll('.view')],nav=[...document.querySelectorAll('.nav-btn')];
@@ -80,7 +80,7 @@
         body.ra-app .status.bad{background:color-mix(in srgb,var(--paper) 84%,#e8b8b3 16%)!important}
         body.ra-app .status.warn,body.ra-app .event-card.fixed{background:color-mix(in srgb,var(--paper) 82%,var(--theme-highlight) 18%)!important}
 
-        /* v1.0.8: 派生図もカラーテーマの文字・紙面・枠色へ統一し、固定色による低コントラストを解消。 */
+        /* v1.0.9: 派生図もカラーテーマの文字・紙面・枠色へ統一し、固定色による低コントラストを解消。 */
         body.ra-app :is(.branch-graph-scroll,.branch-table-scroll,.accessory-branch-scroll){background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
         body.ra-app .branch-graph-panel:fullscreen{background:var(--bg)!important;color:var(--ink)!important}
         body.ra-app .branch-graph-panel:fullscreen .branch-graph-toolbar{background:color-mix(in srgb,var(--theme-topbar) 96%,transparent)!important;border-color:var(--line)!important;color:var(--ink)!important}
@@ -105,7 +105,7 @@
         body.ra-app .branch-table-label small{color:var(--muted)!important}
         body.ra-app .branch-table-cell.has-next::after,body.ra-app .branch-table-node+.branch-table-node::before{color:var(--accent)!important;background:var(--paper)!important}
         body.ra-app .accessory-branch-node button:hover,body.ra-app .accessory-branch-node button:focus-visible{background:var(--paper2)!important;color:var(--ink)!important}
-        /* v1.0.8: 派生図のノードは通常ボタン配色に巻き込ませない。常に明るい面＋濃い文字で読む。 */
+        /* v1.0.9: 派生図のノードは通常ボタン配色に巻き込ませない。常に明るい面＋濃い文字で読む。 */
         body.ra-app .branch-graph-node > button.branch-graph-node-trigger:not(.ghost):not(.danger):not(.secondary),
         body.ra-app .accessory-branch-node > button.ra-branch-node-button:not(.ghost):not(.danger):not(.secondary){background:var(--theme-input)!important;color:var(--ink)!important;border:0!important;box-shadow:none!important;text-shadow:none!important;filter:none!important;transform:none!important}
         body.ra-app .branch-graph-node > .branch-graph-node-locked-label{background:var(--theme-input)!important;color:var(--ink)!important;text-shadow:none!important}

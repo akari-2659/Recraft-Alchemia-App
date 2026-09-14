@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.778</title>
+<title>リクラフト・アルケミア キャラクター作成ツール v90.8.779</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -1151,7 +1151,7 @@ body.public-view .loadout-preset-panel{display:none!important}
 
 </style>
 
-<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.778-monster-turn-band-audit-20260914">
+<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.779-monster-turn-band-audit-20260914">
 
 <script id="raEmbeddedPlayerEarlyClass">
 try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded')}catch(_){}
@@ -1233,7 +1233,7 @@ html.ra-embedded .compact-toolbar:has(#loadEquipmentCategoriesBtn){justify-conte
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.778 / 最終更新日：2026年9月14日</div>
+<div class="ra-build-info">Version：v90.8.779 / 最終更新日：2026年9月14日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -5536,7 +5536,7 @@ function characterNamedProcessDiffPair(before='',after=''){
 }
 function characterNamedProcessingHtml(options=[],appliedId='',index=-1){
   const rows=Array.isArray(options)?options:[];if(!rows.length)return'';
-  return `<div class="named-process-list">${rows.map(opt=>{const applied=String(appliedId||'')===String(opt.id||'');const diff=characterNamedProcessDiffPair(opt.fullBefore||opt.before||'変更前',opt.fullAfter||opt.after||'変更後');const actions=(currentMode!=='view'&&index>=0)?`<div class="named-process-actions">${applied?`<button type="button" class="ghost" data-clear-named-processing="${esc(opt.id||'')}">異名加工登録を解除</button>`:`<button type="button" data-apply-named-processing="${esc(opt.id||'')}">異名加工を適用</button>`}</div>`:'';return `<div class="named-process-card"><div><span class="named-process-chip ${applied?'applied':''}">${applied?'異名加工済':'異名加工可'}</span> <b>${esc(opt.namedMonster||opt.material||'異名加工')}</b></div><div class="named-process-full"><div class="named-process-text"><b>加工前</b>${diff.before}</div><div class="named-process-text after"><b>加工後</b>${diff.after}</div></div><div class="small">変更項目：${esc(opt.changeLabel||'性能')}</div><div class="small">二つ名素材：${esc(opt.material||'')}</div><div class="small">必要素材：${esc(opt.requiredMaterials||'')}</div><div class="small">施設依頼：${esc(String(opt.facilityFeeG||0))}G${opt.difficulty?` / 基礎作成難易度 ${esc(opt.difficulty)}`:''}</div>${actions}</div>`}).join('')}</div>`;
+  return `<div class="named-process-list">${rows.map(opt=>{const applied=String(appliedId||'')===String(opt.id||'');const diff=characterNamedProcessDiffPair(opt.fullBefore||opt.before||'変更前',opt.fullAfter||opt.after||'変更後');const actions=(currentMode!=='view'&&index>=0)?`<div class="named-process-actions">${applied?`<button type="button" class="ghost" data-clear-named-processing="${esc(opt.id||'')}">異名加工登録を解除</button>`:`<button type="button" data-apply-named-processing="${esc(opt.id||'')}">異名加工を適用</button>`}</div>`:'';return `<div class="named-process-card"><div><span class="named-process-chip ${applied?'applied':''}">${applied?'異名加工済':'異名加工可'}</span> <b>${esc(opt.namedMonster||opt.material||'異名加工')}</b></div><div class="named-process-full"><div class="named-process-text"><b>加工前</b>${diff.before}</div><div class="named-process-text after"><b>加工後</b>${diff.after}</div></div><div class="small">二つ名素材：${esc(opt.material||'')}</div><div class="small">必要素材：${esc(opt.requiredMaterials||'')}</div><div class="small">施設依頼：${esc(String(opt.facilityFeeG||0))}G${opt.difficulty?` / 基礎作成難易度 ${esc(opt.difficulty)}`:''}</div>${actions}</div>`}).join('')}</div>`;
 }
 function openCharacterItemDetail(item={},count='',index=null){
   const row=normalizeInventoryItem(item||{});if(!row?.name)return;
@@ -5853,8 +5853,8 @@ function canonicalWeaponUsageSkill(item={}) {
 function parseNamedProcessingOptions(value){if(Array.isArray(value))return value;if(typeof value==='string'&&value.trim()){try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[];}catch(_){return[];}}return[];}
 function parseEquipmentEffects(value){if(Array.isArray(value))return value.map(v=>({name:String(v?.name||'固有効果').trim()||'固有効果',summary:String(v?.summary||'').trim(),detail:String(v?.detail||'').trim()})).filter(v=>v.detail||v.summary);if(typeof value==='string'&&value.trim()){try{return parseEquipmentEffects(JSON.parse(value));}catch(_){return[];}}return [];}
 function equipmentIntrinsicEffectsForItem(item={}){const category=String(item.itemCategory||item.category||item.type||'').trim();const row=(DB_EQUIPMENT_CATEGORY_MASTER||[]).find(v=>String(v?.name||'').trim()===category);if(!row)return[];const structured=parseEquipmentEffects(row.intrinsicEffects);if(structured.length)return structured;const detail=String(row.effect||'').trim();if(!detail)return[];return[{name:category==='鞭'?'引き寄せ':'武器種固有',summary:category==='鞭'?'後衛の敵を前衛へ引き寄せる':detail.split('。')[0],detail}];}
-function equipmentEffectsForItem(item={}){const structured=parseEquipmentEffects(item.equipmentEffects);if(structured.length)return structured;const detail=String(item.effect||'').trim();return detail?[{name:'固有効果',summary:detail.split('。')[0],detail}]:[];}
-function equipmentEffectSectionsHtml(item={}){const intrinsic=equipmentIntrinsicEffectsForItem(item),unique=equipmentEffectsForItem(item);const section=(title,rows)=>rows.length?`<section class="equipment-effect-section"><h4>${esc(title)}</h4>${rows.map(effect=>`<div class="equipment-effect-entry"><details><summary><span class="equipment-effect-name">《${esc(effect.name)}》</span><span class="equipment-effect-summary">${esc(effect.summary||'詳細を表示')}</span></summary><div class="equipment-effect-detail">${esc(effect.detail||effect.summary||'')}</div></details></div>`).join('')}</section>`:'';return intrinsic.length||unique.length?`<div class="equipment-effect-sections">${section('武器種固有',intrinsic)}${section('固有効果',unique)}</div>`:'';}
+function equipmentEffectsForItem(item={}){const detail=String(item.effect||'').trim();return detail?[{detail}]:[];}
+function equipmentEffectSectionsHtml(item={}){const intrinsic=equipmentIntrinsicEffectsForItem(item).map(effect=>String(effect.detail||effect.summary||'').trim()).filter(Boolean),unique=equipmentEffectsForItem(item).map(effect=>String(effect.detail||'').trim()).filter(Boolean);const section=(title,rows)=>rows.length?`<section class="equipment-effect-section"><h4>${esc(title)}</h4>${rows.map(text=>`<div class="equipment-effect-entry"><div class="equipment-effect-detail">${esc(text)}</div></div>`).join('')}</section>`:'';return intrinsic.length||unique.length?`<div class="equipment-effect-sections">${section('武器種固有',intrinsic)}${section('効果',unique)}</div>`:'';}
 function normalizeInventoryItem(item={}) {
   const masterRow = inventoryMasterRowForClassification(item);
   const masterIsMaterial = String(masterRow?.dataKind || '').trim()==='素材';
@@ -9445,8 +9445,8 @@ function collectEquipmentEffectPaletteLines(data={}){
     if(result.length&&result[result.length-1] !== '')result.push('');
     result.push(name,'');
     if(modifierRows.length){result.push(`補正：${modifierRows.map(row=>`${modifierTargetDisplayName(row.target)} ${signedNumberText(row.value)||row.value}`).join(' / ')}`,'');}
-    intrinsic.forEach(effect=>{result.push(`武器種固有：${effect.name}`,`${effect.name}：${effect.detail||effect.summary}`,'');});
-    unique.forEach(effect=>{result.push(`効果：${effect.name}`,`${effect.name}：${effect.detail||effect.summary}`,'');});
+    intrinsic.forEach(effect=>{const detail=String(effect.detail||effect.summary||'').trim();if(detail)result.push('武器種効果',detail,'');});
+    unique.forEach(effect=>{const detail=String(effect.detail||effect.summary||'').trim();if(detail)result.push('効果',detail,'');});
     const seenUpgrade=new Set();upgrades.forEach(raw=>{const entry=normalizeUpgradeEntry(raw),effectName=entry.specialEffectName||'名称未設定';if(seenUpgrade.has(effectName))return;seenUpgrade.add(effectName);const detail=resolvePaletteSpecialUpgradeDetail(entry,items);result.push(`強化特殊効果：${effectName}`,`${effectName}：${detail||'詳細未設定'}`,'');});
     while(result.length&&result[result.length-1]==='')result.pop();
   }
