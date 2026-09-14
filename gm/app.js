@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='1.0.4';
+const APP_VERSION='1.0.5';
 const ACCOUNT=window.RA_ACCOUNT;
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');
@@ -76,6 +76,32 @@ let swRegistration=null;const timers=new Map();
         body.ra-app .status.good,body.ra-app .event-card.random{background:color-mix(in srgb,var(--paper) 82%,#bfe2c9 18%)!important}
         body.ra-app .status.bad{background:color-mix(in srgb,var(--paper) 84%,#e8b8b3 16%)!important}
         body.ra-app .status.warn,body.ra-app .event-card.fixed{background:color-mix(in srgb,var(--paper) 82%,var(--theme-highlight) 18%)!important}
+
+        /* v1.0.5: 派生図もカラーテーマの文字・紙面・枠色へ統一し、固定色による低コントラストを解消。 */
+        body.ra-app :is(.branch-graph-scroll,.branch-table-scroll,.accessory-branch-scroll){background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
+        body.ra-app .branch-graph-panel:fullscreen{background:var(--bg)!important;color:var(--ink)!important}
+        body.ra-app .branch-graph-panel:fullscreen .branch-graph-toolbar{background:color-mix(in srgb,var(--theme-topbar) 96%,transparent)!important;border-color:var(--line)!important;color:var(--ink)!important}
+        body.ra-app :is(.branch-graph-label,.branch-label-side-toggle){background:var(--paper2)!important;border-color:var(--line)!important;color:var(--ink)!important;box-shadow:4px 0 9px color-mix(in srgb,var(--app-deep) 10%,transparent)!important}
+        body.ra-app .branch-graph-label.base{background:color-mix(in srgb,var(--paper2) 78%,var(--theme-highlight) 22%)!important;color:var(--ink)!important}
+        body.ra-app .branch-graph-label.boss{background:color-mix(in srgb,var(--paper) 78%,#e7bbb0 22%)!important;border-color:color-mix(in srgb,var(--line) 58%,#9a4b42 42%)!important;color:var(--ink)!important}
+        body.ra-app .branch-graph-scroll.branch-labels-collapsed .branch-graph-label::after{color:var(--ink)!important}
+        body.ra-app :is(.branch-graph-node,.branch-table-node,.accessory-branch-node){background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important;box-shadow:0 4px 11px color-mix(in srgb,var(--app-deep) 10%,transparent)!important}
+        body.ra-app :is(.branch-graph-node-trigger,.branch-graph-node-locked-label,.accessory-branch-node button){background:var(--paper)!important;color:var(--ink)!important;border-color:var(--line)!important;text-shadow:none!important}
+        body.ra-app :is(.branch-graph-node-name-inline,.branch-graph-node-name,.branch-table-node-name,.accessory-branch-name){color:var(--ink)!important}
+        body.ra-app :is(.branch-graph-node-rank-inline,.branch-graph-node-rank,.branch-table-rank,.accessory-branch-rank,.accessory-branch-effect,.branch-graph-zoom-label){color:var(--muted)!important}
+        body.ra-app :is(.branch-graph-node.locked,.branch-table-node.locked){background:repeating-linear-gradient(135deg,var(--paper),var(--paper) 10px,var(--paper2) 10px,var(--paper2) 20px)!important;color:var(--ink)!important}
+        body.ra-app .branch-graph-node.boss-branch{background:color-mix(in srgb,var(--paper) 86%,#e8c1b8 14%)!important;border-color:color-mix(in srgb,var(--line) 66%,#985348 34%)!important;color:var(--ink)!important}
+        body.ra-app .branch-graph-node.has-named-processing{background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 82%,var(--theme-highlight) 18%),var(--paper) 60%)!important;border-color:var(--accent)!important;outline-color:color-mix(in srgb,var(--accent2) 34%,transparent)!important}
+        body.ra-app .branch-graph-node-named-badge{background:var(--theme-secondary)!important;border:1px solid color-mix(in srgb,var(--theme-secondary) 72%,var(--app-deep) 28%)!important;color:var(--theme-secondary-text)!important;border-radius:999px!important;padding:2px 7px!important;text-shadow:none!important}
+        body.ra-app :is(.branch-graph-edge,.accessory-branch-edge){stroke:color-mix(in srgb,var(--accent) 76%,var(--ink) 24%)!important;filter:none!important}
+        body.ra-app .branch-graph-edge-route{stroke:transparent!important}
+        body.ra-app .branch-node.branch-focus,body.ra-app .branch-graph-node.branch-focus{outline-color:color-mix(in srgb,var(--accent) 72%,transparent)!important}
+        body.ra-app .branch-table th,body.ra-app .branch-table td{background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
+        body.ra-app .branch-table thead th,body.ra-app .branch-table .branch-table-label{background:var(--paper2)!important;color:var(--ink)!important;box-shadow:none!important}
+        body.ra-app .branch-table thead .branch-table-label{background:color-mix(in srgb,var(--paper2) 76%,var(--theme-highlight) 24%)!important;color:var(--ink)!important}
+        body.ra-app .branch-table-label small{color:var(--muted)!important}
+        body.ra-app .branch-table-cell.has-next::after,body.ra-app .branch-table-node+.branch-table-node::before{color:var(--accent)!important;background:var(--paper)!important}
+        body.ra-app .accessory-branch-node button:hover,body.ra-app .accessory-branch-node button:focus-visible{background:var(--paper2)!important;color:var(--ink)!important}
       `;
     }catch(_){ }
   }
