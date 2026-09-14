@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='0.25.0';
+  const APP_VERSION='0.27.0';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
   const views=[...document.querySelectorAll('.view')],nav=[...document.querySelectorAll('.nav-btn')];
@@ -12,16 +12,16 @@
 
   const THEME_STORAGE_KEY='ra-app-theme-color';
   const THEMES={
-    red:{label:'レッド',bg:'#f2e7e5',paper:'#fff9f7',paper2:'#f8ebe7',ink:'#352425',muted:'#796263',line:'#dab8b4',accent:'#9b4347',accent2:'#c8756d',deep:'#3a2125',active:'#7d363d',hover:'#5c2b30',theme:'#7d363d',soft:'#efd3cf'},
-    blue:{label:'ブルー',bg:'#e8eff6',paper:'#f9fcff',paper2:'#eaf2f9',ink:'#202d3b',muted:'#607080',line:'#b9cadb',accent:'#4273a2',accent2:'#79a7cc',deep:'#1d3046',active:'#345f87',hover:'#284a69',theme:'#345f87',soft:'#d5e5f2'},
-    green:{label:'グリーン',bg:'#e9f1e9',paper:'#fbfdf9',paper2:'#eaf3e8',ink:'#26342a',muted:'#657367',line:'#bfd0bd',accent:'#4b7757',accent2:'#82a978',deep:'#23392a',active:'#40674a',hover:'#31513a',theme:'#40674a',soft:'#d8e7d4'},
-    purple:{label:'パープル',bg:'#eee9f3',paper:'#fdfaff',paper2:'#f0e9f5',ink:'#30273a',muted:'#70657a',line:'#cbbbd5',accent:'#74558a',accent2:'#aa8cbb',deep:'#33263e',active:'#604771',hover:'#4b3858',theme:'#604771',soft:'#e2d6e8'},
-    orange:{label:'オレンジ',bg:'#f5ebe1',paper:'#fffaf5',paper2:'#f7e9da',ink:'#39291f',muted:'#7c695c',line:'#dcc3aa',accent:'#b56b32',accent2:'#d6965d',deep:'#44291b',active:'#8d522a',hover:'#6b3f24',theme:'#8d522a',soft:'#f0d8bd'},
-    yellow:{label:'イエロー',bg:'#f5f0dc',paper:'#fffdf4',paper2:'#f6efd2',ink:'#393321',muted:'#78705b',line:'#d9c991',accent:'#9a791e',accent2:'#c9a84c',deep:'#403720',active:'#765f1d',hover:'#5a491d',theme:'#765f1d',soft:'#eee1ae'},
-    pink:{label:'ピンク',bg:'#f5e9ef',paper:'#fffafd',paper2:'#f7e9f0',ink:'#39272f',muted:'#7d6671',line:'#dabcca',accent:'#aa5278',accent2:'#d18aa6',deep:'#452838',active:'#88415f',hover:'#663248',theme:'#88415f',soft:'#f0d3df'},
-    cyan:{label:'シアン',bg:'#e5f2f3',paper:'#f9feff',paper2:'#e7f4f4',ink:'#223436',muted:'#62777a',line:'#b7d3d5',accent:'#38868d',accent2:'#78b7bb',deep:'#183a3f',active:'#2e6e75',hover:'#25565c',theme:'#2e6e75',soft:'#d2e9ea'},
-    navy:{label:'ネイビー',bg:'#e7ebf1',paper:'#f9fbfe',paper2:'#e9edf4',ink:'#222c3b',muted:'#626c7c',line:'#bac3d1',accent:'#405a82',accent2:'#7f94b2',deep:'#18243a',active:'#334b70',hover:'#283a56',theme:'#334b70',soft:'#d6deea'},
-    brown:{label:'ブラウン',bg:'#f5eee4',paper:'#fff9ef',paper2:'#fbf1df',ink:'#34251d',muted:'#76685e',line:'#ddcbb0',accent:'#8f542d',accent2:'#b98643',deep:'#30231c',active:'#5a3b29',hover:'#4a3326',theme:'#6f442d',soft:'#ecd9bd'}
+    red:{label:"レッド",bg:"#eadfdd",paper:"#fff8f5",paper2:"#f3e3de",ink:"#352426",muted:"#786164",line:"#d8b5ae",accent:"#9d4149",accent2:"#c79650",deep:"#341e26",active:"#7a323b",hover:"#57272f",theme:"#7a323b",soft:"#edcec6",secondary:"#536a7d",secondaryText:"#ffffff",input:"#fffdf9",topbar:"#f8ece7",highlight:"#f1d3a4"},
+    blue:{label:"ブルー",bg:"#dfe8f0",paper:"#f8fbff",paper2:"#e7eff6",ink:"#213041",muted:"#607184",line:"#b9cadb",accent:"#396d9f",accent2:"#b78350",deep:"#1c3047",active:"#315d87",hover:"#274a6b",theme:"#315d87",soft:"#d3e2ef",secondary:"#4d8089",secondaryText:"#ffffff",input:"#fcfeff",topbar:"#eaf2f8",highlight:"#ead5bd"},
+    green:{label:"グリーン",bg:"#e3ebe1",paper:"#fbfcf7",paper2:"#e8efe3",ink:"#25342a",muted:"#647267",line:"#becdb8",accent:"#497253",accent2:"#b08a48",deep:"#21372a",active:"#3d6247",hover:"#304d38",theme:"#3d6247",soft:"#d5e3ce",secondary:"#6b778d",secondaryText:"#ffffff",input:"#fdfef9",topbar:"#edf3e9",highlight:"#e4d4ad"},
+    purple:{label:"パープル",bg:"#e8e2ee",paper:"#fdf9ff",paper2:"#eee6f2",ink:"#31283a",muted:"#70647a",line:"#c9b8d3",accent:"#72528a",accent2:"#b97886",deep:"#32243e",active:"#604470",hover:"#493555",theme:"#604470",soft:"#dfd2e5",secondary:"#8a7549",secondaryText:"#ffffff",input:"#fffcff",topbar:"#f1eaf5",highlight:"#e8c8cf"},
+    orange:{label:"オレンジ",bg:"#eee3d9",paper:"#fff9f3",paper2:"#f4e6d8",ink:"#39291f",muted:"#79695d",line:"#d7bfa8",accent:"#b76531",accent2:"#3e8082",deep:"#43291b",active:"#8e522b",hover:"#6a3e24",theme:"#8e522b",soft:"#edd4bc",secondary:"#3f7b80",secondaryText:"#ffffff",input:"#fffdf9",topbar:"#f7ebe0",highlight:"#cce0dd"},
+    yellow:{label:"イエロー",bg:"#ebe6d2",paper:"#fffdf3",paper2:"#f3ebcd",ink:"#373121",muted:"#746d58",line:"#d5c58e",accent:"#98791f",accent2:"#4b6784",deep:"#37321f",active:"#755f1d",hover:"#58491c",theme:"#755f1d",soft:"#e9dda9",secondary:"#4b6784",secondaryText:"#ffffff",input:"#fffef8",topbar:"#f5efda",highlight:"#d6dfed"},
+    pink:{label:"ピンク",bg:"#eee1e8",paper:"#fff9fc",paper2:"#f3e5ec",ink:"#39272f",muted:"#79646f",line:"#d5b7c5",accent:"#a95177",accent2:"#737ea4",deep:"#432736",active:"#86405e",hover:"#633047",theme:"#86405e",soft:"#ebceda",secondary:"#6f7899",secondaryText:"#ffffff",input:"#fffdfd",topbar:"#f7eaf0",highlight:"#dce1ef"},
+    cyan:{label:"シアン",bg:"#dcebed",paper:"#f7fdfe",paper2:"#e3f0f1",ink:"#213538",muted:"#607579",line:"#b4d0d2",accent:"#37838a",accent2:"#7767a0",deep:"#17383d",active:"#2e6c72",hover:"#24545a",theme:"#2e6c72",soft:"#cee5e7",secondary:"#6c6093",secondaryText:"#ffffff",input:"#fbffff",topbar:"#e7f3f4",highlight:"#ded8ed"},
+    navy:{label:"ネイビー",bg:"#dde2e9",paper:"#f8fafc",paper2:"#e6ebf1",ink:"#222d3b",muted:"#626d7c",line:"#bac2ce",accent:"#405a80",accent2:"#b28a50",deep:"#172339",active:"#334a6e",hover:"#283a55",theme:"#334a6e",soft:"#d2dae6",secondary:"#677487",secondaryText:"#ffffff",input:"#fcfdff",topbar:"#e9edf3",highlight:"#eadcc1"},
+    brown:{label:"ブラウン",bg:"#eee6da",paper:"#fff9ef",paper2:"#f4ead7",ink:"#34251d",muted:"#74665c",line:"#d8c5a8",accent:"#8c542f",accent2:"#597872",deep:"#2f231d",active:"#5b3c2a",hover:"#493128",theme:"#6c432f",soft:"#e8d5b8",secondary:"#5a7770",secondaryText:"#ffffff",input:"#fffdf8",topbar:"#f6eddf",highlight:"#d4e0da"}
   };
   const LEGACY_THEME_KEYS={classic:'brown',violet:'purple',amber:'orange'};
   function currentTheme(){
@@ -32,10 +32,11 @@
   function themePairs(theme){return {
     '--bg':theme.bg,'--paper':theme.paper,'--paper2':theme.paper2,'--ink':theme.ink,'--muted':theme.muted,'--line':theme.line,
     '--accent':theme.accent,'--accent2':theme.accent2,'--app-deep':theme.deep,'--app-active':theme.active,'--app-hover':theme.hover,'--theme-soft':theme.soft,
+    '--theme-secondary':theme.secondary,'--theme-secondary-text':theme.secondaryText,'--theme-input':theme.input,'--theme-topbar':theme.topbar,'--theme-highlight':theme.highlight,
     '--ra-desk':theme.deep,'--ra-desk-2':theme.hover,'--ra-page':theme.paper,'--ra-page-2':theme.paper2,'--ra-page-3':theme.soft,
     '--ra-ink':theme.ink,'--ra-muted':theme.muted,'--ra-line':theme.line,'--ra-line-soft':theme.line,'--ra-line-dark':theme.hover,
     '--ra-navy':theme.accent,'--ra-navy-2':theme.deep,'--ra-burgundy':theme.accent,'--ra-burgundy-2':theme.deep,
-    '--ra-brass':theme.accent2,'--ra-brass-light':theme.soft
+    '--ra-brass':theme.accent2,'--ra-brass-light':theme.highlight
   }}
   function applyThemeToFrame(frame,theme,key=currentTheme()){
     try{
@@ -46,16 +47,28 @@
       if(!style){style=doc.createElement('style');style.id='raAppFullThemeV025';doc.head?.appendChild(style)}
       style.textContent=`
         html,body{background:var(--bg)!important;color:var(--ink)!important}
-        body.ra-app{color:var(--ink)!important;background:linear-gradient(145deg,var(--bg),color-mix(in srgb,var(--bg) 72%,var(--app-deep) 28%))!important}
-        body.ra-app>main,body.ra-app main{color:var(--ink)}
-        body.ra-app>main{background-color:var(--paper)!important;border-color:var(--line)!important}
-        body.ra-app :is(.panel,.big-section,.card,.mini-card,.status-box,.resource-card,.choice-card,.help-card,.compact-storage-panel,.facility-work-block,.facility-summary,.autosave-panel,.dialog-inner,.weapon-modal-dialog,.branch-controls,.branch-graph-scroll,.catalog-rank-controls,.inventory-filter-panel,.inventory-search-panel,.tab-block,.subnav-block){border-color:var(--line)!important;background-color:var(--paper)!important;color:var(--ink)!important}
-        body.ra-app :is(.notice,.hint,.muted,.version,.build,.small,.subtitle){color:var(--muted)!important}
-        body.ra-app :is(input,select,textarea){background-color:var(--paper)!important;color:var(--ink)!important;border-color:var(--line)!important}
-        body.ra-app :is(.tabs,.subtabs,.section-subtabs,.facility-inner-tabs,.facility-weapon-category-tabs,.toolbar-screen-actions,.toolbar-db-actions,.global-db-maintenance,.global-db-write){border-color:var(--line)!important}
-        body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn).active{background:var(--accent)!important;border-color:var(--app-deep)!important}
+        body.ra-app{color:var(--ink)!important;background:linear-gradient(145deg,var(--bg),color-mix(in srgb,var(--bg) 74%,var(--app-deep) 26%))!important}
+        body.ra-app>header,body.ra-app header{background:color-mix(in srgb,var(--theme-topbar) 94%,transparent)!important;border-color:var(--line)!important;color:var(--ink)!important}
+        body.ra-app>main{background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
+        body.ra-app :is(.panel,.big-section,.card,.mini-card,.status-box,.resource-card,.choice-card,.help-card,.compact-storage-panel,.facility-work-block,.facility-summary,.autosave-panel,.dialog-inner,.weapon-modal-dialog,.branch-controls,.branch-graph-scroll,.catalog-rank-controls,.inventory-filter-panel,.inventory-search-panel,.tab-block,.subnav-block,.progress-fold,.community-manager-card,.weather-manager,.day-stat,.event-card,.result,.drop-row,.monster-combobox-menu,.facility-product,.facility-card,.record-list-search,.admin-global-search-panel,.admin-global-search-card,.table-pagination){border-color:var(--line)!important;background:var(--paper)!important;color:var(--ink)!important;box-shadow:0 8px 22px color-mix(in srgb,var(--app-deep) 10%,transparent)!important}
+        body.ra-app :is(.tab-nav,.tabs,.subtabs,.buttons,.quest-tools,.quest-category-bar,.toolbar,.section-actions,.filter-actions,.facility-actions,.help-actions,.monster-output-actions,.modal-foot,.facility-inner-tabs,.facility-weapon-category-tabs){background:var(--paper2)!important;border-color:var(--line)!important;color:var(--ink)!important}
+        body.ra-app :is(input,select,textarea){background:var(--theme-input)!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:inset 0 1px 2px color-mix(in srgb,var(--app-deep) 8%,transparent)!important}
+        body.ra-app :is(input,select,textarea):focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)!important}
+        body.ra-app button:not(.ghost):not(.danger):not(.secondary),body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab).active{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 82%,#fff 18%),var(--accent))!important;border-color:color-mix(in srgb,var(--accent) 78%,var(--app-deep) 22%)!important;color:#fff!important;box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 62%,#000 38%),0 5px 12px color-mix(in srgb,var(--accent) 22%,transparent)!important;text-shadow:0 1px 0 rgba(0,0,0,.18)!important}
+        body.ra-app button.secondary,body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab):not(.active){background:linear-gradient(180deg,color-mix(in srgb,var(--theme-secondary) 82%,#fff 18%),var(--theme-secondary))!important;border-color:color-mix(in srgb,var(--theme-secondary) 76%,var(--app-deep) 24%)!important;color:var(--theme-secondary-text)!important;box-shadow:0 2px 0 color-mix(in srgb,var(--theme-secondary) 62%,#000 38%),0 4px 10px color-mix(in srgb,var(--theme-secondary) 18%,transparent)!important;text-shadow:0 1px 0 rgba(0,0,0,.16)!important}
+        body.ra-app button.ghost{background:var(--paper)!important;border-color:var(--accent)!important;color:var(--accent)!important;box-shadow:none!important;text-shadow:none!important}
+        body.ra-app button.danger{background:linear-gradient(180deg,#b45656,#8e3333)!important;border-color:#6b2727!important;color:#fff!important}
+        body.ra-app :is(.badge,.pill,.quest-pill){background:var(--paper2)!important;border-color:var(--line)!important;color:var(--muted)!important}
+        body.ra-app :is(.progress-fold>summary,.ra-progress-load-fold>summary,.ra-admin-fold>summary){background:color-mix(in srgb,var(--paper2) 82%,var(--theme-highlight) 18%)!important;color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(.progress-wrap,.community-manager-progress){background:color-mix(in srgb,var(--paper2) 80%,var(--line) 20%)!important;border-color:var(--line)!important}
+        body.ra-app :is(.progress-bar,.community-manager-progress span){background:linear-gradient(90deg,var(--accent),var(--accent2))!important}
+        body.ra-app :is(.section-title,.big-section>h2,.panel>h2,.panel>h3,.summary-line h2,h1,h2,h3){color:var(--ink)!important;border-color:color-mix(in srgb,var(--line) 78%,var(--accent2) 22%)!important}
+        body.ra-app :is(.muted,.hint,.subtitle,.version,.small,.notice){color:var(--muted)!important}
         body.ra-app .ra-build-info,body.ra-app .build{background:var(--paper2)!important;border-color:var(--line)!important;color:var(--ink)!important}
-        body.ra-app .modal-backdrop{background:color-mix(in srgb,var(--app-deep) 58%,transparent)!important}
+        body.ra-app .tab-nav#progressTabNav{background:color-mix(in srgb,var(--paper2) 92%,var(--theme-highlight) 8%)!important;border-color:var(--line)!important}
+        body.ra-app .status.good,body.ra-app .event-card.random{background:color-mix(in srgb,var(--paper) 82%,#bfe2c9 18%)!important}
+        body.ra-app .status.bad{background:color-mix(in srgb,var(--paper) 84%,#e8b8b3 16%)!important}
+        body.ra-app .status.warn,body.ra-app .event-card.fixed{background:color-mix(in srgb,var(--paper) 82%,var(--theme-highlight) 18%)!important}
       `;
     }catch(_){ }
   }

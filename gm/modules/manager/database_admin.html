@@ -6280,7 +6280,7 @@ function renderFacilityWorkPanel(){
   const panel=$('facilityWorkPanel');
   const title=$('facilityWorkTitle'), notice=$('facilityWorkNotice');
   const smithy=$('facilitySmithyWork'), crystal=$('facilityCrystalWork'), alchemy=$('facilityAlchemyWork'), antique=$('facilityAntiqueWork'), none=$('facilityNoWork');
-  const show=kind!=='none';
+  const show=kind!=='none'&&kind!=='smithy';
   if(panel) panel.classList.toggle('hidden',!show);
   if(smithy) smithy.classList.toggle('hidden',kind!=='smithy');
   if(crystal) crystal.classList.toggle('hidden',kind!=='crystal');

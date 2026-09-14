@@ -537,6 +537,12 @@ html.ra-embedded-facility .facility-unlock-grid{grid-template-columns:minmax(220
 html.ra-embedded-facility #unlockPanel summary span:first-child{font-size:0}
 html.ra-embedded-facility #unlockPanel summary span:first-child::after{content:'解放設定';font-size:14px}
 </style>
+
+<style id="raPlayerFacilityUpgradeV026">
+.facility-upgrade-player-panel{display:grid;gap:14px;padding:16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,var(--paper),var(--paper2));box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 10%,transparent)}
+.facility-upgrade-player-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:12px}.facility-upgrade-player-grid label{display:grid;gap:6px;font-weight:800;color:var(--ink)}.facility-upgrade-player-grid select,.facility-upgrade-player-grid input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:8px 10px}.facility-upgrade-player-actions{display:flex;flex-wrap:wrap;gap:8px}.facility-upgrade-player-result{display:grid;gap:12px;border:1px solid var(--line);border-radius:14px;background:var(--paper);padding:14px}.facility-upgrade-result-title{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:1.05rem}.facility-upgrade-result-title span{color:var(--accent);font-weight:900}.facility-upgrade-result-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:8px}.facility-upgrade-result-grid>div{display:grid;gap:3px;padding:9px 10px;border:1px solid color-mix(in srgb,var(--line) 75%,transparent);border-radius:10px;background:var(--paper2)}.facility-upgrade-result-grid b{font-size:.78rem;color:var(--muted)}.facility-upgrade-method{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--paper2)}.facility-upgrade-method h4{margin:0 0 7px;color:var(--accent)}.facility-upgrade-method-main{font-size:1.05rem;line-height:1.7}.facility-upgrade-method-main strong{font-size:1.2em;color:var(--accent)}.facility-upgrade-effect{line-height:1.75}.facility-upgrade-removal{border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}.facility-upgrade-removal>summary{cursor:pointer;padding:11px 13px;font-weight:900;background:var(--paper2)}.facility-upgrade-removal-body{display:grid;gap:10px;padding:12px}.facility-upgrade-removal-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end}.facility-upgrade-removal-toolbar label{display:grid;gap:5px;min-width:min(360px,100%);flex:1}.facility-upgrade-removal-toolbar select{min-height:42px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:7px 9px}.facility-removal-rows{display:grid;gap:7px}.facility-removal-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper2)}.facility-removal-total{font-weight:900;padding:10px;border-radius:10px;background:color-mix(in srgb,var(--accent2) 13%,var(--paper))}.facility-upgrade-formula-note{font-size:.8rem;color:var(--muted);line-height:1.6}
+@media(max-width:720px){.facility-upgrade-player-panel{padding:11px}.facility-upgrade-player-grid,.facility-upgrade-result-grid{grid-template-columns:1fr}.facility-upgrade-removal-toolbar{align-items:stretch}.facility-upgrade-removal-toolbar>*{width:100%}.facility-removal-row{align-items:flex-start}}
+</style>
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.775 / 最終更新日：2026年9月12日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化の実行はこのページでは扱いません。</p></div></header>
@@ -627,7 +633,7 @@ const DEFAULT_GAS_WEB_APP_URL='https://script.google.com/macros/s/AKfycbxNQYC7-a
 const PLAYER_KEY_STORAGE_KEY='recraft_alchemia.player_facility.player_key';
 const UNLOCK_STATE_STORAGE_PREFIX='recraft_alchemia.player_facility.unlocked_area_ids:';
 const SECTION_DEFS={
- smith:[['sales','販売商品','鍛冶屋で購入できる品と、その段階で解放される常設店売りレシピです。宝箱限定レシピはここには表示しません。'],['craft','装備・道具作成','武器・防具・盾・バッグ・矢筒・仕掛けなどの作成です。装飾品は「装飾品」の派生図へまとめています。'],['accessory','装飾品','白環の聖印・蒼刻の魔印だけは骨董屋の常設販売品です。それ以外の装飾品は完成品を販売せず作成で入手し、エリア進行で解放される段階強化を★ランク列に揃えた派生図で確認できます。'],['materials','素材加工','自作はレシピ不要で、対応する鍛冶道具と判定成功が必要です。施設依頼は判定不要ですが加工依頼費が必要です。'],['crystal','クリスタル強化','現在の解放エリアで利用できる、スキルクリスタルの強化段階・必要素材・費用です。'],['branches','武器派生','武器種を選び、大枠の素材系統と順当強化・分岐を矢印でつないだ派生図を確認できます。武器の詳細では強化枠、必要素材、派生元、次の派生先を確認できます。未解放の派生先は「？？？」で表示します。']],
+ smith:[['sales','販売商品','鍛冶屋で購入できる品と、その段階で解放される常設店売りレシピです。宝箱限定レシピはここには表示しません。'],['craft','装備・道具作成','武器・防具・盾・バッグ・矢筒・仕掛けなどの作成です。装飾品は「装飾品」の派生図へまとめています。'],['upgrade','装備強化','強化する装備・素材・現在の強化回数・使用済み強化枠を選び、自作時の難易度と鍛冶屋へ依頼した場合の成功率・料金を確認できます。'],['accessory','装飾品','白環の聖印・蒼刻の魔印だけは骨董屋の常設販売品です。それ以外の装飾品は完成品を販売せず作成で入手し、エリア進行で解放される段階強化を★ランク列に揃えた派生図で確認できます。'],['materials','素材加工','自作はレシピ不要で、対応する鍛冶道具と判定成功が必要です。施設依頼は判定不要ですが加工依頼費が必要です。'],['crystal','クリスタル強化','現在の解放エリアで利用できる、スキルクリスタルの強化段階・必要素材・費用です。'],['branches','武器派生','武器種を選び、大枠の素材系統と順当強化・分岐を矢印でつないだ派生図を確認できます。武器の詳細では強化枠、必要素材、派生元、次の派生先を確認できます。未解放の派生先は「？？？」で表示します。']],
  apothecary:[['sales','販売商品','薬屋で購入できる調合品・調合道具と、その段階で解放される常設店売りレシピです。宝箱限定レシピはここには表示しません。'],['alchemy','調合品作成','薬品・香・爆弾・瓶などの調合です。'],['materials','素材加工','一般の加工素材はレシピ不要です。魔導インク・祈祷紙は対応レシピが必要な特殊加工としてここに表示します。施設依頼はどちらもレシピ不要・判定不要です。']],
  antique:[['sales','常設販売','骨董屋で常時購入できる品と店売りレシピです。骨董装備はG販売ではなく、魔物素材を使うガチャで入手します。武器種・防具種と★帯を選び、個体ごとに基礎性能・属性・強化枠・固定強化内容が変化します。抽選後の強化追加・変更はできません。抽選個体には通常と同じ形式の登録IDが発行されます。'],['scrolls','未鑑定スクロール価格','販売内容はランダムのため、各ランクの価格だけを表示します。']],
  eatery:[['meals','食材持ち込み料理','必要食材と調理代を確認できます。食事効果は次の探索・依頼から帰還するまで継続し、同時に1種類のみ有効です。']],
@@ -641,6 +647,7 @@ const raStorage={
   remove(key){try{if(window.localStorage)window.localStorage.removeItem(key);}catch(error){console.warn('保存情報を削除できませんでした。',error);}}
 };
 let currentFacility='smith',currentSection='sales',currentPlayerKey='',currentUnlockState={unlockedAreaIds:[],unlockedAreas:[]},currentWeaponCategory=raStorage.get('recraft_alchemia.player_facility.weapon_category')||'',branchSearch='',currentRank='all',catalogSearch='',currentCatalogCategory='all',branchLabelsCollapsed=raStorage.get(BRANCH_LABEL_COLLAPSE_STORAGE_KEY)==='1';
+let facilityUpgradeData={items:[],materialRanks:[]},facilityRemovalEntryIds=[];
 const catalogCategoryByView=Object.create(null);
 const GM_ALL_AREAS_MARKER='__GM_ALL_AREAS__';
 const WEAPON_CATEGORY_STORAGE_KEY='recraft_alchemia.player_facility.weapon_category';
@@ -695,6 +702,115 @@ function craftSupportText(row={}){
   const name=craftSupportName(row);return name?`${name}（自作時のみ・任意個数）／1個につき作成難易度－${CRAFT_SUPPORT_REDUCTION}`:'';
 }
 function uniqueChips(values){const seen=new Set();return values.map(v=>String(v??'').trim()).filter(v=>{if(!v)return false;const key=v.normalize('NFKC').replace(/\s+/g,'');if(seen.has(key))return false;seen.add(key);return true;});}
+
+
+/* v0.27: 管理HTMLの装備強化計算を、Player施設の鍛冶屋へ移植。計算式は管理HTML v90.8.775 と同一。 */
+const FACILITY_UPGRADE_STEP_RULES=[
+  {step:1,usedSlots:0,label:'現在0枠使用'},
+  {step:2,usedSlots:1,label:'現在1枠使用'},
+  {step:3,usedSlots:2,label:'現在2枠使用'},
+  {step:4,usedSlots:3,label:'現在3枠使用'},
+  {step:5,usedSlots:4,label:'現在4枠使用'},
+  {step:6,usedSlots:5,label:'現在5枠以上使用'}
+];
+const FACILITY_UPGRADE_COUNT_RULES=[
+  {value:0,label:'まだ強化していない'},
+  {value:1,label:'現在1回強化済み'},
+  {value:2,label:'現在2回強化済み'},
+  {value:3,label:'現在3回強化済み'},
+  {value:4,label:'現在4回強化済み'},
+  {value:5,label:'現在5回以上強化済み'}
+];
+const FACILITY_UPGRADE_STANDARD_EFFECTS=new Set(['威力強化','威力固定強化','命中強化','防御強化','防御行動強化','回避強化','抵抗強化','副手追撃強化','術式枠拡張','術式省力化','回復量強化','回復量固定強化','最大スタック拡張','HP強化','MP強化','力業補助','魔法補助','祈祷補助']);
+const FACILITY_UPGRADE_REMOVAL_BASIC=new Set(['威力強化','命中強化','防御行動強化','回避強化','抵抗強化','副手追撃強化','回復量強化','最大スタック拡張','HP強化','MP強化']);
+const FACILITY_UPGRADE_REMOVAL_ADVANCED=new Set(['威力固定強化','回復量固定強化','防御強化','術式枠拡張','術式省力化','力業補助','魔法補助','祈祷補助']);
+const FACILITY_UPGRADE_REMOVAL_BASE_G=20;
+const FACILITY_UPGRADE_STRONG_SPECIAL_IDS=new Set(['mat_dolgan_ley_core','mat_glaboros_mire_gland','mat_nereive_reflection_fin','mat_dolgan_magic_crystal_horn','mat_vein_salamander_core','mat_named_17','mat_named_18','mat_named_19','mat_named_20','mat_named_21','mat_named_23','mat_named_24','mat_named_27','mat_named_28','mat_named_29','mat_named_33','mat_named_38']);
+function facilityUpgradeRankValue(value,fallback=''){
+  const legacy={'低級':1,'普通':2,'良質':3,'希少':4,'高級':5},raw=String(value??'').trim();
+  if(Object.prototype.hasOwnProperty.call(legacy,raw))return legacy[raw];
+  if(typeof value==='number'&&Number.isFinite(value)&&value>=1)return Math.floor(value);
+  const m=raw.match(/(?:★|Rank\s*[:：]?\s*)?(\d+)/i),n=m?Number(m[1]):NaN;
+  return Number.isFinite(n)&&n>=1?Math.floor(n):fallback;
+}
+function facilityUpgradeRankLabel(value){const n=facilityUpgradeRankValue(value,'');return n?`★${n}`:String(value??'').trim();}
+function facilityUpgradeItems(){return Array.isArray(facilityUpgradeData.items)?facilityUpgradeData.items:[];}
+function facilityEquipmentMinimumRank(row={}){const own=facilityUpgradeRankValue(row.rank,1);return facilityUpgradeRankValue(row.upgradeMaterialMinRank,own);}
+function facilityRecommendedUpgradeSlotCost(row={}){
+  const effect=String(row.equipmentUpgradeEffect||'').trim(),id=String(row.id||'').trim();
+  if(['威力強化','命中強化','防御行動強化','回避強化','抵抗強化','副手追撃強化','回復量強化','最大スタック拡張','HP強化','MP強化'].includes(effect))return 1;
+  if(['威力固定強化','回復量固定強化','防御強化','術式枠拡張','術式省力化','力業補助','魔法補助','祈祷補助','水属性軽減','水耐性付与','光耐性付与','風属性強化','風属性軽減','風属性増幅','魔力循環','風歌省力'].includes(effect))return 2;
+  if(FACILITY_UPGRADE_STRONG_SPECIAL_IDS.has(id))return 3;
+  return 2;
+}
+function facilityUpgradeSlotCost(row={}){const explicit=Math.max(0,Number(row.equipmentUpgradeSlotCost||0));return explicit||facilityRecommendedUpgradeSlotCost(row);}
+function facilityUpgradeEquipmentRows(){
+  const type=String($('facilityUpgradeEquipmentType')?.value||'武器').trim();
+  return facilityUpgradeItems().filter(r=>{
+    if(String(r.dataKind||'アイテム').trim()==='素材'||Number(r.upgradeLimit||0)<=0)return false;
+    const itemType=String(r.itemType||'').trim();
+    return type==='防具・盾'?(itemType==='防具'||itemType==='盾'):(itemType==='武器'||itemType==='術式装備');
+  }).sort((a,b)=>facilityUpgradeRankValue(a.rank,1)-facilityUpgradeRankValue(b.rank,1)||String(a.name||'').localeCompare(String(b.name||''),'ja'));
+}
+function facilitySelectedUpgradeEquipment(){const key=String($('facilityUpgradeEquipmentSelect')?.value||'').trim();return key?facilityUpgradeEquipmentRows().find(r=>String(r.id||r.publicId||r.name||'').trim()===key)||null:null;}
+function facilityUpgradeTarget(row={}){const explicit=String(row.equipmentUpgradeTarget||'').trim();if(explicit)return explicit;const e=String(row.equipmentUpgradeEffect||'');if(/防御|回避|耐性/.test(e))return'防具';return e?'武器':'';}
+function facilityUpgradeTargetTypes(row={}){return facilityUpgradeTarget(row).split(/[・、,，／/|]+/).map(v=>v.trim()).filter(Boolean);}
+function facilityUpgradeEquipmentTokens(){
+  const equipment=facilitySelectedUpgradeEquipment(),tokens=new Set();
+  if(!equipment){const picker=String($('facilityUpgradeEquipmentType')?.value||'武器');if(picker==='防具・盾'){tokens.add('防具');tokens.add('盾');}else tokens.add('武器');return tokens;}
+  const itemType=String(equipment.itemType||'').trim(),cat=String(equipment.itemCategory||'').trim();
+  if(itemType==='防具')tokens.add('防具');else if(itemType==='盾')tokens.add('盾');else if(itemType==='武器'||itemType==='術式装備'){tokens.add('武器');if(cat)tokens.add(cat);}
+  return tokens;
+}
+function facilityUpgradeMaterialCompatible(row={}){const targets=facilityUpgradeTargetTypes(row);if(!targets.length)return true;const tokens=facilityUpgradeEquipmentTokens();return targets.some(t=>tokens.has(t));}
+function facilityUpgradeMaterials({respectMinimum=true}={}){
+  const equipment=facilitySelectedUpgradeEquipment(),minRank=equipment?facilityEquipmentMinimumRank(equipment):1;
+  return facilityUpgradeItems().filter(r=>String(r.dataKind||'').trim()==='素材'&&String(r.materialType||'').trim()==='魔物素材'&&String(r.equipmentUpgradeEffect||'').trim()&&facilityUpgradeMaterialCompatible(r)&&(!respectMinimum||!equipment||facilityUpgradeRankValue(r.rank,1)>=minRank));
+}
+function facilityUpgradeMaterialByKey(key=''){const q=String(key||'').trim();return q?facilityUpgradeMaterials({respectMinimum:false}).find(r=>String(r.id||r.publicId||r.name||'').trim()===q)||null:null;}
+function facilityUpgradeDisplayName(row={}){return String(row.equipmentUpgradeEffect||'').trim();}
+function facilityUpgradeToolRows(){return facilityUpgradeItems().filter(r=>String(r.itemType||'').trim()==='道具'&&String(r.itemCategory||'').trim()==='細工'&&String(r.toolRank??'').trim()).sort((a,b)=>facilityUpgradeRankValue(a.toolRank,999)-facilityUpgradeRankValue(b.toolRank,999));}
+function facilityUpgradeKnownToolRanks(){const s=new Set();facilityUpgradeItems().forEach(r=>{const n=facilityUpgradeRankValue(r.toolRank,'');if(n)s.add(n)});if(!s.size)[3,6,9,12,15].forEach(v=>s.add(v));return[...s].sort((a,b)=>a-b);}
+function facilityUpgradeRequiredToolRank(rank){const n=Math.max(1,Number(rank)||1);return Math.ceil(n/3)*3;}
+function facilityUpgradeToolDifficultyReduction(targetRank=1,toolMaxRank=3){const required=facilityUpgradeRequiredToolRank(targetRank),max=facilityUpgradeRankValue(toolMaxRank,3);if(max<required)return{usable:false,requiredRank:required,maxRank:max,reduction:0};return{usable:true,requiredRank:required,maxRank:max,reduction:Math.max(0,Math.floor((max-required)/3)*2)};}
+function facilityUpgradeDifficultyPenalty(materialRank,minimumRank){return Math.max(0,Number(materialRank||1)-Number(minimumRank||1));}
+function facilityUpgradeTargetValue(equipmentRank,upgradeCount){return 7+Math.max(1,Number(equipmentRank)||1)+Math.max(0,Number(upgradeCount)||0);}
+function facilityUpgradeSuccessRate(target,difficulty){return Math.max(20,Math.min(95,100-Math.max(0,Number(target||8)-8)*5-Math.max(0,Number(difficulty||0))*10));}
+function facilityUpgradeRankBasePrice(rank=''){const n=facilityUpgradeRankValue(rank,1),row=(facilityUpgradeData.materialRanks||[]).find(r=>facilityUpgradeRankValue(r.name,'')===n),price=Number(String(row?.price||'').trim());return Number.isFinite(price)&&price>0?price:0;}
+function facilityEquipmentRankPriceMultiplier(rank){const n=facilityUpgradeRankValue(rank,'');if(!n)return 0;if(n===1)return 1;if(n===2)return 2;if(n===3)return 4;if(n===4)return 8;return 12+Math.max(0,n-5)*4;}
+function facilityUpgradeWorkPrice(material={},rule=FACILITY_UPGRADE_STEP_RULES[0],equipment=null){const materialPrice=Number(String(material.sellPrice||'').trim()),base=Number.isFinite(materialPrice)&&materialPrice>0?materialPrice:facilityUpgradeRankBasePrice(material.rank),rank=facilityUpgradeRankValue(equipment?.rank,''),rankRate=facilityEquipmentRankPriceMultiplier(rank),stepRate=Math.max(1,Number(rule.usedSlots||0)+facilityUpgradeSlotCost(material));return{base,total:base&&rankRate?Math.ceil(base*stepRate*rankRate):0,rank,rankRate,stepRate};}
+function facilityUpgradeGuaranteeItems(){return facilityUpgradeItems().filter(r=>Number(r.guaranteeUpgradeMaxRank||0)>0).sort((a,b)=>Number(a.guaranteeUpgradeMaxRank)-Number(b.guaranteeUpgradeMaxRank));}
+function facilitySelectedGuaranteeItem(){const key=String($('facilityUpgradeGuaranteeItem')?.value||'').trim();return key?facilityUpgradeGuaranteeItems().find(r=>String(r.id||r.publicId||r.name||'').trim()===key)||null:null;}
+function facilityUpgradeRemovalMaterialId(row={}){return String(row.id||row.publicId||row.name||'').trim();}
+function facilityUpgradeRemovalById(id=''){const key=String(id||'').trim();return key?facilityUpgradeItems().find(r=>facilityUpgradeRemovalMaterialId(r)===key)||null:null;}
+function facilityUpgradeIsSpecial(row={}){const e=String(row.equipmentUpgradeEffect||'').trim();return!!e&&!FACILITY_UPGRADE_STANDARD_EFFECTS.has(e);}
+function facilityUpgradeRemovalRate(row={}){const e=String(row.equipmentUpgradeEffect||'').trim();if(FACILITY_UPGRADE_REMOVAL_BASIC.has(e))return 1;if(FACILITY_UPGRADE_REMOVAL_ADVANCED.has(e))return 1.25;return 1.5;}
+function facilityUpgradeRemovalClass(row={}){const r=facilityUpgradeRemovalRate(row);return r>=1.5?'特殊効果':r>=1.25?'高度強化':'基礎強化';}
+function facilityUpgradeRemovalCandidates(){if(!facilitySelectedUpgradeEquipment())return[];return facilityUpgradeItems().filter(r=>String(r.dataKind||'').trim()==='素材'&&String(r.equipmentUpgradeEffect||'').trim()&&facilityUpgradeMaterialCompatible(r)).sort((a,b)=>String(a.equipmentUpgradeEffect||'').localeCompare(String(b.equipmentUpgradeEffect||''),'ja')||facilityUpgradeRankValue(a.rank,1)-facilityUpgradeRankValue(b.rank,1)||String(a.name||'').localeCompare(String(b.name||''),'ja'));}
+function facilityUpgradePanelHtml(){return `<section class="facility-upgrade-player-panel">
+  <div class="facility-upgrade-player-grid">
+    <label>強化する装備種別<select id="facilityUpgradeEquipmentType"><option value="武器">武器</option><option value="防具・盾">防具・盾</option></select></label>
+    <label>強化する装備<select id="facilityUpgradeEquipmentSelect"><option value="">装備を選択</option></select></label>
+    <label>強化素材<select id="facilityUpgradeMaterialInput"><option value="">先に強化する装備を選択</option></select></label>
+    <label>現在の強化回数<select id="facilityUpgradeCountInput">${FACILITY_UPGRADE_COUNT_RULES.map(r=>`<option value="${r.value}">${r.label}</option>`).join('')}</select></label>
+    <label>現在の使用済み強化枠<select id="facilityUpgradeStepInput">${FACILITY_UPGRADE_STEP_RULES.map(r=>`<option value="${r.step}">${r.label}</option>`).join('')}</select></label>
+    <label>使用する細工道具（自作）<select id="facilitySmithToolRankInput"></select></label>
+    <label>強化定着剤（自作）<input id="facilityUpgradeSupportCountInput" type="number" min="0" step="1" value="0"></label>
+    <label>確定成功アイテム<select id="facilityUpgradeGuaranteeItem"><option value="">使用しない</option></select></label>
+  </div>
+  <div class="facility-upgrade-player-actions"><button type="button" class="secondary" data-facility-upgrade-check>強化内容を確認</button><button type="button" class="ghost" data-facility-upgrade-reset>選択をやり直す</button></div>
+  <div id="facilityUpgradeResult" class="facility-upgrade-player-result muted">強化する装備を選択してください。</div>
+  <details class="facility-upgrade-removal"><summary>装備強化の全解除料金を確認</summary>
+    <div class="facility-upgrade-removal-body"><div class="facility-upgrade-removal-toolbar"><label>現在付いている強化<select id="facilityRemovalMaterialSelect"><option value="">先に装備を選択</option></select></label><button type="button" class="secondary" data-facility-removal-add>強化を追加</button><button type="button" class="ghost" data-facility-removal-clear>設定をクリア</button></div><div id="facilityRemovalRows" class="facility-removal-rows"><div class="muted">登録済みの強化はありません。</div></div><div id="facilityRemovalResult" class="facility-removal-total">全解除料金：装備と現在の強化を設定してください。</div><div class="facility-upgrade-formula-note">各強化の解除額：20G × 装備ランク倍率 × 消費枠 × 効果係数。合計は10G単位で切り上げ。</div></div>
+  </details>
+</section>`;}
+function facilityRenderUpgradeEquipmentSelect(){const sel=$('facilityUpgradeEquipmentSelect');if(!sel)return;const prev=sel.value;sel.innerHTML='<option value="">装備を選択</option>'+facilityUpgradeEquipmentRows().map(r=>{const key=String(r.id||r.publicId||r.name||'').trim();return`<option value="${esc(key)}">${esc(r.name||key)}（${esc(facilityUpgradeRankLabel(r.rank))} / 最低素材${esc(facilityUpgradeRankLabel(facilityEquipmentMinimumRank(r))) }）</option>`}).join('');if([...sel.options].some(o=>o.value===prev))sel.value=prev;}
+function facilityRenderUpgradeMaterialSelect(){const sel=$('facilityUpgradeMaterialInput');if(!sel)return;const prev=sel.value,equipment=facilitySelectedUpgradeEquipment(),minRank=equipment?facilityEquipmentMinimumRank(equipment):1;let rows=facilityUpgradeMaterials({respectMinimum:true}).sort((a,b)=>facilityUpgradeRankValue(a.rank,1)-facilityUpgradeRankValue(b.rank,1)||String(a.name||'').localeCompare(String(b.name||''),'ja'));const placeholder=equipment?(rows.length?`${facilityUpgradeRankLabel(minRank)}以上の強化素材を選択`:`${facilityUpgradeRankLabel(minRank)}以上の対応素材がありません`):'先に強化する装備を選択';sel.innerHTML=`<option value="">${esc(placeholder)}</option>`+rows.map(r=>{const key=facilityUpgradeRemovalMaterialId(r),label=[facilityUpgradeRankLabel(r.rank),`消費${facilityUpgradeSlotCost(r)}枠`,facilityUpgradeDisplayName(r),'対象:'+(facilityUpgradeTarget(r)||'未設定')].filter(Boolean).join(' / ');return`<option value="${esc(key)}">${esc(r.name||key)}（${esc(label)}）</option>`}).join('');if([...sel.options].some(o=>o.value===prev))sel.value=prev;}
+function facilityRenderUpgradeToolSelect(){const sel=$('facilitySmithToolRankInput');if(!sel)return;const rows=facilityUpgradeToolRows();sel.innerHTML=rows.length?rows.map(r=>`<option value="${facilityUpgradeRankValue(r.toolRank,3)}">${esc(r.name||'細工道具')}（${esc(facilityUpgradeRankLabel(r.toolRank))}以下）</option>`).join(''):facilityUpgradeKnownToolRanks().map(r=>`<option value="${r}">${esc(facilityUpgradeRankLabel(r))}以下</option>`).join('');}
+function facilityRenderUpgradeGuaranteeSelect(){const sel=$('facilityUpgradeGuaranteeItem');if(!sel)return;sel.innerHTML='<option value="">使用しない</option>'+facilityUpgradeGuaranteeItems().map(r=>{const key=String(r.id||r.publicId||r.name||'').trim();return`<option value="${esc(key)}">${esc(r.name||key)}（${esc(facilityUpgradeRankLabel(r.guaranteeUpgradeMaxRank))}以下）</option>`}).join('');}
+function facilityRenderUpgradeResult(){const result=$('facilityUpgradeResult');if(!result)return;const equipment=facilitySelectedUpgradeEquipment();if(!equipment){result.className='facility-upgrade-player-result muted';result.textContent='先に強化する装備を選択してください。';return;}const mat=facilityUpgradeMaterialByKey($('facilityUpgradeMaterialInput')?.value||'');if(!mat){result.className='facility-upgrade-player-result muted';result.textContent=`${equipment.name||'選択装備'}の強化には${facilityUpgradeRankLabel(facilityEquipmentMinimumRank(equipment))}以上の対応素材が必要です。`;return;}const materialRank=facilityUpgradeRankValue(mat.rank,1),minimumRank=facilityEquipmentMinimumRank(equipment),equipmentRank=facilityUpgradeRankValue(equipment.rank,1),rankAllowed=materialRank>=minimumRank,rule=FACILITY_UPGRADE_STEP_RULES.find(r=>r.step===Number($('facilityUpgradeStepInput')?.value||1))||FACILITY_UPGRADE_STEP_RULES[0],difficulty=facilityUpgradeDifficultyPenalty(materialRank,minimumRank),usedSlots=Number(rule.usedSlots||0),upgradeCount=Math.max(0,Number($('facilityUpgradeCountInput')?.value||0)),slotCost=facilityUpgradeSlotCost(mat),afterSlots=usedSlots+slotCost,slotLimit=Math.max(0,Number(equipment.upgradeLimit||0)),capacityAllowed=!slotLimit||afterSlots<=slotLimit,target=facilityUpgradeTargetValue(equipmentRank,upgradeCount),toolMax=facilityUpgradeRankValue($('facilitySmithToolRankInput')?.value||3,3),tool=facilityUpgradeToolDifficultyReduction(materialRank,toolMax),toolReduction=tool.usable?tool.reduction:0,supportCount=Math.max(0,Math.floor(Number($('facilityUpgradeSupportCountInput')?.value||0))),supportReduction=supportCount*2,finalTarget=target-toolReduction-supportReduction,selfCraftUsable=rankAllowed&&tool.usable&&capacityAllowed,facilityUsable=rankAllowed&&capacityAllowed,guarantee=facilitySelectedGuaranteeItem(),guaranteeCap=Number(guarantee?.guaranteeUpgradeMaxRank||0),guaranteeUsable=!!guarantee&&guaranteeCap>=materialRank&&facilityUsable,successRate=facilityUpgradeSuccessRate(target,difficulty),price=facilityUpgradeWorkPrice(mat,rule,equipment),toolText=$('facilitySmithToolRankInput')?.selectedOptions?.[0]?.textContent||facilityUpgradeRankLabel(toolMax);result.className='facility-upgrade-player-result';result.innerHTML=`<div class="facility-upgrade-result-title"><b>${esc(mat.name||'素材名未設定')}</b><span>${esc(facilityUpgradeDisplayName(mat)||'強化内容未設定')}</span></div><div class="facility-upgrade-result-grid"><div><b>強化する装備</b><span>${esc(equipment.name||'名称未設定')}（${esc(facilityUpgradeRankLabel(equipmentRank))}）</span></div><div><b>強化難度</b><span>${esc(String(difficulty))}</span></div><div><b>現在の強化回数</b><span>${esc(String(upgradeCount))}回（今回${esc(String(upgradeCount+1))}回目）</span></div><div><b>強化枠</b><span>${esc(String(usedSlots))} / ${esc(String(slotLimit||'上限未設定'))} → 強化後${esc(String(afterSlots))}枠${capacityAllowed?'':'（枠不足）'}</span></div><div><b>基礎作成難易度</b><span>${esc(String(target))}</span></div><div><b>道具による軽減</b><span>－${esc(String(toolReduction))}</span></div><div><b>強化定着剤</b><span>${esc(String(supportCount))}個 / －${esc(String(supportReduction))}</span></div><div><b>最終作成難易度</b><span>${esc(String(finalTarget))}</span></div></div><section class="facility-upgrade-method self"><h4>自分で強化</h4><div class="facility-upgrade-method-main">${selfCraftUsable?`2D6＋細工－${esc(String(difficulty))} &gt;= <strong>${esc(String(finalTarget))}</strong>`:'使用する細工道具の対応上限不足、素材ランク不足、または強化枠不足'}</div><div class="muted">${esc(toolText)} / ${tool.usable?'使用可能':'素材ランクが対応上限を超過'}</div></section><section class="facility-upgrade-method request"><h4>鍛冶屋へ依頼</h4><div class="facility-upgrade-method-main">成功率 <strong>${facilityUsable?(guaranteeUsable?'100%':esc(String(successRate))+'%'):'強化不可'}</strong>　／　依頼価格 <strong>${facilityUsable?(price.total?esc(String(price.total))+'G':'未設定'):'算出対象外'}</strong></div>${guarantee?`<div class="muted">確定成功アイテム：${esc(guarantee.name||'名称未設定')}（${esc(facilityUpgradeRankLabel(guaranteeCap))}以下）${guaranteeUsable?'':' / 使用条件外'}</div>`:''}</section><div class="facility-upgrade-effect"><b>装備強化内容：</b>${esc(facilityUpgradeDisplayName(mat)||'未設定')}<br><b>効果説明：</b>${esc(mat.equipmentUpgradeDetail||'未設定')}</div>`;}
+function facilityRenderRemoval(){const sel=$('facilityRemovalMaterialSelect'),rowsEl=$('facilityRemovalRows'),resultEl=$('facilityRemovalResult');if(!sel||!rowsEl||!resultEl)return;const equipment=facilitySelectedUpgradeEquipment(),candidates=facilityUpgradeRemovalCandidates(),prev=sel.value;if(!equipment){sel.innerHTML='<option value="">先に装備を選択</option>';sel.disabled=true;rowsEl.innerHTML='<div class="muted">上の「強化する装備」を選択してください。</div>';resultEl.textContent='全解除料金：装備と現在の強化を設定してください。';return;}sel.disabled=false;sel.innerHTML='<option value="">現在付いている強化を選択</option>'+candidates.map(r=>`<option value="${esc(facilityUpgradeRemovalMaterialId(r))}">${esc(r.equipmentUpgradeEffect||'強化内容未設定')}（${esc(r.name||'素材名未設定')} / ${facilityUpgradeSlotCost(r)}枠 / ${facilityUpgradeRemovalClass(r)}）</option>`).join('');if([...sel.options].some(o=>o.value===prev))sel.value=prev;const configured=facilityRemovalEntryIds.map(facilityUpgradeRemovalById).filter(Boolean),rank=facilityUpgradeRankValue(equipment.rank,1),rankRate=facilityEquipmentRankPriceMultiplier(rank),priced=configured.map((row,index)=>{const slots=facilityUpgradeSlotCost(row),rate=facilityUpgradeRemovalRate(row),price=FACILITY_UPGRADE_REMOVAL_BASE_G*rankRate*slots*rate;return{row,index,slots,rate,price,classLabel:facilityUpgradeRemovalClass(row)}}),total=priced.length?Math.ceil(priced.reduce((s,x)=>s+x.price,0)/10)*10:0;if(!priced.length){rowsEl.innerHTML='<div class="muted">登録済みの強化はありません。</div>';resultEl.textContent=`全解除料金：解除対象なし（${equipment.name||'装備名未設定'} / ${facilityUpgradeRankLabel(rank)}）`;return;}rowsEl.innerHTML=priced.map(x=>`<div class="facility-removal-row"><div><b>${esc(x.row.equipmentUpgradeEffect||'強化内容未設定')}</b><span class="muted"> ／ ${esc(x.row.name||'素材名未設定')} ／ ${x.slots}枠 ／ ${x.classLabel} ／ ${Math.ceil(x.price)}G</span></div><button type="button" class="ghost" data-facility-removal-remove="${x.index}">削除</button></div>`).join('');resultEl.innerHTML=`全解除料金：<strong>${total}G</strong><div class="muted">${esc(equipment.name||'装備名未設定')} / ${esc(facilityUpgradeRankLabel(rank))}・ランク倍率×${rankRate}</div>`;}
+function facilityInitUpgradePanel(){facilityRemovalEntryIds=[];facilityRenderUpgradeEquipmentSelect();facilityRenderUpgradeToolSelect();facilityRenderUpgradeGuaranteeSelect();facilityRenderUpgradeMaterialSelect();facilityRenderUpgradeResult();facilityRenderRemoval();}
 function rankMatches(row){return currentRank==='all'||rankValue(row&&row.rank)===Number(currentRank);}
 function collectRanks(rows,branches){const ranks=new Set();if(branches){(rows||[]).forEach(cat=>{(cat.baseWeapons||[]).forEach(w=>ranks.add(rankValue(w.rank)));(cat.branches||[]).forEach(branch=>(branch.lines||[]).forEach(line=>(line.nodes||[]).forEach(n=>ranks.add(rankValue(n.rank)))));});}else{(rows||[]).forEach(r=>ranks.add(rankValue(r.rank)));}return [...ranks].sort((a,b)=>a-b);}
 function renderRankControls(rows,branches){const ranks=collectRanks(rows,branches);const wrap=$('catalogRankControls'),box=$('rankFilterButtons');if(ranks.length<2){currentRank='all';wrap.hidden=true;box.innerHTML='';return;}if(currentRank!=='all'&&!ranks.includes(Number(currentRank)))currentRank='all';wrap.hidden=false;box.innerHTML=[`<button type="button" data-rank-filter="all" class="${currentRank==='all'?'active':''}">全て</button>`,...ranks.map(rank=>`<button type="button" data-rank-filter="${rank}" class="${Number(currentRank)===rank?'active':''}">★${rank}</button>`)].join('');}
@@ -1374,6 +1490,7 @@ function buildFacilityCatalogFromGithub(commonMaster,unlockState={}){
     unlockedAreaIds,
     unlockedAreas,
     version:commonMaster.version||'',
+    upgradeData:{items:items.filter(unlocked).map(row=>({...row})),materialRanks:(Array.isArray(data.material_ranks)?data.material_ranks:[]).map(row=>({...row}))},
     catalog:{
       smith:{
         sales:sales('鍛冶屋'),
@@ -2134,6 +2251,11 @@ function communityGatheringCatalog(){
   }).join('');
 }
 function renderSpecialFacility(){
+  if(currentFacility==='smith'&&currentSection==='upgrade'){
+    $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
+    if($('catalogSearchCount'))$('catalogSearchCount').textContent='';
+    $('cards').className='catalog-wide';$('cards').innerHTML=facilityUpgradePanelHtml();requestAnimationFrame(facilityInitUpgradePanel);return true;
+  }
   if(currentFacility!=='plaza')return false;
   $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
   if($('catalogSearchCount'))$('catalogSearchCount').textContent='';
@@ -2176,7 +2298,7 @@ async function loadCatalog(playerKey,{unlockKey='',force=false,reset=false}={}){
     let displayState=unlockStateFromIds(commonMaster,mergedIds,addedAreaName);
     if(cleanPlayerKey)writeLocalUnlockedAreaIds(cleanPlayerKey,storageUnlockIds(displayState));
     let built=buildFacilityCatalogFromGithub(commonMaster,displayState);
-    catalog=built.catalog||catalog;
+    catalog=built.catalog||catalog;facilityUpgradeData=built.upgradeData||facilityUpgradeData;
     displayState={...displayState,gmAllAreas:!!built.gmAllAreas,storedUnlockAreaIds:built.storedUnlockAreaIds||storageUnlockIds(displayState),unlockedAreaIds:built.unlockedAreaIds||[],unlockedAreas:built.unlockedAreas||[]};
     currentPlayerKey=cleanPlayerKey;
     currentUnlockState=displayState;
@@ -2228,7 +2350,7 @@ async function loadCatalog(playerKey,{unlockKey='',force=false,reset=false}={}){
       let reconciled=unlockStateFromIds(commonMaster,merged,addedAreaName);
       writeLocalUnlockedAreaIds(cleanPlayerKey,storageUnlockIds(reconciled));
       built=buildFacilityCatalogFromGithub(commonMaster,reconciled);
-      catalog=built.catalog||catalog;
+      catalog=built.catalog||catalog;facilityUpgradeData=built.upgradeData||facilityUpgradeData;
       reconciled={...reconciled,gmAllAreas:!!built.gmAllAreas,storedUnlockAreaIds:built.storedUnlockAreaIds||storageUnlockIds(reconciled),unlockedAreaIds:built.unlockedAreaIds||[],unlockedAreas:built.unlockedAreas||[]};
       currentUnlockState=reconciled;renderUnlockedAreas(reconciled);render();
       const mergedIdsForCloud=storageUnlockIds(reconciled);
@@ -2261,6 +2383,20 @@ async function loadCatalog(playerKey,{unlockKey='',force=false,reset=false}={}){
   }
 }
 
+
+document.addEventListener('change',e=>{
+  if(e.target?.id==='facilityUpgradeEquipmentType'){facilityRemovalEntryIds=[];facilityRenderUpgradeEquipmentSelect();facilityRenderUpgradeMaterialSelect();facilityRenderUpgradeResult();facilityRenderRemoval();return;}
+  if(e.target?.id==='facilityUpgradeEquipmentSelect'){facilityRemovalEntryIds=[];facilityRenderUpgradeMaterialSelect();facilityRenderUpgradeResult();facilityRenderRemoval();return;}
+  if(['facilityUpgradeMaterialInput','facilityUpgradeCountInput','facilityUpgradeStepInput','facilitySmithToolRankInput','facilityUpgradeGuaranteeItem'].includes(e.target?.id)){facilityRenderUpgradeResult();return;}
+});
+document.addEventListener('input',e=>{if(e.target?.id==='facilityUpgradeSupportCountInput')facilityRenderUpgradeResult();});
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-facility-upgrade-check]')){facilityRenderUpgradeResult();return;}
+  if(e.target.closest('[data-facility-upgrade-reset]')){const type=$('facilityUpgradeEquipmentType')?.value||'武器';facilityInitUpgradePanel();if($('facilityUpgradeEquipmentType'))$('facilityUpgradeEquipmentType').value=type;facilityRenderUpgradeEquipmentSelect();facilityRenderUpgradeMaterialSelect();facilityRenderUpgradeResult();facilityRenderRemoval();return;}
+  if(e.target.closest('[data-facility-removal-add]')){const row=facilityUpgradeRemovalById($('facilityRemovalMaterialSelect')?.value||'');if(!row)return;const effect=String(row.equipmentUpgradeEffect||'').trim();if(facilityUpgradeIsSpecial(row)&&facilityRemovalEntryIds.map(facilityUpgradeRemovalById).filter(Boolean).some(r=>String(r.equipmentUpgradeEffect||'').trim()===effect))return;facilityRemovalEntryIds.push(facilityUpgradeRemovalMaterialId(row));if($('facilityRemovalMaterialSelect'))$('facilityRemovalMaterialSelect').value='';facilityRenderRemoval();return;}
+  if(e.target.closest('[data-facility-removal-clear]')){facilityRemovalEntryIds=[];facilityRenderRemoval();return;}
+  const remove=e.target.closest('[data-facility-removal-remove]');if(remove){const i=Number(remove.dataset.facilityRemovalRemove);if(Number.isInteger(i)&&i>=0)facilityRemovalEntryIds.splice(i,1);facilityRenderRemoval();return;}
+});
 function playerKeyValue(){return String($('playerKey')?.value||'').trim();}
 $('loadState').addEventListener('click',()=>loadCatalog(playerKeyValue()));
 $('playerKey').addEventListener('keydown',e=>{if(e.key==='Enter')loadCatalog(playerKeyValue());});
@@ -2459,7 +2595,7 @@ function run(){
    let wrap=document.getElementById('catalogAreaControls');
    const searchControls=document.getElementById('catalogSearchControls');
    if(!wrap){wrap=document.createElement('div');wrap.id='catalogAreaControls';wrap.className='ra-area-filter';wrap.innerHTML='<div class="ra-area-filter-label">解放エリアで絞り込み</div><div class="ra-area-filter-tabs"></div>';(searchControls?.parentNode||document.getElementById('catalogPanel')||document.querySelector('main'))?.insertBefore(wrap,searchControls?.nextSibling||null)}
-   const branches=typeof currentSection!=='undefined'&&currentSection==='branches';const special=String(currentFacility||'')==='plaza';wrap.hidden=branches||special;if(branches||special)return;
+   const branches=typeof currentSection!=='undefined'&&currentSection==='branches';const special=String(currentFacility||'')==='plaza'||(String(currentFacility||'')==='smith'&&String(currentSection||'')==='upgrade');wrap.hidden=branches||special;if(branches||special)return;
    const rows=areaRows();const ids=new Set(rows.map(a=>txt(a.id)));if(currentCatalogArea!=='all'&&!ids.has(currentCatalogArea))currentCatalogArea='all';
    wrap.querySelector('.ra-area-filter-tabs').innerHTML=[`<button type="button" data-ra-area="all" class="${currentCatalogArea==='all'?'active':''}">全て</button>`,...rows.map(a=>`<button type="button" data-ra-area="${escHtml(a.id)}" class="${currentCatalogArea===txt(a.id)?'active':''}">${escHtml(a.name||'名称未設定')}</button>`)].join('');
  }
@@ -2554,11 +2690,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   box-sizing:border-box;
   margin:2px auto 16px;
   padding:0;
-  background-image:url("assets/items/weapons/dagger-icon-background.png");
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:100% 100%;
-  filter:drop-shadow(0 5px 12px rgba(77,48,24,.10));
+  background:
+    radial-gradient(circle at 50% 43%,color-mix(in srgb,var(--accent2) 18%,transparent),transparent 58%),
+    linear-gradient(145deg,var(--paper),var(--paper2));
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 14%,transparent);
 }
 .weapon-modal-body>.ra-dagger-atlas-preview>.ra-dagger-atlas-icon{
   width:100%;

@@ -42,7 +42,7 @@ html,body{height:100%;overflow:hidden}.app{height:100svh;display:grid;grid-templ
 .sidebar{background:var(--app-deep)!important}.nav-btn:hover{background:var(--app-hover)!important}.nav-btn.active{background:var(--app-active)!important}.quick button,.update-notice button{background:var(--accent)!important;border-color:var(--accent)!important}.side-settings{margin-top:18px;padding:12px;border-top:1px solid rgba(255,255,255,.14);display:grid;gap:6px}.side-settings label{font-size:11px;font-weight:900;color:#dcc8ce}.side-settings select{width:100%;min-height:36px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;padding:6px 8px;font:inherit}.side-settings select option{color:#2f241d;background:#fffaf0}.span-12{grid-column:span 12}@media(max-width:840px){.span-12{grid-column:1/-1}}
 
 
-/* v0.25: 10種類の完全UIテーマ。アクセントだけでなく背景・紙面・枠・操作面まで一括変更。 */
+/* v0.27: 10種類の完全UIテーマ。アクセントだけでなく背景・紙面・枠・操作面まで一括変更。 */
 .app{background:radial-gradient(circle at 15% 8%,color-mix(in srgb,var(--accent2) 16%,transparent),transparent 30rem),linear-gradient(145deg,var(--bg),color-mix(in srgb,var(--bg) 88%,var(--accent) 12%))!important;color:var(--ink)}
 .workspace,.main{background:transparent;color:var(--ink)}
 .sidebar{color:#fff;border-right-color:color-mix(in srgb,var(--accent) 55%,var(--line) 45%)!important}
@@ -58,3 +58,14 @@ html,body{height:100%;overflow:hidden}.app{height:100svh;display:grid;grid-templ
 .side-settings select{background:color-mix(in srgb,var(--app-deep) 82%,#fff 18%)!important;border-color:color-mix(in srgb,var(--accent2) 48%,transparent)!important;color:#fff!important}.side-settings select option{background:var(--paper)!important;color:var(--ink)!important}
 .character-new-btn{border-color:color-mix(in srgb,var(--accent2) 50%,transparent)!important;color:#fff!important}.app-advanced>summary{color:var(--ink)!important}.app-advanced-body{color:var(--ink)!important}
 .frame-retry{background:var(--accent)!important;border-color:var(--accent)!important}.character-nav-retry{border-color:color-mix(in srgb,var(--accent2) 62%,transparent)!important;color:#fff!important}
+
+
+/* v0.27: full palette propagation to app shell, controls, and embedded-frame chrome. */
+.topbar{background:color-mix(in srgb,var(--theme-topbar) 94%,transparent)!important}
+.menu-btn{background:var(--theme-input)!important}
+.module-frame-wrap,.module-frame{background:var(--paper2)!important}
+.frame-loading{background:color-mix(in srgb,var(--paper2) 97%,transparent)!important}
+.quick button,.update-notice button:not(.ghost),.frame-retry{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 82%,#fff 18%),var(--accent))!important;border-color:var(--accent)!important;color:#fff!important}
+.quick .btn.secondary,.app-advanced .btn.secondary{background:linear-gradient(180deg,color-mix(in srgb,var(--theme-secondary) 82%,#fff 18%),var(--theme-secondary))!important;border-color:var(--theme-secondary)!important;color:var(--theme-secondary-text)!important}
+.side-settings select{background:color-mix(in srgb,var(--app-deep) 76%,var(--theme-secondary) 24%)!important}
+.app-advanced{background:linear-gradient(145deg,var(--paper),var(--paper2))!important}
