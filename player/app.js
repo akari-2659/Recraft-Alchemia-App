@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.2';
+  const APP_VERSION='1.0.3';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
   const views=[...document.querySelectorAll('.view')],nav=[...document.querySelectorAll('.nav-btn')];
