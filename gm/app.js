@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='1.0.14';
+const APP_VERSION='1.0.15';
 const ACCOUNT=window.RA_ACCOUNT;
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');
@@ -76,6 +76,9 @@ let swRegistration=null;const timers=new Map();
         body.ra-app .status.good,body.ra-app .event-card.random{background:color-mix(in srgb,var(--paper) 82%,#bfe2c9 18%)!important}
         body.ra-app .status.bad{background:color-mix(in srgb,var(--paper) 84%,#e8b8b3 16%)!important}
         body.ra-app .status.warn,body.ra-app .event-card.fixed{background:color-mix(in srgb,var(--paper) 82%,var(--theme-highlight) 18%)!important}
+        body.ra-app .drop-row.success{background:color-mix(in srgb,var(--paper) 58%,#bfe2c9 42%)!important;border-color:color-mix(in srgb,var(--good) 68%,var(--line) 32%)!important;box-shadow:inset 4px 0 0 var(--good),0 6px 14px color-mix(in srgb,var(--good) 12%,transparent)!important}
+        body.ra-app .drop-row.success>div>b{color:var(--good)!important}
+        body.ra-app .drop-row.success .pill:last-child{background:color-mix(in srgb,var(--paper2) 58%,#bfe2c9 42%)!important;border-color:color-mix(in srgb,var(--good) 55%,var(--line) 45%)!important;color:var(--good)!important;font-weight:900!important}
 
         /* v1.0.10: 派生図もカラーテーマの文字・紙面・枠色へ統一し、固定色による低コントラストを解消。 */
         body.ra-app :is(.branch-graph-scroll,.branch-table-scroll,.accessory-branch-scroll){background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
