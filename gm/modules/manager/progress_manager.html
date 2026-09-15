@@ -268,6 +268,64 @@ body.progress-modal-open{overflow:hidden}
 html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{display:none!important}
 html.ra-web-embedded main{margin-top:0}
 </style>
+
+<style id="raReadabilityAuditV1016">
+/* App v1.0.16: 実レンダリング確認に基づく進行管理の視認性・余白調整 */
+body{font-size:16px}
+main{gap:18px}
+.panel{padding:18px}
+h2{font-size:19px;line-height:1.4;margin-bottom:14px}
+h3{font-size:16px;line-height:1.45}
+.muted{font-size:14px;line-height:1.7}
+.small{font-size:13px}
+button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:10px;padding-bottom:10px}
+.tab-nav,.quest-category-bar{gap:8px!important;padding:8px!important}
+.tab-nav>button,.quest-category-bar>button{min-height:42px!important}
+.buttons,.quest-tools{gap:8px!important;padding:9px!important}
+.status,.result,.card{font-size:14px}
+
+/* アイテムドロップ：個体一覧と結果を情報ブロックとして明確に分離 */
+#dropEncounterPanel{display:grid;gap:12px}
+#lastEncounterSummary{margin-top:0;padding:12px 14px}
+.encounter-drop-actions{display:flex;flex-wrap:wrap;gap:8px}
+.encounter-drop-actions>button{min-height:40px}
+.encounter-drop-list{display:grid;gap:9px}
+.encounter-drop-instance{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:11px 12px}
+.encounter-drop-title{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:5px;font-size:15px;line-height:1.4}
+.encounter-dismantle-check{display:flex;align-items:flex-start;gap:8px;margin:8px 0 0;color:var(--ink);font-size:13.5px;font-weight:700;line-height:1.45}
+.encounter-dismantle-check input{margin-top:1px!important}
+.drop-copy-actions{margin-top:0!important}
+#dropResult{margin-top:12px;padding:12px}
+.encounter-drop-result-list{display:grid;gap:12px;margin-top:12px}
+.encounter-drop-result-group{border:1px solid #eadcc6;border-radius:12px;background:#fffdf8;padding:12px}
+.encounter-drop-result-group h4{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 8px;font-size:15px}
+.encounter-drop-result-group .drop-list{margin-top:8px}
+.drop-row{grid-template-columns:minmax(0,1fr) auto auto!important;gap:10px;padding:10px 12px;min-height:42px;font-size:14px}
+.drop-row.success{border-color:#87c59f!important;background:#effcf4!important;box-shadow:inset 4px 0 0 var(--good);font-weight:700}
+.drop-row.fail{opacity:.66}
+
+@media(max-width:620px){
+  main{padding:12px;gap:12px}
+  .grid{gap:12px}
+  .panel{padding:14px;border-radius:16px}
+  h2{font-size:18px;margin-bottom:12px}
+  .muted{font-size:13.5px}
+  .small{font-size:13px}
+  button,.tab-btn,.quest-category-btn{min-height:44px;font-size:14px;padding:10px 11px}
+  .tab-nav,.quest-category-bar,.buttons,.quest-tools{gap:7px!important;padding:7px!important}
+  .tab-nav>button,.quest-category-bar>button{min-height:44px!important}
+  .encounter-drop-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .encounter-drop-actions>button{width:100%!important}
+  .encounter-drop-instance{padding:11px}
+  .encounter-dismantle-check{font-size:13.5px}
+  .drop-copy-actions{display:grid!important;grid-template-columns:1fr!important}
+  .drop-copy-actions>button{width:100%!important}
+  #dropResult{padding:10px}
+  .encounter-drop-result-group{padding:11px}
+  .drop-row{grid-template-columns:minmax(0,1fr) auto auto!important;gap:7px;padding:10px;font-size:13.5px}
+  .drop-row>span:nth-child(2),.drop-row>b{white-space:nowrap}
+}
+</style>
 </head>
 <body class="ra-app ra-manager ra-progress">
 <div class="ra-build-info">Version：v90.8.784 / 最終更新日：2026年9月15日</div>
