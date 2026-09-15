@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.779</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.784</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -424,7 +424,7 @@
   .monster-output-panel textarea{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.55;min-height:180px;white-space:pre;overflow:auto}
   .monster-card-actions .secondary{background:#6d7e68;color:white;border-color:transparent}
 
-.monster-line-editor{display:grid;gap:8px}.monster-line-head,.monster-line-row{display:grid;gap:6px;align-items:center}.monster-line-head{font-size:11px;color:var(--muted);font-weight:900}.monster-line-head.action-head,.monster-line-row[data-monster-action-row]{grid-template-columns:1fr .78fr 1.08fr .52fr .82fr .52fr .70fr 1.22fr auto}.monster-line-head.drop-head,.monster-line-row[data-monster-drop-row]{grid-template-columns:1fr 1fr 1.45fr .75fr .65fr auto}.monster-line-row input,.monster-line-row select{min-width:0}
+.monster-line-editor{display:grid;gap:8px}.monster-line-head,.monster-line-row{display:grid;gap:6px;align-items:center}.monster-line-head{font-size:11px;color:var(--muted);font-weight:900}.monster-line-head.action-head,.monster-line-row[data-monster-action-row]{grid-template-columns:1fr .76fr .66fr 1.04fr .50fr .80fr .50fr .68fr 1.20fr auto}.monster-line-head.drop-head,.monster-line-row[data-monster-drop-row]{grid-template-columns:1fr 1fr 1.45fr .75fr .65fr auto}.monster-line-row input,.monster-line-row select{min-width:0}
   @media(max-width:980px){
     .monster-line-head.action-head{display:none}
     .monster-line-row[data-monster-action-row]{grid-template-columns:repeat(2,minmax(0,1fr));padding:9px;border:1px solid var(--line);border-radius:12px;background:#fffaf3}
@@ -1237,7 +1237,7 @@ main>.subnav-block:not(.hidden){position:sticky;top:58px;z-index:59;padding-top:
 @media(max-width:720px){.ra-build-info{text-align:left}.title-card .subtitle,.dbid{display:none}header{padding:8px!important}.title-card{padding:10px!important}.title-card h1{font-size:1.25rem!important}.toolbar{gap:6px!important}.ra-admin-fold-body{padding:8px}main>.subnav-block:not(.hidden){top:52px}#recordInternalCategoryBlock:not(.hidden){top:104px}.tabs,.subtabs{max-height:106px}}
 </style>
 
-<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.779-monster-turn-band-audit-20260914">
+<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.780-monster-turn-band-audit-20260914">
 
 <script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
 
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.779 / 最終更新日：2026年9月14日</div>
+<div class="ra-build-info">Version：v90.8.784 / 最終更新日：2026年9月15日</div>
 
 <header>
   <div class="title-card">
@@ -2156,8 +2156,8 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.779';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.779';
+const RECRAFT_DB_VERSION = 'v90.8.784';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.784';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -2181,10 +2181,10 @@ const SCHEMA = {
   event_tables: ['id','tableId','areaName','eventName','eventType','description','conditionType','conditionValue','timeSlots','weatherWeights','timeWeights','rumorScope','checkType','targetValue','treasureTableId','rewardTableId','rewardDrawCount','encounterCountRule','encounterCountMin','encounterCountMax','encounterFormation','encounterComposition','result','progressEffect','notes','updatedAt','ownerKey','createdBy'],
   treasure_tables: ['id','tableId','tablePurpose','areaName','treasureRank','chestName','hasLock','unlockDifficulty','hasTrap','trapDetectDifficulty','trapDisarmDifficulty','trapName','trapEffect','hasLock','hasTrap','entryType','entryName','entryPublicId','recipeName','scrollRank','quantity','weight','description','enabled','notes','updatedAt','ownerKey','createdBy'],
   appraisal_rules: ['id','facilityName','scrollRank','difficulty','spellType','spellRank','candidateTags','description','enabled','notes','updatedAt','ownerKey','createdBy'],
-  monsters: ['id','name','monsterType','monsterTraits','rank','hp','mp','evasionValue','resistValue','defenseValue','initiative','encounterValue','individualValueEnabled','individualValueRule','dismantleDifficulty','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','passiveName','passiveEffect','fixedActionNames','actions','drops','habit','description','notes','updatedAt','ownerKey','createdBy']
+  monsters: ['id','name','monsterType','monsterTraits','rank','hp','mp','evasionValue','resistValue','defenseValue','initiative','encounterValue','individualValueEnabled','individualValueRule','dismantleDifficulty','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','passiveName','passiveEffect','fixedActionNames','passiveOnlyActionNames','actionSelectionRules','actions','drops','habit','description','notes','updatedAt','ownerKey','createdBy']
 };
 const LABELS = {
-  id:'ID', publicId:'公開ID', dataKind:'登録種別', itemType:'アイテム種別', itemCategory:'アイテムカテゴリ', materialType:'素材種別', materialCategory:'素材カテゴリ', name:'名称', csVisible:'キャラシ表示', price:'価格', buyPrice:'買値', sellPrice:'売値', recipePrice:'販売価格', limitedRecipePrice:'旧限定販売価格', recipeSellPrice:'売値', recipeSource:'レシピ入手先', craftSkill:'製作技能', rank:'ランク', toolRank:'使用可能上限ランク', guaranteeUpgradeMaxRank:'強化確定上限ランク', craftType:'製作区分', baseItem:'派生元', branchType:'派生系統名', equipSlot:'装備/使用枠', skill:'使用技能', power:'威力', baseValue:'基礎技能値', hitMod:'命中補正', alwaysDefense:'防御値', guardValue:'防御行動値', evasionMod:'回避補正', maxStack:'最大スタック数', ammoUse:'矢弾消費', ammoKind:'矢弾種別', compatibleWeaponTypes:'対応武器種', quiverCapacity:'矢筒収納種類数', bagCapacity:'バッグ容量', offhandBonus:'副手追撃値', reloadTurns:'装填ターン', spellSlots:'術式追加枠', modifiers:'補正値', upgradeLimit:'強化枠上限', upgradeMaterialMinRank:'強化素材最低ランク', mpCost:'MP', target:'対象', checkType:'判定', element:'属性', enchantTarget:'エンチャント対象', enchantEffectType:'エンチャント効果種別', enchantValue:'エンチャント値', enchantDuration:'持続期間', enchantRounds:'持続ラウンド', enchantStackRule:'重複ルール', physicalAffinity:'物', fireAffinity:'火', waterAffinity:'水', windAffinity:'風', thunderAffinity:'雷', lightAffinity:'光', darkAffinity:'闇', neutralAffinity:'無', pullRule:'引き寄せ', passiveName:'固有パッシブ名', passiveEffect:'固有パッシブ効果', fixedActionNames:'固定選出技', habit:'習性', description:'説明', effect:'旧互換効果全文', equipmentEffects:'固有効果', intrinsicEffects:'武器種固有', processingSkill:'加工技能', processingToolType:'対応道具', processingToolRank:'必要道具ランク', processingRequiredMaterials:'加工に必要な素材', processingResultCount:'加工完成数', processingDifficulty:'加工難易度', processingFee:'施設加工依頼費', source:'入手先', category:'分類', resultItem:'完成品', resultKind:'完成品種別', resultCount:'完成数', requiredMaterials:'必要素材', difficulty:'難度', usageTags:'用途タグ', equipmentUpgradeEffect:'装備強化内容', equipmentUpgradeSlotCost:'消費強化枠', equipmentUpgradeDetail:'効果説明', equipmentUpgradeTarget:'強化対象', namedProcessingOptions:'異名加工データ', unlockAreaKey:'必要解放エリア', unlockFacility:'解放施設', tags:'タグ', notes:'メモ', updatedAt:'更新日時', type:'種別', role:'役割', scrollPrice:'スクロール価格', setItem:'必要装備', rewardMin:'最小報酬', rewardMax:'最大報酬', rewardAvg:'基準報酬', scale:'規模', description:'説明', extraRewards:'追加報酬', sortOrder:'表示順', enabled:'有効', ownerKey:'管理キー', createdBy:'登録者', questCategory:'クエスト分類', requestKind:'依頼区分', questType:'内容種別', areaName:'エリア', questLocation:'実施場所', recommendedSkills:'推奨技能', rewardScope:'報酬範囲', deliveryItems:'納品物', progressStep:'進行度上昇', fixedEvents:'固定イベント', clearCondition:'クリア条件', bossMonster:'設定魔物', questBossName:'クエストボス名', questBossFormation:'クエストボス配置', questBossComposition:'クエストボス構成', battleRoundLimit:'戦闘制限ラウンド', battleRoundSuccess:'制限成功条件', battleRoundFailure:'制限失敗条件', rewardMoney:'報酬金', rewardItems:'報酬アイテム', bonusPoints:'ボーナスポイント', unlockResult:'解放内容', areaType:'エリア種別', difficulty:'難度', unlockKey:'エリア解放キー', unlockOrder:'解放順', unlockCondition:'解放条件', mainMaterials:'主な素材', mainMonsters:'主な魔物', fieldEffect:'フィールド効果', weatherProfiles:'天気プロファイル', timeProfiles:'時間帯プロファイル', eventTableId:'イベント表ID', tableId:'表ID', eventName:'イベント名', eventType:'イベント種別', targetValue:'目標値', treasureTableId:'宝箱表ID', rewardTableId:'入手アイテム表ID', rewardDrawCount:'抽選枠数', tablePurpose:'表用途', encounterCountRule:'出現数ルール', encounterCountMin:'最小出現数', encounterCountMax:'最大出現数', encounterFormation:'配置', encounterComposition:'出現構成', treasureRank:'宝箱ランク', chestName:'宝箱名', hasLock:'鍵', unlockDifficulty:'解錠基準難易度', hasTrap:'罠', trapDetectDifficulty:'罠感知基準難易度', trapDisarmDifficulty:'罠解除基準難易度', trapName:'罠の種類', trapEffect:'罠の効果', entryType:'中身種別', entryName:'中身名称', entryPublicId:'中身公開ID', recipeName:'レシピ名', scrollRank:'スクロールランク', quantity:'数量', weight:'重み', facilityName:'施設名', spellType:'術式種別', spellRank:'術式ランク', candidateTags:'候補タグ', conditionType:'前提条件', conditionValue:'条件内容', timeSlots:'有効時間帯', weatherWeights:'天気別抽選倍率', timeWeights:'時間帯別抽選倍率', rumorScope:'噂の有効範囲', result:'結果', progressEffect:'進行/探索効果', monsterType:'魔物種別', monsterTraits:'魔物特性', hp:'HP', mp:'MP', evasionValue:'回避値', resistValue:'抵抗値', defenseValue:'防御値', initiative:'先制値', encounterValue:'遭遇値', individualValueEnabled:'個体値有効', individualValueRule:'個体値ルール', dismantleDifficulty:'解体難易度', actions:'行動', drops:'ドロップ', weaponType:'武器種', timing:'タイミング', cost:'消費', ct:'CT', drawWeight:'排出ウェイト', balanceTier:'強さ区分', balanceReason:'バランス評価', probability:'排出率', unlockCondition:'解放条件'
+  id:'ID', publicId:'公開ID', dataKind:'登録種別', itemType:'アイテム種別', itemCategory:'アイテムカテゴリ', materialType:'素材種別', materialCategory:'素材カテゴリ', name:'名称', csVisible:'キャラシ表示', price:'価格', buyPrice:'買値', sellPrice:'売値', recipePrice:'販売価格', limitedRecipePrice:'旧限定販売価格', recipeSellPrice:'売値', recipeSource:'レシピ入手先', craftSkill:'製作技能', rank:'ランク', toolRank:'使用可能上限ランク', guaranteeUpgradeMaxRank:'強化確定上限ランク', craftType:'製作区分', baseItem:'派生元', branchType:'派生系統名', equipSlot:'装備/使用枠', skill:'使用技能', power:'威力', baseValue:'基礎技能値', hitMod:'命中補正', alwaysDefense:'防御値', guardValue:'防御行動値', evasionMod:'回避補正', maxStack:'最大スタック数', ammoUse:'矢弾消費', ammoKind:'矢弾種別', compatibleWeaponTypes:'対応武器種', quiverCapacity:'矢筒収納種類数', bagCapacity:'バッグ容量', offhandBonus:'副手追撃値', reloadTurns:'装填ターン', spellSlots:'術式追加枠', modifiers:'補正値', upgradeLimit:'強化枠上限', upgradeMaterialMinRank:'強化素材最低ランク', mpCost:'MP', target:'対象', checkType:'判定', element:'属性', enchantTarget:'エンチャント対象', enchantEffectType:'エンチャント効果種別', enchantValue:'エンチャント値', enchantDuration:'持続期間', enchantRounds:'持続ラウンド', enchantStackRule:'重複ルール', physicalAffinity:'物', fireAffinity:'火', waterAffinity:'水', windAffinity:'風', thunderAffinity:'雷', lightAffinity:'光', darkAffinity:'闇', neutralAffinity:'無', pullRule:'引き寄せ', passiveName:'固有パッシブ名', passiveEffect:'固有パッシブ効果', fixedActionNames:'固定選出技', passiveOnlyActionNames:'パッシブ専用技', actionSelectionRules:'技選出候補条件', habit:'習性', description:'説明', effect:'旧互換効果全文', equipmentEffects:'固有効果', intrinsicEffects:'武器種固有', processingSkill:'加工技能', processingToolType:'対応道具', processingToolRank:'必要道具ランク', processingRequiredMaterials:'加工に必要な素材', processingResultCount:'加工完成数', processingDifficulty:'加工難易度', processingFee:'施設加工依頼費', source:'入手先', category:'分類', resultItem:'完成品', resultKind:'完成品種別', resultCount:'完成数', requiredMaterials:'必要素材', difficulty:'難度', usageTags:'用途タグ', equipmentUpgradeEffect:'装備強化内容', equipmentUpgradeSlotCost:'消費強化枠', equipmentUpgradeDetail:'効果説明', equipmentUpgradeTarget:'強化対象', namedProcessingOptions:'異名加工データ', unlockAreaKey:'必要解放エリア', unlockFacility:'解放施設', tags:'タグ', notes:'メモ', updatedAt:'更新日時', type:'種別', role:'役割', scrollPrice:'スクロール価格', setItem:'必要装備', rewardMin:'最小報酬', rewardMax:'最大報酬', rewardAvg:'基準報酬', scale:'規模', description:'説明', extraRewards:'追加報酬', sortOrder:'表示順', enabled:'有効', ownerKey:'管理キー', createdBy:'登録者', questCategory:'クエスト分類', requestKind:'依頼区分', questType:'内容種別', areaName:'エリア', questLocation:'実施場所', recommendedSkills:'推奨技能', rewardScope:'報酬範囲', deliveryItems:'納品物', progressStep:'進行度上昇', fixedEvents:'固定イベント', clearCondition:'クリア条件', bossMonster:'設定魔物', questBossName:'クエストボス名', questBossFormation:'クエストボス配置', questBossComposition:'クエストボス構成', battleRoundLimit:'戦闘制限ラウンド', battleRoundSuccess:'制限成功条件', battleRoundFailure:'制限失敗条件', rewardMoney:'報酬金', rewardItems:'報酬アイテム', bonusPoints:'ボーナスポイント', unlockResult:'解放内容', areaType:'エリア種別', difficulty:'難度', unlockKey:'エリア解放キー', unlockOrder:'解放順', unlockCondition:'解放条件', mainMaterials:'主な素材', mainMonsters:'主な魔物', fieldEffect:'フィールド効果', weatherProfiles:'天気プロファイル', timeProfiles:'時間帯プロファイル', eventTableId:'イベント表ID', tableId:'表ID', eventName:'イベント名', eventType:'イベント種別', targetValue:'目標値', treasureTableId:'宝箱表ID', rewardTableId:'入手アイテム表ID', rewardDrawCount:'抽選枠数', tablePurpose:'表用途', encounterCountRule:'出現数ルール', encounterCountMin:'最小出現数', encounterCountMax:'最大出現数', encounterFormation:'配置', encounterComposition:'出現構成', treasureRank:'宝箱ランク', chestName:'宝箱名', hasLock:'鍵', unlockDifficulty:'解錠基準難易度', hasTrap:'罠', trapDetectDifficulty:'罠感知基準難易度', trapDisarmDifficulty:'罠解除基準難易度', trapName:'罠の種類', trapEffect:'罠の効果', entryType:'中身種別', entryName:'中身名称', entryPublicId:'中身公開ID', recipeName:'レシピ名', scrollRank:'スクロールランク', quantity:'数量', weight:'重み', facilityName:'施設名', spellType:'術式種別', spellRank:'術式ランク', candidateTags:'候補タグ', conditionType:'前提条件', conditionValue:'条件内容', timeSlots:'有効時間帯', weatherWeights:'天気別抽選倍率', timeWeights:'時間帯別抽選倍率', rumorScope:'噂の有効範囲', result:'結果', progressEffect:'進行/探索効果', monsterType:'魔物種別', monsterTraits:'魔物特性', hp:'HP', mp:'MP', evasionValue:'回避値', resistValue:'抵抗値', defenseValue:'防御値', initiative:'先制値', encounterValue:'遭遇値', individualValueEnabled:'個体値有効', individualValueRule:'個体値ルール', dismantleDifficulty:'解体難易度', actions:'行動', drops:'ドロップ', weaponType:'武器種', timing:'タイミング', cost:'消費', ct:'CT', drawWeight:'排出ウェイト', balanceTier:'強さ区分', balanceReason:'バランス評価', probability:'排出率', unlockCondition:'解放条件'
 };
 function fieldLabelFor(key='', field=''){
   const base=baseKeyForTable(key);
@@ -2213,9 +2213,9 @@ const FORM_PRIMARY_FIELDS = {
   event_tables: ['tableId','areaName','eventName','eventType','description','conditionType','conditionValue','timeSlots','weatherWeights','timeWeights','rumorScope','checkType','targetValue','treasureTableId','rewardTableId','rewardDrawCount','encounterCountRule','encounterCountMin','encounterCountMax','encounterFormation','encounterComposition','result','progressEffect','notes'],
   treasure_tables: ['tableId','tablePurpose','areaName','treasureRank','chestName','hasLock','unlockDifficulty','hasTrap','trapDetectDifficulty','trapDisarmDifficulty','trapName','trapEffect','hasLock','hasTrap','entryType','entryName','entryPublicId','recipeName','scrollRank','quantity','weight','description','enabled','notes'],
   appraisal_rules: ['facilityName','scrollRank','difficulty','spellType','spellRank','candidateTags','description','enabled','notes'],
-  monsters: ['name','monsterType','monsterTraits','rank','hp','mp','evasionValue','resistValue','defenseValue','initiative','encounterValue','individualValueEnabled','individualValueRule','dismantleDifficulty','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','passiveName','passiveEffect','fixedActionNames','actions','drops','habit','description','notes']
+  monsters: ['name','monsterType','monsterTraits','rank','hp','mp','evasionValue','resistValue','defenseValue','initiative','encounterValue','individualValueEnabled','individualValueRule','dismantleDifficulty','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','passiveName','passiveEffect','fixedActionNames','passiveOnlyActionNames','actionSelectionRules','actions','drops','habit','description','notes']
 };
-const FORM_LONG_FIELDS = new Set(['habit','description','description','effect','notes','extraRewards','tags','usageTags','fixedEvents','clearCondition','battleRoundSuccess','battleRoundFailure','rewardItems','deliveryItems','unlockResult','mainMaterials','mainMonsters','weatherProfiles','timeProfiles','weatherWeights','timeWeights','result','progressEffect','actions','drops','passiveEffect','modifiers','encounterComposition','equipmentUpgradeDetail','equipmentEffects','intrinsicEffects','balanceReason','individualValueRule']);
+const FORM_LONG_FIELDS = new Set(['habit','description','description','effect','notes','extraRewards','tags','usageTags','fixedEvents','clearCondition','battleRoundSuccess','battleRoundFailure','rewardItems','deliveryItems','unlockResult','mainMaterials','mainMonsters','weatherProfiles','timeProfiles','weatherWeights','timeWeights','result','progressEffect','actions','drops','passiveEffect','passiveOnlyActionNames','actionSelectionRules','modifiers','encounterComposition','equipmentUpgradeDetail','equipmentEffects','intrinsicEffects','balanceReason','individualValueRule']);
 const RECORD_CARD_KEYS = new Set(['items','materials','recipes','spells','skills','exploration_areas']);
 const FIELD_PLACEHOLDERS = {
   id:'種別は任意IDを入力。未入力なら自動生成', name:'例：ポーション', csVisible:'TRUEならキャラシ側のDB装備/アイテム候補に表示。FALSEならDBには残るが候補に出しません。', dataKind:'アイテム / 素材', itemType:'例：武器', itemCategory:'例：片手武器', materialType:'例：採取素材', materialCategory:'例：草花', price:'例：100', buyPrice:'例：180', sellPrice:'例：160', rank:'魔物・素材・装備・道具・レシピ・術式・クエスト・宝箱などは1以上の数値。すべての画面で★N表示', toolRank:'例：6。この道具で扱える上限ランク。道具本体も★6に揃え、飛び番を許可します', guaranteeUpgradeMaxRank:'例：6。このアイテムを使うと★6以下の強化素材を使う装備強化が確定成功になります。', description:'見た目や雰囲気を入力', effect:'数値・ルール処理を入力', source:'例：森、獣系魔物、調合', craftType:'例：武器派生 / 調合 / 鍛冶', baseItem:'例：ロングソード。武器派生の派生元を選びます。', branchType:'例：鉱石 / 獣牙 / 植生 / 異界 / 草角。通常武器は大枠の素材系統、ボス武器は素材・特徴を表す固有系統を入力します。画面では「鉱石派生」のように表示します。', equipmentUpgradeEffect:'効果が単独で分かる名称を設定します。例：威力強化、威力固定強化、回復量強化、回復量固定強化、水属性軽減、抵抗妨害。数値や固有名を別欄へ分けません。', equipmentUpgradeSlotCost:'命中強化・回避強化などの基礎補正は1枠。威力固定強化・回復量固定強化・防御強化・術式枠拡張・術式省力化・属性系効果・技能補助は2枠以上。強力な複合効果やボス固有効果は3枠にできます。装備強化に防御値無視は設定しません。', equipmentUpgradeDetail:'すべての装備強化で、実際に適用される処理・補正・条件・重複可否を具体的に入力します。', upgradeMaterialMinRank:'例：3。この装備を強化できる素材の最低ランク。空欄時は装備ランクを使用します。', bagCapacity:'例：8。バッグ種別アイテムの所持品枠数。maxStackには入れません。', usageTags:'例：回復,薬,探索', notes:'補足メモ', sortOrder:'例：10', ownerKey:'空欄なら公開データ', createdBy:'例：GM名・制作者名', requestKind:'通常依頼のみ：拠点内依頼 / エリア依頼 / 納品依頼。重要クエストは空欄', questType:'例：仕分け / 採取 / 討伐 / 納品 / 制限戦闘 / 運搬保護 / 継続行動', battleRoundLimit:'制限戦闘・継続行動など、戦闘中に期限がある依頼へ設定。例：3。第3ラウンド終了までに成功条件を満たす。期限がない依頼は空欄', battleRoundSuccess:'例：3ラウンド以内に指定魔物を撃破する。', battleRoundFailure:'例：第3ラウンド終了時に指定魔物が生存している場合、対象が撤退してクエスト失敗。', recommendedSkills:'納品依頼以外に設定。例：採取・戦闘系技能', rewardScope:'各PC / パーティー共通', deliveryItems:'例：薬草×3, 中和剤×2', areaName:'例：街はずれの草原', questLocation:'例：拠点 / 街はずれの草原', progressStep:'進行ボタン1回で加算する数値。標準4段階は25、長めの調査・巡回・運搬保護・継続行動は20、短い採取等は50、拠点内単発は100を目安に内容で選択', fixedEvents:'クエスト専用。固定で発生させたい進行区切りだけ登録します。未登録の区切り（0%を含む）は対象エリアのランダムイベントを使用します。探索エリアには通常固定イベントを設定しません', clearCondition:'クリア条件を入力', bossMonster:'例：プチスライム', rewardMoney:'例：80G', rewardItems:'例：ポーション×1', unlockResult:'例：通常依頼の受注許可', areaType:'例：草原 / 異界', difficulty:'例：★1', unlockKey:'例：7UCX-JAUE-E2TH-GLRG-MEGW。エリア名や順番を推測しにくい文字列を設定', unlockOrder:'例：2。表示・並び替え・進行目安に使用します。施設HTMLの自動累積解放には使用しません', unlockAreaKey:'例：area_nearby_forest。商品・作成・派生に必要なエリアID', unlockCondition:'例：初期解放', mainMaterials:'例：薬草, 澄んだ水', mainMonsters:'例：プチスライム', eventTableId:'例：evt_grass_trial', tableId:'例：evt_grass_trial', eventName:'例：薬草の群生', eventType:'例：採取', targetValue:'例：8', treasureTableId:'例：grass_common_cache', rewardTableId:'例：reward_outskirts_grass。拠点内イベント・拠点内依頼・一部エリアイベントで使う入手アイテム表', rewardDrawCount:'例：1 / 2。入手アイテム表から何枠抽選するか', tablePurpose:'宝箱 / 入手アイテム。入手アイテム表は宝箱抽選画面には表示しません', treasureRank:'例：1。画面では★1と表示します', entryType:'例：換金品 / アイテム / レシピ / 未鑑定スクロール', entryName:'例：未鑑定の魔法スクロール：★1', entryPublicId:'例：RCA-XXXX-XXXX', recipeName:'例：ポーション', scrollRank:'例：1。画面では★1と表示します', quantity:'例：1 / 1D3', weight:'例：10。数字が大きいほど出やすい', facilityName:'例：宿屋', spellType:'例：魔法', spellRank:'例：1。画面では★1と表示します', candidateTags:'例：火,攻撃。空欄ならランク内全候補', result:'成功時の結果', progressEffect:'例：次の採取判定+1、または補足効果', monsterType:'大分類：粘体 / 獣 / 虫 / 植物 / 爬虫 / 水棲 / 軟体 / 霊体 / 造魔 / 竜 / 異界', monsterTraits:'例：飛行,甲殻,異界。複数指定はカンマ区切り', encounterValue:'1～3。魔物単体の戦闘負荷。エリアではなく能力・行動の強さで設定します。', individualValueEnabled:'通常魔物はTRUE、二つ名個体はFALSE。エリアボスはFALSEまたは空欄。', individualValueRule:'通常魔物の遭遇時個体値ルール。二つ名個体・ボスは固定値のため空欄。', dismantleDifficulty:'例：7。採取技能>=解体難易度で判定し、成功時は全ドロップ率+10%（上限100%）。目安はチュートリアル5～6、通常6～9、ボス10以上', pullRule:'可 / 不可', passiveName:'例：胞子反応', passiveEffect:'発動条件・処理・回数制限を具体的に入力', habit:'生息場所・群れ方・警戒時の行動などを1～3文で入力', actions:'行動内容', drops:'例：ゼラチン液：100%（1個）\nぷるぷる膜：50%（1個）', modifiers:'例：hit\t+1\t命中補正。行追加式で能力/技能/戦闘ステータス補正を登録します。', reloadTurns:'例：1。攻撃後に必要な装填ターン数。クロスボウ/ヘヴィクロスボウは1が目安です。'
@@ -2234,7 +2234,9 @@ FIELD_PLACEHOLDERS.ct='例：2 / 戦闘終了 / クエスト終了';
 FIELD_PLACEHOLDERS.drawWeight='例：100。大きいほど排出されやすい。';
 FIELD_PLACEHOLDERS.balanceTier='例：標準 / 強力 / 最上位';
 FIELD_PLACEHOLDERS.balanceReason='排出ウェイトを決めた理由や、効果の強さ・条件の狭さを記載。';
-FIELD_PLACEHOLDERS.fixedActionNames='通常魔物のみ。遭遇時に選ばれる3技のうち、必ず含めたい行動名をカンマ区切りで0～2個指定します。固有パッシブが特定行動を参照する場合も、その行動をここへ明示して構いません。例：雷脈充填 / 高空旋回,風脈急襲';
+FIELD_PLACEHOLDERS.fixedActionNames='通常魔物・候補制二つ名で、通常の所持技抽選に必ず含めたい行動名をカンマ区切りで0～2個指定します。パッシブで参照されるだけでは固定選出になりません。例：雷脈充填 / 高空旋回,風脈急襲';
+FIELD_PLACEHOLDERS.passiveOnlyActionNames='固有パッシブからのみ発動し、通常手番の所持技抽選には入れない行動名をカンマ区切りで指定します。チャットパレットには掲載されます。';
+FIELD_PLACEHOLDERS.actionSelectionRules='1行につき「行動名\t候補条件」。条件を満たす遭遇では所持技の抽選候補に入り、条件を満たさない場合は候補外になります。条件成立でも確定所持にはなりません。対応条件：味方あり / 前衛後衛あり / 前衛あり / 後衛あり / 強敵不在 / 同名N体未満。例：鏡像誘導\t味方あり';
 const FORM_SELECT_FIELDS = new Set(['dataKind','csVisible','itemType','itemCategory','materialType','materialCategory','rank','toolRank','guaranteeUpgradeMaxRank','equipSlot','skill','checkType','type','role','setItem','unlockAreaKey','unlockFacility','equipmentUpgradeEffect','equipmentUpgradeTarget','ammoUse','ammoKind','craftSkill','craftType','baseItem','branchType','enabled','hasLock','hasTrap','scale','requestKind','questType','rewardScope','areaName','bossMonster','areaType','difficulty','eventType','conditionType','conditionValue','rumorScope','treasureTableId','rewardTableId','tableId','tablePurpose','treasureRank','hasLock','hasTrap','hasLock','hasTrap','entryType','entryName','entryPublicId','recipeName','scrollRank','facilityName','spellType','spellRank','monsterType','resultKind','element','enchantTarget','enchantEffectType','enchantDuration','enchantStackRule','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','category','weaponType','balanceTier','individualValueEnabled']);
 let formState = { key:null, idx:null, mode:'new', defaultDataKind:'', defaultItemType:'' };
 let quickCategoryDirty = false;
@@ -3299,10 +3301,10 @@ const SYSTEM_HELP = [
       "魔物の基礎直接ダメージ式と武器の基礎ダメージ式はD6を必須とし、最大構成をxD6+yD2～D5+zとする。D2～D5はD6へ追加する補助ダイスとしてのみ使用でき、補助ダイスを含む場合はy<=xを必須とする。固定値zは0以上のみとし、ダメージ式へのマイナス固定値は禁止。D2～D5だけの基礎ダメージ式は禁止。毒などの継続ダメージと、条件成立時に別途加算される追加ダメージはこの式制限の対象外。D2～D5の使用自体は強制せず、D2は小さい振れ幅、D3は軽～中程度、D4は標準的な補助、D5は大きめの振れ幅を持たせたい攻撃に使い分ける。",
       "防御・補助・回復行動も自動成功にせず、行動ごとの基礎技能値を使う『技能値>=固定達成値』判定を設定する。失敗時はその行動の防御・強化・回復・準備効果を適用しない。妨害などの変動補正は{補正}へ加算し、この判定にも適用する。",
       "通常魔物は所持技プールを5個以上持ち、遭遇時にその中から3個をランダム選出して、その戦闘中の使用行動として固定する。二つ名個体とボスは技を必ず4個所持する。固有パッシブは技数に含めない。固有パッシブが特定行動を参照する場合、その行動は選出時の必須枠とする。準備・連携などで特定の別行動を明示参照する場合は、参照関係が成立する組み合わせだけを選出候補にする。",
-      "エリアボスは、前衛が残っている状態でも後衛へ直接ダメージを与えられる行動を最低1つ必ず持つ。敵全体・敵1列・敵後衛を対象とする直接ダメージ行動、または遠距離攻撃・術式・祈祷で後衛を選択できる直接ダメージ行動を用意する。状態異常や弱体だけの全体行動はこの条件を満たさない。",
+      "エリアボスは、前衛が残っている状態でも後衛へ直接ダメージを与えられる行動を最低1つ必ず持つ。後衛へ届くかは行動種別ではなく距離で判定し、距離：遠距離の直接ダメージ行動、または距離：特殊で効果文に後衛到達条件を明記した直接ダメージ行動を用意する。状態異常や弱体だけの行動はこの条件を満たさない。",
       "準備と次ターンの大技で構成される予告攻撃は、2段階を1つの技として同じ行に登録する。",
-      "魔物行動には距離とは別に行動種別を設定する。種別は近接攻撃、遠距離攻撃、術式、祈祷、防御、補助、回復、特殊。近接攻撃・遠距離攻撃は直接ダメージを必ず含む。特殊は敵への状態付与・拘束・移動など、直接ダメージを伴わない特殊効果に使用する。術式・祈祷は行使手段を示すため、直接ダメージ型と非ダメージ型の両方を許可する。",
-      "魔物の判定は行動種別にかかわらず、その行動に設定された基礎技能値を使用する。判定欄は『技能値>=回避値』『技能値>=抵抗値』『技能値>=固定達成値』で参照先を示し、行動種別欄は近接攻撃・遠距離攻撃・術式など行動の性質だけを示す。",
+      "魔物行動には距離とは別に行動種別を設定する。行動種別は行動者側の位置取り、距離は対象へ届く範囲として別々に扱う。近接攻撃は行動時に前衛へ出て処理し、遠距離攻撃は味方前衛がいる場合に後衛へ下がって処理する。距離：近接は敵前衛のみ、距離：遠距離は敵前衛・敵後衛を対象にできる。種別は近接攻撃、遠距離攻撃、術式、祈祷、防御、補助、回復、特殊。",
+      "魔物の判定は行動種別にかかわらず、その行動に設定された基礎技能値を使用する。判定欄は『技能値>=回避値』『技能値>=抵抗値』『技能値>=固定達成値』で参照先を示す。",
       "ドロップはメモ式ではなく行単位で管理する。",
       "ドロップ素材は魔物素材カテゴリから選択する。"
     ]
@@ -5269,7 +5271,7 @@ function renderMonsterActionCards(value){
   return `<div class="monster-mini-table">${rows.map(r=>{
     const title = r.name || '名称未設定の行動';
     const hasCheck=String(r.checkType||'').trim() && String(r.checkType||'').trim()!=='なし';
-    const chips = [r.actionType ? `種別:${r.actionType}` : '', r.checkType, hasCheck ? `基礎技能:${normalizeMonsterActionBaseValue(r.baseValue)}` : '', r.target ? `対象:${r.target}` : '', r.element ? `属性:${r.element}` : '', r.power ? `威力:${r.power}` : ''].filter(Boolean);
+    const chips = [r.actionType ? `種別:${r.actionType}` : '', r.range ? `距離:${normalizeMonsterActionRange(r)}` : '', r.flags ? `特性:${r.flags}` : '', r.checkType, hasCheck ? `基礎技能:${normalizeMonsterActionBaseValue(r.baseValue)}` : '', r.target ? `対象:${r.target}` : '', r.element ? `属性:${r.element}` : '', r.power ? `威力:${r.power}` : ''].filter(Boolean);
     return `<div class="monster-action-card"><div class="monster-action-main"><span>${escapeHtml(title)}</span>${chips.map(c=>`<span class="monster-badge">${escapeHtml(c)}</span>`).join('')}</div>${r.effect ? `<div class="monster-action-sub">${escapeHtml(r.effect)}</div>` : ''}</div>`;
   }).join('')}</div>`;
 }
@@ -6578,15 +6580,7 @@ function monsterStatusNotesHtml(row={}){
   if(!notes.length) return '';
   return `<section class="monster-section"><h4>状態異常</h4><div class="monster-mini-table">${notes.map(note=>`<div class="monster-action-card"><div class="monster-action-sub">${escapeHtml(note)}</div></div>`).join('')}</div></section>`;
 }
-function monsterActionRange(action={}){
-  const target = compactMonsterText(action.target);
-  if(target.includes('自身')) return '自身';
-  const type=normalizeMonsterActionType(action);
-  if(type==='近接攻撃') return '近接';
-  if(['遠距離攻撃','術式','祈祷'].includes(type)) return '遠距離';
-  if(['防御','補助','回復'].includes(type)) return target.includes('自身') ? '自身' : '特殊';
-  return '特殊';
-}
+function monsterActionRange(action={}){ return normalizeMonsterActionRange(action); }
 function monsterActionTarget(action={}){
   return compactMonsterText(action.target) || '対象未設定';
 }
@@ -6727,7 +6721,9 @@ function monsterCardHtml(row, idx){
     monsterBadge('特性', row.monsterTraits),
     monsterBadge('ランク', playerRankLabel(row.rank)),
     monsterBadge('引き寄せ', row.pullRule || '可'),
-    monsterBadge('固定選出', row.fixedActionNames)
+    monsterBadge('固定選出', row.fixedActionNames),
+    monsterBadge('パッシブ専用', row.passiveOnlyActionNames),
+    monsterBadge('候補条件', row.actionSelectionRules)
   ].filter(Boolean).join('');
   const statHtml = [
     monsterStat('HP', row.hp), monsterStat('MP', row.mp), monsterStat('回避', row.evasionValue),
@@ -7470,6 +7466,7 @@ function quickButtonLabel(field){
 const ELEMENT_VALUES = ['物','火','水','風','雷','光','闇','無'];
 const AFFINITY_VALUES = ['-','耐','無','反','吸','弱'];
 const MONSTER_ACTION_TYPE_VALUES = ['近接攻撃','遠距離攻撃','術式','祈祷','防御','補助','回復','特殊'];
+const MONSTER_ACTION_RANGE_VALUES = ['近接','遠距離','自身','特殊'];
 function splitMonsterLine(line, size){
   const cols = String(line || '').split('\t');
   while(cols.length < size) cols.push('');
@@ -7491,6 +7488,20 @@ function inferMonsterActionType(row={}){
 function normalizeMonsterActionType(row={}){
   const type = String(row.actionType || '').trim();
   return MONSTER_ACTION_TYPE_VALUES.includes(type) ? type : inferMonsterActionType(row);
+}
+function inferMonsterActionRange(row={}){
+  const target=String(row.target||'').trim();
+  if(target.includes('自身')) return '自身';
+  const type=normalizeMonsterActionType(row);
+  if(type==='近接攻撃') return '近接';
+  if(['遠距離攻撃','術式','祈祷'].includes(type)) return '遠距離';
+  if(['防御','補助','回復'].includes(type)) return target.includes('自身') ? '自身' : '特殊';
+  return '特殊';
+}
+function normalizeMonsterActionRange(row={}){
+  let range=String(row.range||row.distance||'').trim();
+  if(range==='近距離') range='近接';
+  return MONSTER_ACTION_RANGE_VALUES.includes(range) ? range : inferMonsterActionRange(row);
 }
 function normalizeMonsterActionBaseValue(value){
   const raw=String(value ?? '').trim();
@@ -7521,17 +7532,26 @@ function parseMonsterActions(value, legacyHitValue=''){
   try{
     const arr = JSON.parse(raw);
     if(Array.isArray(arr)) return arr.map(r=>({
-      name:r.name||'', actionType:normalizeMonsterActionType(r), checkType:r.checkType||'', target:r.target||'', element:r.element||'', power:r.power||'', effect:r.effect||'',
+      name:r.name||'', actionType:normalizeMonsterActionType(r), range:normalizeMonsterActionRange(r), checkType:r.checkType||'', target:r.target||'', element:r.element||'', power:r.power||'', effect:r.effect||'', flags:r.flags||r.actionFlags||'',
       baseValue:resolveBase(r, r.baseValue)
     }));
   }catch(e){}
   return raw.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{
     const rawCols = String(line || '').split('\t');
+    if(rawCols.length >= 9){
+      const cols = splitMonsterLine(line, Math.min(10,rawCols.length));
+      const row = {name:cols[0], actionType:cols[1], checkType:cols[2], target:cols[3], element:cols[4], power:cols[5], effect:cols[6], range:cols[8], flags:cols[9]||''};
+      row.baseValue=resolveBase({}, cols[7]);
+      row.actionType = normalizeMonsterActionType(row);
+      row.range = normalizeMonsterActionRange(row);
+      return row;
+    }
     if(rawCols.length >= 8){
       const cols = splitMonsterLine(line, 8);
       const row = {name:cols[0], actionType:cols[1], checkType:cols[2], target:cols[3], element:cols[4], power:cols[5], effect:cols[6]};
       row.baseValue=resolveBase({}, cols[7]);
       row.actionType = normalizeMonsterActionType(row);
+      row.range = normalizeMonsterActionRange(row);
       return row;
     }
     if(rawCols.length >= 7){
@@ -7539,6 +7559,7 @@ function parseMonsterActions(value, legacyHitValue=''){
       const row = {name:cols[0], actionType:cols[1], checkType:cols[2], target:cols[3], element:cols[4], power:cols[5], effect:cols[6]};
       row.baseValue=legacyHit!==null ? legacyHit : '';
       row.actionType = normalizeMonsterActionType(row);
+      row.range = normalizeMonsterActionRange(row);
       return row;
     }
     if(rawCols.length >= 6){
@@ -7546,19 +7567,21 @@ function parseMonsterActions(value, legacyHitValue=''){
       const row = {name:cols[0], checkType:cols[1], target:cols[2], element:cols[3], power:cols[4], effect:cols[5]};
       row.baseValue=legacyHit!==null ? legacyHit : '';
       row.actionType = inferMonsterActionType(row);
+      row.range = normalizeMonsterActionRange(row);
       return row;
     }
     const m = line.match(/^([^：:]+)[：:](.*)$/);
     const row = {name:m ? m[1].trim() : '', checkType:'', target:'', element:'物', power:'', effect:m ? m[2].trim() : line, baseValue:''};
     row.actionType = inferMonsterActionType(row);
+    row.range = normalizeMonsterActionRange(row);
     return row;
   });
 }
 function serializeMonsterActions(rows){
   return (rows || []).map(r=>({
-    name:String(r.name||'').trim(), actionType:normalizeMonsterActionType(r), checkType:normalizeMonsterActionCheckType(r), target:String(r.target||'').trim(), element:String(r.element||'').trim(), power:String(r.power||'').trim(), effect:String(r.effect||'').trim(), baseValue:normalizeMonsterActionBaseValue(r.baseValue)
-  })).filter(r=>r.name || r.actionType || r.checkType || r.target || r.element || r.power || r.effect)
-    .map(r=>[r.name,r.actionType,r.checkType,r.target,r.element,r.power,r.effect,(r.checkType && r.checkType!=='なし') ? String(r.baseValue) : ''].join('\t')).join('\n');
+    name:String(r.name||'').trim(), actionType:normalizeMonsterActionType(r), range:normalizeMonsterActionRange(r), checkType:normalizeMonsterActionCheckType(r), target:String(r.target||'').trim(), element:String(r.element||'').trim(), power:String(r.power||'').trim(), effect:String(r.effect||'').trim(), baseValue:normalizeMonsterActionBaseValue(r.baseValue), flags:String(r.flags||'').trim()
+  })).filter(r=>r.name || r.actionType || r.checkType || r.target || r.element || r.power || r.effect || r.flags)
+    .map(r=>[r.name,r.actionType,r.checkType,r.target,r.element,r.power,r.effect,(r.checkType && r.checkType!=='なし') ? String(r.baseValue) : '',r.range,r.flags].join('\t')).join('\n');
 }
 function parseMonsterDrops(value){
   const raw = String(value || '').trim();
@@ -7657,6 +7680,8 @@ function monsterActionRowHtml(row={}, idx=0){
   return `<div class="monster-line-row" data-monster-action-row>
     <input data-monster-action-field="name" value="${escapeHtml(row.name||'')}" placeholder="行動名">
     <select data-monster-action-field="actionType">${optionHtml(MONSTER_ACTION_TYPE_VALUES, normalizeMonsterActionType(row), '行動種別')}</select>
+    <select data-monster-action-field="range">${optionHtml(MONSTER_ACTION_RANGE_VALUES, normalizeMonsterActionRange(row), '距離')}</select>
+    <input data-monster-action-field="flags" value="${escapeHtml(row.flags||'')}" placeholder="行動フラグ（例：妨害不可）">
     ${checkBuilderHtml(row.checkType, 'data-monster-action-field="checkType"', {key:'monsters', row})}
     <input type="number" min="0" step="1" data-monster-action-field="baseValue" title="この行動固有の基礎技能値。妨害・バフ等は{補正}へ後から加算します。" value="${hasCheck ? escapeHtml(baseValue) : ''}" placeholder="基礎値" ${hasCheck?'':'disabled'}>
     <input data-monster-action-field="target" value="${escapeHtml(row.target||'')}" placeholder="対象">
@@ -7691,7 +7716,7 @@ function monsterDropRowHtml(row={}, idx=0){
 function monsterActionsEditor(value){
   const rows = parseMonsterActions(value);
   const body = rows.length ? rows.map(monsterActionRowHtml).join('') : monsterActionRowHtml({element:'物'});
-  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は所持技プールとして5個以上を登録し、遭遇時に3個だけ選出します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体は基本4個です。後衛へ届く手段など戦術上の候補を増やす個体は5個以上を登録し、遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・術式・祈祷・防御・補助・回復・特殊から選択します。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
+  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は所持技プールとして5個以上を登録し、遭遇時に3個だけ選出します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体は基本4個です。後衛へ届く手段など戦術上の候補を増やす個体は5個以上を登録し、遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・術式・祈祷・防御・補助・回復・特殊から選択します。距離は行動種別から独立して近接・遠距離・自身・特殊を指定します。行動種別は行動者側の位置取り、距離は対象へ届く範囲として分けて扱います。近接攻撃は行動時に前衛へ出て処理し、遠距離攻撃は味方前衛がいる場合に後衛へ下がって処理します。距離：近接は前衛のみ、距離：遠距離は前衛・後衛を対象にできます。近接攻撃でも、ヴェイルの《虚影刃》のように特性上後衛へ届く技は距離：遠距離にしてください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
 }
 function monsterDropsEditor(value){
   const rows = parseMonsterDrops(value);
@@ -7701,7 +7726,7 @@ function monsterDropsEditor(value){
 function readMonsterActionRows(editor){
   return Array.from(editor.querySelectorAll('[data-monster-action-row]')).map(row=>{
     const get=f=>row.querySelector(`[data-monster-action-field="${f}"]`)?.value || '';
-    return {name:get('name'), actionType:get('actionType'), checkType:get('checkType'), baseValue:get('baseValue'), target:get('target'), element:get('element'), power:get('power'), effect:get('effect')};
+    return {name:get('name'), actionType:get('actionType'), range:get('range'), flags:get('flags'), checkType:get('checkType'), baseValue:get('baseValue'), target:get('target'), element:get('element'), power:get('power'), effect:get('effect')};
   });
 }
 function readMonsterDropRows(editor){
@@ -8857,6 +8882,9 @@ function assertMonsterDirectDamageDieRows(rows=[]){
 function monsterFixedActionNames(row={}){
   return [...new Set(String(row.fixedActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean))];
 }
+function monsterPassiveOnlyActionNames(row={}){
+  return [...new Set(String(row.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean))];
+}
 function assertMonsterFixedActionSelectionRows(rows=[]){
   const invalid=[];
   (rows||[]).forEach(row=>{
@@ -8873,6 +8901,20 @@ function assertMonsterFixedActionSelectionRows(rows=[]){
   if(!invalid.length)return;
   const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：${x.reason}`).join('\n');
   throw new Error(`固定選出技の設定を確認してください。通常魔物と5技以上の候補制二つ名は0～2技まで指定でき、指定名は行動プールと完全一致させます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+}
+function assertMonsterPassiveOnlyActionRows(rows=[]){
+  const invalid=[];
+  (rows||[]).forEach(row=>{
+    const actionNames=new Set(parseMonsterActions(row.actions||'').map(a=>String(a.name||'').trim()).filter(Boolean));
+    const passiveOnly=monsterPassiveOnlyActionNames(row),fixed=new Set(monsterFixedActionNames(row));
+    const missing=passiveOnly.filter(name=>!actionNames.has(name));
+    const overlap=passiveOnly.filter(name=>fixed.has(name));
+    if(missing.length)invalid.push({row,reason:`行動プールに存在しないパッシブ専用技：${missing.join('、')}`});
+    if(overlap.length)invalid.push({row,reason:`固定選出技とパッシブ専用技が重複：${overlap.join('、')}`});
+  });
+  if(!invalid.length)return;
+  const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：${x.reason}`).join('\n');
+  throw new Error(`パッシブ専用技の設定を確認してください。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function monsterLoadoutReferencedNames(text='',actionNames=new Set()){
   const refs=[];
@@ -8896,15 +8938,14 @@ function monsterLoadoutActionIsDirectDamage(action={}){
   return ['近接攻撃','遠距離攻撃','術式','祈祷'].includes(type)&&!!power&&power!=='なし'&&power!=='-';
 }
 function monsterLegalLoadouts(row={}){
-  const pool=parseMonsterActions(row.actions||'');
+  const fullPool=parseMonsterActions(row.actions||'');
+  const passiveOnly=new Set(monsterPassiveOnlyActionNames(row));
+  const pool=fullPool.filter(a=>!passiveOnly.has(String(a.name||'').trim()));
   const traits=String(row.monsterTraits||'').split(/[,、，]/).map(v=>v.trim());
   const isNamed=traits.includes('二つ名')||String(row.id||'').startsWith('mon_named_');
-  const selectCount=isNamed&&pool.length>4?4:3;
-  const actionNames=new Set(pool.map(a=>String(a.name||'').trim()).filter(Boolean));
-  const mandatory=new Set([
-    ...monsterFixedActionNames(row),
-    ...monsterLoadoutReferencedNames(row.passiveEffect||'',actionNames)
-  ]);
+  const selectCount=isNamed&&pool.length>4?4:Math.min(isNamed?4:3,pool.length);
+  const actionNames=new Set(fullPool.map(a=>String(a.name||'').trim()).filter(Boolean));
+  const mandatory=new Set(monsterFixedActionNames(row));
   const loadouts=monsterLoadoutCombinations(pool,selectCount).filter(combo=>{
     const selected=new Set(combo.map(a=>String(a.name||'').trim()));
     if([...mandatory].some(name=>!selected.has(name)))return false;
@@ -8932,7 +8973,7 @@ function assertMonsterLoadoutViabilityRows(rows=[]){
   });
   if(!invalid.length)return;
   const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：${x.reason}`).join('\n');
-  throw new Error(`魔物の技選出条件を満たせません。通常魔物は3技、候補制二つ名は4技になるよう、固定選出技・固有パッシブ参照・行動間依存を確認してください。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+  throw new Error(`魔物の技選出条件を満たせません。通常魔物は3技、候補制二つ名は4技になるよう、固定選出技・パッシブ専用技・行動間依存を確認してください。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function assertMonsterActionCountRows(rows=[]){
   const invalid=(rows || []).map(row=>{
@@ -8953,10 +8994,10 @@ function monsterActionCanDamageBackline(action={}){
   const power=String(action.power||'').trim();
   if(!power || power==='なし') return false;
   const target=String(action.target||'').trim();
-  const type=normalizeMonsterActionType(action);
-  if(target.includes('敵全体') || target.includes('敵1列') || target.includes('敵後衛')) return true;
-  if(['遠距離攻撃','術式','祈祷'].includes(type) && /^敵(?:1体|2体|3体|複数)/.test(target)) return true;
-  if(/前衛が残って.*敵後衛|敵後衛.*対象にできる/u.test(String(action.effect||''))) return true;
+  const range=normalizeMonsterActionRange(action);
+  const effect=String(action.effect||'');
+  if(range==='遠距離' && /^敵(?:1体|2体|3体|複数|全体|1列|後衛)/.test(target)) return true;
+  if(range==='特殊' && /前衛が残って.*敵後衛|敵後衛.*対象にできる/u.test(effect)) return true;
   return false;
 }
 function assertMonsterActionTypeSemanticsRows(rows=[]){
@@ -9265,7 +9306,7 @@ function collectFormRow(){
   if(key==='quest_rewards') assertNumericRankRows('quest_rewards',[clean]);
   if(key==='quests') assertNumericRankRows('quests',[clean]);
   if(key==='treasure_tables'){ assertNumericRankRows('treasure_tables',[clean]); assertTreasureDifficultyRows([clean]); }
-  if(key==='monsters'){ assertNumericRankRows('monsters',[clean]); assertMonsterFixedActionSelectionRows([clean]); assertMonsterLoadoutViabilityRows([clean]); assertMonsterActionCountRows([clean]); assertMonsterActionTypeSemanticsRows([clean]); assertNamedBacklineAttackRows([clean]); assertAreaBossBacklineAttackRows([clean]); assertMonsterActionBaseValueRows([clean]); assertMonsterActionCheckSourceRows([clean]); assertMonsterSupportActionCheckRows([clean]); assertMonsterDirectDamageDieRows([clean]); }
+  if(key==='monsters'){ assertNumericRankRows('monsters',[clean]); assertMonsterFixedActionSelectionRows([clean]); assertMonsterPassiveOnlyActionRows([clean]); assertMonsterLoadoutViabilityRows([clean]); assertMonsterActionCountRows([clean]); assertMonsterActionTypeSemanticsRows([clean]); assertNamedBacklineAttackRows([clean]); assertAreaBossBacklineAttackRows([clean]); assertMonsterActionBaseValueRows([clean]); assertMonsterActionCheckSourceRows([clean]); assertMonsterSupportActionCheckRows([clean]); assertMonsterDirectDamageDieRows([clean]); }
   return clean;
 }
 function applyFormToState(){
@@ -10290,7 +10331,7 @@ const VERIFY_SAVE_FIELDS = {
   quest_rewards: ['rank','rewardMin','rewardMax','rewardAvg','scale'],
   quests: ['rank','questCategory','requestKind','questType','areaName','questLocation','recommendedSkills','rewardScope','deliveryItems','progressStep','fixedEvents','clearCondition'],
   treasure_tables: ['treasureRank','scrollRank','entryType','entryName','quantity','weight'],
-  monsters: ['rank','monsterType','monsterTraits','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','fixedActionNames','actions','drops','modifiers']
+  monsters: ['rank','monsterType','monsterTraits','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','fixedActionNames','passiveOnlyActionNames','actionSelectionRules','actions','drops','modifiers']
 };
 function verifyRowKey(row){
   return String(row && row.id || '').trim();
@@ -10463,6 +10504,25 @@ function assertMonsterPassiveDesignRows(rows){
   if(bad.length)throw new Error(`固有パッシブの発動条件に、通常攻略で恒常的に無視できる条件が含まれています。\n${bad.slice(0,12).join('\n')}${bad.length>12?`\nほか${bad.length-12}件`:''}`);
 }
 
+function assertMonsterActionRangeRows(rows){
+  const bad=[];
+  (rows||[]).forEach(row=>{
+    const passive=String(row?.passiveEffect||'');
+    const randomPassiveStates=[...passive.matchAll(/([ぁ-んァ-ヶ一-龠A-Za-z0-9]+状態)/g)].map(m=>m[1]);
+    const randomMarking=/(ランダム|行動可能なPC|各PC|全PC)/.test(passive);
+    parseMonsterActions(row?.actions||'').forEach(action=>{
+      const type=normalizeMonsterActionType(action), range=normalizeMonsterActionRange(action), target=String(action.target||'').trim();
+      const effect=String(action.effect||'').trim();
+      const effectRearReach=/(?:前衛[^。\n]{0,50}(?:いる|残って)[^。\n]{0,50}後衛[^。\n]{0,35}(?:対象|狙)|前衛の有無[^。\n]{0,50}後衛[^。\n]{0,35}(?:対象|狙)|後衛にいても[^。\n]{0,35}(?:対象|狙)|すでに後衛)/.test(effect);
+      const passivePayoff=randomMarking && randomPassiveStates.some(state=>effect.includes(state));
+      if((/敵(?:後衛|1列|全体)/.test(target) || effectRearReach || passivePayoff) && range==='近接'){
+        bad.push(`${row.name||row.id||'魔物'} / ${action.name||'行動'}：特性・対象・効果文が後衛到達を前提としているため、距離「近接」では成立しません。距離を「遠距離」、条件付きなら「特殊」にしてください。`);
+      }
+    });
+  });
+  if(bad.length)throw new Error(`魔物行動の対象・効果文と距離に矛盾があります。\n${bad.slice(0,12).join('\n')}${bad.length>12?`\nほか${bad.length-12}件`:''}`);
+}
+
 function assertMonsterSelfMoveConditionRows(rows){
   const bad=[];
   const movePerf=/(?:この|自身の)?手番[^\n]{0,30}移動[^\n]{0,50}(?:判定|命中|ダメージ|回避値|防御値|抵抗値|最終ダメージ)|移動してから使用した場合|移動していない場合|この手番に移動した場合/;
@@ -10479,7 +10539,7 @@ function cloneRowsForSave(baseKey, rows){
   if(baseKey==='treasure_tables') assertTreasureDifficultyRows(rows||[]);
   if(baseKey==='items'){ assertItemPriceRows(rows||[]); assertItemClassificationRows(rows||[]); assertWeaponKatakanaNames(rows||[]); assertWeaponBaseDamageDieRows(rows||[]); assertUpgradeSlotScopeRows(rows||[]); assertUpgradeMaterialTargetScopeRows(rows||[]); assertEquipmentUpgradeMinimumRows(rows||[]); assertMonsterMaterialUpgradeRows(rows || []); assertSpecialUpgradeNonStackRows(rows || []); assertNoDefenseIgnoreUpgradeRows(rows || []); assertMaterialUpgradeSlotCostRows(rows || []); assertMaterialUpgradeSeparationRows(rows || []); assertProcessedMaterialRows(rows || []); assertMonsterMaterialDescriptionRows(rows || []); assertLateAreaMonsterMaterialRankRows(rows || []); }
   if(baseKey==='recipes'){ assertWeaponBranchMaterialRows(rows || []); assertOtherworldAccessoryUpgradeMaterialRows(rows || []); assertItemPriceRows(state.items||[], rows||[]); }
-  if(baseKey==='monsters'){ assertMonsterPassiveDesignRows(rows || []); assertMonsterSelfMoveConditionRows(rows || []); assertMonsterFixedActionSelectionRows(rows || []); assertMonsterLoadoutViabilityRows(rows || []); assertMonsterActionCountRows(rows || []); assertMonsterActionTypeSemanticsRows(rows || []); assertNamedBacklineAttackRows(rows || []); assertAreaBossBacklineAttackRows(rows || []); assertMonsterActionBaseValueRows(rows || []); assertMonsterActionCheckSourceRows(rows || []); assertMonsterSupportActionCheckRows(rows || []); assertMonsterDirectDamageDieRows(rows || []); }
+  if(baseKey==='monsters'){ assertMonsterPassiveDesignRows(rows || []); assertMonsterActionRangeRows(rows || []); assertMonsterSelfMoveConditionRows(rows || []); assertMonsterFixedActionSelectionRows(rows || []); assertMonsterPassiveOnlyActionRows(rows || []); assertMonsterLoadoutViabilityRows(rows || []); assertMonsterActionCountRows(rows || []); assertMonsterActionTypeSemanticsRows(rows || []); assertNamedBacklineAttackRows(rows || []); assertAreaBossBacklineAttackRows(rows || []); assertMonsterActionBaseValueRows(rows || []); assertMonsterActionCheckSourceRows(rows || []); assertMonsterSupportActionCheckRows(rows || []); assertMonsterDirectDamageDieRows(rows || []); }
   return (rows || []).map(src=>{
     const r = {...(src || {})};
     normalizeEncounterPlacementRow(baseKey,r);

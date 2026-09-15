@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.779</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.784</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -183,7 +183,7 @@ header{padding-top:10px!important;padding-bottom:8px!important}.header-inner h1{
 @media(max-width:620px){.ra-build-info{text-align:left}header{padding:8px!important}.fixed-url{display:none}.header-inner .version{font-size:.7rem}.day-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#progressTabNav{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
 
-<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.779-monster-turn-band-audit-20260914">
+<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.780-monster-turn-band-audit-20260914">
 
 <style id="raCheckboxSizeFixV375">
 input[type="checkbox"],input[type="radio"]{appearance:auto!important;-webkit-appearance:auto!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;max-height:18px!important;padding:0!important;margin:0!important;flex:0 0 18px!important;vertical-align:middle}
@@ -270,7 +270,7 @@ html.ra-web-embedded main{margin-top:0}
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.779 / 最終更新日：2026年9月14日</div>
+<div class="ra-build-info">Version：v90.8.784 / 最終更新日：2026年9月15日</div>
 
 <header>
   <div class="header-inner">
@@ -600,7 +600,7 @@ html.ra-web-embedded main{margin-top:0}
 <script src="./assets/vendor/jszip.min.js"></script>
 <script>
 'use strict';
-const VERSION='v90.8.779';
+const VERSION='v90.8.784';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -658,9 +658,9 @@ function tokenStatusEntry(label,value,maxValue){const v=tokenNumberOrString(valu
 function tokenAffinityParams(row={}){return [['物',row.physicalAffinity],['火',row.fireAffinity],['水',row.waterAffinity],['風',row.windAffinity],['雷',row.thunderAffinity],['光',row.lightAffinity],['闇',row.darkAffinity],['無',row.neutralAffinity]].map(([label,value])=>({label,value:tokenCompact(value||'-')}));}
 function tokenParseCheckType(value=''){const raw=tokenCompact(value);const m=raw.match(/^(.+?)>=(.+)$/);return m?{left:m[1].trim(),right:m[2].trim(),raw}:{left:raw,right:'',raw};}
 function tokenInferActionType(row={}){const parsed=tokenParseCheckType(row.checkType||'');if(parsed.left==='近接')return'近接攻撃';if(parsed.left==='射撃')return'遠距離攻撃';if(parsed.left==='魔法')return'術式';if(parsed.left==='祈祷')return'祈祷';const name=tokenCompact(row.name),power=tokenCompact(row.power);if(/回復/.test(power)||['泥の再生'].includes(name))return'回復';if(['ぷるぷる防御','跳躍回避','身を固める','潜り込み','樹皮の守り','木登り退避','泥中跳躍','泥の鎧','甲殻封鎖'].includes(name))return'防御';if(['角の構え','根脈の隆起','沼底の脈動','鏡界の収束'].includes(name))return'補助';return'特殊';}
-function tokenNormalizeActionType(row={}){const type=tokenCompact(row.actionType);return['近接攻撃','遠距離攻撃','術式','祈祷','防御','補助','回復','特殊'].includes(type)?type:tokenInferActionType(row);}
-function tokenParseActions(value=''){const raw=tokenCompact(value);if(!raw)return[];try{const arr=JSON.parse(raw);if(Array.isArray(arr))return arr.map(r=>({name:r.name||'',actionType:tokenNormalizeActionType(r),checkType:r.checkType||'',target:r.target||'',element:r.element||'',power:r.power||'',effect:r.effect||'',baseValue:tokenCompact(r.baseValue)}));}catch(_e){}return raw.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{const cols=line.split('\t');while(cols.length<8)cols.push('');const row={name:cols[0],actionType:cols[1],checkType:cols[2],target:cols[3],element:cols[4],power:cols[5],effect:cols[6],baseValue:cols[7]};row.actionType=tokenNormalizeActionType(row);return row;});}
-function encounterSerializeActions(actions=[]){return(actions||[]).map(a=>[a.name||'',a.actionType||'',a.checkType||'',a.target||'',a.element||'',a.power||'',a.effect||'',a.baseValue??''].join('\t')).join('\n');}
+function tokenNormalizeActionType(row={}){const type=tokenCompact(row.actionType);return['近接攻撃','遠距離攻撃','術式','祈祷','防御','補助','回復','特殊'].includes(type)?type:tokenInferActionType(row);}function tokenInferActionRange(row={}){const target=tokenCompact(row.target);if(target.includes('自身'))return'自身';const type=tokenNormalizeActionType(row);if(type==='近接攻撃')return'近接';if(['遠距離攻撃','術式','祈祷'].includes(type))return'遠距離';if(['防御','補助','回復'].includes(type))return target.includes('自身')?'自身':'特殊';return'特殊';}function tokenNormalizeActionRange(row={}){let range=tokenCompact(row.range||row.distance);if(range==='近距離')range='近接';return['近接','遠距離','自身','特殊'].includes(range)?range:tokenInferActionRange(row);}
+function tokenParseActions(value=''){const raw=tokenCompact(value);if(!raw)return[];try{const arr=JSON.parse(raw);if(Array.isArray(arr))return arr.map(r=>({name:r.name||'',actionType:tokenNormalizeActionType(r),range:tokenNormalizeActionRange(r),checkType:r.checkType||'',target:r.target||'',element:r.element||'',power:r.power||'',effect:r.effect||'',baseValue:tokenCompact(r.baseValue),flags:r.flags||r.actionFlags||''}));}catch(_e){}return raw.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{const cols=line.split('\t');while(cols.length<10)cols.push('');const row={name:cols[0],actionType:cols[1],checkType:cols[2],target:cols[3],element:cols[4],power:cols[5],effect:cols[6],baseValue:cols[7],range:cols[8],flags:cols[9]};row.actionType=tokenNormalizeActionType(row);row.range=tokenNormalizeActionRange(row);return row;});}
+function encounterSerializeActions(actions=[]){return(actions||[]).map(a=>[a.name||'',a.actionType||'',a.checkType||'',a.target||'',a.element||'',a.power||'',a.effect||'',a.baseValue??'',tokenNormalizeActionRange(a),a.flags||''].join('\t')).join('\n');}
 function encounterActionIsDirectDamage(action={}){
   const type=tokenNormalizeActionType(action),power=tokenCompact(action.power);
   return['近接攻撃','遠距離攻撃','術式','祈祷'].includes(type)&&!!power&&power!=='なし'&&power!=='-';
@@ -679,17 +679,51 @@ function encounterActionCombinations(actions=[],count=3){
 function encounterFixedActionNames(monster={},actionNames=new Set()){
   return [...new Set(String(monster.fixedActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean))].filter(name=>actionNames.has(name));
 }
-function encounterSelectedActionSet(monster={}){
-  const pool=tokenParseActions(monster.actions||'');
+function encounterPassiveOnlyActionNames(monster={},actionNames=new Set()){
+  return [...new Set(String(monster.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean))].filter(name=>actionNames.has(name));
+}
+function encounterActionSelectionRules(monster={}){
+  const rules=new Map();
+  String(monster.actionSelectionRules||'').split(/\r?\n/).map(v=>v.trim()).filter(Boolean).forEach(line=>{
+    const cols=line.split('\t');
+    const actionName=String(cols[0]||'').trim(),condition=String(cols[1]||'').trim();
+    if(actionName&&condition)rules.set(actionName,condition);
+  });
+  return rules;
+}
+function encounterSelectionContext(groups=[],actor={}){
+  const normalized=tokenNormalizeGroups(groups||[]);
+  let total=0,front=0,rear=0;
+  normalized.forEach(group=>{const count=Math.max(1,Math.floor(Number(group.count)||1));total+=count;if(group.formation==='後衛')rear+=count;else front+=count;});
+  let sameName=0,strong=0;const actorName=String(actor.name||'').trim();normalized.forEach(group=>{const count=Math.max(1,Math.floor(Number(group.count)||1));if(String(group.name||'').trim()===actorName)sameName+=count;const master=(state.monsters||[]).find(row=>String(row.name||'').trim()===String(group.name||'').trim());const traits=String(master?.monsterTraits||'').split(/[,、，]/).map(v=>v.trim()).filter(Boolean);if(traits.includes('強敵'))strong+=count;});return{total,front,rear,sameName,strong,actorName,actorFormation:String(actor.formation||'').trim()};
+}
+function encounterActionSelectionEligible(condition='',context={}){
+  const parts=String(condition||'').split(/[&＆]/).map(v=>v.trim()).filter(Boolean);
+  if(!parts.length)return true;
+  return parts.every(part=>{
+    if(part==='味方あり')return Number(context.total||0)>1;
+    if(part==='前衛後衛あり')return Number(context.front||0)>0&&Number(context.rear||0)>0;
+    if(part==='前衛あり')return Number(context.front||0)>0;
+    if(part==='後衛あり')return Number(context.rear||0)>0;
+    if(part==='強敵不在')return Number(context.strong||0)===0;
+    {const m=part.match(/^同名(\d+)体未満$/);if(m)return Number(context.sameName||0)<Number(m[1]);}
+    return true;
+  });
+}
+function encounterSelectedActionSet(monster={},selectionContext={}){
+  const fullPool=tokenParseActions(monster.actions||'');
+  const actionNames=new Set(fullPool.map(a=>String(a.name||'').trim()).filter(Boolean));
+  const passiveOnlyNames=new Set(encounterPassiveOnlyActionNames(monster,actionNames));
+  const passiveOnlyActions=fullPool.filter(action=>passiveOnlyNames.has(String(action.name||'').trim()));
+  const selectionRules=encounterActionSelectionRules(monster);
+  const pool=fullPool.filter(action=>!passiveOnlyNames.has(String(action.name||'').trim())).filter(action=>encounterActionSelectionEligible(selectionRules.get(String(action.name||'').trim())||'',selectionContext));
   const isNamed=String(monster.id||'').startsWith('mon_named_')||String(monster.monsterTraits||'').split(/[,、，]/).map(v=>v.trim()).includes('二つ名');
   const normalSelectable=String(monster.individualValueEnabled||'').toUpperCase()==='TRUE'&&pool.length>3;
   const namedSelectable=isNamed&&pool.length>4;
-  const selectCount=namedSelectable?4:3;
-  if((!normalSelectable&&!namedSelectable)||pool.length<=selectCount)return{poolSize:pool.length,actions:pool.slice(),selectedNames:pool.map(a=>a.name).filter(Boolean),fixedSelectedNames:[],validLoadoutCount:1};
-  const actionNames=new Set(pool.map(a=>String(a.name||'').trim()).filter(Boolean));
+  const selectCount=namedSelectable?4:Math.min(3,pool.length);
+  if((!normalSelectable&&!namedSelectable)||pool.length<=selectCount)return{poolSize:fullPool.length,eligiblePoolSize:pool.length,actions:pool.slice(),passiveOnlyActions,selectedNames:pool.map(a=>a.name).filter(Boolean),fixedSelectedNames:[],validLoadoutCount:1};
   const explicitFixed=encounterFixedActionNames(monster,actionNames);
-  const passiveFixed=encounterActionReferencedNames(monster.passiveEffect||'',actionNames);
-  const mandatory=new Set([...explicitFixed,...passiveFixed]);
+  const mandatory=new Set(explicitFixed);
   const candidates=encounterActionCombinations(pool,selectCount).filter(combo=>{
     const selected=new Set(combo.map(a=>String(a.name||'').trim()));
     if([...mandatory].some(name=>!selected.has(name)))return false;
@@ -711,15 +745,15 @@ function encounterSelectedActionSet(monster={}){
   const chosen=candidates.length?candidates[Math.floor(Math.random()*candidates.length)]:fallback();
   const selectedNames=chosen.map(a=>String(a.name||'').trim()).filter(Boolean);
   const fixedSelectedNames=selectedNames.filter(name=>mandatory.has(name));
-  return{poolSize:pool.length,actions:chosen,selectedNames,fixedSelectedNames,validLoadoutCount:candidates.length||1};
+  return{poolSize:fullPool.length,eligiblePoolSize:pool.length,actions:chosen,passiveOnlyActions,selectedNames,fixedSelectedNames,validLoadoutCount:candidates.length||1};
 }
 
 function tokenStatusNotesFromText(text=''){const source=String(text||''),notes=[];Object.entries(TOKEN_STATUS_DEFINITIONS).forEach(([status,descriptions])=>{const pattern=TOKEN_STATUS_PATTERNS[status];const matched=pattern?pattern.test(source):source.includes(status);if(matched)(Array.isArray(descriptions)?descriptions:[descriptions]).forEach(x=>x&&notes.push(x));});return notes;}
 function tokenMonsterRowStatusNotes(row={}){const actions=tokenParseActions(row.actions||''),source=[row.passiveName||'',row.passiveEffect||'',...actions.flatMap(a=>[a.name||'',a.effect||''])].join(' ');return[...new Set(tokenStatusNotesFromText(source))];}
-function tokenActionRange(action={}){const target=tokenCompact(action.target);if(target.includes('自身'))return'自身';const type=tokenNormalizeActionType(action);if(type==='近接攻撃')return'近接';if(['遠距離攻撃','術式','祈祷'].includes(type))return'遠距離';if(['防御','補助','回復'].includes(type))return target.includes('自身')?'自身':'特殊';return'特殊';}
+function tokenActionRange(action={}){return tokenNormalizeActionRange(action);}
 function tokenActionCheckCommand(action={}){const parsed=tokenParseCheckType(action.checkType||'');if(!parsed.raw||parsed.left==='なし')return'';const base=tokenCompact(action.baseValue);if(base==='')return'';return`2D6+${base}+{補正}>=${parsed.right||'目標値'} 【${action.name||'魔物行動'}】`;}
 function tokenDamageCommand(action={}){let power=tokenCompact(action.power);if(!power||power==='なし'||power==='-')return'';const type=tokenNormalizeActionType(action),effect=String(action.effect||''),isRecovery=type==='回復'||/HP.*回復|回復する/.test(effect)||/回復$/.test(power);if(isRecovery){power=power.replace(/回復$/,'');return`${power} 【${action.name||'魔物行動'}・回復】`;}return`${power} 【${action.name||'魔物行動'}ダメージ】`;}
-function tokenMonsterChatPalette(row={}){const name=tokenCompact(row.name)||'名称未設定の魔物',actions=tokenParseActions(row.actions),lines=[];if(row.pullRule)lines.push(`// 引き寄せ：${row.pullRule}`);if(row.passiveName||row.passiveEffect){lines.push(`// 【固有パッシブ：${row.passiveName||'名称未設定'}】`);if(row.passiveEffect)lines.push(`// ${tokenCompact(row.passiveEffect)}`);}if(actions.length){const actionNames=actions.map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean),conditional=a=>/(のみ使用|HPが半分以下|HP半分以下|次の行動で|戦闘中1回|1戦闘1回)/.test(`${a.effect||''} ${a.power||''}`),normal=actions.filter(a=>!conditional(a)).map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean);if(normal.length&&normal.length<actionNames.length)lines.push(`choice[${normal.join(',')}]`);if(actionNames.length)lines.push(`choice[${actionNames.join(',')}]`);lines.push(`// ${name}`);actions.forEach(action=>{const actionName=action.name||'魔物行動',type=tokenNormalizeActionType(action),range=tokenActionRange(action),target=tokenCompact(action.target)||'対象未設定',element=tokenCompact(action.element),check=tokenActionCheckCommand(action),damage=tokenDamageCommand(action),effect=tokenCompact(action.effect);lines.push(`// 【${actionName}】 種別：${type}／距離：${range}／対象：${target}${element?`／属性：${element}`:''}`);if(check)lines.push(check);if(damage)lines.push(damage);if(effect)lines.push(`// 効果：${effect}`);if(!check&&!damage&&!effect)lines.push(`// ${actionName}`);});const notes=tokenMonsterRowStatusNotes(row);if(notes.length){lines.push('// 【状態異常】');notes.forEach(note=>lines.push(`// ${note}`));}}else{lines.push(`// ${name}`);lines.push('// 行動は未登録です。');}return lines.join('\n');}
+function tokenMonsterChatPalette(row={}){const name=tokenCompact(row.name)||'名称未設定の魔物',actions=tokenParseActions(row.actions),lines=[];if(row.pullRule)lines.push(`// 引き寄せ：${row.pullRule}`);if(row.passiveName||row.passiveEffect){lines.push(`// 【固有パッシブ：${row.passiveName||'名称未設定'}】`);if(row.passiveEffect)lines.push(`// ${tokenCompact(row.passiveEffect)}`);}if(actions.length){const passiveOnly=new Set(String(row.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean)),selectable=actions.filter(a=>!passiveOnly.has(tokenCompact(a.name))),actionNames=selectable.map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean),conditional=a=>/(のみ使用|HPが半分以下|HP半分以下|次の行動で|戦闘中1回|1戦闘1回)/.test(`${a.effect||''} ${a.power||''}`),normal=selectable.filter(a=>!conditional(a)).map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean);if(normal.length&&normal.length<actionNames.length)lines.push(`choice[${normal.join(',')}]`);if(actionNames.length)lines.push(`choice[${actionNames.join(',')}]`);lines.push(`// ${name}`);actions.forEach(action=>{const actionName=action.name||'魔物行動',type=tokenNormalizeActionType(action),range=tokenActionRange(action),flags=tokenCompact(action.flags),target=tokenCompact(action.target)||'対象未設定',element=tokenCompact(action.element),check=tokenActionCheckCommand(action),damage=tokenDamageCommand(action),effect=tokenCompact(action.effect);if(passiveOnly.has(tokenCompact(action.name)))lines.push(`// 【パッシブ専用技】`);lines.push(`// 【${actionName}】 種別：${type}／距離：${range}${flags?` / ${flags}`:''}／対象：${target}${element?`／属性：${element}`:''}`);if(check)lines.push(check);if(damage)lines.push(damage);if(effect)lines.push(`// 効果：${effect}`);if(!check&&!damage&&!effect)lines.push(`// ${actionName}`);});const notes=tokenMonsterRowStatusNotes(row);if(notes.length){lines.push('// 【状態異常】');notes.forEach(note=>lines.push(`// ${note}`));}}else{lines.push(`// ${name}`);lines.push('// 行動は未登録です。');}return lines.join('\n');}
 function tokenMonsterByName(name=''){const target=String(name||'').trim();return(state.monsters||[]).find(row=>String(row.name||'').trim()===target)||null;}
 function tokenMonsterSize(row={}){const imageId=String(row.baseMonsterId||row.id||'');const size=Number(MONSTER_TOKEN_SIZE_OVERRIDES[imageId])||3;return{width:size,height:size};}
 function tokenNormalizeGroups(groups=[]){return normalizeEncounterFrontline((groups||[]).map(group=>({name:group?.name,count:group?.count,formation:group?.formation||group?.position||''}))).map(group=>({name:group.name,count:Math.max(1,Math.floor(Number(group.count)||1)),formation:group.formation||group.position||'前衛'}));}
@@ -3401,7 +3435,7 @@ function individualApplyAttackTendency(monster={},tendency='標準'){
     if(precision)action.power=individualPrecisionPower(power,precision);
     if(strong){const m=power.match(/^(.*?)(?:\+(\d+))?$/);const current=m&&m[2]?Number(m[2]):0;action.power=current?`${m[1]}+${current+strong}`:`${power}+${strong}`;}
   });
-  copy.actions=actions.map(a=>[a.name,a.actionType,a.checkType,a.target,a.element,a.power,a.effect,a.baseValue].join('\t')).join('\n');
+  copy.actions=actions.map(a=>[a.name,a.actionType,a.checkType,a.target,a.element,a.power,a.effect,a.baseValue,tokenNormalizeActionRange(a),a.flags||''].join('\t')).join('\n');
   return copy;
 }
 function individualBounty(base=0,ranks={},tendency='標準'){
@@ -3415,25 +3449,33 @@ function generateEncounterIndividual(monster={},options={}){
   const fixed=encounterMonsterIsFixed(monster)||String(monster.individualValueEnabled||'').toUpperCase()!=='TRUE';
   if(fixed){
     const bounty=Math.max(0,Number(monster.bountyG)||0),variant=JSON.parse(JSON.stringify(monster));
-    const selected=encounterSelectedActionSet(variant);
-    variant.actions=encounterSerializeActions(selected.actions);
-    return{monster:variant,iv:{fixed:true,hp:'B',evasion:'B',resist:'B',attack:'標準'},bountyG:bounty,selectedActionNames:selected.selectedNames||[],selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,validLoadoutCount:selected.validLoadoutCount||1};
+    const selected=encounterSelectedActionSet(variant,options.selectionContext||{});
+    {const keep=new Set([...(selected.actions||[]),...(selected.passiveOnlyActions||[])].map(a=>String(a.name||'').trim()));variant.actions=encounterSerializeActions(tokenParseActions(variant.actions||'').filter(a=>keep.has(String(a.name||'').trim())));}
+    return{monster:variant,iv:{fixed:true,hp:'B',evasion:'B',resist:'B',attack:'標準'},bountyG:bounty,selectedActionNames:selected.selectedNames||[],selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,eligibleActionPoolSize:selected.eligiblePoolSize??selected.poolSize,validLoadoutCount:selected.validLoadoutCount||1};
   }
   const forced=!!options.fixedIv;
   const ranks={hp:forced?'B':individualRollRank(individualStatWidth(monster,'hp')),evasion:forced?'B':individualRollRank(individualStatWidth(monster,'evasion')),resist:forced?'B':individualRollRank(individualStatWidth(monster,'resist'))};
   const attack=forced?'標準':individualRollAttackTendency(individualAttackWidth(monster));
   let variant=individualApplyAttackTendency(monster,attack);
-  const selected=encounterSelectedActionSet(variant);
-  variant.actions=encounterSerializeActions(selected.actions);
+  const selected=encounterSelectedActionSet(variant,options.selectionContext||{});
+  {const keep=new Set([...(selected.actions||[]),...(selected.passiveOnlyActions||[])].map(a=>String(a.name||'').trim()));variant.actions=encounterSerializeActions(tokenParseActions(variant.actions||'').filter(a=>keep.has(String(a.name||'').trim())));}
   const baseHp=Math.max(1,Number(monster.hp)||1),hpPct=({D:-10,C:-5,B:0,A:5,S:10})[ranks.hp]||0;
   variant.hp=String(Math.max(1,Math.round(baseHp*(1+hpPct/100))));
   variant.evasionValue=String(Math.max(0,(Number(monster.evasionValue)||0)+individualRankDelta(ranks.evasion)));
   variant.resistValue=String(Math.max(0,(Number(monster.resistValue)||0)+individualRankDelta(ranks.resist)));
   const bounty=individualBounty(monster.baseBountyG,ranks,attack);
-  return{monster:variant,iv:{fixed:false,...ranks,attack},bountyG:bounty,selectedActionNames:selected.selectedNames,selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,validLoadoutCount:selected.validLoadoutCount};
+  return{monster:variant,iv:{fixed:false,...ranks,attack},bountyG:bounty,selectedActionNames:selected.selectedNames,selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,eligibleActionPoolSize:selected.eligiblePoolSize??selected.poolSize,validLoadoutCount:selected.validLoadoutCount};
 }
 function encounterInstanceRows(groups=[],options={}){
-  const rows=[];(groups||[]).forEach(group=>{const master=(state.monsters||[]).find(row=>String(row.name||'').trim()===String(group.name||'').trim())||null;if(!master)return;for(let i=0;i<Math.max(1,Math.floor(Number(group.count)||1));i++){const generated=generateEncounterIndividual(master,options);rows.push({uid:`enc_${Date.now()}_${Math.random().toString(36).slice(2,9)}`,monsterId:String(master.id||''),name:String(master.name||group.name||''),formation:String(group.formation||group.position||''),monster:generated.monster,iv:generated.iv,bountyG:generated.bountyG,selectedActionNames:generated.selectedActionNames||[],selectedFixedActionNames:generated.selectedFixedActionNames||[],actionPoolSize:Number(generated.actionPoolSize)||0,validLoadoutCount:Number(generated.validLoadoutCount)||1});}});return rows;
+  const rows=[],normalizedGroups=tokenNormalizeGroups(groups||[]);
+  normalizedGroups.forEach(group=>{
+    const master=(state.monsters||[]).find(row=>String(row.name||'').trim()===String(group.name||'').trim())||null;if(!master)return;
+    const selectionContext=encounterSelectionContext(normalizedGroups,{name:group.name,formation:group.formation});
+    for(let i=0;i<Math.max(1,Math.floor(Number(group.count)||1));i++){
+      const generated=generateEncounterIndividual(master,{...options,selectionContext});
+      rows.push({uid:`enc_${Date.now()}_${Math.random().toString(36).slice(2,9)}`,monsterId:String(master.id||''),name:String(master.name||group.name||''),formation:String(group.formation||group.position||''),monster:generated.monster,iv:generated.iv,bountyG:generated.bountyG,selectedActionNames:generated.selectedActionNames||[],selectedFixedActionNames:generated.selectedFixedActionNames||[],actionPoolSize:Number(generated.actionPoolSize)||0,eligibleActionPoolSize:Number(generated.eligibleActionPoolSize)||Number(generated.actionPoolSize)||0,validLoadoutCount:Number(generated.validLoadoutCount)||1});
+    }
+  });return rows;
 }
 function encounterBountyTotal(encounter=state.lastEncounter){if(encounter?.bountyEligible===false)return 0;return (encounter?.instances||[]).reduce((sum,row)=>sum+Math.max(0,Number(row.bountyG)||0),0);}
 function encounterIvLabel(row={}){const iv=row.iv||{};if(iv.fixed)return '固定個体';return `HP:${iv.hp||'B'} / 回避:${iv.evasion||'B'} / 抵抗:${iv.resist||'B'} / 攻撃:${iv.attack||'標準'}`;}
