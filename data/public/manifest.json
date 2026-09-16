@@ -27,6 +27,39 @@
         "treasure_tables",
         "skills"
       ]
+    },
+    "character": {
+      "file": "recraft_alchemia_character_master.json",
+      "sha256": "03c5d3c4b03db0f42fc5554da1d5ba8a5f9f08c8c9119cec9da2a73d9b9d8a19",
+      "bytes": 2580567,
+      "recordCount": 1789,
+      "dataKeys": [
+        "item_types",
+        "item_categories",
+        "material_types",
+        "material_categories",
+        "material_ranks",
+        "equipment_categories",
+        "recipes",
+        "spells",
+        "skills",
+        "items"
+      ]
+    },
+    "facility": {
+      "file": "recraft_alchemia_facility_master.json",
+      "sha256": "7dce5a0f9310af3bce9a1394b4415446a398ec0353f41814d44175c346517652",
+      "bytes": 3409055,
+      "recordCount": 2297,
+      "dataKeys": [
+        "items",
+        "recipes",
+        "exploration_areas",
+        "monsters",
+        "event_tables",
+        "equipment_categories",
+        "material_ranks"
+      ]
     }
   },
   "sha256": "00f5e6a517b80be2a4d98bcf28b6069e3712c05ddae4925556d43dcbdafe340e",

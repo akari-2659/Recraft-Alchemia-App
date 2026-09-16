@@ -94,3 +94,12 @@ html,body{height:100%;overflow:hidden}.app{height:100svh;display:grid;grid-templ
 .side-settings select{color:var(--theme-on-deep,#fff)!important}.side-settings select option{background:var(--paper)!important;color:var(--ink)!important}
 .page-head p,.note,.module-version{color:var(--muted)!important}
 .account-key-status{color:var(--muted)!important}.account-key-status.error{color:#963933!important}.account-key-status.ok{color:#1f6a43!important}
+
+/* v1.0.19: lightweight motion only (opacity/transform) */
+@keyframes raViewIn{from{opacity:.72;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes raFrameIn{from{opacity:.82}to{opacity:1}}
+.view.active{animation:raViewIn .14s ease-out}
+.module-frame-wrap.loaded .module-frame{animation:raFrameIn .12s ease-out}
+:is(.nav-btn,.nav-category-toggle,.character-nav-btn,.character-new-btn,.btn,button){transition:transform .1s ease,opacity .1s ease,background-color .12s ease,border-color .12s ease}
+:is(.nav-btn,.nav-category-toggle,.character-nav-btn,.character-new-btn,.btn,button):active{transform:translateY(1px)}
+@media(prefers-reduced-motion:reduce){.view.active,.module-frame-wrap.loaded .module-frame{animation:none}:is(.nav-btn,.nav-category-toggle,.character-nav-btn,.character-new-btn,.btn,button){transition:none}}

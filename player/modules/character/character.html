@@ -1231,6 +1231,13 @@ html.ra-embedded .cloud-key-field,html.ra-embedded #backListBtn,html.ra-embedded
 html.ra-embedded #editorView>.view{display:block!important}
 html.ra-embedded .compact-toolbar:has(#loadEquipmentCategoriesBtn){justify-content:flex-start!important}
 </style>
+<style id="raPerfMotionV1019">
+@keyframes raSoftIn{from{opacity:.72;transform:translateY(3px)}to{opacity:1;transform:none}}
+.view.active{animation:raSoftIn .14s ease-out}
+button,.tab,.subtab,.tab-btn,.editor-tab-btn{transition:transform .1s ease,opacity .1s ease}
+button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{transform:translateY(1px)}
+@media(prefers-reduced-motion:reduce){.view.active{animation:none}button,.tab,.subtab,.tab-btn,.editor-tab-btn{transition:none}}
+</style>
 </head>
 <body class="ra-app ra-player ra-character">
 <div class="ra-build-info">Version：v90.8.786 / 最終更新日：2026年9月16日</div>
@@ -2128,6 +2135,7 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     else{currentCharacter=data;autoSaveLastSavedHash=autoSaveContentHash(data);}
     const listMayHaveChanged=currentMode==='new'||(!usePatch&&String(currentCharacter?.name||'')!==String(data?.name||''))||(usePatch&&Object.prototype.hasOwnProperty.call(patch||{},'name'));
     currentMode='edit';
+    try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_SAVED',id:String(currentCharacter?.id||''),name:String(currentCharacter?.name||''),updatedAt:String(currentCharacter?.updatedAt||patch?.updatedAt||''),revision:Number(cloudCharacterRevision||0)||0,storageRow:Number(cloudCharacterRowHint||0)||0},location.origin)}catch(_){}
     if(listMayHaveChanged){try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_LIST_CHANGED'},location.origin)}catch(_){}}
     autoSaveDirty=autoSaveDirtySections.size>0;
     syncAutoSaveToggle();
@@ -6888,11 +6896,11 @@ function characterGithubBaseCandidates(){
   return [GITHUB_COMMON_DB_BASE];
 }
 function characterManifestMasterInfo(manifest={}){
-  const nested=manifest&&manifest.files&&manifest.files.master;
-  const nestedObject=nested&&typeof nested==='object'?nested:{};
+  const preferred=manifest&&manifest.files&&(manifest.files.character||manifest.files.master);
+  const nestedObject=preferred&&typeof preferred==='object'?preferred:{};
   return{
-    file:String(manifest.master||nestedObject.path||(typeof nested==='string'?nested:'')||'').trim(),
-    sha256:String(manifest.sha256||nestedObject.sha256||'').trim()
+    file:String(nestedObject.file||nestedObject.path||(typeof preferred==='string'?preferred:'')||manifest.master||'').trim(),
+    sha256:String(nestedObject.sha256||manifest.sha256||'').trim()
   };
 }
 let lastCharacterSheetMasterResult = null;
@@ -7092,10 +7100,15 @@ async function fetchGithubCharacterSheetMaster({force=false}={}) {
         if(attempt<1)await characterGithubDelay(300);
       }
       try{
-        const directUrl=new URL('recraft_alchemia_master.json',base);
-        return characterGithubMasterResult(await characterFetchGithubJson(directUrl.toString(),{timeoutMs:15000,cacheMode:'no-cache'}),{master:'recraft_alchemia_master.json'});
-      }catch(directError){
-        errors.push(`${base}: ${[lastError&&lastError.message,directError&&directError.message].filter(Boolean).join(' / ')}`);
+        const directUrl=new URL('recraft_alchemia_character_master.json',base);
+        return characterGithubMasterResult(await characterFetchGithubJson(directUrl.toString(),{timeoutMs:12000,cacheMode:'no-cache'}),{files:{character:{file:'recraft_alchemia_character_master.json'}}});
+      }catch(characterDirectError){
+        try{
+          const directUrl=new URL('recraft_alchemia_master.json',base);
+          return characterGithubMasterResult(await characterFetchGithubJson(directUrl.toString(),{timeoutMs:15000,cacheMode:'no-cache'}),{master:'recraft_alchemia_master.json'});
+        }catch(directError){
+          errors.push(`${base}: ${[lastError&&lastError.message,characterDirectError&&characterDirectError.message,directError&&directError.message].filter(Boolean).join(' / ')}`);
+        }
       }
     }
     if(usableMismatch)return usableMismatch;
@@ -8538,20 +8551,40 @@ async function listItems() {
   const res = await cloudRequest('list', { playerKey: currentCloudPlayerKey });
   return { items: res.items || [] };
 }
-async function loadItem(id) {
+
+const CHARACTER_DATA_CACHE_DB='recraft_alchemia_character_data_cache_v1';
+const CHARACTER_DATA_CACHE_STORE='characters';
+const CHARACTER_DATA_CACHE_TIMEOUT_MS=900;
+function characterDataCacheKey(playerKey,id){return `${String(playerKey||'').trim()}::${String(id||'').trim()}`;}
+function characterDataCacheOpen(){return new Promise(resolve=>{if(!('indexedDB'in window)){resolve(null);return;}let done=false,req;const finish=v=>{if(done){try{v?.close?.();}catch(_){}return;}done=true;clearTimeout(timer);resolve(v||null);};const timer=setTimeout(()=>finish(null),CHARACTER_DATA_CACHE_TIMEOUT_MS);try{req=indexedDB.open(CHARACTER_DATA_CACHE_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(CHARACTER_DATA_CACHE_STORE))db.createObjectStore(CHARACTER_DATA_CACHE_STORE);};req.onsuccess=()=>finish(req.result);req.onerror=req.onblocked=()=>finish(null);}catch(_){finish(null);}});}
+async function characterDataCacheGet(playerKey,id){const key=characterDataCacheKey(playerKey,id);if(!key||key==='::')return null;let db=null;try{db=await characterDataCacheOpen();if(!db)return null;return await new Promise(resolve=>{let done=false;const finish=v=>{if(done)return;done=true;clearTimeout(timer);resolve(v||null);};const timer=setTimeout(()=>finish(null),CHARACTER_DATA_CACHE_TIMEOUT_MS);try{const tx=db.transaction(CHARACTER_DATA_CACHE_STORE,'readonly'),req=tx.objectStore(CHARACTER_DATA_CACHE_STORE).get(key);req.onsuccess=()=>finish(req.result||null);req.onerror=()=>finish(null);tx.onabort=()=>finish(null);}catch(_){finish(null);}});}finally{try{db?.close();}catch(_){}}}
+async function characterDataCachePut(playerKey,data,revision=0,storageRow=0){const id=String(data?.id||'').trim(),key=characterDataCacheKey(playerKey,id);if(!id||!String(playerKey||'').trim())return false;let db=null;try{db=await characterDataCacheOpen();if(!db)return false;const record={id,playerKey:String(playerKey||'').trim(),revision:Number(revision||0)||0,storageRow:Number(storageRow||0)||0,cachedAt:Date.now(),data:stripRuntimeOnlyData(data)};const saved=await new Promise(resolve=>{let done=false;const finish=v=>{if(done)return;done=true;clearTimeout(timer);resolve(!!v);};const timer=setTimeout(()=>finish(false),CHARACTER_DATA_CACHE_TIMEOUT_MS);try{const tx=db.transaction(CHARACTER_DATA_CACHE_STORE,'readwrite');tx.objectStore(CHARACTER_DATA_CACHE_STORE).put(record,key);tx.oncomplete=()=>finish(true);tx.onerror=tx.onabort=()=>finish(false);}catch(_){finish(false);}});if(saved)setTimeout(()=>characterDataCachePrune(playerKey,8),0);return saved;}finally{try{db?.close();}catch(_){}}}
+async function characterDataCacheDelete(playerKey,id){let db=null;try{db=await characterDataCacheOpen();if(!db)return;await new Promise(resolve=>{try{const tx=db.transaction(CHARACTER_DATA_CACHE_STORE,'readwrite');tx.objectStore(CHARACTER_DATA_CACHE_STORE).delete(characterDataCacheKey(playerKey,id));tx.oncomplete=tx.onerror=tx.onabort=()=>resolve();}catch(_){resolve();}});}finally{try{db?.close();}catch(_){}}}
+async function characterDataCachePrune(playerKey,maxEntries=8){let db=null;try{db=await characterDataCacheOpen();if(!db)return;const rows=await new Promise(resolve=>{try{const tx=db.transaction(CHARACTER_DATA_CACHE_STORE,'readonly'),req=tx.objectStore(CHARACTER_DATA_CACHE_STORE).getAll();req.onsuccess=()=>resolve(Array.isArray(req.result)?req.result:[]);req.onerror=()=>resolve([]);}catch(_){resolve([]);}});const own=rows.filter(r=>String(r?.playerKey||'')===String(playerKey||'')).sort((a,b)=>Number(b?.cachedAt||0)-Number(a?.cachedAt||0));if(own.length<=maxEntries)return;await new Promise(resolve=>{try{const tx=db.transaction(CHARACTER_DATA_CACHE_STORE,'readwrite'),store=tx.objectStore(CHARACTER_DATA_CACHE_STORE);own.slice(maxEntries).forEach(r=>store.delete(characterDataCacheKey(playerKey,r.id)));tx.oncomplete=tx.onerror=tx.onabort=()=>resolve();}catch(_){resolve();}});}finally{try{db?.close();}catch(_){}}}
+async function prefetchCharacterData(id,{expectedRevision=0,rowHint=0}={}){
+  if(!currentCloudPlayerKey||!id)return false;const cached=await characterDataCacheGet(currentCloudPlayerKey,id);
+  if(Number(expectedRevision||0)>0&&Number(cached?.revision||0)===Number(expectedRevision||0))return true;
+  try{const res=await cloudRequest('load',{id,playerKey:currentCloudPlayerKey,rowHint:Number(rowHint||cached?.storageRow||0)||0});if(res?.data){await characterDataCachePut(currentCloudPlayerKey,res.data,res.revision,res.storageRow);return true;}}catch(_){}return false;
+}
+async function loadItem(id,{expectedRevision=0,rowHint=0,force=false}={}) {
   if (!currentCloudPlayerKey) throw new Error('クラウド読み込みにはプレイヤーキーが必要です。');
-  const res = await cloudRequest('load', { id, playerKey: currentCloudPlayerKey });
+  const cached=force?null:await characterDataCacheGet(currentCloudPlayerKey,id);
+  const wantedRevision=Number(expectedRevision||0)||0;
+  if(cached?.data&&wantedRevision>0&&Number(cached.revision||0)===wantedRevision){
+    cloudCharacterRevision=Number(cached.revision||0)||0;cloudCharacterRowHint=Number(cached.storageRow||rowHint||0)||0;return cached.data;
+  }
+  const res = await cloudRequest('load', { id, playerKey: currentCloudPlayerKey, rowHint:Number(rowHint||cached?.storageRow||0)||0 });
   cloudCharacterRevision=Number(res.revision||0)||0;
   cloudCharacterRowHint=Number(res.storageRow||0)||0;
-  if(res&&res.migratedToDrive){
-    showToast('旧スプレッドシート保存をGoogle Driveへ移行しました。','ok');
-  }
+  if(res?.data)characterDataCachePut(currentCloudPlayerKey,res.data,cloudCharacterRevision,cloudCharacterRowHint);
+  if(res&&res.migratedToDrive){showToast('旧スプレッドシート保存をGoogle Driveへ移行しました。','ok');}
   return res.data;
 }
 async function deleteItem(id) {
   const playerKey = currentCloudPlayerKey || prompt('削除用のプレイヤーキーを入力してください。') || '';
   if (!String(playerKey).trim()) throw new Error('削除にはプレイヤーキーが必要です。');
   await cloudRequest('delete', { id, playerKey });
+  characterDataCacheDelete(playerKey,id);
 }
 function sleepMs(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -8595,6 +8628,8 @@ async function saveItem(data) {
     if ($('newPlayerKey')) $('newPlayerKey').value = '';
     if ($('cloudPlayerKeyInput')) $('cloudPlayerKeyInput').value = auth.newPlayerKey;
   }
+  characterDataCachePut(effectivePlayerKey,cleanData,cloudCharacterRevision,cloudCharacterRowHint);
+  if(auth.newPlayerKey&&auth.playerKey&&auth.playerKey!==auth.newPlayerKey)characterDataCacheDelete(auth.playerKey,cleanData.id);
   return { saved:true, cloudSaved:true, verified:true, acknowledged:!!(saveResult&&saveResult.acknowledged) };
 }
 async function verifyCloudCharacterPatch(id, patch, playerKey) {
@@ -8630,6 +8665,8 @@ async function savePatchItem(id,patch={}){
     cloudCharacterRowHint=Number(saveResult.storageRow||cloudCharacterRowHint)||0;
   }
   if(auth.newPlayerKey){currentCloudPlayerKey=auth.newPlayerKey;if($('playerKey'))$('playerKey').value=auth.newPlayerKey;if($('newPlayerKey'))$('newPlayerKey').value='';if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=auth.newPlayerKey;}
+  characterDataCachePut(effectivePlayerKey,snapshot,cloudCharacterRevision,cloudCharacterRowHint);
+  if(auth.newPlayerKey&&auth.playerKey&&auth.playerKey!==auth.newPlayerKey)characterDataCacheDelete(auth.playerKey,id);
   return {saved:true,patched:true,acknowledged:!!(saveResult&&saveResult.acknowledged)};
 }
 
@@ -8649,7 +8686,7 @@ async function refreshList() {
     $('listStatus').className = 'status-box ok';
     $('listStatus').textContent = `${items.length}件のキャラクターがあります。`;
     $('characterList').innerHTML = items.map(item => `
-      <div class="list-item" data-id="${esc(item.id)}">
+      <div class="list-item" data-id="${esc(item.id)}" data-revision="${Number(item.revision||0)||0}" data-storage-row="${Number(item.storageRow||0)||0}">
         <div class="list-title">${esc(item.name || '無名のキャラクター')}</div>
         <div class="list-meta">更新：${formatDate(item.updatedAt)} / ID: ${esc(item.id)}</div>
         <div class="button-row">
@@ -9814,7 +9851,8 @@ function bindEvents() {
       }
       if (action === 'share') { await copyShareUrlForListItem(id); return; }
       if ($('listStatus')) { $('listStatus').className = 'status-box'; $('listStatus').textContent = action === 'export' ? '出力データを読み込み中です。' : '編集画面を開いています。'; }
-      const data = await loadItem(id);
+      const itemEl=btn.closest('.list-item');
+      const data = await loadItem(id,{expectedRevision:Number(itemEl?.dataset?.revision||0)||0,rowHint:Number(itemEl?.dataset?.storageRow||0)||0});
       if (action === 'export') { openOutputDialog(data); return; }
       openEditor(action === 'view' ? 'view' : 'edit', data);
     } catch (err) {
@@ -10277,11 +10315,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   if(new URLSearchParams(location.search).get('embedded')!=='1')return;
   document.documentElement.classList.add('ra-embedded');
   function ctx(){try{return window.parent&&window.parent!==window?(window.parent.RA_PLAYER_CONTEXT||{}):{}}catch(_){return{}}}
-  function notify(type,text=''){try{window.parent.postMessage({type,text},location.origin)}catch(_){}}
+  function notify(type,text='',extra={}){try{window.parent.postMessage({type,text,...(extra||{})},location.origin)}catch(_){}}
   function applyKey(){const c=ctx();const key=String(c.charKey||'').trim();if(!key)return'';currentCloudPlayerKey=key;if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=key;if($('playerKey'))$('playerKey').value=key;if($('newPlayerKey'))$('newPlayerKey').value='';return key}
   let embeddedOpenCharacterId='',openingPromise=null;
-  async function resilientLoad(id){let last;for(let i=0;i<3;i++){try{return await loadItem(id)}catch(e){last=e;if(i<2){notify('RA_MODULE_LOADING',`通信を再試行しています（${i+2}/3）`);await sleepMs([800,2000][i]||2500);}}}throw last||new Error('キャラクターデータを読み込めませんでした。')}
-  async function openId(id,{force=false}={}){
+  async function resilientLoad(id,options={}){let last;for(let i=0;i<3;i++){try{return await loadItem(id,{...options,force:options.force===true&&i===0})}catch(e){last=e;if(i<2){notify('RA_MODULE_LOADING',`通信を再試行しています（${i+2}/3）`);await sleepMs([800,2000][i]||2500);}}}throw last||new Error('キャラクターデータを読み込めませんでした。')}
+  async function openId(id,{force=false,revision=0,storageRow=0}={}){
     const cleanId=String(id||''),key=applyKey();
     if(!key){const msg='ログイン時のキャラクターシート用プレイヤーキー紐づけが見つかりません。';const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);return;}
     if(cleanId==='__new__'){openNew();return;}
@@ -10289,12 +10327,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     if(!force&&embeddedOpenCharacterId===cleanId&&String(currentCharacter?.id||'')===cleanId){notify('RA_MODULE_READY');return;}
     if(openingPromise&&!force)return openingPromise;
     notify('RA_MODULE_LOADING','読み込み中');
-    openingPromise=(async()=>{try{const data=await resilientLoad(cleanId);openEditor('edit',data);embeddedOpenCharacterId=cleanId;notify('RA_MODULE_READY');}catch(e){const msg=e.message||String(e);const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);}finally{openingPromise=null;}})();
+    openingPromise=(async()=>{try{const data=await resilientLoad(cleanId,{expectedRevision:Number(revision||0)||0,rowHint:Number(storageRow||0)||0,force});openEditor('edit',data);embeddedOpenCharacterId=cleanId;notify('RA_MODULE_READY','',{revision:Number(cloudCharacterRevision||0)||0,storageRow:Number(cloudCharacterRowHint||0)||0});}catch(e){const msg=e.message||String(e);const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);}finally{openingPromise=null;}})();
     return openingPromise;
   }
   function openNew(){applyKey();embeddedOpenCharacterId='';openEditor('new',emptyCharacter());notify('RA_MODULE_READY');}
-  window.addEventListener('message',ev=>{if(ev.origin!==location.origin)return;const type=ev.data?.type;if(type==='RA_OPEN_CHARACTER')openId(String(ev.data.characterId||''),{force:ev.data?.force===true});if(type==='RA_NEW_CHARACTER')openNew();if(type==='RA_RELOAD_CHARACTER_DB')$('loadEquipmentCategoriesBtn')?.click();if(type==='RA_SYNC_INITIAL_WAREHOUSE')$('addInitialWeaponSetBtn')?.click();});
-  const start=()=>{const c=ctx();applyKey();const id=String(c.characterId||'');if(id==='__new__')openNew();else openId(id);};
+  window.addEventListener('message',ev=>{if(ev.origin!==location.origin)return;const type=ev.data?.type;if(type==='RA_OPEN_CHARACTER')openId(String(ev.data.characterId||''),{force:ev.data?.force===true,revision:Number(ev.data?.revision||0)||0,storageRow:Number(ev.data?.storageRow||0)||0});if(type==='RA_PREFETCH_CHARACTER')prefetchCharacterData(String(ev.data.characterId||''),{expectedRevision:Number(ev.data?.revision||0)||0,rowHint:Number(ev.data?.storageRow||0)||0});if(type==='RA_NEW_CHARACTER')openNew();if(type==='RA_RELOAD_CHARACTER_DB')$('loadEquipmentCategoriesBtn')?.click();if(type==='RA_SYNC_INITIAL_WAREHOUSE')$('addInitialWeaponSetBtn')?.click();});
+  const start=()=>{const c=ctx();applyKey();const id=String(c.characterId||''),meta=c.characterMeta||{};if(id==='__new__')openNew();else openId(id,{revision:Number(meta.revision||0)||0,storageRow:Number(meta.storageRow||0)||0});};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0),{once:true});else setTimeout(start,0);
 })();
 </script>

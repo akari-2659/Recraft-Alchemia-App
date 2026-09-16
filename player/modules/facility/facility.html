@@ -1000,10 +1000,10 @@ function facilityGithubBaseCandidates(){
   return [GITHUB_COMMON_DB_BASE];
 }
 function facilityManifestMasterInfo(manifest={}){
-  const nested=manifest&&manifest.files&&manifest.files.master;
-  const nestedObject=nested&&typeof nested==='object'?nested:{};
-  const file=String(manifest.master||nestedObject.path||(typeof nested==='string'?nested:'')||'').trim();
-  const sha256=String(manifest.sha256||nestedObject.sha256||'').trim();
+  const preferred=manifest&&manifest.files&&(manifest.files.facility||manifest.files.master);
+  const nestedObject=preferred&&typeof preferred==='object'?preferred:{};
+  const file=String(nestedObject.file||nestedObject.path||(typeof preferred==='string'?preferred:'')||manifest.master||'').trim();
+  const sha256=String(nestedObject.sha256||manifest.sha256||'').trim();
   return{file,sha256};
 }
 
@@ -1204,10 +1204,15 @@ async function fetchGithubCommonMaster({force=false}={}){
         if(attempt<1)await facilityGithubDelay(300);
       }
       try{
-        const directUrl=new URL('recraft_alchemia_master.json',base);
-        return{...facilityValidateGithubMaster(await facilityFetchGithubJson(directUrl.toString(),{timeoutMs:15000,cacheMode:'no-cache'}),{master:'recraft_alchemia_master.json'}),base};
-      }catch(directError){
-        errors.push(`${base}: ${[lastError&&lastError.message,directError&&directError.message].filter(Boolean).join(' / ')}`);
+        const directUrl=new URL('recraft_alchemia_facility_master.json',base);
+        return{...facilityValidateGithubMaster(await facilityFetchGithubJson(directUrl.toString(),{timeoutMs:12000,cacheMode:'no-cache'}),{files:{facility:{file:'recraft_alchemia_facility_master.json'}}}),base};
+      }catch(facilityDirectError){
+        try{
+          const directUrl=new URL('recraft_alchemia_master.json',base);
+          return{...facilityValidateGithubMaster(await facilityFetchGithubJson(directUrl.toString(),{timeoutMs:15000,cacheMode:'no-cache'}),{master:'recraft_alchemia_master.json'}),base};
+        }catch(directError){
+          errors.push(`${base}: ${[lastError&&lastError.message,facilityDirectError&&facilityDirectError.message,directError&&directError.message].filter(Boolean).join(' / ')}`);
+        }
       }
     }
     if(usableMismatch)return usableMismatch;
