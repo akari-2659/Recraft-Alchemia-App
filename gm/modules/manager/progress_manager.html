@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.784</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.786</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.784 / 最終更新日：2026年9月15日</div>
+<div class="ra-build-info">Version：v90.8.786 / 最終更新日：2026年9月16日</div>
 
 <header>
   <div class="header-inner">
@@ -635,7 +635,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 <script src="./assets/vendor/jszip.min.js"></script>
 <script>
 'use strict';
-const VERSION='v90.8.784';
+const VERSION='v90.8.786';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -5075,10 +5075,24 @@ function eventOutcomeNarrative(row={},group={},scope='event'){
   if(threshold)return 'さらに注意深く確かめたことで、もう一段踏み込んだ成果へたどり着いた。';
   return hasItems?'周囲の様子を丁寧に確かめ、見つけたものを無事に回収した。':'状況を見極め、無事にこの場を切り抜けた。';
 }
+function eventSuccessHint(row={},group={}){
+  if(String(group?.trigger?.kind||'')!=='success')return '';
+  const notes=String(row?.notes||'');
+  const matches=[...notes.matchAll(/【成功ヒント(?::([^】]+))?】([^\n]+)/g)];
+  if(!matches.length)return '';
+  const branch=String(group?.trigger?.branchKey||'').trim();
+  const hit=matches.find(m=>!String(m[1]||'').trim()||String(m[1]||'').trim()===branch);
+  return String(hit?.[2]||'').trim();
+}
 const v775EventOutcomeNarrative=eventOutcomeNarrative;
 eventOutcomeNarrative=function(row={},group={},scope='event'){
-  const base=v775EventOutcomeNarrative(row,group,scope);
-  if(!base)return '';
+  const raw=v775EventOutcomeNarrative(row,group,scope);
+  if(!raw)return '';
+  const hint=eventSuccessHint(row,group);
+  const base=[raw,hint].filter(Boolean).join(' ');
+  const failure=['failure','questFailure'].includes(String(group?.trigger?.kind||''));
+  // 失敗時は判定コピーで使った導入descriptionを再掲しない。
+  if(failure)return base;
   // 「入手なし」等を文字列の「入手」で誤って取得扱いしない。
   // 実際に解析された取得アイテム／報酬表枠だけを取得ありとして扱う。
   const hasItems=(group?.items||[]).length>0||Number(group?.tableSlots||0)>0;
