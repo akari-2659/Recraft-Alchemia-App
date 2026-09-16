@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.786</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.787</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.786 / 最終更新日：2026年9月16日</div>
+<div class="ra-build-info">Version：v90.8.787 / 最終更新日：2026年9月16日</div>
 
 <header>
   <div class="title-card">
@@ -2153,11 +2153,12 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
     <div class="modal-foot"><button type="button" class="ghost" data-facility-general-area-cancel>キャンセル</button><button type="button" data-facility-general-area-apply>選択を適用</button></div>
   </div>
 </div>
+<script src="../../../js/ra_monster_rules.js?v=90.8.787"></script>
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.786';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.786';
+const RECRAFT_DB_VERSION = 'v90.8.787';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.787';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -2234,7 +2235,7 @@ FIELD_PLACEHOLDERS.ct='例：2 / 戦闘終了 / クエスト終了';
 FIELD_PLACEHOLDERS.drawWeight='例：100。大きいほど排出されやすい。';
 FIELD_PLACEHOLDERS.balanceTier='例：標準 / 強力 / 最上位';
 FIELD_PLACEHOLDERS.balanceReason='排出ウェイトを決めた理由や、効果の強さ・条件の狭さを記載。';
-FIELD_PLACEHOLDERS.fixedActionNames='通常魔物・候補制二つ名で、通常の所持技抽選に必ず含めたい行動名をカンマ区切りで0～2個指定します。パッシブで参照されるだけでは固定選出になりません。例：雷脈充填 / 高空旋回,風脈急襲';
+FIELD_PLACEHOLDERS.fixedActionNames='通常の所持技抽選に必ず含めたい行動名をカンマ区切りで指定します（通常魔物0～2個、候補制二つ名0～3個）。パッシブで参照されるだけでは固定選出になりません。例：雷脈充填 / 高空旋回,風脈急襲';
 FIELD_PLACEHOLDERS.passiveOnlyActionNames='固有パッシブからのみ発動し、通常手番の所持技抽選には入れない行動名をカンマ区切りで指定します。チャットパレットには掲載されます。';
 FIELD_PLACEHOLDERS.actionSelectionRules='1行につき「行動名\t候補条件」。条件を満たす遭遇では所持技の抽選候補に入り、条件を満たさない場合は候補外になります。条件成立でも確定所持にはなりません。対応条件：味方あり / 前衛後衛あり / 前衛あり / 後衛あり / 強敵不在 / 同名N体未満。例：鏡像誘導\t味方あり';
 const FORM_SELECT_FIELDS = new Set(['dataKind','csVisible','itemType','itemCategory','materialType','materialCategory','rank','toolRank','guaranteeUpgradeMaxRank','equipSlot','skill','checkType','type','role','setItem','unlockAreaKey','unlockFacility','equipmentUpgradeEffect','equipmentUpgradeTarget','ammoUse','ammoKind','craftSkill','craftType','baseItem','branchType','enabled','hasLock','hasTrap','scale','requestKind','questType','rewardScope','areaName','bossMonster','areaType','difficulty','eventType','conditionType','conditionValue','rumorScope','treasureTableId','rewardTableId','tableId','tablePurpose','treasureRank','hasLock','hasTrap','hasLock','hasTrap','entryType','entryName','entryPublicId','recipeName','scrollRank','facilityName','spellType','spellRank','monsterType','resultKind','element','enchantTarget','enchantEffectType','enchantDuration','enchantStackRule','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','category','weaponType','balanceTier','individualValueEnabled']);
@@ -3492,7 +3493,7 @@ const SYSTEM_HELP = [
       "チャットパレットは『choice[技名1,技名2,…]』から始める。",
       "ラウンド開始時にプレイヤーへ公開するのは使用予定の行動名だけ。対象となるPC・対象列・距離・威力・効果は事前公開しない。対象PC・対象列は、その魔物の行動を実際に解決する時点で選ぶ。",
       "GM用チャットパレットには行動種別、対象、距離（近接／遠距離／自身）、ダメージ、効果を表示する。",
-      "状態異常を付与する行動は、状態名だけでなく具体的な効果と継続期間もチャットパレットへ表示する。段階制の状態異常は、付与する段階数だけでなく、I・II・IIIなど現在定義されている全段階の効果をチャットパレットへまとめて表示する。",
+      "行動効果欄には付与条件・状態名・固有の期限だけを記載する。具体的な状態・フィールドの定義は、チャットパレット末尾の【状態・フィールド】へ使用するものだけ1回ずつ表示する。段階制は全段階をまとめて表示する。",
       "ダイスのない効果も技能セクションに入れる。"
     ]
   },
@@ -3585,6 +3586,7 @@ const SYSTEM_HELP = [
     ]
   }
 ];
+SYSTEM_HELP.push({title:'状態・フィールドの共通定義',tags:['魔物','状態','フィールド'],body:[...RAMonsterRules.common,...Object.values(RAMonsterRules.definitions).flat()]});
 function buildSystemHelpText(){
   return SYSTEM_HELP.map(section=>{
     const tagText = (section.tags||[]).length ? `【${section.tags.join(' / ')}】\n` : '';
@@ -6523,50 +6525,13 @@ function monsterMemo(row={}){
   // ドロップや詳細説明は管理HTML側で確認する。
   return '';
 }
-const MONSTER_STATUS_DEFINITIONS = {
-  '毒状態':['※毒状態：ラウンド終了時に1D3の無属性・防御無視ダメージ。戦闘終了後に解除。'],
-  '汚染':[
-    '※汚染I：この戦闘中、受けるHP回復量-2（最低0）。',
-    '※汚染II：この戦闘中、受けるHP回復量-4（最低0）。',
-    '※汚染III：この戦闘中、受けるHP回復量-6（最低0）。さらに受けるMP回復量-2（最低0）。',
-    '※汚染の段階：再度付与された場合は行動に記載された段階数だけ上昇し、最大III。下位段階の効果は加算せず、現在段階の効果だけを適用する。戦闘終了時に解除。'
-  ],
-  '呪い':[
-    '※呪いI：この戦闘中、攻撃判定・魔法判定・祈祷判定の達成値-1。',
-    '※呪いII：この戦闘中、攻撃判定・魔法判定・祈祷判定の達成値-2。',
-    '※呪いIII：この戦闘中、攻撃判定・魔法判定・祈祷判定の達成値-2。さらに常時防御値-1。',
-    '※呪いの段階：再度付与された場合は行動に記載された段階数だけ上昇し、最大III。下位段階の効果は加算せず、現在段階の効果だけを適用する。戦闘終了時に解除。'
-  ],
-  '鏡蝕状態':['※鏡蝕状態：攻撃判定・魔法判定・祈祷判定-1。戦闘終了後に解除。'],
-  '拘束状態':['※拘束状態：次に回避値を参照される攻撃1回に対して回避値-2。その攻撃の解決後に解除する。'],
-  '根牢状態':['※根牢状態：回避値-2。自身の手番に行動1回を消費し、力業判定または細工判定（目標値10）に成功すると解除する。また、《根脈穿槍》が命中した場合も解除する。戦闘終了時に解除する。'],
-  '萎縮状態':['※萎縮状態：攻撃判定・魔法判定・祈祷判定-1。次のラウンド終了時に解除する。'],
-  '泥まみれ状態':['※泥まみれ状態：攻撃判定-1、回避値-1。次のラウンド終了時に解除する。'],
-  '胞子状態':['※胞子状態：魔法判定・祈祷判定-1、抵抗値-1。次のラウンド終了時に解除する。'],
-  '侵蝕胞子状態':['※侵蝕胞子状態：次のラウンド終了まで魔法判定・祈祷判定-1、抵抗値-1。また、2ラウンドの間、各ラウンド終了時に1D3の無属性・防御無視ダメージ。2ラウンド目の終了時に解除。'],
-  '粘着状態':['※粘着状態：回避値-2、防御行動値-1。次のラウンド終了時に解除する。'],
-  '視界不良状態':['※視界不良状態：攻撃判定-1、回避値-1。次のラウンド終了時に解除する。'],
-  '体勢崩れ状態':['※体勢崩れ状態：常時防御値-1。次のラウンド終了時に解除する。'],
-  '睡眠状態':['※睡眠状態：移動・攻撃・魔法・祈祷・妨害・かばう・防御行動を行えない。自身の手番開始時に覚醒判定（2D6>=8）を行い、成功すると解除し、その手番は通常どおり行動できる。戦闘終了時にも解除する。'],
-  '麻痺状態':['※麻痺状態：移動できない。攻撃判定・魔法判定・祈祷判定・妨害判定・かばう判定-2。戦闘終了時に解除する。']
-};
+const MONSTER_STATUS_DEFINITIONS = RAMonsterRules.definitions;
 const MONSTER_STATUS_PATTERNS = {
   '毒状態': /毒状態/,
   '汚染': /汚染(?:状態|I|II|III|Ⅰ|Ⅱ|Ⅲ|を|が|へ)/,
   '呪い': /呪い(?:状態|I|II|III|Ⅰ|Ⅱ|Ⅲ|を|が|へ)/
 };
-function monsterStatusNotesFromText(text=''){
-  const source = String(text || '');
-  const notes = [];
-  Object.entries(MONSTER_STATUS_DEFINITIONS).forEach(([status,descriptions])=>{
-    const pattern = MONSTER_STATUS_PATTERNS[status];
-    const matched = pattern ? pattern.test(source) : source.includes(status);
-    if(!matched) return;
-    const list = Array.isArray(descriptions) ? descriptions : [descriptions];
-    list.forEach(description=>{ if(description) notes.push(description); });
-  });
-  return notes;
-}
+function monsterStatusNotesFromText(text=''){return RAMonsterRules.notesFromText(text);}
 function monsterActionStatusNotes(action={}){
   return monsterStatusNotesFromText(`${action.name || ''} ${action.effect || ''}`);
 }
@@ -6578,7 +6543,7 @@ function monsterRowStatusNotes(row={}){
 function monsterStatusNotesHtml(row={}){
   const notes = monsterRowStatusNotes(row);
   if(!notes.length) return '';
-  return `<section class="monster-section"><h4>状態異常</h4><div class="monster-mini-table">${notes.map(note=>`<div class="monster-action-card"><div class="monster-action-sub">${escapeHtml(note)}</div></div>`).join('')}</div></section>`;
+  return `<section class="monster-section"><h4>状態・フィールド</h4><div class="monster-mini-table">${notes.map(note=>`<div class="monster-action-card"><div class="monster-action-sub">${escapeHtml(note)}</div></div>`).join('')}</div></section>`;
 }
 function monsterActionRange(action={}){ return normalizeMonsterActionRange(action); }
 function monsterActionTarget(action={}){
@@ -6597,7 +6562,7 @@ function monsterDamageCommand(action={}){
   if(!power || power === 'なし' || power === '-') return '';
   const actionType = normalizeMonsterActionType(action);
   const effect = String(action.effect || '');
-  const isRecovery = actionType === '回復' || /HP.*回復|回復する/.test(effect) || /回復$/.test(power);
+  const isRecovery = actionType === '回復' || /回復$/.test(power) || (['補助','防御'].includes(actionType) && /HP.*回復/.test(effect));
   if(isRecovery){
     power = power.replace(/回復$/,'');
     return `${power} 【${action.name || '魔物行動'}・回復】`;
@@ -6631,14 +6596,15 @@ function monsterChatPalette(row={}){
       const actionType = normalizeMonsterActionType(action);
       lines.push(`// 【${actionName}】 種別：${actionType}／距離：${range}／対象：${target}${element ? `／属性：${element}` : ''}`);
       if(check) lines.push(check);
-      if(damage) lines.push(damage);
+      if(damage){ lines.push(damage); if(damage.includes('・回復】')){ const alt=effect.match(/代わりに([0-9D+]+)回復/); if(alt) lines.push(`${alt[1]} 【${actionName}・条件成立時の回復】`); }}
       if(effect) lines.push(`// 効果：${effect}`);
       if(!check && !damage && !effect) lines.push(`// ${actionName}`);
     });
     const statusNotes = monsterRowStatusNotes(row);
     if(statusNotes.length){
-      lines.push('// 【状態異常】');
+      lines.push('// 【状態・フィールド】');
       statusNotes.forEach(note=>lines.push(`// ${note}`));
+      lines.push(...RAMonsterRules.fieldCommands([row.passiveEffect||'',...actions.map(a=>a.effect||'')].join(' ')));
     }
   }else{
     lines.push(`// ${name}`);
@@ -8796,6 +8762,14 @@ function assertLateAreaMonsterMaterialRankRows(rows=[]){
   const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：★${x.actual||'?'}（許可：${x.allowed.map(v=>'★'+v).join(' / ')}）`).join('\n');
   throw new Error(`魔物素材の★が現行エリア帯ルールと一致していません。単一帯★xは通常素材★x・20%固有素材★x+1、幅帯★x～★yは通常魔物の通常素材★x・20%固有素材★y、強敵枠のみ★x/★y/★(y+1)を使用できます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
+function assertMonsterEffectClarityRows(rows=[]){
+  const errors=[];
+  (rows||[]).forEach(row=>{
+    const parts=[{name:'固有パッシブ',effect:row.passiveEffect||''},...parseMonsterActions(row.actions||'')];
+    parts.forEach(part=>RAMonsterRules.validateText(part.effect||'').forEach(error=>errors.push(`${row.name||row.id}／${part.name}：${error}`)));
+  });
+  if(errors.length)throw new Error(errors.slice(0,12).join('\n'));
+}
 function assertMonsterActionBaseValueRows(rows=[]){
   const invalid=[];
   (rows||[]).forEach(monster=>{
@@ -8893,14 +8867,15 @@ function assertMonsterFixedActionSelectionRows(rows=[]){
     const fixed=monsterFixedActionNames(row),actionCount=parseMonsterActions(row.actions||'').length;
     if(isBoss&&fixed.length){invalid.push({row,reason:'ボスは4技固定のため固定選出技は設定しません'});return;}
     if(isNamed&&actionCount<=4&&fixed.length){invalid.push({row,reason:'4技固定の二つ名には固定選出技を設定しません。5技以上の候補制二つ名だけ指定できます'});return;}
-    if(fixed.length>2){invalid.push({row,reason:`固定選出技は最大2個です（${fixed.length}個）`});return;}
+    const maxFixed=isNamed?3:2;
+    if(fixed.length>maxFixed){invalid.push({row,reason:`固定選出技は最大${maxFixed}個です（${fixed.length}個）`});return;}
     const actionNames=new Set(parseMonsterActions(row.actions||'').map(a=>String(a.name||'').trim()).filter(Boolean));
     const missing=fixed.filter(name=>!actionNames.has(name));
     if(missing.length)invalid.push({row,reason:`行動プールに存在しない固定技：${missing.join('、')}`});
   });
   if(!invalid.length)return;
   const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：${x.reason}`).join('\n');
-  throw new Error(`固定選出技の設定を確認してください。通常魔物と5技以上の候補制二つ名は0～2技まで指定でき、指定名は行動プールと完全一致させます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+  throw new Error(`固定選出技の設定を確認してください。通常魔物は0～2技、5技以上の候補制二つ名は0～3技まで指定でき、指定名は行動プールと完全一致させます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function assertMonsterPassiveOnlyActionRows(rows=[]){
   const invalid=[];
@@ -9019,15 +8994,14 @@ function assertNamedBacklineAttackRows(rows=[]){
     const actions=parseMonsterActions(row.actions||'');
     if(!actions.some(monsterActionCanDamageBackline))return true;
     if(actions.length>4){
-      const actionNames=new Set(actions.filter(monsterActionCanDamageBackline).map(a=>String(a.name||'').trim()));
-      const fixed=new Set(monsterFixedActionNames(row));
-      if(![...actionNames].some(name=>fixed.has(name)))return true;
+      const {loadouts}=monsterLegalLoadouts(row);
+      if(!loadouts.length||loadouts.some(combo=>!combo.some(monsterActionCanDamageBackline)))return true;
     }
     return false;
   });
   if(!invalid.length)return;
   const details=invalid.slice(0,12).map(row=>`・${String(row.name||row.id||'名称未設定')}`).join('\n');
-  throw new Error(`二つ名個体は単体出現を前提とするため、前衛が残っていても後衛へ直接ダメージを与えられる手段を最低1つ持たせてください。5技以上の候補制二つ名では、その後衛圧行動を固定選出技へ含めます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+  throw new Error(`二つ名個体は単体出現を前提とするため、前衛が残っていても後衛へ直接ダメージを与えられる手段を最低1つ持たせてください。5技以上の候補制二つ名では、固定技・技依存を満たす全候補構成に後衛への直接ダメージ手段が残るかを確認します。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function areaBossMonsterNameSet(){
   const names=new Set();
@@ -9306,7 +9280,7 @@ function collectFormRow(){
   if(key==='quest_rewards') assertNumericRankRows('quest_rewards',[clean]);
   if(key==='quests') assertNumericRankRows('quests',[clean]);
   if(key==='treasure_tables'){ assertNumericRankRows('treasure_tables',[clean]); assertTreasureDifficultyRows([clean]); }
-  if(key==='monsters'){ assertNumericRankRows('monsters',[clean]); assertMonsterFixedActionSelectionRows([clean]); assertMonsterPassiveOnlyActionRows([clean]); assertMonsterLoadoutViabilityRows([clean]); assertMonsterActionCountRows([clean]); assertMonsterActionTypeSemanticsRows([clean]); assertNamedBacklineAttackRows([clean]); assertAreaBossBacklineAttackRows([clean]); assertMonsterActionBaseValueRows([clean]); assertMonsterActionCheckSourceRows([clean]); assertMonsterSupportActionCheckRows([clean]); assertMonsterDirectDamageDieRows([clean]); }
+  if(key==='monsters'){ assertMonsterEffectClarityRows([clean]); assertNumericRankRows('monsters',[clean]); assertMonsterFixedActionSelectionRows([clean]); assertMonsterPassiveOnlyActionRows([clean]); assertMonsterLoadoutViabilityRows([clean]); assertMonsterActionCountRows([clean]); assertMonsterActionTypeSemanticsRows([clean]); assertNamedBacklineAttackRows([clean]); assertAreaBossBacklineAttackRows([clean]); assertMonsterActionBaseValueRows([clean]); assertMonsterActionCheckSourceRows([clean]); assertMonsterSupportActionCheckRows([clean]); assertMonsterDirectDamageDieRows([clean]); }
   return clean;
 }
 function applyFormToState(){
@@ -10539,7 +10513,7 @@ function cloneRowsForSave(baseKey, rows){
   if(baseKey==='treasure_tables') assertTreasureDifficultyRows(rows||[]);
   if(baseKey==='items'){ assertItemPriceRows(rows||[]); assertItemClassificationRows(rows||[]); assertWeaponKatakanaNames(rows||[]); assertWeaponBaseDamageDieRows(rows||[]); assertUpgradeSlotScopeRows(rows||[]); assertUpgradeMaterialTargetScopeRows(rows||[]); assertEquipmentUpgradeMinimumRows(rows||[]); assertMonsterMaterialUpgradeRows(rows || []); assertSpecialUpgradeNonStackRows(rows || []); assertNoDefenseIgnoreUpgradeRows(rows || []); assertMaterialUpgradeSlotCostRows(rows || []); assertMaterialUpgradeSeparationRows(rows || []); assertProcessedMaterialRows(rows || []); assertMonsterMaterialDescriptionRows(rows || []); assertLateAreaMonsterMaterialRankRows(rows || []); }
   if(baseKey==='recipes'){ assertWeaponBranchMaterialRows(rows || []); assertOtherworldAccessoryUpgradeMaterialRows(rows || []); assertItemPriceRows(state.items||[], rows||[]); }
-  if(baseKey==='monsters'){ assertMonsterPassiveDesignRows(rows || []); assertMonsterActionRangeRows(rows || []); assertMonsterSelfMoveConditionRows(rows || []); assertMonsterFixedActionSelectionRows(rows || []); assertMonsterPassiveOnlyActionRows(rows || []); assertMonsterLoadoutViabilityRows(rows || []); assertMonsterActionCountRows(rows || []); assertMonsterActionTypeSemanticsRows(rows || []); assertNamedBacklineAttackRows(rows || []); assertAreaBossBacklineAttackRows(rows || []); assertMonsterActionBaseValueRows(rows || []); assertMonsterActionCheckSourceRows(rows || []); assertMonsterSupportActionCheckRows(rows || []); assertMonsterDirectDamageDieRows(rows || []); }
+  if(baseKey==='monsters'){ assertMonsterEffectClarityRows(rows||[]); assertMonsterPassiveDesignRows(rows || []); assertMonsterActionRangeRows(rows || []); assertMonsterSelfMoveConditionRows(rows || []); assertMonsterFixedActionSelectionRows(rows || []); assertMonsterPassiveOnlyActionRows(rows || []); assertMonsterLoadoutViabilityRows(rows || []); assertMonsterActionCountRows(rows || []); assertMonsterActionTypeSemanticsRows(rows || []); assertNamedBacklineAttackRows(rows || []); assertAreaBossBacklineAttackRows(rows || []); assertMonsterActionBaseValueRows(rows || []); assertMonsterActionCheckSourceRows(rows || []); assertMonsterSupportActionCheckRows(rows || []); assertMonsterDirectDamageDieRows(rows || []); }
   return (rows || []).map(src=>{
     const r = {...(src || {})};
     normalizeEncounterPlacementRow(baseKey,r);

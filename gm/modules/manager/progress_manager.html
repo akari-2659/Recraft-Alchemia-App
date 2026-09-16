@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.786</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.787</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.786 / 最終更新日：2026年9月16日</div>
+<div class="ra-build-info">Version：v90.8.787 / 最終更新日：2026年9月16日</div>
 
 <header>
   <div class="header-inner">
@@ -633,9 +633,10 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
   </div>
 </div>
 <script src="./assets/vendor/jszip.min.js"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.787"></script>
 <script>
 'use strict';
-const VERSION='v90.8.786';
+const VERSION='v90.8.787';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -669,23 +670,7 @@ const MONSTER_TOKEN_SIZE_OVERRIDES=Object.freeze({
   mon_grass_horn_king_ragvel:8,mon_forest_branch_lord_vildran:8,mon_swamp_lord_glaboros:7,boss_dolgan:7,mon_nereive:8,
   mon_mine_golem:4,mon_crag_ram:4,mon_glide_scale:4,mon_bolt_bison:4,mon_velgrat:8
 });
-const TOKEN_STATUS_DEFINITIONS={
-  '毒状態':['※毒状態：ラウンド終了時に1D3の無属性・防御無視ダメージ。戦闘終了後に解除。'],
-  '汚染':['※汚染I：この戦闘中、受けるHP回復量-2（最低0）。','※汚染II：この戦闘中、受けるHP回復量-4（最低0）。','※汚染III：この戦闘中、受けるHP回復量-6（最低0）。さらに受けるMP回復量-2（最低0）。','※汚染の段階：再度付与された場合は行動に記載された段階数だけ上昇し、最大III。下位段階の効果は加算せず、現在段階の効果だけを適用する。戦闘終了時に解除。'],
-  '呪い':['※呪いI：この戦闘中、攻撃判定・魔法判定・祈祷判定の達成値-1。','※呪いII：この戦闘中、攻撃判定・魔法判定・祈祷判定の達成値-2。','※呪いIII：この戦闘中、攻撃判定・魔法判定・祈祷判定の達成値-2。さらに常時防御値-1。','※呪いの段階：再度付与された場合は行動に記載された段階数だけ上昇し、最大III。下位段階の効果は加算せず、現在段階の効果だけを適用する。戦闘終了時に解除。'],
-  '鏡蝕状態':['※鏡蝕状態：攻撃判定・魔法判定・祈祷判定-1。戦闘終了後に解除。'],
-  '拘束状態':['※拘束状態：次に回避値を参照される攻撃1回に対して回避値-2。その攻撃の解決後に解除する。'],
-  '根牢状態':['※根牢状態：回避値-2。自身の手番に行動1回を消費し、力業判定または細工判定（目標値10）に成功すると解除する。また、《根脈穿槍》が命中した場合も解除する。戦闘終了時に解除する。'],
-  '萎縮状態':['※萎縮状態：攻撃判定・魔法判定・祈祷判定-1。次のラウンド終了時に解除する。'],
-  '泥まみれ状態':['※泥まみれ状態：攻撃判定-1、回避値-1。次のラウンド終了時に解除する。'],
-  '胞子状態':['※胞子状態：魔法判定・祈祷判定-1、抵抗値-1。次のラウンド終了時に解除する。'],
-  '侵蝕胞子状態':['※侵蝕胞子状態：次のラウンド終了まで魔法判定・祈祷判定-1、抵抗値-1。また、2ラウンドの間、各ラウンド終了時に1D3の無属性・防御無視ダメージ。2ラウンド目の終了時に解除。'],
-  '粘着状態':['※粘着状態：回避値-2、防御行動値-1。次のラウンド終了時に解除する。'],
-  '視界不良状態':['※視界不良状態：攻撃判定-1、回避値-1。次のラウンド終了時に解除する。'],
-  '体勢崩れ状態':['※体勢崩れ状態：常時防御値-1。次のラウンド終了時に解除する。'],
-  '睡眠状態':['※睡眠状態：移動・攻撃・魔法・祈祷・妨害・かばう・防御行動を行えない。自身の手番開始時に覚醒判定（2D6>=8）を行い、成功すると解除し、その手番は通常どおり行動できる。戦闘終了時にも解除する。'],
-  '麻痺状態':['※麻痺状態：移動できない。攻撃判定・魔法判定・祈祷判定・妨害判定・かばう判定-2。戦闘終了時に解除する。']
-};
+const TOKEN_STATUS_DEFINITIONS = RAMonsterRules.definitions;
 const TOKEN_STATUS_PATTERNS={'毒状態':/毒状態/,'汚染':/汚染(?:状態|I|II|III|Ⅰ|Ⅱ|Ⅲ|を|が|へ)/,'呪い':/呪い(?:状態|I|II|III|Ⅰ|Ⅱ|Ⅲ|を|が|へ)/};
 function tokenCompact(value){return String(value??'').trim();}
 function tokenNumberOrString(value,fallback=0){const raw=String(value??'').trim();if(!raw)return fallback;const n=Number(raw);return Number.isFinite(n)?n:raw;}
@@ -783,12 +768,12 @@ function encounterSelectedActionSet(monster={},selectionContext={}){
   return{poolSize:fullPool.length,eligiblePoolSize:pool.length,actions:chosen,passiveOnlyActions,selectedNames,fixedSelectedNames,validLoadoutCount:candidates.length||1};
 }
 
-function tokenStatusNotesFromText(text=''){const source=String(text||''),notes=[];Object.entries(TOKEN_STATUS_DEFINITIONS).forEach(([status,descriptions])=>{const pattern=TOKEN_STATUS_PATTERNS[status];const matched=pattern?pattern.test(source):source.includes(status);if(matched)(Array.isArray(descriptions)?descriptions:[descriptions]).forEach(x=>x&&notes.push(x));});return notes;}
+function tokenStatusNotesFromText(text=''){return RAMonsterRules.notesFromText(text);}
 function tokenMonsterRowStatusNotes(row={}){const actions=tokenParseActions(row.actions||''),source=[row.passiveName||'',row.passiveEffect||'',...actions.flatMap(a=>[a.name||'',a.effect||''])].join(' ');return[...new Set(tokenStatusNotesFromText(source))];}
 function tokenActionRange(action={}){return tokenNormalizeActionRange(action);}
 function tokenActionCheckCommand(action={}){const parsed=tokenParseCheckType(action.checkType||'');if(!parsed.raw||parsed.left==='なし')return'';const base=tokenCompact(action.baseValue);if(base==='')return'';return`2D6+${base}+{補正}>=${parsed.right||'目標値'} 【${action.name||'魔物行動'}】`;}
-function tokenDamageCommand(action={}){let power=tokenCompact(action.power);if(!power||power==='なし'||power==='-')return'';const type=tokenNormalizeActionType(action),effect=String(action.effect||''),isRecovery=type==='回復'||/HP.*回復|回復する/.test(effect)||/回復$/.test(power);if(isRecovery){power=power.replace(/回復$/,'');return`${power} 【${action.name||'魔物行動'}・回復】`;}return`${power} 【${action.name||'魔物行動'}ダメージ】`;}
-function tokenMonsterChatPalette(row={}){const name=tokenCompact(row.name)||'名称未設定の魔物',actions=tokenParseActions(row.actions),lines=[];if(row.pullRule)lines.push(`// 引き寄せ：${row.pullRule}`);if(row.passiveName||row.passiveEffect){lines.push(`// 【固有パッシブ：${row.passiveName||'名称未設定'}】`);if(row.passiveEffect)lines.push(`// ${tokenCompact(row.passiveEffect)}`);}if(actions.length){const passiveOnly=new Set(String(row.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean)),selectable=actions.filter(a=>!passiveOnly.has(tokenCompact(a.name))),actionNames=selectable.map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean),conditional=a=>/(のみ使用|HPが半分以下|HP半分以下|次の行動で|戦闘中1回|1戦闘1回)/.test(`${a.effect||''} ${a.power||''}`),normal=selectable.filter(a=>!conditional(a)).map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean);if(normal.length&&normal.length<actionNames.length)lines.push(`choice[${normal.join(',')}]`);if(actionNames.length)lines.push(`choice[${actionNames.join(',')}]`);lines.push(`// ${name}`);actions.forEach(action=>{const actionName=action.name||'魔物行動',type=tokenNormalizeActionType(action),range=tokenActionRange(action),flags=tokenCompact(action.flags),target=tokenCompact(action.target)||'対象未設定',element=tokenCompact(action.element),check=tokenActionCheckCommand(action),damage=tokenDamageCommand(action),effect=tokenCompact(action.effect);if(passiveOnly.has(tokenCompact(action.name)))lines.push(`// 【パッシブ専用技】`);lines.push(`// 【${actionName}】 種別：${type}／距離：${range}${flags?` / ${flags}`:''}／対象：${target}${element?`／属性：${element}`:''}`);if(check)lines.push(check);if(damage)lines.push(damage);if(effect)lines.push(`// 効果：${effect}`);if(!check&&!damage&&!effect)lines.push(`// ${actionName}`);});const notes=tokenMonsterRowStatusNotes(row);if(notes.length){lines.push('// 【状態異常】');notes.forEach(note=>lines.push(`// ${note}`));}}else{lines.push(`// ${name}`);lines.push('// 行動は未登録です。');}return lines.join('\n');}
+function tokenDamageCommand(action={}){let power=tokenCompact(action.power);if(!power||power==='なし'||power==='-')return'';const type=tokenNormalizeActionType(action),effect=String(action.effect||''),isRecovery=type==='回復'||/回復$/.test(power)||(['補助','防御'].includes(type)&&/HP.*回復/.test(effect));if(isRecovery){power=power.replace(/回復$/,'');return`${power} 【${action.name||'魔物行動'}・回復】`;}return`${power} 【${action.name||'魔物行動'}ダメージ】`;}
+function tokenMonsterChatPalette(row={}){const name=tokenCompact(row.name)||'名称未設定の魔物',actions=tokenParseActions(row.actions),lines=[];if(row.pullRule)lines.push(`// 引き寄せ：${row.pullRule}`);if(row.passiveName||row.passiveEffect){lines.push(`// 【固有パッシブ：${row.passiveName||'名称未設定'}】`);if(row.passiveEffect)lines.push(`// ${tokenCompact(row.passiveEffect)}`);}if(actions.length){const passiveOnly=new Set(String(row.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean)),selectable=actions.filter(a=>!passiveOnly.has(tokenCompact(a.name))),actionNames=selectable.map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean),conditional=a=>/(のみ使用|HPが半分以下|HP半分以下|次の行動で|戦闘中1回|1戦闘1回)/.test(`${a.effect||''} ${a.power||''}`),normal=selectable.filter(a=>!conditional(a)).map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean);if(normal.length&&normal.length<actionNames.length)lines.push(`choice[${normal.join(',')}]`);if(actionNames.length)lines.push(`choice[${actionNames.join(',')}]`);lines.push(`// ${name}`);actions.forEach(action=>{const actionName=action.name||'魔物行動',type=tokenNormalizeActionType(action),range=tokenActionRange(action),flags=tokenCompact(action.flags),target=tokenCompact(action.target)||'対象未設定',element=tokenCompact(action.element),check=tokenActionCheckCommand(action),damage=tokenDamageCommand(action),effect=tokenCompact(action.effect);if(passiveOnly.has(tokenCompact(action.name)))lines.push(`// 【パッシブ専用技】`);lines.push(`// 【${actionName}】 種別：${type}／距離：${range}${flags?` / ${flags}`:''}／対象：${target}${element?`／属性：${element}`:''}`);if(check)lines.push(check);if(damage){lines.push(damage);if(damage.includes('・回復】')){const alt=effect.match(/代わりに([0-9D+]+)回復/);if(alt)lines.push(`${alt[1]} 【${actionName}・条件成立時の回復】`);}}if(effect)lines.push(`// 効果：${effect}`);if(!check&&!damage&&!effect)lines.push(`// ${actionName}`);});const notes=tokenMonsterRowStatusNotes(row);if(notes.length){lines.push('// 【状態・フィールド】');notes.forEach(note=>lines.push(`// ${note}`));lines.push(...RAMonsterRules.fieldCommands([row.passiveEffect||'',...actions.map(a=>a.effect||'')].join(' ')));}}else{lines.push(`// ${name}`);lines.push('// 行動は未登録です。');}return lines.join('\n');}
 function tokenMonsterByName(name=''){const target=String(name||'').trim();return(state.monsters||[]).find(row=>String(row.name||'').trim()===target)||null;}
 function tokenMonsterSize(row={}){const imageId=String(row.baseMonsterId||row.id||'');const size=Number(MONSTER_TOKEN_SIZE_OVERRIDES[imageId])||3;return{width:size,height:size};}
 function tokenNormalizeGroups(groups=[]){return normalizeEncounterFrontline((groups||[]).map(group=>({name:group?.name,count:group?.count,formation:group?.formation||group?.position||''}))).map(group=>({name:group.name,count:Math.max(1,Math.floor(Number(group.count)||1)),formation:group.formation||group.position||'前衛'}));}
