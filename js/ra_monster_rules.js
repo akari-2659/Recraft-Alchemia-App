@@ -1,4 +1,4 @@
-/* Recraft-Alchemia v90.8.787 — 管理画面・進行管理で共用する状態定義 */
+/* Recraft-Alchemia v90.8.792 — 管理画面・進行管理で共用する状態定義 */
 (function(root){
 'use strict';
 const definitions = {
@@ -57,10 +57,13 @@ const definitions = {
     "※火傷状態：2ラウンドの間、各ラウンド終了時に1D3の火属性防御無視ダメージ。同じ技・効果の火傷は重複せず、再付与時は残り期間を2ラウンドへ更新。戦闘終了時にも解除。"
   ],
   "注目状態": [
-    "※注目状態：付与元を対象に選べる攻撃・術式・祈祷では、単体なら付与元を選び、複数対象なら可能な限り付与元を含める。対象条件・射程は変えない。付与時に指定した期限で解除。"
+    "※注目状態：付与された対象は、敵からの単体攻撃・術式・祈祷の最優先対象となる。複数対象では可能な限り含める。対象条件・射程は変えない。付与時に指定した期限で解除。"
+  ],
+  "注視状態": [
+    "※注視状態：付与された対象は、この状態を付与した対象を最優先攻撃対象とする。単体ではその対象を選び、複数対象では可能な限り含める。対象条件・射程は変えない。付与時に指定した期限で解除。"
   ],
   "威圧状態": [
-    "※威圧状態：付与元を対象に選べる場合、次の手番の主行動は防御、または付与元を含む攻撃・術式・祈祷から選ぶ。付与元を選べない場合は行動制限なし。その手番終了時に解除。"
+    "※威圧状態：この状態を付与した対象を選べる場合、次の手番の主行動は防御、またはその対象を含む攻撃・術式・祈祷から選ぶ。選べない場合は行動制限なし。その手番終了時に解除。"
   ],
   "足止め状態": [
     "※足止め状態：前衛・後衛間の通常移動不可。強制移動は受ける。次の自身の手番終了時に解除。"
@@ -88,12 +91,6 @@ const definitions = {
   ],
   "爆裂準備状態": [
     "※爆裂準備状態：準備手番は攻撃判定・ダメージ判定なし。次の自身の手番は指定技の実行に固定。実行時の命中判定は妨害の影響を受けない。解決後に自身は戦闘不能。準備中に戦闘不能になると不発。"
-  ],
-  "招来準備状態": [
-    "※招来準備状態：次の自身の手番開始時、自身が戦闘不能になり、グラスケイルまたはアッシュバイソンをランダムに1体選んで前衛へ増援。準備中に戦闘不能になると不発。"
-  ],
-  "増援準備状態": [
-    "※増援準備状態：次のラウンド開始時、付与された自身が戦闘中なら指定した魔物・数を前衛へ増援として追加し、解除。それまでに自身が戦闘不能になった場合は不発。"
   ],
   "鏡像状態": [
     "※鏡像状態：鏡像は最大2体。単体攻撃の対象に選ばれた時、命中判定前に鏡像2体なら1D3、1体なら1D2。出目1は本体へ解決し、それ以外は鏡像1体が消滅して本体には解決しない。複数・1列・全体攻撃では鏡像判定を行わず、本体へ通常どおり解決。"
@@ -146,6 +143,19 @@ const fields = {
     "damageKind": "防御無視"
   }
 };
+const reinforcements = Object.freeze({
+  "ラフィンラットの呼び声": Object.freeze([
+    Object.freeze({weight:1,groups:Object.freeze([Object.freeze({name:"ラフィンラット",count:1,formation:"前衛"})])})
+  ]),
+  "火口の災獣": Object.freeze([
+    Object.freeze({weight:1,groups:Object.freeze([Object.freeze({name:"グラスケイル",count:1,formation:"前衛"})])}),
+    Object.freeze({weight:1,groups:Object.freeze([Object.freeze({name:"アッシュバイソン",count:1,formation:"前衛"})])})
+  ])
+});
+function reinforcementTable(name=''){
+  return reinforcements[String(name||'').trim()]||null;
+}
+
 const common = [
   "複数対象の命中判定とダメージ判定は対象ごとに行う。「敵1列」は特記がなければ行動解決時に前衛・後衛のどちらかを選ぶ。",
   "命中時・成功時の付随効果は、1点以上のダメージなどの条件がなければ最終ダメージ0でも発生する。",
@@ -180,5 +190,5 @@ function fieldCommands(text=''){
     return [`2D6+${f.hit}>=回避値 【${key}・終了時判定／妨害対象外】`,`${f.power} 【${key}・${f.element}属性${f.damageKind}ダメージ】`];
   });
 }
-root.RAMonsterRules=Object.freeze({definitions,fields,common,keysFromText,notesFromText,validateText,fieldCommands});
+root.RAMonsterRules=Object.freeze({definitions,fields,reinforcements,reinforcementTable,common,keysFromText,notesFromText,validateText,fieldCommands});
 })(globalThis);

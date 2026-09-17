@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.787</title>
+<title>リクラフト・アルケミア キャラクター作成ツール v90.8.792</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -1240,7 +1240,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.787 / 最終更新日：2026年9月16日</div>
+<div class="ra-build-info">Version：v90.8.792 / 最終更新日：2026年9月17日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -1824,7 +1824,7 @@ const SKILL_CATEGORIES = [
   { key:'sense', name:'感覚系', ability:'sense', skills:[
     { key:'search', name:'探索', desc:'場所を調べる', detail:'周囲を調べ、手がかり、隠し通路、素材の群生地、違和感のある物品などを見つける判定に使用します。場所を調べる時の基本技能です。' },
     { key:'detect', name:'感知', desc:'危険や異変に気づく', detail:'気配、罠、危険、異変、接近してくる存在などに気づく判定に使用します。奇襲の察知、不自然な音や匂い、魔力や空気の変化に気づく場面で使います。' },
-    { key:'evade', name:'回避', desc:'回避値の基準', detail:'攻撃、落石、罠、爆発、崩落などを避ける判定に使用します。戦闘中は物理攻撃や、飛来・範囲型の術式を避けるための基準になります。回避値 = 5 + 回避ポイント + 装備の回避補正。' },
+    { key:'evade', name:'回避', desc:'回避値の基準', detail:'攻撃、落石、罠、爆発、崩落などを避ける判定に使用します。PCが自分から行う回避判定は2D6＋回避技能合計（装備の回避補正込み）で行います。敵の行動から参照される回避値は、その回避技能合計に+5し、回避値専用補正があればさらに加算します。' },
     { key:'track', name:'追跡', desc:'痕跡を辿る', detail:'足跡、痕跡、匂い、魔力の流れなどを辿る判定に使用します。逃げた魔物や人物を追う、移動経路を推測する、痕跡から進行方向を読む場面で使います。' },
   ]},
   { key:'intellect', name:'知性系', ability:'intellect', skills:[
@@ -1834,7 +1834,7 @@ const SKILL_CATEGORIES = [
     { key:'design', name:'設計', desc:'罠の仕組みを組む', detail:'罠の構造を考え、作成・調整する判定に使用します。現状、武器作成・武器派生・武器強化には使用せず、それらは細工で判定します。' },
   ]},
   { key:'will', name:'意志系', ability:'will', skills:[
-    { key:'resist', name:'抵抗', desc:'状態異常や精神干渉に耐える', detail:'毒・汚染・呪い・麻痺・睡眠や精神干渉、弱体化などに耐える基準です。身体・精神・状態に作用する効果へ使用します。抵抗値 = 5 + 抵抗技能値 + 装備などの抵抗補正。' },
+    { key:'resist', name:'抵抗', desc:'状態異常や精神干渉に耐える', detail:'毒・汚染・呪い・麻痺・睡眠や精神干渉、弱体化などに耐える基準です。PCが自分から行う抵抗判定は2D6＋抵抗技能合計（装備の抵抗補正込み）で行います。敵の行動から参照される抵抗値は、その抵抗技能合計に+5し、抵抗値専用補正があればさらに加算します。' },
     { key:'focus', name:'集中', desc:'維持・集中攻撃', detail:'長時間の作業、高難度の調合、儀式、継続的な魔力操作など、精神を乱さずに行動を続ける判定に使用します。戦闘中は主行動を使用して集中状態になれます。集中開始後から次の自分のターン開始までに1点以上のダメージを受けると集中は解除されます。維持したまま次の自分のターンを迎えた場合、射撃武器による攻撃またはダメージを与える魔法を1回行えます。その攻撃は本来の射撃・魔法の代わりに集中技能で判定し、判定に+2します。命中時は通常どおり射撃または魔法へ割り振ったポイントをダメージへ加え、さらにダメージダイスを1個追加します。単体・複数・列・範囲を問わず適用し、複数対象では各対象のダメージロールへ適用します。敵前衛がいる状態で射撃武器から後衛を狙う-2補正は通常どおり受けます。矢弾・MPなどの消費は攻撃1回分のみで、攻撃後に集中状態を解除します。祈祷には使用できません。' },
     { key:'magic', name:'魔法', desc:'魔法術式', detail:'魔法術式を使用する時の判定に使用します。魔法術式でダメージを与える場合、術式ダメージに魔法へ振り分けたポイント分のダメージを追加します。' },
     { key:'prayer', name:'祈祷', desc:'祈祷術式', detail:'祈祷術式を使用する時の判定に使用します。祈祷術式でダメージや回復を行う場合、術式の効果量に祈祷へ振り分けたポイント分を追加します。浄化、加護、回復、精神支援にも関わります。' },
@@ -2797,8 +2797,9 @@ function normalizeModifierRow(row={}) {
   const aliases = {
     '命中':'hit', '命中補正':'hit', 'hitMod':'hit', 'hit':'hit',
     '防御':'combat:defense', '防御値':'combat:defense', '常時防御':'combat:defense', '常時防御値':'combat:defense', 'alwaysDefense':'combat:defense', 'defense':'combat:defense',
-    '回避値':'combat:evasion', '抵抗値':'combat:resistance', '抵抗補正':'combat:resistance',
+    '回避値':'combat:evasion', '抵抗値':'combat:resistance',
     '回避':'skill:evade', '回避補正':'skill:evade', 'evasionMod':'skill:evade', 'evade':'skill:evade',
+    '抵抗':'skill:resist', '抵抗補正':'skill:resist', 'resistanceMod':'skill:resist', 'resist':'skill:resist',
     '防御行動':'combat:guardAction', '防御行動値':'combat:guardAction', 'guardValue':'combat:guardAction', 'guard':'combat:guardAction',
     '知識':'skill:knowledge',
     'monsterKnowledge':'skill:knowledge', 'materialKnowledge':'skill:knowledge', 'elementKnowledge':'skill:knowledge',
@@ -2846,6 +2847,7 @@ function legacyModifierRowsFromEquipment(item={}) {
   const defense=first('defense','alwaysDefense'); if(defense && !isZeroModifierText(defense)) rows.push({target:'combat:defense', value:defense});
   const guard=first('guard','guardValue'); if(guard && !isZeroModifierText(guard)) rows.push({target:'combat:guardAction', value:guard});
   const evade=first('evade','evasionMod'); if(evade && !isZeroModifierText(evade)) rows.push({target:'skill:evade', value:evade});
+  const resist=first('resist','resistanceMod'); if(resist && !isZeroModifierText(resist)) rows.push({target:'skill:resist', value:resist});
   return rows;
 }
 function migratedModifierTextForItem(item={}){
@@ -2912,7 +2914,7 @@ function sumModifierRows(rows=[], predicate=()=>false) {
 function upgradeEntryModifierRow(entry={}) {
   const e=normalizeUpgradeEntry(entry),content=e.content,value=String(upgradeEffectAmount(e)||'').trim();
   if(!content||!value||isZeroModifierText(value))return null;
-  const aliases={'命中強化':'hit','防御強化':'combat:defense','回避強化':'skill:evade','抵抗強化':'combat:resistance','防御行動強化':'combat:guardAction','HP強化':'resource:maxHp','MP強化':'resource:maxMp','力業補助':'skill:force','魔法補助':'skill:magic','祈祷補助':'skill:prayer'};
+  const aliases={'命中強化':'hit','防御強化':'combat:defense','回避強化':'skill:evade','抵抗強化':'skill:resist','防御行動強化':'combat:guardAction','HP強化':'resource:maxHp','MP強化':'resource:maxMp','力業補助':'skill:force','魔法補助':'skill:magic','祈祷補助':'skill:prayer'};
   const target=aliases[content]||'';return target?normalizeModifierRow({target,value}):null;
 }
 function equipmentUpgradeModifierRows(item={}) {

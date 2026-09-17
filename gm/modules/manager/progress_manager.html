@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.787</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.792</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.787 / 最終更新日：2026年9月16日</div>
+<div class="ra-build-info">Version：v90.8.792 / 最終更新日：2026年9月17日</div>
 
 <header>
   <div class="header-inner">
@@ -633,10 +633,10 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
   </div>
 </div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=90.8.787"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.792"></script>
 <script>
 'use strict';
-const VERSION='v90.8.787';
+const VERSION='v90.8.792';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -781,12 +781,30 @@ function encounterGroupsSignature(groups=[]){return tokenNormalizeGroups(groups)
 function setTokenExportEncounter(label='',areaName='',groups=[],scope='event'){
   const clean=tokenNormalizeGroups(groups);if(!clean.length){clearTokenExportEncounter(scope);return;}
   const last=state.lastEncounter,matched=last&&Array.isArray(last.instances)&&last.instances.length&&encounterGroupsSignature(last.groups||[])===encounterGroupsSignature(clean);
-  state.tokenExportEncounter={label:String(label||'戦闘').trim(),areaName:String(areaName||'').trim(),scope:scope==='quest'?'quest':'event',groups:clean,instances:matched?last.instances.map(x=>JSON.parse(JSON.stringify(x))):[]};renderTokenExportPanels();
+  const instances=matched?last.instances.map(x=>JSON.parse(JSON.stringify(x))):encounterInstanceRows(clean);
+  state.tokenExportEncounter={label:String(label||'戦闘').trim(),areaName:String(areaName||'').trim(),scope:scope==='quest'?'quest':'event',groups:clean,instances,reinforcementInstances:[]};renderTokenExportPanels();
 }
 function clearTokenExportEncounter(scope=''){if(scope&&state.tokenExportEncounter?.scope!==scope)return;state.tokenExportEncounter=null;renderTokenExportPanels();}
 function tokenExportPanelId(scope){return scope==='quest'?'questTokenExportPanel':'eventTokenExportPanel';}
 function tokenEncounterTotal(encounter){return(encounter?.groups||[]).reduce((sum,g)=>sum+Math.max(1,Math.floor(Number(g.count)||1)),0);}
-function renderTokenExportPanels(){['quest','event'].forEach(scope=>{const panel=$(tokenExportPanelId(scope));if(!panel)return;const encounter=state.tokenExportEncounter;if(!encounter||encounter.scope!==scope||!encounter.groups?.length){panel.classList.add('hidden');panel.innerHTML='';return;}const summary=encounter.groups.map(g=>`${g.formation||'前衛'}：${g.name} ×${g.count}`).join(' / ');panel.classList.remove('hidden');panel.innerHTML=`<div class="token-export-title">戦闘用の敵駒</div><div class="token-export-meta">${esc(encounter.label||'戦闘')}${encounter.areaName?` / ${esc(encounter.areaName)}`:''}<br>${esc(summary)}</div><div class="buttons"><button type="button" data-token-export="${scope}">駒出力</button><button type="button" data-token-export-folder="${scope}">ZIP保存先設定</button><span class="token-export-status" data-token-export-status="${scope}"></span></div>`;});tokenRefreshExportDirectoryUi();}
+function tokenReinforcementTableSummary(table=[]){
+  const options=(table||[]).map(option=>(option.groups||[]).map(group=>`${group.formation||'前衛'}：${group.name} ×${Math.max(1,Number(group.count)||1)}`).join(' / ')).filter(Boolean);
+  return [...new Set(options)].join(' または ');
+}
+function tokenReinforcementActionRows(encounter={}){
+  const sources=[...(Array.isArray(encounter.instances)?encounter.instances:[]),...(Array.isArray(encounter.reinforcementInstances)?encounter.reinforcementInstances:[])],rows=[];
+  sources.forEach(source=>{
+    const uid=String(source.uid||'').trim();if(!uid)return;
+    const used=new Set(Array.isArray(source.usedReinforcementActions)?source.usedReinforcementActions:[]);
+    tokenParseActions(source.monster?.actions||'').forEach(action=>{
+      const match=String(action.effect||'').match(/増援表「([^」]+)」/);if(!match||used.has(String(action.name||'')))return;
+      const tableName=match[1],table=RAMonsterRules.reinforcementTable(tableName);if(!table?.length)return;
+      rows.push({source,uid,actionName:String(action.name||'増援呼び'),tableName,summary:tokenReinforcementTableSummary(table)});
+    });
+  });
+  return rows;
+}
+function renderTokenExportPanels(){['quest','event'].forEach(scope=>{const panel=$(tokenExportPanelId(scope));if(!panel)return;const encounter=state.tokenExportEncounter;if(!encounter||encounter.scope!==scope||!encounter.groups?.length){panel.classList.add('hidden');panel.innerHTML='';return;}const summary=encounter.groups.map(g=>`${g.formation||'前衛'}：${g.name} ×${g.count}`).join(' / '),reinforcements=tokenReinforcementActionRows(encounter),reinforcementHtml=reinforcements.length?`<div class="token-reinforcement-list"><div class="token-export-title" style="margin-top:10px">増援呼び</div>${reinforcements.map(row=>`<div class="token-export-meta" data-token-reinforcement-row="${esc(row.uid)}|${esc(row.actionName)}"><b>${esc(row.source.name||row.source.monster?.name||'魔物')}《${esc(row.actionName)}》</b><br>${esc(row.summary||row.tableName)}<div class="buttons" style="margin-top:6px"><button type="button" data-token-reinforcement="${scope}" data-source-uid="${esc(row.uid)}" data-action-name="${esc(row.actionName)}" data-table-name="${esc(row.tableName)}">増援ZIP出力</button></div></div>`).join('')}</div>`:'';panel.classList.remove('hidden');panel.innerHTML=`<div class="token-export-title">戦闘用の敵駒</div><div class="token-export-meta">${esc(encounter.label||'戦闘')}${encounter.areaName?` / ${esc(encounter.areaName)}`:''}<br>${esc(summary)}</div><div class="buttons"><button type="button" data-token-export="${scope}">駒出力</button><button type="button" data-token-export-folder="${scope}">ZIP保存先設定</button><span class="token-export-status" data-token-export-status="${scope}"></span></div>${reinforcementHtml}`;});tokenRefreshExportDirectoryUi();}
 const TOKEN_EXPORT_DIRECTORY_DB='recraft-alchemia-token-export-directory-v1';
 const TOKEN_EXPORT_DIRECTORY_STORE='handles';
 const TOKEN_EXPORT_DIRECTORY_KEY='monsterTokenZipDirectory';
@@ -832,15 +850,14 @@ async function tokenSha256Hex(bytes){const view=bytes instanceof Uint8Array?byte
 async function tokenFetchMonsterImage(monster){const id=String(monster?.baseMonsterId||monster?.id||'').trim();if(!id)throw new Error(`${monster?.name||'魔物'} の画像IDを確認できません。`);const filename=`${id}.png`,subdir=tokenCompact(CCFOLIA_MONSTER_IMAGE_SUBDIR[id]||''),urls=[];if(subdir)urls.push(`${CCFOLIA_MONSTER_IMAGE_BASE}${subdir}/${filename}`);urls.push(`${CCFOLIA_MONSTER_IMAGE_BASE}${filename}`);let lastError='';for(const url of [...new Set(urls)]){try{const response=await fetch(url,{cache:'no-cache'});if(!response.ok){lastError=`HTTP ${response.status}`;continue;}return new Uint8Array(await response.arrayBuffer());}catch(e){lastError=e?.message||String(e);}}throw new Error(`${monster.name||id} の駒画像を取得できませんでした。${lastError?`（${lastError}）`:''}`);}
 function tokenSafeFilename(text='戦闘'){return String(text||'戦闘').replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim().slice(0,60)||'戦闘';}
 function tokenTimestamp(){const d=new Date(),pad=n=>String(n).padStart(2,'0');return`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;}
-async function exportCurrentEncounterTokens(scope='event',button=null){
-  const encounter=state.tokenExportEncounter;
-  if(!encounter||encounter.scope!==scope||!encounter.groups?.length){setTokenExportStatus(scope,'出力できる戦闘編成がありません。','bad');return;}
-  if(typeof JSZip==='undefined'){setTokenExportStatus(scope,'ZIP生成ライブラリを読み込めませんでした。','bad');return;}
+async function exportEncounterTokens(encounter,scope='event',button=null){
+  if(!encounter||!encounter.groups?.length){setTokenExportStatus(scope,'出力できる戦闘編成がありません。','bad');return false;}
+  if(typeof JSZip==='undefined'){setTokenExportStatus(scope,'ZIP生成ライブラリを読み込めませんでした。','bad');return false;}
   const original=button?.textContent||'駒出力';
   if(button){button.disabled=true;button.textContent='作成中…';}
   try{
     const destination=await tokenResolveExportDestination(scope);
-    if(destination.mode==='cancel')return;
+    if(destination.mode==='cancel')return false;
     setTokenExportStatus(scope,'魔物画像を取得しています…');
     const instances=tokenBuildInstances(encounter),uniqueMonsters=[...new Map(instances.map(x=>[x.monster.id,x.monster])).values()],imageInfo=new Map();
     for(let i=0;i<uniqueMonsters.length;i++){
@@ -860,13 +877,42 @@ async function exportCurrentEncounterTokens(scope='event',button=null){
     const destinationText=saved.mode==='directory'?` / 保存先：${saved.name}`:' / 通常ダウンロード';
     setTokenExportStatus(scope,`出力完了：敵${instances.length}体 / 画像${uniqueMonsters.length}枚${destinationText}`,'good');
     addLog(`駒出力：${encounter.label||'戦闘'} / 敵${instances.length}体 / 画像${uniqueMonsters.length}枚${destinationText}`);
+    return true;
   }catch(e){
     const message=e?.message||String(e);
     setTokenExportStatus(scope,message,'bad');
     addLog(`駒出力失敗：${message}`);
+    return false;
   }finally{
     if(button){button.disabled=false;button.textContent=original;}
   }
+}
+async function exportCurrentEncounterTokens(scope='event',button=null){
+  const encounter=state.tokenExportEncounter;
+  if(!encounter||encounter.scope!==scope||!encounter.groups?.length){setTokenExportStatus(scope,'出力できる戦闘編成がありません。','bad');return false;}
+  return exportEncounterTokens(encounter,scope,button);
+}
+function tokenPickReinforcementOption(table=[]){
+  const rows=(table||[]).filter(row=>Array.isArray(row.groups)&&row.groups.length);if(!rows.length)return null;
+  const total=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.weight)||0),0);if(total<=0)return rows[Math.floor(Math.random()*rows.length)];
+  let roll=Math.random()*total;for(const row of rows){roll-=Math.max(0,Number(row.weight)||0);if(roll<0)return row;}return rows[rows.length-1];
+}
+async function exportReinforcementTokens(scope='event',sourceUid='',actionName='',tableName='',button=null){
+  const encounter=state.tokenExportEncounter;if(!encounter||encounter.scope!==scope)return false;
+  const sources=[...(Array.isArray(encounter.instances)?encounter.instances:[]),...(Array.isArray(encounter.reinforcementInstances)?encounter.reinforcementInstances:[])];
+  const source=sources.find(row=>String(row.uid||'')===String(sourceUid||''));if(!source){setTokenExportStatus(scope,'増援を呼ぶ個体を確認できません。','bad');return false;}
+  const used=new Set(Array.isArray(source.usedReinforcementActions)?source.usedReinforcementActions:[]);if(used.has(actionName)){renderTokenExportPanels();return false;}
+  const action=tokenParseActions(source.monster?.actions||'').find(row=>String(row.name||'')===String(actionName||''));if(!action){setTokenExportStatus(scope,'この個体には現在その増援技が選出されていません。','bad');renderTokenExportPanels();return false;}
+  const match=String(action.effect||'').match(/増援表「([^」]+)」/),resolvedTable=String(tableName||match?.[1]||'').trim(),table=RAMonsterRules.reinforcementTable(resolvedTable),picked=tokenPickReinforcementOption(table);
+  if(!picked){setTokenExportStatus(scope,`増援表「${resolvedTable||'未設定'}」を解決できません。`,'bad');return false;}
+  const groups=tokenNormalizeGroups(picked.groups||[]),instances=encounterInstanceRows(groups),label=`${source.name||source.monster?.name||'魔物'}《${actionName}》の増援`,reinforcementEncounter={label,areaName:encounter.areaName||'',scope,groups,instances,reinforcementInstances:[]};
+  const success=await exportEncounterTokens(reinforcementEncounter,scope,button);if(!success)return false;
+  source.usedReinforcementActions=[...used,actionName];
+  if(!Array.isArray(encounter.reinforcementInstances))encounter.reinforcementInstances=[];
+  encounter.reinforcementInstances.push(...instances);
+  saveState(false);renderTokenExportPanels();
+  addLog(`増援処理：${source.name||source.monster?.name||'魔物'}《${actionName}》 → ${groups.map(g=>`${g.formation||'前衛'}：${g.name}×${g.count}`).join(' / ')}`);
+  return true;
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function clamp(n){return Math.max(0,Math.min(100,Number(n)||0));}
@@ -1767,10 +1813,16 @@ function eventCheckSkillName(checkType=''){
   if(!raw||raw==='なし')return '';
   return raw.replace(/\s*>=\s*目標値.*$/,'').trim();
 }
+function eventCheckExpressionRelation(expr=''){
+  const raw=String(expr||'').trim();
+  if(/(?:かつ|＋)/.test(raw))return 'and';
+  if(/または/.test(raw))return 'or';
+  return 'single';
+}
 function eventCheckExpressionParts(expr=''){
   const raw=String(expr||'').trim();
   if(!raw)return [];
-  return raw.split(/\s*または\s*/).map(v=>v.trim()).filter(Boolean).map(part=>{
+  return raw.split(/\s*(?:または|かつ|＋)\s*/).map(v=>v.trim()).filter(Boolean).map(part=>{
     const m=part.match(/^(.+?)\s*>=\s*(\d+(?:\.\d+)?)$/);
     return m?{skill:m[1].trim(),target:m[2],penalty:0}:null;
   }).filter(Boolean);
@@ -1778,9 +1830,11 @@ function eventCheckExpressionParts(expr=''){
 function eventCheckExpressionDisplay(expr=''){
   const parsed=eventCheckExpressionParts(expr);
   if(!parsed.length)return '';
+  const relation=eventCheckExpressionRelation(expr);
   const targets=[...new Set(parsed.map(v=>v.target))];
-  if(targets.length===1)return `使用技能：${parsed.map(v=>v.skill).join('・')} / 達成値：${targets[0]}`;
-  return `使用技能：${parsed.map(v=>`${v.skill}（達成値：${v.target}）`).join('・')}`;
+  const prefix=relation==='and'?'複合判定':'使用技能';
+  if(targets.length===1)return `${prefix}：${parsed.map(v=>v.skill).join('・')} / 達成値：${targets[0]}`;
+  return `${prefix}：${parsed.map(v=>`${v.skill}（達成値：${v.target}）`).join('・')}`;
 }
 function inlineEventCheckInfo(text=''){
   const raw=String(text||'');
@@ -2017,7 +2071,8 @@ function eventCheckInfo(e={}){
   });
   const targets=[...new Set(skills.map(row=>String(row.target||'')).filter(Boolean))];
   const skillText=skills.map(row=>`${row.skill}${row.penalty?`${row.penalty>0?'+':''}${row.penalty}`:''}`).join('・');
-  const contentMode=eventCheckContentMode(e,skills);
+  const relation=eventCheckExpressionRelation(expr);
+  const contentMode=relation==='and'?'複合判定':eventCheckContentMode(e,skills);
   const outcomeTags=eventOutcomeCopyTags(e);
   let line='';
   if(targets.length===1)line=`${skillText} / 達成値：${targets[0]}`;
@@ -5686,6 +5741,7 @@ $('rumorAreaSelect').addEventListener('change',()=>{fillInnRumorSelect(); render
   });
   document.addEventListener('click',e=>{
     const tokenExportFolder=e.target.closest('[data-token-export-folder]');if(tokenExportFolder){tokenChooseExportDirectory(tokenExportFolder.dataset.tokenExportFolder||'event');return;}
+    const tokenReinforcement=e.target.closest('[data-token-reinforcement]');if(tokenReinforcement){exportReinforcementTokens(tokenReinforcement.dataset.tokenReinforcement||'event',tokenReinforcement.dataset.sourceUid||'',tokenReinforcement.dataset.actionName||'',tokenReinforcement.dataset.tableName||'',tokenReinforcement);return;}
     const tokenExport=e.target.closest('[data-token-export]');if(tokenExport){exportCurrentEncounterTokens(tokenExport.dataset.tokenExport||'event',tokenExport);return;}
     const importantResolve=e.target.closest('[data-important-use-resolve]');if(importantResolve){resolveDeclaredImportantItem(importantResolve.dataset.importantUseResolve||'event');return;}
     const reroll=e.target.closest('[data-event-reward-reroll]');if(reroll){rerollEventReward(reroll.dataset.eventRewardReroll);return;}
