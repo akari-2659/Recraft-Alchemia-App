@@ -1,8 +1,8 @@
 {
   "format": "recraft-alchemia-character-master",
-  "version": "v90.8.795",
+  "version": "v90.8.800",
   "encoding": "UTF-8",
-  "description": "v90.8.795：反照の水庭の報酬構成を再監査。通常入手アイテム表・共通箱・武器/制作レシピ箱・淵主の褒賞箱で異界固有4素材への偏重を緩和し、解放済み通常素材・加工素材・消耗品・換金品・スクロールを混在させた。異界現象・特殊地点の一部報酬も通常入手表へ分散し、沈鏡の小庭を異界素材の高密度回収地点として差別化。",
+  "description": "v90.8.798：v90.8.797で行った強敵HPの一括増加を撤回し、既存の強敵HP帯を維持。防御装備参照帯の再監査は敵HPではなく被ダメージ側の検証へ使用し、通常主力技の一律火力上昇も撤回。準備が必要な危険技3件のみ役割に合わせて再調整。",
   "data": {
     "item_types": [
       {
@@ -4631,10 +4631,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_scythe",
@@ -4661,10 +4665,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_otherworld_astral_codex",
@@ -4691,10 +4699,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_nereive_litany",
@@ -4721,10 +4733,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_void_scorpion",
@@ -4751,10 +4767,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,ヘヴィクロスボウ,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_abyss_maul",
@@ -4781,10 +4801,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,大槌,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_nereive_reaper",
@@ -4811,10 +4835,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,大鎌,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_boss_heartwood_mace",
@@ -4841,10 +4869,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_dolgan_bow",
@@ -4871,10 +4903,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_otherworld_echo_bracer",
@@ -4901,10 +4937,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,ガントレット,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_boss_heartwood_greatsword",
@@ -4931,10 +4971,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_axe",
@@ -4961,10 +5005,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_bow",
@@ -4991,10 +5039,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_dolgan_prayer_book",
@@ -5021,10 +5073,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 3,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_mace",
@@ -5051,10 +5107,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_mine_branch_claymore",
@@ -5201,10 +5261,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_greatsword",
@@ -5231,10 +5295,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_grasshorn_chain_whip_branch",
@@ -5261,10 +5329,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "細工,武器派生,鞭,鎖鞭,第2段階,ボス素材,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★3。施設依頼費380G。進化段階では別の実装済み魔物素材を要求する。 自作時はこのレシピが必要。施設依頼ではレシピ不要。 必要素材は複数種類・合計複数個を必須とする。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 2,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_dolgan_gauntlet",
@@ -5291,10 +5363,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 2,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_heavy_crossbow",
@@ -5321,10 +5397,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_spear",
@@ -5351,10 +5431,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_dagger",
@@ -5381,10 +5465,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 2,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_grasshorn_heavy_crossbow",
@@ -5411,10 +5499,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 3,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_dolgan_maul",
@@ -5441,10 +5533,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_lance",
@@ -5471,10 +5567,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_heartwood_crossbow",
@@ -5501,10 +5601,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_otherworld_silence_mallet",
@@ -5531,10 +5635,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,片手槌,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_boss_heartwood_dagger",
@@ -5561,10 +5669,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_sword",
@@ -5591,10 +5703,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_gauntlet",
@@ -5621,10 +5737,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_magic_book",
@@ -5651,10 +5771,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_branch_sylvan_missal",
@@ -5681,10 +5805,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,★4,樹心系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。完成装備と同じ★4。★4以上の細工道具が必要。派生装備の固有効果・補正は固定で、ほかの派生と役割を重複させない。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_heartwood_staff",
@@ -5711,10 +5839,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_dolgan_magic_book",
@@ -5741,10 +5873,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_staff",
@@ -5771,10 +5907,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_mine_chain_whip_branch",
@@ -5831,10 +5971,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_mine_branch_siege_crossbow",
@@ -5891,10 +6035,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_branch_fang_reaper",
@@ -5921,10 +6069,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,★3,草角系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★4。完成装備と同じ★3。★2以上の細工道具が必要。派生装備の固有効果・補正は固定で、ほかの派生と役割を重複させない。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_otherworld_phase_arbalest",
@@ -5951,10 +6103,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,クロスボウ,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_phase_rod",
@@ -5981,10 +6137,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,杖,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_boss_heartwood_heavy_crossbow",
@@ -6011,10 +6171,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,樹心,★4,樹心系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_grasshorn_mace",
@@ -6041,10 +6205,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_staff",
@@ -6071,10 +6239,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 1,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_branch_horn_breaker",
@@ -6101,10 +6273,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,★3,草角系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★4。完成装備と同じ★3。★2以上の細工道具が必要。派生装備の固有効果・補正は固定で、ほかの派生と役割を重複させない。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 13,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_gauntlet",
@@ -6131,10 +6307,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_branch_horn_lance",
@@ -6161,10 +6341,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,★3,草角系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★4。完成装備と同じ★3。★2以上の細工道具が必要。派生装備の固有効果・補正は固定で、ほかの派生と役割を重複させない。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_sword",
@@ -6191,10 +6375,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_swampcore_axe",
@@ -6221,10 +6409,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_greatsword",
@@ -6251,10 +6443,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_gauntlet",
@@ -6281,10 +6477,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_mace",
@@ -6311,10 +6511,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_magic_book",
@@ -6341,10 +6545,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_dagger",
@@ -6371,10 +6579,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_spear",
@@ -6401,10 +6613,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_sword",
@@ -6431,10 +6647,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_heavy_crossbow",
@@ -6461,10 +6681,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_maul",
@@ -6491,10 +6715,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_lance",
@@ -6521,10 +6749,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 13,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_prayer_book",
@@ -6551,10 +6783,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_crossbow",
@@ -6581,10 +6817,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 11,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_bow",
@@ -6611,10 +6851,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_whip",
@@ -6641,10 +6885,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_scythe",
@@ -6671,10 +6919,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_boss_swampcore_staff",
@@ -6701,10 +6953,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,沼核,★5,沼核系統,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：沼核派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_otherworld_rift_anchor",
@@ -6731,10 +6987,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_boss_dolgan_greatsword",
@@ -6761,10 +7021,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 11,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_otherworld_rift_lance",
@@ -6791,10 +7055,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,長槍,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_reflect_saber",
@@ -6821,10 +7089,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_reflect_partisan",
@@ -6851,10 +7123,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,片手槍,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_reflect_breaker",
@@ -6881,10 +7157,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,両手剣,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_mine_branch_magic_grimoire",
@@ -6971,10 +7251,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,★4,樹心系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。完成装備と同じ★4。★4以上の細工道具が必要。派生装備の固有効果・補正は固定で、ほかの派生と役割を重複させない。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 8,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_branch_root_lance",
@@ -7001,10 +7285,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,★4,樹心系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。完成装備と同じ★4。★4以上の細工道具が必要。派生装備の固有効果・補正は固定で、ほかの派生と役割を重複させない。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：樹心派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_boss_dolgan_sword",
@@ -7031,10 +7319,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 13,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_boss_dolgan_whip",
@@ -7061,10 +7353,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_mine_branch_iron_pike",
@@ -7181,10 +7477,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 13,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_mine_branch_shell_hatchet",
@@ -7331,10 +7631,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,穿王,★5,穿岩系統,ボス派生",
         "notes": "完成装備と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：穿岩派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 3,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_mine_branch_thorn_scythe",
@@ -7391,10 +7695,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 7,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_prayer_book",
@@ -7421,10 +7729,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_dagger",
@@ -7451,10 +7763,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_bow",
@@ -7481,10 +7797,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 3,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_crossbow",
@@ -7511,10 +7831,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 3,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_boss_grasshorn_spear",
@@ -7541,10 +7865,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,ボス素材,草角,★3,草角系統,ボス派生",
         "notes": "完成武器と同じ★4。自作時はこのレシピが必要。施設依頼ではレシピ不要。ボス素材を1個使用する。 素材系統：草角派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 11,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_otherworld_void_cleaver",
@@ -7571,10 +7899,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,片手斧,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_void_stinger",
@@ -7601,10 +7933,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,短剣,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_otherworld_void_stringer",
@@ -7631,10 +7967,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,異界派生,反照の水庭,第2段階,★5,鏡淵系統,ボス素材,ボス派生",
         "notes": "完成武器と同じ★5。自作時はこのレシピが必要。施設依頼ではレシピ不要。必要素材は複数種類・合計複数個を必須とする。 素材系統：鏡淵派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_trap_biting_jaw",
@@ -10211,8 +10551,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,鍛冶屋,軽装,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_spore_mantle",
@@ -10295,8 +10639,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,鍛冶屋,中装,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_bogheart_plate",
@@ -10323,8 +10671,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,鍛冶屋,重装,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_mist_prayer_veil",
@@ -10407,8 +10759,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,装飾品,鍛冶屋,★2",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-04",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "recipe_mireheart_talisman",
@@ -10435,8 +10791,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,装飾品,鍛冶屋,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-04",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "recipe_carapace_guard_bangle",
@@ -10491,8 +10851,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,装飾品,鍛冶屋,★2",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-04",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "recipe_ore_scale_guard_vest",
@@ -10659,8 +11023,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,鍛冶屋,腕輪,★3,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-04",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_luminous_ore_talisman",
@@ -10771,8 +11139,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,鍛冶屋,重装,★5,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "recipe_deep_mirror_raiment",
@@ -10799,8 +11171,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,鍛冶屋,魔導衣,異界,ボス素材,★5",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_deep_mirror_observation_ring",
@@ -10827,8 +11203,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,装飾品,鍛冶屋,★4",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-09",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "recipe_highland_windward_oil",
@@ -11149,12 +11529,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 15,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_sword",
@@ -11251,12 +11635,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_axe",
@@ -11353,12 +11741,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 13,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_mace",
@@ -11455,12 +11847,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 15,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_spear",
@@ -11557,12 +11953,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 15,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_staff",
@@ -11659,12 +12059,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 4,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_bow",
@@ -11761,12 +12165,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_crossbow",
@@ -11863,12 +12271,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 5,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_heavy_crossbow",
@@ -11965,12 +12377,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 10,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_lance",
@@ -12067,12 +12483,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_greatsword",
@@ -12169,12 +12589,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_maul",
@@ -12271,12 +12695,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 9,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_scythe",
@@ -12373,12 +12801,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_gauntlet",
@@ -12475,12 +12907,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_whip",
@@ -12577,12 +13013,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 12,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_magic_book",
@@ -12679,12 +13119,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 6,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_wind_prayer_book",
@@ -12781,12 +13225,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,高原,★6,嵐翼系統,ボス素材,ボス派生",
         "notes": "嵐翼獣ヴェルグラートのボス素材派生。ボス固有素材は1個使用し、最新派生だけを一律の派生元にはしない。施設依頼ではレシピ不要。 素材系統：嵐翼派生。 ボス派生。通常の順当強化ラインから分岐する。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 14,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_highland_tempest_cloak",
@@ -12813,10 +13261,14 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,軽装,ボス素材,高原,★6",
         "notes": "新規防具の製作レシピ。防具の派生装備としては扱わない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_wpn_branch_outskirts_grass_staff_1",
@@ -15999,8 +16451,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,装飾品,鍛冶屋,護符,★4,ボス素材",
         "notes": "自作時はこのレシピが必要。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-09",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "recipe_rootbark_guard",
@@ -17273,12 +17729,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_02_obsidian",
@@ -17375,12 +17835,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_03_obsidian",
@@ -17477,12 +17941,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_04_obsidian",
@@ -17579,12 +18047,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_05_obsidian",
@@ -17681,12 +18153,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_06_obsidian",
@@ -17783,12 +18259,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_07_obsidian",
@@ -17885,12 +18365,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_08_obsidian",
@@ -17987,12 +18471,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_09_obsidian",
@@ -18089,12 +18577,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_10_obsidian",
@@ -18191,12 +18683,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_11_obsidian",
@@ -18293,12 +18789,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_12_obsidian",
@@ -18395,12 +18895,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_13_obsidian",
@@ -18497,12 +19001,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_14_obsidian",
@@ -18599,12 +19107,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_15_obsidian",
@@ -18701,12 +19213,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_16_obsidian",
@@ -18803,12 +19319,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_ashcrown_17_obsidian",
@@ -18905,12 +19425,16 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器派生,火山峡谷,★7,灰冠系統,ボス素材,ボス派生",
         "notes": "灰嶺の大蛇ウルガナのボス素材派生。ボス固有素材は1個使用。レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "branchClass": "ボス派生",
         "branchDisplayOrder": 16,
-        "limitedRecipePrice": ""
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_arm_ashcrown_scoria_cloak",
@@ -19553,8 +20077,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "防具製作,重装,火山峡谷,★7",
         "notes": "レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-09-03T13:29:54+09:00",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_acc_ashcrown_boss_serpent_ring",
@@ -19581,8 +20109,12 @@
         "unlockFacility": "鍛冶屋",
         "tags": "装飾品製作,指輪,火山峡谷,★5",
         "notes": "レシピは大蛇の褒賞箱からのみ入手でき、勝利だけで鍛冶屋へ自動解放しない。施設依頼ではレシピ不要。",
-        "updatedAt": "2026-08-17",
-        "limitedRecipePrice": ""
+        "updatedAt": "2026-09-18",
+        "limitedRecipePrice": "",
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "recipe_wind_earring",
@@ -24330,7 +24862,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,ガントレット,武器派生,異界派生,強連撃蓄積,★5,鏡淵系統",
         "notes": "反照の水庭・異界派生。全武器種共通の2段階系統。派生途中から別系統へ分岐しない。 素材系統：鏡淵派生。 ボス派生固有能力を持つ。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "鏡淵主の深核と鏡甲片が打撃の残響を拳へ留め、連続攻撃を鋭く積み重ねる異界ガントレット。",
         "publicId": "RCA-SB5J-AVCW",
         "upgradeLimit": 5,
@@ -24361,7 +24893,11 @@
             "summary": "攻撃時、対象の防御値を1点まで無視する",
             "detail": "攻撃時、対象の防御値を1点まで無視する。対象変更・攻撃失敗で解除。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_carapace_knuckle",
@@ -24555,7 +25091,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 2,
@@ -24572,7 +25108,11 @@
             "summary": "防御値3以上の対象への通常攻撃の命中+1、防御値1点無視",
             "detail": "防御値が3以上の対象への通常攻撃の命中+1。その攻撃では対象の防御値を1点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_boss_heartwood_gauntlet",
@@ -24613,7 +25153,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -24633,7 +25173,11 @@
             "summary": "妨害に成功した場合、対象が次に攻撃を受ける際の回避－1",
             "detail": "妨害に成功した場合、対象が次に攻撃を受ける際の回避－1。重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_beast_claw",
@@ -24825,7 +25369,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -24845,7 +25389,11 @@
             "summary": "移動後に行う通常攻撃の命中+1",
             "detail": "移動後に行う通常攻撃の命中+1。その通常攻撃が命中した場合、次のラウンド終了まで対象は後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_gauntlet",
@@ -24886,7 +25434,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -24906,7 +25454,11 @@
             "summary": "この武器による妨害判定+1",
             "detail": "この武器による妨害判定+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_boss_heartwood_greatsword",
@@ -24947,7 +25499,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -24962,7 +25514,11 @@
             "summary": "前の手番で防御していた場合、次の力業攻撃の判定+1、ダメージ+2",
             "detail": "前の自分の手番で防御行動を行っていた場合、この武器による次の力業攻撃の判定+1、ダメージ+2。攻撃後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_carapace_greatsword",
@@ -25229,7 +25785,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -25249,7 +25805,11 @@
             "summary": "HPが半分以下の対象へ力業攻撃を行う場合、この武器による力業攻撃の判定+1",
             "detail": "HPが半分以下の対象へ力業攻撃を行う場合、この武器による力業攻撃の判定+1。力業攻撃が命中した場合、対象の次の命中－1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_great_sword",
@@ -25396,7 +25956,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -25416,7 +25976,11 @@
             "summary": "状態異常の対象への力業攻撃命中時、その状態異常が解除されるまで後衛へ移動不可",
             "detail": "状態異常を受けている対象へ力業攻撃が命中した場合、その状態異常が解除されるまで対象は後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_mirror_claymore",
@@ -25530,7 +26094,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 11,
@@ -25542,7 +26106,11 @@
             "summary": "力業攻撃命中時、通常の追加ダイスに加えてダメージ+3。防御値を2点まで無視",
             "detail": "力業攻撃命中時、通常の追加ダイスに加えてダメージ+3。その攻撃では対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_reflect_breaker",
@@ -25572,7 +26140,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "光",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -25590,7 +26158,11 @@
             "summary": "前の手番で防御していた場合、通常攻撃のダメージ+1D6+1。防御値を1点まで無視",
             "detail": "前の自分の手番で防御行動を行っていた場合、通常攻撃のダメージ+1D6+1。その攻撃では対象の防御値を1点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_void_scorpion",
@@ -25620,7 +26192,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "矢弾依存",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -25643,7 +26215,11 @@
             "summary": "攻撃時、対象の防御値を2点まで無視する",
             "detail": "攻撃時、対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_siege_crossbow",
@@ -25764,7 +26340,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -25782,7 +26358,11 @@
             "summary": "防御値3以上の対象への命中+1",
             "detail": "防御値が3以上の対象への命中+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_boss_grasshorn_heavy_crossbow",
@@ -25823,7 +26403,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -25843,7 +26423,11 @@
             "summary": "戦闘中に1回、攻撃後の装填を省略",
             "detail": "戦闘中1回、攻撃後に装填が必要な状態にならない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_mine_branch_siege_crossbow",
@@ -25962,7 +26546,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -25977,7 +26561,11 @@
             "summary": "その手番に移動していない場合、攻撃の命中+1、ダメージ+1。命中時、対象の次の命中－1",
             "detail": "その手番に移動していない場合、この武器による攻撃の命中+1、ダメージ+1。命中した場合、対象の次の命中－1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_steel_ballista",
@@ -26199,7 +26787,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -26219,7 +26807,11 @@
             "summary": "状態異常を受けている対象へのダメージ+1D6",
             "detail": "状態異常を受けている対象へのダメージ+1D6。その攻撃では対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_rift_ballista",
@@ -26319,7 +26911,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "闇",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -26342,7 +26934,11 @@
             "summary": "戦闘中1回、この効果を付与する際、対象が次に受ける攻撃では防御値を0として扱う",
             "detail": "戦闘中1回、この効果を付与する際、対象が次に受ける攻撃では防御値を0として扱う。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_war_maul",
@@ -26464,7 +27060,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 14,
@@ -26486,7 +27082,11 @@
             "summary": "防御値3以上の対象へ通常攻撃で1点以上のダメージを与えた場合、対象が次に防御行動を行う際、その防御行動値－1",
             "detail": "防御値3以上の対象へ通常攻撃で1点以上のダメージを与えた場合、対象が次に防御行動を行う際、その防御行動値－1。防御行動終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_great_hammer",
@@ -26641,7 +27241,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -26656,7 +27256,11 @@
             "summary": "その手番に移動していない場合、この武器による力業攻撃の判定+1",
             "detail": "その手番に移動していない場合、この武器による力業攻撃の判定+1。その力業攻撃が命中した場合、対象が次に防御行動を行う際の防御行動値－1。防御行動終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_forge_hammer",
@@ -26757,7 +27361,7 @@
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "element": "物",
@@ -26779,7 +27383,11 @@
             "summary": "力業攻撃命中時、対象が次に受ける攻撃では防御値を2点まで無視する",
             "detail": "力業攻撃命中時、対象が次に受ける攻撃では、防御値を2点まで無視する。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_maul",
@@ -26820,7 +27428,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -26840,7 +27448,11 @@
             "summary": "状態異常の対象への力業攻撃で防御値2点無視",
             "detail": "状態異常を受けている対象への力業攻撃では、対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_rift_maul",
@@ -27034,7 +27646,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -27054,7 +27666,11 @@
             "summary": "通常攻撃命中時、対象が次に受けるHP回復量を1D6減らす（最低0）",
             "detail": "通常攻撃命中時、対象が次に受けるHP回復量を1D6減らす（最低0）。回復処理後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_nereive_reaper",
@@ -27079,7 +27695,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,大鎌,武器派生,異界派生,強単体吸収,★5,鏡淵系統",
         "notes": "反照の水庭・異界派生。全武器種共通の2段階系統。派生途中から別系統へ分岐しない。 素材系統：鏡淵派生。 ボス派生固有能力を持つ。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "鏡淵主の深核が敵の生命像を深く映し取り、刃を振るう者へ還流させる異界大鎌。",
         "publicId": "RCA-TZCY-LHTR",
         "upgradeLimit": 5,
@@ -27110,7 +27726,11 @@
             "summary": "HPを回復した場合、次に自身を対象とする攻撃1回に対して回避+1。攻撃の解決後に解除し、重複しない",
             "detail": "HPを回復した場合、次に自身を対象とする攻撃1回に対して回避+1。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_thorn_scythe",
@@ -27232,7 +27852,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 8,
@@ -27249,7 +27869,11 @@
             "summary": "防御値が3以上の対象への命中+1、ダメージ+1",
             "detail": "防御値が3以上の対象への命中+1、ダメージ+1。対象ごとに個別判定する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_branch_spore_scythe",
@@ -27386,7 +28010,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,大鎌,武器派生,★3,草角系統",
         "notes": "役割：獣牙系統の固有機能。ほかの派生と役割を重複させない。 素材系統：草角派生。 ボス派生固有能力を持つ。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "牙と角を内刃へ並べ、単体の獲物を刈り取ることに特化した大鎌。",
         "publicId": "RCA-3EC5-4HNP",
         "upgradeLimit": 4,
@@ -27416,7 +28040,11 @@
             "summary": "敵1体だけを対象にした通常攻撃は、HPが最大でない対象へのダメージ+1D6",
             "detail": "通常攻撃で敵1体だけを対象にした場合、HPが最大でない対象へのダメージ+1D6。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_scythe",
@@ -27457,7 +28085,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -27482,7 +28110,11 @@
             "summary": "状態異常を受けている対象へのダメージ+1",
             "detail": "状態異常を受けている対象へのダメージ+1。対象ごとに攻撃判定とダメージ判定を個別に行う。ダメージを与えた場合、対象が次に受けるHP回復量－1。HP回復処理後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_mirage_scythe",
@@ -27904,7 +28536,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -27922,7 +28554,11 @@
             "summary": "通常矢では防御値1点無視。穿岩鋼射Ⅰの精密成功時は合計2点無視",
             "detail": "通常矢を使用する攻撃では、対象の防御値を1点まで無視する。《穿岩鋼射Ⅰ》による防御値無視が発生した場合は、合計2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_boss_heartwood_bow",
@@ -27963,7 +28599,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -27988,7 +28624,11 @@
             "summary": "通常矢命中時、次のラウンド終了まで対象の回避－1",
             "detail": "通常矢を使用した攻撃が命中した場合、次のラウンド終了まで対象の回避－1。この効果は対象が攻撃を受けても解除されず、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_hunter_bow",
@@ -28283,7 +28923,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -28308,7 +28948,11 @@
             "summary": "状態異常の対象への攻撃命中時、対象の次の命中－1",
             "detail": "状態異常を受けている対象へ攻撃が命中した場合、対象の次の命中－1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_boss_grasshorn_bow",
@@ -28349,7 +28993,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -28369,7 +29013,11 @@
             "summary": "敵前衛を対象にした場合、その攻撃のダメージ+1",
             "detail": "通常矢を使用して敵前衛を対象にした場合、ダメージ+1。その判定値が対象の回避値+2以上だった場合、さらにダメージ+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_void_stringer",
@@ -28402,7 +29050,7 @@
         "equipmentUpgradeDetail": "",
         "spellSlots": "",
         "offhandBonus": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -28424,7 +29072,11 @@
             "summary": "状態異常の対象へ攻撃する場合、ダメージ+2",
             "detail": "状態異常の対象へ攻撃する場合、ダメージ+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_crank_crossbow",
@@ -28579,7 +29231,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -28599,7 +29251,11 @@
             "summary": "風属性ボルト命中時、対象の後衛移動を封鎖",
             "detail": "風属性のボルトを使用した攻撃が命中した場合、対象は次の手番終了まで後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_carapace_crossbow",
@@ -28769,7 +29425,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "矢弾依存",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -28792,7 +29448,11 @@
             "summary": "偶数回目の攻撃が命中した対象は次のラウンド終了まで回避－1",
             "detail": "《偶数狙撃・幻影》で数える偶数回目の攻撃が命中した場合、次のラウンド終了まで対象の回避－1。この効果は対象が攻撃を受けても解除されず、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_boss_swampcore_crossbow",
@@ -28833,7 +29493,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -28858,7 +29518,11 @@
             "summary": "状態異常の対象への攻撃で防御値1点無視",
             "detail": "状態異常を受けている対象への攻撃では、対象の防御値を1点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_mirror_crossbow",
@@ -28971,7 +29635,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -28984,7 +29648,11 @@
             "summary": "戦闘中、この武器による攻撃2回につき1回、偶数回目の命中+3",
             "detail": "戦闘中、この武器による攻撃2回につき1回、偶数回目の命中+3。その攻撃では対象の防御値を2点まで無視する。命中・失敗を問わず、攻撃を行った回数で数える。戦闘ごとに1回目から数え直す。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_mine_branch_crank_crossbow",
@@ -29103,7 +29771,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -29123,7 +29791,11 @@
             "summary": "通常ボルトを使用する攻撃のダメージ+1",
             "detail": "通常ボルトを使用する攻撃のダメージ+1。その判定値が対象の回避値+2以上だった場合、さらにダメージ+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_staff",
@@ -29279,7 +29951,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -29309,7 +29981,11 @@
             "summary": "2枠目の身体・精神・状態術式による妨害効果の値+1",
             "detail": "2枠目にセットした身体・精神・状態を対象とする術式による妨害効果の値を+1する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_boss_dolgan_staff",
@@ -29353,7 +30029,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 8,
@@ -29370,7 +30046,11 @@
             "summary": "防御値が2以上の対象へ魔法術式で与えるダメージは、さらに+1",
             "detail": "防御値が2以上の対象へ魔法術式で与えるダメージは、さらに+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_branch_spore_staff",
@@ -29541,7 +30221,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "無",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -29563,7 +30243,11 @@
             "summary": "2体以上への判定に1体以上成功すると、次の複数対象術式の消費MPを2点軽減（最低1）",
             "detail": "2体以上への判定に1体以上成功した場合、次に使用する敵2体以上を対象とする魔法術式の消費MPを2点軽減する（最低1）。術式使用後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_boss_grasshorn_staff",
@@ -29604,7 +30288,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -29624,7 +30308,11 @@
             "summary": "祈祷によるHP回復量+2",
             "detail": "祈祷によるHP回復量+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_staff",
@@ -29665,7 +30353,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -29690,7 +30378,11 @@
             "summary": "戦闘中1回、その魔法術式の消費MPを1点軽減する（最低1）",
             "detail": "戦闘中1回、その魔法術式の消費MPを1点軽減する（最低1）。軽減した水属性魔法術式が成功した場合、対象の次の命中－1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_mist_staff",
@@ -30027,7 +30719,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -30047,7 +30739,11 @@
             "summary": "《かばう》に成功した場合、その攻撃に限り自身の防御行動値+1",
             "detail": "《かばう》に成功した場合、その攻撃に限り自身の防御行動値+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_broadsword",
@@ -30166,7 +30862,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -30181,7 +30877,11 @@
             "summary": "前の自分の手番で防御行動を行っていた場合、次に行う通常攻撃の命中+1、ダメージ+1",
             "detail": "前の自分の手番で防御行動を行っていた場合、次に行う通常攻撃の命中+1、ダメージ+1。攻撃の解決後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_sword",
@@ -30222,7 +30922,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -30242,7 +30942,11 @@
             "summary": "状態異常の対象への通常攻撃命中時、次の命中－1。戦闘中1回は－2に強化可能",
             "detail": "状態異常を受けている対象へ通常攻撃が命中した場合、対象の次の命中－1。戦闘中1回、この命中低下を－2として適用できる。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_mirror_edge",
@@ -30347,7 +31051,7 @@
         "equipmentUpgradeDetail": "",
         "spellSlots": "",
         "offhandBonus": "2",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -30369,7 +31073,11 @@
             "summary": "通常攻撃命中時、次のラウンド終了まで対象の回避－2",
             "detail": "通常攻撃命中時、次のラウンド終了まで対象の回避－2。この効果は対象が攻撃を受けても解除されず、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_root_saber",
@@ -30482,7 +31190,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -30500,7 +31208,11 @@
             "summary": "防御行動中、受ける物属性ダメージをさらに1点軽減",
             "detail": "防御行動中、この武器の装備者が受ける物属性ダメージをさらに1点軽減する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_sword_1h",
@@ -30578,7 +31290,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -30598,7 +31310,11 @@
             "summary": "移動後に行う通常攻撃が命中した場合、次に自身を対象とする攻撃1回に対して回避+2。攻撃の解決後に解除し、重複しない",
             "detail": "移動後に行う通常攻撃が命中した場合、次に自身を対象とする攻撃1回に対して回避+2。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_boss_grasshorn_axe",
@@ -30639,7 +31355,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -30659,7 +31375,11 @@
             "summary": "HPが半分以下の対象への通常攻撃では、対象の防御値を1点まで無視する",
             "detail": "HPが半分以下の対象への通常攻撃では、対象の防御値を1点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_axe_1h",
@@ -30955,7 +31675,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -30975,7 +31695,11 @@
             "summary": "HP半分以下かつ状態異常の対象への通常攻撃で防御値1点無視",
             "detail": "HPが半分以下かつ状態異常を受けている対象への通常攻撃では、対象の防御値を1点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_rift_hatchet",
@@ -31166,7 +31890,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -31179,7 +31903,11 @@
             "summary": "防御値3以上の対象への通常攻撃ダメージ+1D6、防御値1点無視",
             "detail": "防御値が3以上の対象への通常攻撃のダメージ+1D6。その攻撃では対象の防御値を1点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_void_cleaver",
@@ -31210,7 +31938,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "闇",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -31227,7 +31955,11 @@
             "summary": "敵を倒した時、次の通常攻撃のダメージ+1D6+1。防御値を2点まで無視",
             "detail": "この武器で敵を倒した時、次に行う通常攻撃のダメージ+1D6+1。その攻撃では対象の防御値を2点まで無視する。通常攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_hammer_1h",
@@ -31305,7 +32037,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -31320,7 +32052,11 @@
             "summary": "その手番に移動していない場合、通常攻撃の命中+1。命中時、対象の次の命中－1",
             "detail": "その手番に移動していない場合、この武器による通常攻撃の命中+1。命中した場合、対象の次の命中－1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_echo_mace",
@@ -31434,7 +32170,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 4,
@@ -31451,7 +32187,11 @@
             "summary": "通常攻撃命中時、対象の防御値－1",
             "detail": "通常攻撃命中時、対象の防御値－1。次の対象の手番終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_branch_crystal_mace",
@@ -31622,7 +32362,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "風",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -31644,7 +32384,11 @@
             "summary": "戦闘中1回、この効果を受けた判定が失敗した場合、対象の次の攻撃の命中－1",
             "detail": "戦闘中1回、この効果を受けた判定が失敗した場合、対象の次の攻撃の命中－1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_shell_mace",
@@ -31763,7 +32507,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -31783,7 +32527,11 @@
             "summary": "通常攻撃命中時、対象が次に受ける攻撃では防御値を1点まで追加で無視する",
             "detail": "通常攻撃命中時、対象が次に受ける攻撃では防御値を1点まで追加で無視する。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_mace",
@@ -31824,7 +32572,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -31844,7 +32592,11 @@
             "summary": "通常攻撃命中時、対象の防御値－1",
             "detail": "通常攻撃命中時、対象の防御値－1。次の対象の手番終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_mine_branch_shell_mace",
@@ -32184,7 +32936,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
         "branchDisplayOrder": 10,
@@ -32206,7 +32958,11 @@
             "summary": "《妨害》成功後、次の通常攻撃ダメージ+1",
             "detail": "《妨害》に成功した場合、自身が次に行う通常攻撃のダメージ+1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_spear_1h",
@@ -32362,7 +33118,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -32382,7 +33138,11 @@
             "summary": "妨害成功時に対象の列移動を制限",
             "detail": "妨害に成功した対象は、次の手番終了まで前衛・後衛を移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_reflect_partisan",
@@ -32413,7 +33173,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "光",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -32430,7 +33190,11 @@
             "summary": "《かばう》に成功した場合、次に行う通常攻撃の命中+2、ダメージ+2。攻撃の解決後に解除し、重複しない",
             "detail": "《かばう》に成功した場合、次に行う通常攻撃の命中+2、ダメージ+2。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_root_lance",
@@ -32462,7 +33226,7 @@
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "element": "風",
@@ -32488,7 +33252,11 @@
             "summary": "妨害成功時に対象の列移動を制限",
             "detail": "妨害に成功した対象は、次の手番終了まで後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_mine_branch_fang_spear",
@@ -32612,7 +33380,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -32632,7 +33400,11 @@
             "summary": "妨害に成功した場合、対象が次に攻撃を受ける際の回避－1",
             "detail": "妨害に成功した場合、対象が次に攻撃を受ける際の回避－1。重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_mine_branch_stiletto",
@@ -32753,7 +33525,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -32771,7 +33543,11 @@
             "summary": "防御値2以上への通常攻撃の命中+1、ダメージ+1",
             "detail": "防御値が2以上の対象への通常攻撃の命中+1、ダメージ+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_dagger",
@@ -32849,7 +33625,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -32869,7 +33645,11 @@
             "summary": "HPが最大でない対象へ通常攻撃命中時、対象が次に受けるHP回復量を1D6減らす（最低0）",
             "detail": "HPが最大でない対象へ通常攻撃命中時、対象が次に受けるHP回復量を1D6減らす（最低0）。回復処理後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_branch_stiletto",
@@ -33128,7 +33908,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -33148,7 +33928,11 @@
             "summary": "状態異常を受けている対象へ通常攻撃が命中した場合、その状態異常が解除されるまで対象の抵抗－1",
             "detail": "状態異常を受けている対象へ通常攻撃が命中した場合、その状態異常が解除されるまで対象の抵抗－1。重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_branch_venom_needle",
@@ -33259,7 +34043,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -33279,7 +34063,11 @@
             "summary": "移動後にHPが最大でない対象へ通常攻撃を行う場合、命中はさらに+1",
             "detail": "移動後にHPが最大でない対象へ通常攻撃を行う場合、命中はさらに+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_void_stinger",
@@ -33310,7 +34098,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "闇",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -33332,7 +34120,11 @@
             "summary": "《抵抗崩しⅠ》を付与した対象が、その抵抗低下を受けた効果に失敗した場合、次にその対象へ行う通常攻撃の命中+1、ダメージ+1",
             "detail": "《抵抗崩しⅠ》を付与した対象が、その抵抗低下を受けた効果に失敗した場合、次にその対象へ行う通常攻撃の命中+1、ダメージ+1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "book_nereive_litany",
@@ -33365,7 +34157,7 @@
         "equipmentUpgradeDetail": "",
         "spellSlots": "1",
         "offhandBonus": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -33387,7 +34179,11 @@
             "summary": "戦闘中1回、祈祷で味方1体を回復した時、別の味方も1D6+2回復",
             "detail": "戦闘中1回、祈祷で味方1体のHPを回復した時、別の味方1体のHPも1D6+2回復する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "book_prayer_aegis_litany",
@@ -33484,7 +34280,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "skill": "祈祷",
         "checkType": "",
@@ -33504,7 +34300,11 @@
             "summary": "祈祷によるダメージ軽減量+1",
             "detail": "祈祷によるダメージ軽減量+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "book_branch_magiccrystal_prayer_book",
@@ -33669,7 +34469,7 @@
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -33696,7 +34496,11 @@
             "summary": "祈祷で味方1体のHPを回復した時、その対象が次に抵抗値を参照される際、抵抗+2",
             "detail": "祈祷で味方1体のHPを回復した時、その対象が次に抵抗値を参照される際、抵抗+2。その行動の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "book_boss_swampcore_prayer_book",
@@ -33724,7 +34528,7 @@
         "offhandBonus": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "element": "",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
@@ -33752,7 +34556,11 @@
             "summary": "状態異常を受けている味方を祈祷で回復した場合、HP回復量+2",
             "detail": "状態異常を受けている味方を祈祷で回復した場合、HP回復量+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "book_prayer",
@@ -33955,7 +34763,7 @@
         "offhandBonus": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "element": "",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
@@ -33978,7 +34786,11 @@
             "summary": "1枠目にセットした祈祷を使用し、敵へダメージを与えた場合は次に使用するHP回復祈祷の回復量+1、味方のHPを回復した場合は次に使用する攻撃祈祷のダメージ+1",
             "detail": "1枠目にセットした祈祷を使用し、敵へダメージを与えた場合は次に使用するHP回復祈祷の回復量+1、味方のHPを回復した場合は次に使用する攻撃祈祷のダメージ+1。該当祈祷の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_unarmed",
@@ -34213,7 +35025,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "branchClass": "ボス派生",
         "branchType": "穿岩",
@@ -34236,7 +35048,11 @@
             "summary": "《妨害》成功時、対象は次の手番終了まで後衛へ移動不可",
             "detail": "《妨害》に成功した対象は、次の手番終了まで後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "wpn_branch_iron_pike",
@@ -34415,7 +35231,7 @@
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "element": "物",
@@ -34437,7 +35253,11 @@
             "summary": "《かばう》に成功した後、次に行う通常攻撃の命中+1",
             "detail": "《かばう》に成功した場合、次に行う通常攻撃の命中+1。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "wpn_boss_swampcore_lance",
@@ -34478,7 +35298,7 @@
         "equipmentUpgradeDetail": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
@@ -34498,7 +35318,11 @@
             "summary": "《かばう》判定+1。成功時、防御行動値+1。さらに次の状態異常対象への通常攻撃ダメージ+1",
             "detail": "この武器を装備して行う《かばう》判定+1。《かばう》に成功した場合、その攻撃に限り自身の防御行動値+1。さらに、次に状態異常を受けている対象へ行う通常攻撃のダメージ+1。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_branch_moss_guard_pike",
@@ -34606,7 +35430,7 @@
         "equipmentUpgradeDetail": "",
         "csVisible": "TRUE",
         "element": "無",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -34629,7 +35453,11 @@
             "summary": "その攻撃が命中した場合、次のラウンド終了まで対象は後衛へ移動できない",
             "detail": "その攻撃が命中した場合、次のラウンド終了まで対象は後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "wpn_branch_root_pike",
@@ -34660,7 +35488,7 @@
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "element": "風",
@@ -34682,7 +35510,11 @@
             "summary": "《かばう》に成功した場合、その攻撃に限り自身の防御行動値+2",
             "detail": "《かばう》に成功した場合、その攻撃に限り自身の防御行動値+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_mine_branch_iron_pike",
@@ -34814,7 +35646,7 @@
         "upgradeLimit": 4,
         "equipmentUpgradeEffect": "",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "id": "wpn_boss_heartwood_whip",
         "publicId": "RCA-3071-84F0",
         "itemType": "武器",
@@ -34857,7 +35689,11 @@
             "summary": "通常攻撃で《枝王の茨》を付与した対象は、その継続ダメージを受けている間、回避－1",
             "detail": "通常攻撃で《枝王の茨》を付与した対象は、その継続ダメージを受けている間、回避－1。同名効果は重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "dataKind": "アイテム",
@@ -34875,7 +35711,7 @@
         "upgradeLimit": 4,
         "equipmentUpgradeEffect": "",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "id": "wpn_grasshorn_chain_whip",
         "publicId": "RCA-WHIP-HORN",
         "itemType": "武器",
@@ -34918,7 +35754,11 @@
             "summary": "引き寄せ成功時に移動を封じ、次の近接攻撃に対する回避を下げる",
             "detail": "引き寄せ成功時、対象は次の手番終了まで移動できない。さらに、対象が次に近接攻撃を受ける際、その攻撃に対する回避値－2。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "dataKind": "アイテム",
@@ -35320,7 +36160,7 @@
         "upgradeLimit": 5,
         "equipmentUpgradeEffect": "",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "id": "wpn_boss_swampcore_whip",
         "publicId": "RCA-989D-1F29",
         "itemType": "武器",
@@ -35363,7 +36203,11 @@
             "summary": "引き寄せ成功時、後衛移動不可。さらに次の手番終了まで移動不可",
             "detail": "引き寄せに成功した場合、次のラウンド終了まで対象は後衛へ移動できない。さらに、対象は次の手番終了まで移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "wpn_rift_anchor",
@@ -35396,7 +36240,7 @@
         "equipmentUpgradeDetail": "",
         "spellSlots": "",
         "offhandBonus": "2",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -35418,7 +36262,11 @@
             "summary": "引き寄せ成功時、対象が次に受ける攻撃では防御値を2点まで無視",
             "detail": "引き寄せ成功時、対象が次に受ける攻撃では、対象の防御値を2点まで無視する。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "dataKind": "アイテム",
@@ -35436,7 +36284,7 @@
         "upgradeLimit": 5,
         "equipmentUpgradeEffect": "",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "id": "wpn_boss_dolgan_whip",
         "publicId": "RCA-9541-4198",
         "itemType": "武器",
@@ -35479,7 +36327,11 @@
             "summary": "引き寄せ成功時、対象の防御値－1",
             "detail": "引き寄せ成功時、対象の防御値－1。次の対象の手番終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "dataKind": "アイテム",
@@ -35636,7 +36488,7 @@
         "equipmentUpgradeDetail": "",
         "spellSlots": "2",
         "offhandBonus": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
@@ -35658,7 +36510,11 @@
             "summary": "敵2体以上を対象とする魔法術式の消費MPを1点軽減し、与えるダメージ+2",
             "detail": "敵2体以上を対象とする魔法術式の消費MPを1点軽減し、与えるダメージ+2（消費MPは最低1）。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "book_magic_arcana_codex",
@@ -35849,7 +36705,7 @@
         "toolRank": "",
         "upgradeMaterialMinRank": 4,
         "unlockAreaKey": "area_nearby_forest",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "element": "",
         "modifiers": "resource:maxMp\t+1",
         "guaranteeUpgradeMaxRank": "",
@@ -35873,7 +36729,11 @@
             "summary": "2枠目にセットした該当術式による妨害効果の値を+1する",
             "detail": "2枠目にセットした該当術式による妨害効果の値を+1する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "wpn_boss_dolgan_magic_book",
@@ -35900,7 +36760,7 @@
         "unlockAreaKey": "area_foothill_old_mine",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "modifiers": "",
         "skill": "魔法",
@@ -35926,7 +36786,11 @@
             "summary": "3枠目にセットした術式で防御値3以上の対象へ1点以上のダメージを与えた場合、次に同じ対象へ使用する魔法術式の判定+1",
             "detail": "3枠目にセットした術式で防御値3以上の対象へ1点以上のダメージを与えた場合、次に同じ対象へ使用する魔法術式の判定+1。判定後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "book_boss_swampcore_magic_book",
@@ -35951,7 +36815,7 @@
         "toolRank": "",
         "upgradeMaterialMinRank": 5,
         "unlockAreaKey": "area_waterside_wetland",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "element": "",
         "modifiers": "resource:maxMp\t+1",
         "guaranteeUpgradeMaxRank": "",
@@ -35980,7 +36844,11 @@
             "summary": "水属性の魔法術式による妨害効果の値を+1する",
             "detail": "水属性の魔法術式による妨害効果の値を+1する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "book_branch_myco_grimoire",
@@ -36211,7 +37079,7 @@
         "toolRank": "",
         "upgradeMaterialMinRank": 3,
         "unlockAreaKey": "area_outskirts_grass",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "element": "",
         "modifiers": "",
         "guaranteeUpgradeMaxRank": "",
@@ -36235,7 +37103,11 @@
             "summary": "1枠目にセットした魔法術式によるダメージは、さらに+1",
             "detail": "1枠目にセットした魔法術式によるダメージは、さらに+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "ammo_heavy_bolt_normal",
@@ -37654,7 +38526,7 @@
         "equipmentUpgradeTarget": "",
         "sellPrice": "798",
         "buyPrice": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentEffects": [
           {
             "name": "解析強化",
@@ -37666,7 +38538,11 @@
             "summary": "各戦闘で1回、解析成功後、同じ対象に対して次に行う攻撃・魔法・祈祷のいずれかに+2",
             "detail": "各戦闘で1回、解析成功後、同じ対象に対して次に行う攻撃・魔法・祈祷のいずれかに+2。行動後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "acc_glass_fin_earring",
@@ -37883,7 +38759,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "sellPrice": "698",
         "buyPrice": "",
         "equipmentEffects": [
@@ -37897,7 +38773,11 @@
             "summary": "各戦闘で1回、解析成功後、その敵へ次に与える攻撃・術式・祈祷のダメージ+1D6",
             "detail": "各戦闘で1回、解析成功後、その敵へ次に与える攻撃・術式・祈祷のダメージ+1D6。ダメージ処理後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "acc_root_bind_bracelet",
@@ -37997,14 +38877,18 @@
         "equipmentUpgradeTarget": "",
         "sellPrice": "282",
         "buyPrice": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentEffects": [
           {
             "name": "力業精度",
             "summary": "条件を満たす力業攻撃の判定を強化",
             "detail": "《力業》判定+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "acc_phase_ward_charm",
@@ -38149,14 +39033,18 @@
         "equipmentUpgradeTarget": "",
         "sellPrice": "292",
         "buyPrice": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentEffects": [
           {
             "name": "かばう補助",
             "summary": "《かばう》判定+1",
             "detail": "《かばう》判定+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "acc_purifying_herb_charm",
@@ -38222,7 +39110,7 @@
         "unlockAreaKey": "area_waterside_wetland",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "sellPrice": "372",
         "buyPrice": "",
@@ -38232,7 +39120,11 @@
             "summary": "毒・汚染を付与される際、抵抗+2",
             "detail": "毒・汚染を付与される際、抵抗+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "acc_luminous_ore_talisman",
@@ -40568,7 +41460,7 @@
         "unlockAreaKey": "area_nearby_forest",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-08",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "sellPrice": "518",
         "buyPrice": "",
@@ -40578,7 +41470,11 @@
             "summary": "《かばう》に成功した場合、その攻撃から受ける最終ダメージを1点軽減する",
             "detail": "《かばう》に成功した場合、その攻撃から受ける最終ダメージを1点軽減する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "森奥の枝王ヴィルドラン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_foothill_old_mine",
+        "balanceReferenceStage": "山麓の旧鉱山"
       },
       {
         "id": "arm_medium",
@@ -40735,7 +41631,7 @@
         "unlockAreaKey": "area_outskirts_grass",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "sellPrice": "503",
         "buyPrice": "",
@@ -40745,7 +41641,11 @@
             "summary": "各戦闘で1回、前衛へ移動した直後、次に行う近接攻撃のダメージ+1D6",
             "detail": "各戦闘で1回、前衛へ移動した直後、次に行う近接攻撃のダメージ+1D6。攻撃の解決後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "草角王ラグヴェル",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_waterside_wetland",
+        "balanceReferenceStage": "水辺の湿地"
       },
       {
         "id": "arm_raffinwind_coat",
@@ -40924,7 +41824,7 @@
         "unlockAreaKey": "area_waterside_wetland",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "sellPrice": "620",
         "buyPrice": "",
@@ -40934,7 +41834,11 @@
             "summary": "水属性ダメージを受ける際、最終ダメージを1点軽減する",
             "detail": "水属性ダメージを受ける際、最終ダメージを1点軽減する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "沼主グラボロス",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_reflection_water_garden",
+        "balanceReferenceStage": "反照の水庭"
       },
       {
         "id": "arm_dolgan_earthshell_plate",
@@ -40964,7 +41868,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "sellPrice": "1074",
         "buyPrice": "",
         "equipmentEffects": [
@@ -40973,7 +41877,11 @@
             "summary": "HPが最大HPの半分以下の間、防御行動値+2",
             "detail": "HPが最大HPの半分以下の間、防御行動値+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "坑奥の穿王ドルガン",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_wind_swept_highland",
+        "balanceReferenceStage": "風渡りの高原"
       },
       {
         "id": "arm_heavy",
@@ -41123,7 +42031,7 @@
         "unlockAreaKey": "area_reflection_water_garden",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "sellPrice": "1080",
         "buyPrice": "",
@@ -41155,7 +42063,11 @@
             "fullBefore": "各戦闘で1回、敵の攻撃または魔法が失敗した直後、その敵に対して次に行う攻撃・魔法・祈祷のいずれかに+2。行動後に解除する。",
             "fullAfter": "各戦闘で1回、敵の攻撃または魔法が失敗した直後、その敵に対して次に行う攻撃・魔法・祈祷のいずれかに+3。行動後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "反照の淵主ネレイヴ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "area_ashcrown_volcanic_canyon",
+        "balanceReferenceStage": "灰冠の火山峡谷"
       },
       {
         "id": "arm_mage_robe",
@@ -48361,7 +49273,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
         "branchDisplayOrder": 15,
@@ -48383,7 +49295,11 @@
             "summary": "その判定値が対象の回避値+3以上だった場合、ダメージ+1D6",
             "detail": "その判定値が対象の回避値+3以上だった場合、ダメージ+1D6。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_sword",
@@ -48559,7 +49475,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
         "branchDisplayOrder": 12,
@@ -48576,7 +49492,11 @@
             "summary": "防御上昇効果を受けている対象への通常攻撃では、対象の防御値を2点まで無視する",
             "detail": "防御上昇効果を受けている対象への通常攻撃では、対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_axe",
@@ -48752,7 +49672,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
         "branchDisplayOrder": 13,
@@ -48774,7 +49694,11 @@
             "summary": "移動後の通常攻撃命中時、次に受ける攻撃1回へ回避+2",
             "detail": "移動後に行う通常攻撃が命中した場合、次に自身を対象とする攻撃1回に対して回避+2。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_mace",
@@ -48950,7 +49874,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
         "branchDisplayOrder": 15,
@@ -48967,7 +49891,11 @@
             "summary": "通常攻撃命中時、対象が次の手番で移動した場合、その手番に行う命中－2",
             "detail": "通常攻撃命中時、対象が次の手番で移動した場合、その手番に行う命中－2。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_spear",
@@ -49158,7 +50086,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
         "branchDisplayOrder": 15,
@@ -49185,7 +50113,11 @@
             "summary": "《かばう》に成功した場合、その攻撃に限り自身の防御値+2",
             "detail": "《かばう》に成功した場合、その攻撃に限り自身の防御値+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_staff",
@@ -49361,7 +50293,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
         "branchDisplayOrder": 4,
@@ -49378,7 +50310,11 @@
             "summary": "戦闘中1回、その魔法術式の消費MPを1点軽減する（最低1）",
             "detail": "戦闘中1回、その魔法術式の消費MPを1点軽減する（最低1）。軽減した風属性または雷属性の魔法術式で弱点を突いた場合、その術式のダメージ+1。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_bow",
@@ -49558,7 +50494,7 @@
         "equipmentUpgradeTarget": "",
         "element": "矢弾依存",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
@@ -49576,7 +50512,11 @@
             "summary": "風矢は命中+2・ダメージ+1、雷矢は命中+1・ダメージ+1",
             "detail": "風属性の矢を使用する攻撃の命中+2、ダメージ+1。雷属性の矢を使用する攻撃の命中+1、ダメージ+1。風属性の矢を使用した攻撃が敵後衛へ命中した場合、次のラウンド終了まで対象は前衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_crossbow",
@@ -49753,7 +50693,7 @@
         "unlockAreaKey": "area_wind_swept_highland",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "element": "矢弾依存",
         "unlockFacility": "鍛冶屋",
@@ -49779,7 +50719,11 @@
             "summary": "戦闘中、この武器による攻撃2回につき1回、偶数回目の命中+3。その攻撃では対象の防御値を2点まで無視する。命中・失敗を問わず、攻撃を行った回数で数える。戦闘ごとに1回目から数え直す",
             "detail": "戦闘中、この武器による攻撃2回につき1回、偶数回目の命中+3。その攻撃では対象の防御値を2点まで無視する。命中・失敗を問わず、攻撃を行った回数で数える。戦闘ごとに1回目から数え直す。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_heavy_crossbow",
@@ -49961,7 +50905,7 @@
         "unlockAreaKey": "area_wind_swept_highland",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "element": "矢弾依存",
         "unlockFacility": "鍛冶屋",
@@ -49987,7 +50931,11 @@
             "summary": "戦闘中に1回、攻撃後の装填を省略",
             "detail": "戦闘中1回、攻撃後に装填が必要な状態にならない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_lance",
@@ -50172,7 +51120,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
@@ -50190,7 +51138,11 @@
             "summary": "《かばう》に成功した場合、その攻撃に限り自身の防御値+2",
             "detail": "《かばう》に成功した場合、その攻撃に限り自身の防御値+2。さらに、次に行う通常攻撃のダメージ+2。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_greatsword",
@@ -50365,7 +51317,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
@@ -50388,7 +51340,11 @@
             "summary": "移動後の力業攻撃命中時、対象の次の命中－1",
             "detail": "移動後の力業攻撃が命中した場合、対象の次の命中－1。対象が攻撃判定を行った後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_maul",
@@ -50568,7 +51524,7 @@
         "equipmentUpgradeTarget": "",
         "element": "風",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "嵐翼",
@@ -50586,7 +51542,11 @@
             "summary": "攻撃時、対象の防御値を3点まで無視",
             "detail": "攻撃時、対象の防御値を3点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_scythe",
@@ -50760,7 +51720,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,大鎌,武器派生,高原,★6,嵐翼系統",
         "notes": "風渡りの高原の嵐翼系統。火力帯の範囲内で、既存派生と役割が重複しすぎないよう調整。 素材系統：嵐翼派生。 ボス派生固有能力を持つ。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "嵐翼獣の天翔核と風紋布を湾曲刃と長柄へ組み込み、羽根状の装飾と風を逃がす細い稜線を持つ大鎌。",
         "publicId": "RCA-6BZ2-2AE6",
         "upgradeLimit": 6,
@@ -50795,7 +51755,11 @@
             "summary": "移動後の通常攻撃が命中した対象は次のラウンド終了まで後衛へ移動できない",
             "detail": "移動後に行う通常攻撃が命中した場合、次のラウンド終了まで対象は後衛へ移動できない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_highland_wind_gauntlet",
@@ -50969,7 +51933,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,ガントレット,武器派生,高原,★6,嵐翼系統",
         "notes": "風渡りの高原の嵐翼系統。火力帯の範囲内で、既存派生と役割が重複しすぎないよう調整。 素材系統：嵐翼派生。 ボス派生固有能力を持つ。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "嵐翼獣の天翔核と風紋布を拳甲と手甲へ組み込み、羽根状の装飾と風を逃がす細い稜線を持つガントレット。",
         "publicId": "RCA-WJHS-GFN4",
         "upgradeLimit": 6,
@@ -51004,7 +51968,11 @@
             "summary": "《妨害》成功後、次の通常攻撃ダメージ+2",
             "detail": "《妨害》に成功した場合、次に行う通常攻撃のダメージ+2。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "dataKind": "アイテム",
@@ -51178,7 +52146,7 @@
         "upgradeLimit": 5,
         "equipmentUpgradeEffect": "",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "id": "wpn_highland_boss_whip",
         "publicId": "RCA-V6ZP-QRBU",
         "itemType": "武器",
@@ -51226,7 +52194,11 @@
             "summary": "引き寄せ成功時、対象の防御値－2",
             "detail": "引き寄せ成功時、対象の防御値－2。次の対象の手番終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "book_highland_wind_magic_book",
@@ -51399,7 +52371,7 @@
         "unlockAreaKey": "area_wind_swept_highland",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "skill": "魔法",
         "checkType": "",
@@ -51422,7 +52394,11 @@
             "summary": "1枠目にセットした風属性または雷属性の魔法術式は、消費MP－1（最低1）、与えるダメージ+2",
             "detail": "1枠目にセットした風属性または雷属性の魔法術式は、消費MP－1（最低1）、与えるダメージ+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "book_highland_wind_prayer_book",
@@ -51610,7 +52586,7 @@
         "unlockAreaKey": "area_wind_swept_highland",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "skill": "祈祷",
         "checkType": "",
@@ -51638,7 +52614,11 @@
             "summary": "2枠目にセットした祈祷によるダメージまたはHP回復量+2",
             "detail": "2枠目にセットした祈祷によるダメージまたはHP回復量+2。祈祷の属性は光のまま変更しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "arm_highland_tempest_cloak",
@@ -51668,7 +52648,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "ownerKey": "",
         "createdBy": "",
         "sellPrice": "1244",
@@ -51679,7 +52659,11 @@
             "summary": "風属性または雷属性のダメージを受ける際、最終ダメージを2点軽減する",
             "detail": "風属性または雷属性のダメージを受ける際、最終ダメージを2点軽減する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "wpn_branch_outskirts_grass_staff_1",
@@ -58798,7 +59782,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "sellPrice": "1066",
         "buyPrice": "",
         "equipmentEffects": [
@@ -58807,7 +59791,11 @@
             "summary": "各戦闘で1回、風または雷属性ダメージを受ける際、その最終ダメージを3点軽減する",
             "detail": "各戦闘で1回、風または雷属性ダメージを受ける際、その最終ダメージを3点軽減する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "嵐翼獣ヴェルグラート",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第1通常エリア"
       },
       {
         "id": "shield_rootbark_guard",
@@ -62646,7 +63634,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
         "branchDisplayOrder": 16,
@@ -62673,7 +63661,11 @@
             "summary": "大成功域で火傷を付与し、既に火傷なら残り2ラウンドへ更新",
             "detail": "その判定値が対象の回避値+3以上だった場合、対象を火傷状態にする。対象がすでに火傷状態の場合は、その火傷の残り期間を2ラウンドに更新する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_02_obsidian",
@@ -62859,7 +63851,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
         "branchDisplayOrder": 16,
@@ -62876,7 +63868,11 @@
             "summary": "前の自分の手番で防御行動を行っていた場合、火傷状態の対象への次の通常攻撃では対象の防御値を3点まで無視する",
             "detail": "前の自分の手番で防御行動を行っていた場合、火傷状態の対象への次の通常攻撃では対象の防御値を3点まで無視する。攻撃の解決後に解除する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_03_obsidian",
@@ -63062,7 +64058,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
         "branchDisplayOrder": 16,
@@ -63084,7 +64080,11 @@
             "summary": "火傷状態の対象への通常攻撃では、対象の防御値を3点まで無視する",
             "detail": "火傷状態の対象への通常攻撃では、対象の防御値を3点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_04_obsidian",
@@ -63270,7 +64270,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
         "branchDisplayOrder": 16,
@@ -63287,7 +64287,11 @@
             "summary": "火傷状態の対象への通常攻撃のダメージ+2",
             "detail": "火傷状態の対象への通常攻撃のダメージ+2。その攻撃では対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_05_obsidian",
@@ -63488,7 +64492,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
         "branchDisplayOrder": 16,
@@ -63520,7 +64524,11 @@
             "summary": "火傷状態の対象への通常攻撃のダメージ+2",
             "detail": "火傷状態の対象への通常攻撃のダメージ+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_06_obsidian",
@@ -63706,7 +64714,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
         "branchDisplayOrder": 16,
@@ -63728,7 +64736,11 @@
             "summary": "火傷対象への火属性魔法術式の魔法+1。ダメージを与えた場合、火傷を2ラウンドへ更新",
             "detail": "火傷状態の対象へ火属性の魔法術式を使用する際、魔法+1。その術式で1点以上のダメージを与えた場合、その火傷の残り期間を2ラウンドに更新する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "dataKind": "アイテム",
@@ -63912,7 +64924,7 @@
         "upgradeLimit": 7,
         "equipmentUpgradeEffect": "",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "id": "wpn_ashcrown_07_boss",
         "publicId": "RCA-WD03-X6VQ",
         "itemType": "武器",
@@ -63960,7 +64972,11 @@
             "summary": "引き寄せ成功時、対象の防御値－2",
             "detail": "引き寄せ成功時、対象の防御値－2。次の対象の手番終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_08_obsidian",
@@ -64145,7 +65161,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
@@ -64163,7 +65179,11 @@
             "summary": "防御値が4以上または火傷状態の対象への力業攻撃命中時、通常の追加ダイスに加えてダメージ+1D6",
             "detail": "防御値が4以上または火傷状態の対象への力業攻撃命中時、通常の追加ダイスに加えてダメージ+1D6。その攻撃では対象の防御値を2点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_09_obsidian",
@@ -64353,7 +65373,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
@@ -64381,7 +65401,11 @@
             "summary": "火傷状態の対象への力業攻撃のダメージ+2",
             "detail": "火傷状態の対象への力業攻撃のダメージ+2。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_10_obsidian",
@@ -64576,7 +65600,7 @@
         "equipmentUpgradeTarget": "",
         "element": "火",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
@@ -64599,7 +65623,11 @@
             "summary": "移動しなかった手番に火傷状態の対象へ行う通常攻撃の命中+1",
             "detail": "移動しなかった手番に火傷状態の対象へ行う通常攻撃の命中+1。その攻撃では対象の防御値を3点まで無視する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_11_obsidian",
@@ -64789,7 +65817,7 @@
         "equipmentUpgradeTarget": "",
         "element": "矢弾依存",
         "unlockFacility": "鍛冶屋",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "offhandBonus": "",
         "branchClass": "ボス派生",
         "branchType": "灰冠",
@@ -64817,7 +65845,11 @@
             "summary": "その判定値が対象の回避値+3以上だった場合、対象を火傷状態にする",
             "detail": "その判定値が対象の回避値+3以上だった場合、対象を火傷状態にする。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_12_obsidian",
@@ -65004,7 +66036,7 @@
         "unlockAreaKey": "area_ashcrown_volcanic_canyon",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "element": "矢弾依存",
         "unlockFacility": "鍛冶屋",
@@ -65035,7 +66067,11 @@
             "summary": "命中した場合、対象の防御値－1",
             "detail": "命中した場合、対象の防御値－1。次の対象の手番終了時に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_13_obsidian",
@@ -65217,7 +66253,7 @@
         "unlockAreaKey": "area_ashcrown_volcanic_canyon",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "element": "矢弾依存",
         "unlockFacility": "鍛冶屋",
@@ -65243,7 +66279,11 @@
             "summary": "火傷状態の対象へ命中した場合、次にこの武器で行う攻撃のダメージ+3",
             "detail": "火傷状態の対象へ命中した場合、次にこの武器で行う攻撃のダメージ+3。攻撃の解決後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_14_obsidian",
@@ -65417,7 +66457,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,大鎌,武器派生,火山峡谷,★7,灰冠系統",
         "notes": "灰冠の火山峡谷の灰冠系統。現行の武器役割と火傷連携を再監査済み。 ボス派生。レシピは大蛇の褒賞箱限定。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "熾脈晶と火脈合金を湾曲刃と長柄へ組み込み、灰白の鱗状装飾と火口色の差し色を持つ大鎌。",
         "publicId": "RCA-L7V4-ASZY",
         "upgradeLimit": 7,
@@ -65452,7 +66492,11 @@
             "summary": "火傷状態の対象へのダメージ+1D6",
             "detail": "火傷状態の対象へのダメージ+1D6。対象ごとに攻撃判定とダメージ判定を個別に行う。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_15_obsidian",
@@ -65636,7 +66680,7 @@
         "unlockFacility": "鍛冶屋",
         "tags": "武器,ガントレット,武器派生,火山峡谷,★7,灰冠系統",
         "notes": "灰冠の火山峡谷の灰冠系統。現行の武器役割と火傷連携を再監査済み。 ボス派生。レシピは大蛇の褒賞箱限定。",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "description": "地脈珠と火脈合金を拳甲と手甲へ組み込み、灰白の鱗状装飾と火口色の差し色を持つガントレット。",
         "publicId": "RCA-VO81-UGTV",
         "upgradeLimit": 7,
@@ -65676,7 +66720,11 @@
             "summary": "火傷状態の対象への妨害に成功した場合、次にその対象へ行う通常攻撃のダメージ+2",
             "detail": "火傷状態の対象への妨害に成功した場合、次にその対象へ行う通常攻撃のダメージ+2。攻撃後に解除し、重複しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_16_obsidian",
@@ -65864,7 +66912,7 @@
         "unlockAreaKey": "area_ashcrown_volcanic_canyon",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-11",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "skill": "魔法",
         "checkType": "",
@@ -65892,7 +66940,11 @@
             "summary": "火傷状態の対象へ火属性の魔法術式を使用する場合、その術式の消費MP－1（最低1）",
             "detail": "火傷状態の対象へ火属性の魔法術式を使用する場合、その術式の消費MP－1（最低1）。1点以上のダメージを与えた場合、その火傷の残り期間を2ラウンドに更新する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "wpn_ashcrown_17_obsidian",
@@ -66085,7 +67137,7 @@
         "unlockAreaKey": "area_ashcrown_volcanic_canyon",
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
-        "updatedAt": "2026-09-12",
+        "updatedAt": "2026-09-18",
         "equipmentUpgradeTarget": "",
         "skill": "祈祷",
         "checkType": "",
@@ -66123,7 +67175,11 @@
             "summary": "戦闘中1回、祈祷の消費MPを1点軽減",
             "detail": "戦闘中1回、その祈祷の消費MPを1点軽減する（最低1）。祈祷の属性は光のまま変更しない。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "arm_ashcrown_scoria_cloak",
@@ -67126,7 +68182,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "sellPrice": "1203",
         "buyPrice": 5750,
         "equipmentEffects": [
@@ -67135,7 +68191,11 @@
             "summary": "火属性ダメージを受ける際、最終ダメージを2点軽減する",
             "detail": "火属性ダメージを受ける際、最終ダメージを2点軽減する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "acc_ashcrown_boss_serpent_ring",
@@ -67164,7 +68224,7 @@
         "guaranteeUpgradeMaxRank": "",
         "equipmentUpgradeSlotCost": "",
         "equipmentUpgradeTarget": "",
-        "updatedAt": "2026-09-07",
+        "updatedAt": "2026-09-18",
         "sellPrice": "939",
         "buyPrice": "",
         "equipmentEffects": [
@@ -67173,7 +68233,11 @@
             "summary": "戦闘中に1回、受ける火傷を無効化",
             "detail": "各戦闘で1回、火傷を付与された際、その火傷を無効化する。"
           }
-        ]
+        ],
+        "balanceReferenceBoss": "灰嶺の大蛇ウルガナ",
+        "balanceReferenceRule": "ボス討伐推奨ライン以降",
+        "balanceReferenceAreaKey": "",
+        "balanceReferenceStage": "第三区画・第2通常エリア"
       },
       {
         "id": "acc_wind_earring_2",
@@ -71623,6 +72687,6 @@
       }
     ]
   },
-  "updatedAt": "2026-09-17",
-  "generatedAt": "2026-09-17"
+  "updatedAt": "2026-09-18",
+  "generatedAt": "2026-09-18T01:55:00+09:00"
 }

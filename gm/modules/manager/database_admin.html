@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.795</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.800</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.795 / 最終更新日：2026年9月17日</div>
+<div class="ra-build-info">Version：v90.8.800 / 最終更新日：2026年9月18日</div>
 
 <header>
   <div class="title-card">
@@ -2153,12 +2153,12 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
     <div class="modal-foot"><button type="button" class="ghost" data-facility-general-area-cancel>キャンセル</button><button type="button" data-facility-general-area-apply>選択を適用</button></div>
   </div>
 </div>
-<script src="../../../js/ra_monster_rules.js?v=90.8.795"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.800"></script>
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.795';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.795';
+const RECRAFT_DB_VERSION = 'v90.8.800';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.800';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -3301,10 +3301,10 @@ const SYSTEM_HELP = [
       "行動ごとの基礎技能値と威力は独立して評価する。基礎技能値だけを理由にダメージを機械的に上下させず、エリア難易度・対象数・追加効果・防御貫通・予告の有無・期待値と振れ幅を合わせて個別に決める。高技能低威力・低技能高威力・抵抗参照だけ低技能など、役割に応じて個別設定してよい。",
       "魔物の基礎直接ダメージ式と武器の基礎ダメージ式はD6を必須とし、最大構成をxD6+yD2～D5+zとする。D2～D5はD6へ追加する補助ダイスとしてのみ使用でき、補助ダイスを含む場合はy<=xを必須とする。固定値zは0以上のみとし、ダメージ式へのマイナス固定値は禁止。D2～D5だけの基礎ダメージ式は禁止。毒などの継続ダメージと、条件成立時に別途加算される追加ダメージはこの式制限の対象外。D2～D5の使用自体は強制せず、D2は小さい振れ幅、D3は軽～中程度、D4は標準的な補助、D5は大きめの振れ幅を持たせたい攻撃に使い分ける。",
       "防御・補助・回復行動も自動成功にせず、行動ごとの基礎技能値を使う『技能値>=固定達成値』判定を設定する。失敗時はその行動の防御・強化・回復・準備効果を適用しない。妨害などの変動補正は{補正}へ加算し、この判定にも適用する。",
-      "通常魔物は所持技プールを5個以上持ち、遭遇時にその中から3個をランダム選出して、その戦闘中の使用行動として固定する。二つ名個体とボスは技を必ず4個所持する。固有パッシブは技数に含めない。固有パッシブが特定行動を参照する場合、その行動は選出時の必須枠とする。準備・連携などで特定の別行動を明示参照する場合は、参照関係が成立する組み合わせだけを選出候補にする。",
+      "通常魔物は役割に必要な行動だけを登録し、選択可能な行動が4個以上なら遭遇時に3個を選出する。3個なら全て使用する。二つ名個体も3～4個なら全て使用し、選択可能な行動が5個以上なら遭遇時に4個を選出してよい。ボスは4個固定。固有パッシブは技数に含めない。固定選出技は戦闘コンセプトの成立に不可欠な場合だけ指定し、固有パッシブ参照技を一律に固定しない。準備・連携などで別行動を明示参照する場合は、参照関係が成立する組み合わせだけを選出候補にする。",
       "エリアボスは、前衛が残っている状態でも後衛へ直接ダメージを与えられる行動を最低1つ必ず持つ。後衛へ届くかは行動種別ではなく距離で判定し、距離：遠距離の直接ダメージ行動、または距離：特殊で効果文に後衛到達条件を明記した直接ダメージ行動を用意する。状態異常や弱体だけの行動はこの条件を満たさない。",
       "準備と次ターンの大技で構成される予告攻撃は、2段階を1つの技として同じ行に登録する。",
-      "魔物行動には距離とは別に行動種別を設定する。行動種別は行動者側の位置取り、距離は対象へ届く範囲として別々に扱う。近接攻撃は行動時に前衛へ出て処理し、遠距離攻撃は味方前衛がいる場合に後衛へ下がって処理する。距離：近接は敵前衛のみ、距離：遠距離は敵前衛・敵後衛を対象にできる。種別は近接攻撃、遠距離攻撃、術式、祈祷、防御、補助、回復、特殊。",
+      "魔物行動には距離とは別に行動種別を設定する。行動種別は行動者側の位置取り、距離は対象へ届く範囲として別々に扱う。魔物は行動種別だけを理由に前衛・後衛間を移動しない。位置変更は行動・固有パッシブ・強制移動などに明記された処理でのみ発生する。距離：近接は敵前衛のみ、距離：遠距離は敵前衛・敵後衛を対象にできる。種別は近接攻撃、遠距離攻撃、術式、祈祷、防御、補助、回復、特殊。",
       "魔物の判定は行動種別にかかわらず、その行動に設定された基礎技能値を使用する。判定欄は『技能値>=回避値』『技能値>=抵抗値』『技能値>=固定達成値』で参照先を示す。",
       "ドロップはメモ式ではなく行単位で管理する。",
       "ドロップ素材は魔物素材カテゴリから選択する。"
@@ -7682,7 +7682,7 @@ function monsterDropRowHtml(row={}, idx=0){
 function monsterActionsEditor(value){
   const rows = parseMonsterActions(value);
   const body = rows.length ? rows.map(monsterActionRowHtml).join('') : monsterActionRowHtml({element:'物'});
-  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は所持技プールとして5個以上を登録し、遭遇時に3個だけ選出します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体は基本4個です。後衛へ届く手段など戦術上の候補を増やす個体は5個以上を登録し、遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・術式・祈祷・防御・補助・回復・特殊から選択します。距離は行動種別から独立して近接・遠距離・自身・特殊を指定します。行動種別は行動者側の位置取り、距離は対象へ届く範囲として分けて扱います。近接攻撃は行動時に前衛へ出て処理し、遠距離攻撃は味方前衛がいる場合に後衛へ下がって処理します。距離：近接は前衛のみ、距離：遠距離は前衛・後衛を対象にできます。近接攻撃でも、ヴェイルの《虚影刃》のように特性上後衛へ届く技は距離：遠距離にしてください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
+  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は役割に必要な数だけ登録し、選択可能な行動が4個以上なら遭遇時に3個だけ選出します。3個なら全て使用します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体も役割に必要な数だけ登録し、3～4個なら全て使用します。選択可能な行動が5個以上なら遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・術式・祈祷・防御・補助・回復・特殊から選択します。距離は行動種別から独立して近接・遠距離・自身・特殊を指定します。行動種別と距離は別軸です。魔物は行動種別だけを理由に前衛・後衛間を移動しません。位置変更は行動・固有パッシブ・強制移動などに明記された処理でのみ発生します。距離：近接は敵前衛のみ、距離：遠距離は敵前衛・敵後衛を対象にできます。近接攻撃でも、ヴェイルの《虚影刃》のように特性上後衛へ届く技は距離：遠距離にしてください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
 }
 function monsterDropsEditor(value){
   const rows = parseMonsterDrops(value);
@@ -8866,7 +8866,7 @@ function assertMonsterFixedActionSelectionRows(rows=[]){
     const isBoss=traits.includes('ボス'),isNamed=traits.includes('二つ名')||String(row.id||'').startsWith('mon_named_');
     const fixed=monsterFixedActionNames(row),actionCount=parseMonsterActions(row.actions||'').length;
     if(isBoss&&fixed.length){invalid.push({row,reason:'ボスは4技固定のため固定選出技は設定しません'});return;}
-    if(isNamed&&actionCount<=4&&fixed.length){invalid.push({row,reason:'4技固定の二つ名には固定選出技を設定しません。5技以上の候補制二つ名だけ指定できます'});return;}
+    if(isNamed&&actionCount<=4&&fixed.length){invalid.push({row,reason:'全行動を使用する二つ名には固定選出技を設定しません。5技以上の候補制二つ名だけ指定できます'});return;}
     const maxFixed=isNamed?3:2;
     if(fixed.length>maxFixed){invalid.push({row,reason:`固定選出技は最大${maxFixed}個です（${fixed.length}個）`});return;}
     const actionNames=new Set(parseMonsterActions(row.actions||'').map(a=>String(a.name||'').trim()).filter(Boolean));
@@ -8875,7 +8875,7 @@ function assertMonsterFixedActionSelectionRows(rows=[]){
   });
   if(!invalid.length)return;
   const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：${x.reason}`).join('\n');
-  throw new Error(`固定選出技の設定を確認してください。通常魔物は0～2技、5技以上の候補制二つ名は0～3技まで指定でき、指定名は行動プールと完全一致させます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+  throw new Error(`固定選出技の設定を確認してください。固定枠は戦闘コンセプトの成立に必要な行動だけに限定し、通常魔物は0～2技、5技以上の候補制二つ名は0～3技まで指定できます。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function assertMonsterPassiveOnlyActionRows(rows=[]){
   const invalid=[];
@@ -8948,22 +8948,21 @@ function assertMonsterLoadoutViabilityRows(rows=[]){
   });
   if(!invalid.length)return;
   const details=invalid.slice(0,12).map(x=>`・${String(x.row.name||x.row.id||'名称未設定')}：${x.reason}`).join('\n');
-  throw new Error(`魔物の技選出条件を満たせません。通常魔物は3技、候補制二つ名は4技になるよう、固定選出技・パッシブ専用技・行動間依存を確認してください。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+  throw new Error(`魔物の技選出条件を満たせません。候補抽選を行う個体は通常魔物3技、候補制二つ名4技になるよう、固定選出技・パッシブ専用技・行動間依存を確認してください。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function assertMonsterActionCountRows(rows=[]){
   const invalid=(rows || []).map(row=>{
     const traits=String(row.monsterTraits || '').split(/[,、，]/).map(v=>v.trim());
     const isBoss=traits.includes('ボス'),isNamed=traits.includes('二つ名')||String(row.id||'').startsWith('mon_named_');
-    const isNormal=!isBoss&&!isNamed;
     const actual=parseMonsterActions(row.actions || '').length;
-    const ok=isNormal?actual>=5:(isBoss?actual===4:actual>=4);
-    const expected=isNormal?'5個以上（戦闘時3個選出）':(isBoss?'4個固定':'4個固定、または5個以上（戦闘時4個選出）');
+    const ok=isBoss?actual===4:actual>=3;
+    const expected=isBoss?'4個固定':'3個以上（役割に必要な数。候補が多い場合のみ遭遇時抽選）';
     return {row,expected,actual,ok};
   }).filter(x=>!x.ok);
   if(!invalid.length) return;
   const details=invalid.slice(0,10).map(x=>`・${String(x.row.name || x.row.id || '名称未設定')}：${x.actual}個（必要${x.expected}）`).join('\n');
   const rest=invalid.length>10 ? `\nほか${invalid.length-10}件` : '';
-  throw new Error(`通常魔物は5技以上から3技を選出します。二つ名は4技固定、または5技以上から4技を選出します。ボスは4技固定です。固有パッシブは技数に含めません。\n${details}${rest}`);
+  throw new Error(`魔物の登録行動数は役割に必要な数とし、通常・強敵・二つ名は最低3行動、ボスは4行動固定です。行動数を強さのためのノルマとして増やさないでください。\n${details}${rest}`);
 }
 function monsterActionCanDamageBackline(action={}){
   const power=String(action.power||'').trim();
@@ -8987,21 +8986,9 @@ function assertMonsterActionTypeSemanticsRows(rows=[]){
   throw new Error(`魔物の行動種別と処理内容が一致していません。近接攻撃・遠距離攻撃は直接ダメージを必ず含め、特殊は状態付与・拘束・移動など直接ダメージを伴わない効果に使用してください。術式・祈祷は攻撃/非攻撃の両方を許可します。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
 }
 function assertNamedBacklineAttackRows(rows=[]){
-  const invalid=(rows||[]).filter(row=>{
-    const traits=String(row.monsterTraits||'').split(/[,、，]/).map(v=>v.trim());
-    const isNamed=traits.includes('二つ名')||String(row.id||'').startsWith('mon_named_');
-    if(!isNamed)return false;
-    const actions=parseMonsterActions(row.actions||'');
-    if(!actions.some(monsterActionCanDamageBackline))return true;
-    if(actions.length>4){
-      const {loadouts}=monsterLegalLoadouts(row);
-      if(!loadouts.length||loadouts.some(combo=>!combo.some(monsterActionCanDamageBackline)))return true;
-    }
-    return false;
-  });
-  if(!invalid.length)return;
-  const details=invalid.slice(0,12).map(row=>`・${String(row.name||row.id||'名称未設定')}`).join('\n');
-  throw new Error(`二つ名個体は単体出現を前提とするため、前衛が残っていても後衛へ直接ダメージを与えられる手段を最低1つ持たせてください。5技以上の候補制二つ名では、固定技・技依存を満たす全候補構成に後衛への直接ダメージ手段が残るかを確認します。\n${details}${invalid.length>12?`\nほか${invalid.length-12}件`:''}`);
+  // 二つ名だからという理由だけで後衛攻撃枠を強制しない。
+  // 後衛圧は個体の役割・行動構成に必要な場合だけ持たせる。
+  return;
 }
 function areaBossMonsterNameSet(){
   const names=new Set();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.800</title>
+<title>Recraft Alchemia GM Character Sheet</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -1532,7 +1532,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
       <details class="big-section" open>
         <summary>装備</summary>
         <div class="section-body">
-          <p class="hint">右手・左手・鎧・装飾品は、倉庫に登録済みの装備から選択して反映します。必要な装備は先に倉庫へ登録してください。同じ武器を右手・左手へ重複装備したり、同じ装飾品を装飾品1・2へ重複装備することはできません。</p>
+          <p class="hint">GM版では、共通DBに登録されている通常アイテムを全キャラクターで直接使用できます。倉庫登録は不要です。キャラクター固有の個体品・骨董個体などだけ、必要に応じて従来の倉庫登録を使用してください。同じ武器を右手・左手へ重複装備したり、同じ装飾品を装飾品1・2へ重複装備することはできません。</p>
           <div class="button-row compact-toolbar">
             <button id="loadEquipmentCategoriesBtn" type="button" class="ghost">共通DBを再読込</button>
             <span id="equipmentCategoryStatus" class="small">GitHub共通DBを確認しています。取得できない場合はGASへ切り替えます。</span>
@@ -1560,7 +1560,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
                 <label for="bagSelect">バッグ選択</label>
                 <select id="bagSelect" data-inventory-input="1"><option value="">バッグ未選択</option></select>
               </div>
-              <div id="bagCapacityStatus" class="bag-status">倉庫にあるバッグを選択してください。</div>
+              <div id="bagCapacityStatus" class="bag-status">共通DBまたは倉庫からバッグを選択してください。</div>
             </div>
           </div>
         </div>
@@ -1574,7 +1574,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
               <div class="field">
                 <label for="quiverSelect">矢筒選択</label>
                 <select id="quiverSelect" data-inventory-input="1"><option value="">矢筒未装備</option></select>
-                <p class="hint">倉庫に登録した矢筒を選び、矢弾をスタック単位で収納します。矢筒内の矢弾は所持品枠を消費しません。</p>
+                <p class="hint">GM版では共通DBの矢筒・矢弾を直接選択できます。キャラごとの倉庫登録は不要です。矢筒内の矢弾は所持品枠を消費しません。</p>
               </div>
               <div>
                 <div id="quiverCapacityStatus" class="bag-status">倉庫にある矢筒を装備してください。</div>
@@ -1588,7 +1588,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
       <details class="big-section carry-big-section">
         <summary>所持品</summary>
         <div class="section-body">
-          <p class="hint">冒険へ持ち出すアイテムです。バッグ容量まで、倉庫から選択して移動できます。</p>
+          <p class="hint">冒険へ持ち出すアイテムです。GM版では共通DBまたはキャラ固有倉庫から直接選択できます。</p>
           <div id="carryArea" class="carry-item-list"></div>
         </div>
       </details>
@@ -1598,11 +1598,11 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
       <details class="big-section" open>
         <summary>倉庫・習得</summary>
         <div class="section-body">
-          <p class="hint">「所持品（倉庫）」では拠点に保管している装備・素材・道具・所持レシピなどを確認します。「習得系」では、覚えている術式・スキル・レシピを種類ごとに切り替えて確認できます。倉庫には保管上限はありません。</p>
-          <details class="mini-card inventory-registration-card" open>
-            <summary>倉庫へ登録</summary>
+          <p class="hint">GM版では共通DBの通常アイテムを登録なしで全キャラクターから直接利用できます。「所持品（倉庫）」はキャラクター固有の個体品・追加登録品の確認用です。「習得系」では、覚えている術式・スキル・レシピを種類ごとに切り替えて確認できます。</p>
+          <details class="mini-card inventory-registration-card">
+            <summary>キャラ固有アイテムを登録（任意）</summary>
             <div class="inventory-registration-body">
-            <p class="hint">GMや進行管理HTMLから受け取った登録IDを入力して追加します。骨董装備も通常と同じ RCA-XXXX-XXXX 形式で登録できます。装備・素材・道具・レシピなどは倉庫へ、術式・スキルは習得系へ反映されます。所持数を持つものは指定した個数で追加でき、0個でも登録・保存できます。</p>
+            <p class="hint">共通DBの通常アイテムは登録不要です。ここは骨董個体・キャラクター固有品・個別管理したいアイテムだけを登録する任意機能です。</p>
             <div class="inventory-form-grid">
               <div class="field">
                 <label for="publicIdInput">登録ID</label>
@@ -1780,6 +1780,41 @@ let DB_INITIAL_SPELL_MASTER = [];
 let DB_RECIPE_MASTER = [];
 let DB_SKILL_MASTER = [];
 let lastAppliedCharacterSheetMasterRef = null;
+
+/* GM_APP_MASTER_ITEM_DIRECT_V1 */
+const GM_MASTER_ITEM_DIRECT_MODE = true;
+let gmMasterVirtualCache = { source:null, rows:[], byLookup:new Map(), byName:new Map() };
+function gmMasterVirtualRows(){
+  if(!GM_MASTER_ITEM_DIRECT_MODE)return [];
+  const source=DB_INITIAL_ITEM_MASTER||[];
+  if(gmMasterVirtualCache.source===source)return gmMasterVirtualCache.rows;
+  const rows=[];const byLookup=new Map(),byName=new Map();const seen=new Set();
+  for(const raw of source){
+    try{
+      if(typeof enabledLike==='function'&&!enabledLike(raw?.enabled))continue;
+      if(typeof csItemVisible==='function'&&!csItemVisible(raw||{}))continue;
+      const item=dbItemToInventoryItem(raw||{});
+      const identity=String(item.masterId||item.id||item.publicId||item.name||'').trim();
+      if(!identity||seen.has(identity))continue;seen.add(identity);
+      const maxStack=Math.max(1,Number(raw?.maxStack||item?.spellSlots||99)||99);
+      const row=normalizeInventoryItem({...item,count:Math.max(9999,maxStack)});
+      row.__gmMasterDirect=true;
+      rows.push(row);
+      for(const value of [inventoryItemKey(row),row.id,row.masterId,String(row.publicId||'').trim().toUpperCase()]){const key=String(value||'').trim();if(key&&!byLookup.has(key))byLookup.set(key,row);}
+      const name=String(row.name||'').trim();if(name&&!byName.has(name))byName.set(name,row);
+    }catch(_){ }
+  }
+  gmMasterVirtualCache={source,rows,byLookup,byName};
+  return rows;
+}
+function gmMasterVirtualFind(itemId='',itemName=''){
+  gmMasterVirtualRows();
+  const id=String(itemId||'').trim();
+  if(id){return gmMasterVirtualCache.byLookup.get(id)||gmMasterVirtualCache.byLookup.get(id.toUpperCase())||null;}
+  const name=String(itemName||'').trim();return name?(gmMasterVirtualCache.byName.get(name)||null):null;
+}
+function gmMasterVirtualHasName(name=''){return !!gmMasterVirtualFind('',name);}
+
 let skillGachaState = null;
 let skillWarehouseFilter = { category:'全て', weaponType:'全て', search:'' };
 
@@ -2440,7 +2475,7 @@ function renderStatic() {
           <div class="carry-item-title" id="equip_${slot.key}_summary">未設定</div>
           <div class="carry-item-primary">
             <div class="field">
-              <label class="small" for="equip_${slot.key}_itemSelect">倉庫から選択</label>
+              <label class="small" for="equip_${slot.key}_itemSelect">共通DB・倉庫から選択</label>
               <select id="equip_${slot.key}_itemSelect" data-equipment-input="1"><option value="">未選択（倉庫へ戻す）</option></select>
             </div>
             <div class="field">
@@ -2477,7 +2512,7 @@ function renderStatic() {
         <div class="equipment-slot-body">
           <div class="equipment-primary-grid equipment-selection-only">
             <div class="field equipment-select-field equipment-wide">
-              <label for="equip_${slot.key}_itemSelect">倉庫から選択</label>
+              <label for="equip_${slot.key}_itemSelect">共通DB・倉庫から選択</label>
               <select id="equip_${slot.key}_itemSelect" data-equipment-input="1"><option value="">未選択</option></select>
             </div>
             <input id="equip_${slot.key}_name" data-equipment-input="1" type="hidden" value="" />
@@ -4866,36 +4901,45 @@ function invalidateInventoryDerivedCache(){
   inventoryDerivedCache = null;
 }
 function inventoryDerived(){
-  if(inventoryDerivedCache && inventoryDerivedCache.revision===inventoryStateRevision) return inventoryDerivedCache;
+  if(inventoryDerivedCache && inventoryDerivedCache.revision===inventoryStateRevision && inventoryDerivedCache.masterSource===DB_INITIAL_ITEM_MASTER) return inventoryDerivedCache;
   const rows=(inventoryItemsState||[]).map((raw,index)=>{
     const normalized=normalizeInventoryItem(raw||{});
     if(inventoryItemsState[index]!==normalized) inventoryItemsState[index]=normalized;
     return normalized;
   });
+  const virtualRows=gmMasterVirtualRows();
   const indexByLookup=new Map(), rowByLookup=new Map(), rowByName=new Map();
   const equipmentRows=[], equipmentBySlotKind={hand:[],armor:[],accessory:[],carry:[]};
   const equipmentByKey=new Map(), equipmentByName=new Map();
   const bags=[], quivers=[], ammoRows=[], warehouseRows=[];
   const internalByType=new Map(), smallPresent=new Set();
-  const addLookup=(value,index,row)=>{
+  const addLookup=(value,index,row,{actual=true}={})=>{
     const key=String(value||'').trim();
     if(!key)return;
-    if(!indexByLookup.has(key))indexByLookup.set(key,index);
+    if(actual&&!indexByLookup.has(key))indexByLookup.set(key,index);
     if(!rowByLookup.has(key))rowByLookup.set(key,row);
   };
-  rows.forEach((row,index)=>{
+  const addCandidateRow=(row,index,{actual=true}={})=>{
     const itemKey=inventoryItemKey(row);
-    addLookup(itemKey,index,row);
-    addLookup(row.id,index,row);
-    addLookup(row.masterId,index,row);
-    addLookup(String(row.publicId||'').trim().toUpperCase(),index,row);
+    addLookup(itemKey,index,row,{actual});
+    addLookup(row.id,index,row,{actual});
+    addLookup(row.masterId,index,row,{actual});
+    addLookup(String(row.publicId||'').trim().toUpperCase(),index,row,{actual});
     const name=String(row.name||'').trim();
     if(name&&!rowByName.has(name))rowByName.set(name,row);
-
     if(isBagInventoryItem(row)) bags.push(row);
     if(isQuiverInventoryItem(row)) quivers.push(row);
     if(isQuiverAmmoInventoryItem(row)) ammoRows.push(row);
-
+    if(row.name && row.kind!=='レシピ' && row.kind!=='バッグ' && !isSpellInventoryItem(row)){
+      equipmentRows.push(row);
+      const slotKind=slotKindForCsItem(row);
+      if(equipmentBySlotKind[slotKind])equipmentBySlotKind[slotKind].push(row);
+      if(itemKey&&!equipmentByKey.has(itemKey))equipmentByKey.set(itemKey,row);
+      if(name&&!equipmentByName.has(name))equipmentByName.set(name,row);
+    }
+  };
+  rows.forEach((row,index)=>{
+    addCandidateRow(row,index,{actual:true});
     const learnedSpell=isSpellInventoryItem(row) && inventorySmallCategory(row)==='術式';
     if(!learnedSpell){
       warehouseRows.push(row);
@@ -4907,16 +4951,14 @@ function inventoryDerived(){
         internalByType.get(small).add(internal);
       }
     }
-    if(row.name && row.kind!=='レシピ' && row.kind!=='バッグ' && !isSpellInventoryItem(row)){
-      equipmentRows.push(row);
-      const slotKind=slotKindForCsItem(row);
-      if(equipmentBySlotKind[slotKind])equipmentBySlotKind[slotKind].push(row);
-      if(itemKey&&!equipmentByKey.has(itemKey))equipmentByKey.set(itemKey,row);
-      if(name&&!equipmentByName.has(name))equipmentByName.set(name,row);
-    }
   });
+  // GM版では共通DBアイテムを仮想倉庫として候補へ追加する。保存データには混ぜない。
+  for(const row of virtualRows){
+    const key=inventoryItemKey(row);if(key&&rowByLookup.has(key))continue; // キャラ固有登録品を優先
+    addCandidateRow(row,-1,{actual:false});
+  }
   inventoryDerivedCache={
-    revision:inventoryStateRevision, rows, warehouseRows, warehouseCount:warehouseRows.length,
+    revision:inventoryStateRevision,masterSource:DB_INITIAL_ITEM_MASTER, rows, virtualRows, warehouseRows, warehouseCount:warehouseRows.length,
     indexByLookup,rowByLookup,rowByName,equipmentRows,equipmentBySlotKind,equipmentByKey,equipmentByName,
     bags,quivers,ammoRows,smallPresent,internalByType
   };
@@ -5383,9 +5425,12 @@ function warehouseItemIndex(itemId='', itemName='') {
 }
 function warehouseItemByKey(itemId='', itemName='') {
   const index = warehouseItemIndex(itemId, itemName);
-  return index >= 0 ? inventoryItemsState[index] : null;
+  if(index >= 0) return inventoryItemsState[index];
+  return gmMasterVirtualFind(itemId,itemName);
 }
 function adjustWarehouseItemCount(itemId='', delta=0, itemName='') {
+  // 共通DB直参照アイテムは全キャラ共通・登録不要のため、倉庫在庫を増減させない。
+  if(gmMasterVirtualFind(itemId,itemName))return true;
   const index = warehouseItemIndex(itemId, itemName);
   if (index < 0) return false;
   const row = inventoryItemsState[index];
@@ -5616,10 +5661,13 @@ function parseNamedProcessingMaterials(text=''){
   return String(text||'').split(/[,、\n]+/u).map(v=>String(v||'').trim()).filter(Boolean).map(part=>{const m=part.match(/^(.*?)[×xX*]\s*(\d+)\s*$/u);return{name:String(m?m[1]:part).trim(),count:Math.max(1,Number(m?m[2]:1)||1)}}).filter(v=>v.name);
 }
 function inventoryCountByName(name=''){
-  const target=String(name||'').trim();return (inventoryItemsState||[]).reduce((sum,raw)=>sum+(String(raw?.name||'').trim()===target?Math.max(0,Number(raw.count||0)):0),0);
+  const target=String(name||'').trim();
+  if(gmMasterVirtualHasName(target))return 9999;
+  return (inventoryItemsState||[]).reduce((sum,raw)=>sum+(String(raw?.name||'').trim()===target?Math.max(0,Number(raw.count||0)):0),0);
 }
 function consumeInventoryByName(name='',amount=0){
   let remain=Math.max(0,Number(amount)||0),target=String(name||'').trim();
+  if(gmMasterVirtualHasName(target))return true;
   for(let i=0;i<inventoryItemsState.length&&remain>0;i++){
     const raw=inventoryItemsState[i];if(String(raw?.name||'').trim()!==target)continue;
     const have=Math.max(0,Number(raw.count||0)),take=Math.min(have,remain);if(!take)continue;
@@ -5676,7 +5724,7 @@ function renderQuiverControls() {
   const cap = selectedQuiverCapacity();
   const q = selectedQuiverItem();
   if (!q || cap <= 0) {
-    status.textContent = '倉庫にある矢筒を装備してください。';
+    status.textContent = '共通DBまたは倉庫から矢筒を装備してください。';
     area.innerHTML = '';
     return;
   }
@@ -5692,7 +5740,7 @@ function renderQuiverControls() {
     }) || null;
     const options = ammo.map(a => {
       const id = inventoryItemKey(a);
-      return `<option value="${esc(id)}" ${id === selectedId ? 'selected' : ''}>${esc(a.name)} / 倉庫${esc(a.count)}</option>`;
+      return `<option value="${esc(id)}" ${id === selectedId ? 'selected' : ''}>${esc(a.name)} / ${a.__gmMasterDirect?'共通DB':`倉庫${esc(a.count)}`}</option>`;
     }).join('');
     const count = state?.count || 1;
     const maxStack = state?.maxStack || 99;
@@ -5736,7 +5784,7 @@ function applyBagCapacityToEquipmentSlots() {
     status.classList.toggle('warning', !!over.length || !bag);
     status.textContent = over.length ? `${label}
 容量を超えた所持品が${over.length}件あります。倉庫へ戻すか、容量の大きいバッグを選択してください。` : `${label}
-倉庫は保管上限なしです。冒険へ持ち出す所持品だけバッグ容量の制限を受けます。`;
+共通DBアイテムは登録不要です。冒険へ持ち出す所持品だけバッグ容量の制限を受けます。`;
   }
 }
 function renderBagSelect() {
@@ -7154,6 +7202,7 @@ function setDbCharacterSheetMaster(res={}, {force=false,refreshUi=true}={}){
   if(!force && lastAppliedCharacterSheetMasterRef===res)return false;
   lastAppliedCharacterSheetMasterRef=res;
   DB_INITIAL_ITEM_MASTER = Array.isArray(res.cs_items) ? res.cs_items : [];
+  gmMasterVirtualCache={source:null,rows:[],byLookup:new Map(),byName:new Map()};
   rebuildInventoryMasterClassificationIndex();
   DB_INITIAL_SPELL_MASTER = Array.isArray(res.spells) ? res.spells : [];
   DB_RECIPE_MASTER = Array.isArray(res.recipes) ? res.recipes : [];
@@ -8214,7 +8263,8 @@ function refreshEquipmentItemSelects({slotKinds=null,slotKeys=null}={}) {
       const key = inventoryItemKey(row);
       const duplicateSlot = slot.kind!=='carry' ? duplicateRestrictedEquipmentOtherSlot(slot.key,row) : null;
       const multi=(nameCounts.get(String(row.name||'').trim())||0)>1;const individual=isAntiqueIndividualItem(row)||multi;const instance=individual?inventoryIndividualShortId(row):'';const individualStats=individual?[row.power?`威力:${row.power}`:'',row.defense?`防御:${row.defense}`:'',row.guard?`防御行動:${row.guard}`:'',`${isAntiqueIndividualItem(row)?'固定枠':'枠'}:${equipmentUpgradeUsedSlots(parseUpgradeLines(row.upgradeEntries||row.upgradeLines||''))}/${resolvedEquipmentUpgradeLimit(row)||0}`,antiqueIndividualEnhancementSummary(row)].filter(Boolean).join(' / '):'';
-      const label = [row.name,instance,row.kind,row.category,slot.kind === 'carry' ? '倉庫:' + row.count : '',row.element ? '属性:' + row.element : '',individualStats,duplicateSlot ? `${duplicateSlot.name}に装備中` : ''].filter(Boolean).join(' / ');
+      const sourceLabel=row.__gmMasterDirect?'共通DB':(slot.kind === 'carry' ? '倉庫:' + row.count : '');
+      const label = [row.name,instance,row.kind,row.category,sourceLabel,row.element ? '属性:' + row.element : '',individualStats,duplicateSlot ? `${duplicateSlot.name}に装備中` : ''].filter(Boolean).join(' / ');
       return `<option value="${esc(key)}"${duplicateSlot?' disabled':''}>${esc(label)}</option>`;
     }));
     select.innerHTML = options.join('');
@@ -10122,6 +10172,14 @@ function sanitizePublicView(){
   });
 }
 document.addEventListener('DOMContentLoaded', sanitizePublicView);
+
+// GM版：共通DBアイテム直参照モード
+document.addEventListener('DOMContentLoaded',()=>{
+  document.body.classList.add('gm-master-item-direct');
+  const title=document.querySelector('header h1');if(title&&!String(title.textContent||'').includes('GM'))title.textContent=`${title.textContent}（GM）`;
+  const status=document.querySelector('#inventoryStatus');
+  if(status){status.classList.add('ok');status.textContent='GM版：共通DBの通常アイテムは全キャラクターで登録なしに利用できます。';}
+});
 
 </script>
 
