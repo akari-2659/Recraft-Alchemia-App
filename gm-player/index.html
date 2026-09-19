@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-  <meta name="theme-color" content="#30231c"><meta name="application-name" content="Recraft Alchemia Player">
-  <title>Recraft Alchemia - Player</title>
+  <meta name="theme-color" content="#30231c"><meta name="application-name" content="Recraft Alchemia GM Player">
+  <title>Recraft Alchemia - GM Player</title>
   <link rel="manifest" href="manifest.webmanifest?v=1.0.36"><link rel="icon" href="../icons/player-app-v4.ico?rev=4" sizes="any"><link rel="icon" href="../icons/player-app-v4-192.png?rev=4" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v4-180.png?rev=4"><meta name="msapplication-TileImage" content="../icons/player-app-v4-512.png?rev=4">
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="../player/app.css">
 </head>
 <body>
-<div id="authError" class="auth-error hidden"><section class="card"><div class="eyebrow">PLAYER ACCESS</div><h1>Playerアプリへ接続できません</h1><p class="note">共通ログインからプレイヤーキーでログインしてください。</p><a class="btn primary" href="../">共通ログインへ戻る</a></section></div>
+<div id="authError" class="auth-error hidden"><section class="card"><div class="eyebrow">GM PLAYER ACCESS</div><h1>GM用キャラシアプリへ接続できません</h1><p class="note">共通ログインからGM用プレイヤーキーでログインしてください。</p><a class="btn primary" href="../">共通ログインへ戻る</a></section></div>
 <div id="playerApp" class="app hidden">
   <aside id="sidebar" class="sidebar" aria-label="メインメニュー">
     <div class="side-brand">
       <div class="brand">RECRAFT ALCHEMIA</div>
-      <small>Player App</small>
+      <small>GM Player App</small>
     </div>
     <nav class="nav-group">
       <button class="nav-btn active" data-view="home"><span class="nav-icon">⌂</span><span>総合画面</span></button>
@@ -48,7 +48,7 @@
     </header>
 
     <div id="updateNotice" class="update-notice" hidden>
-      <span>Playerアプリの新しいバージョンがあります。</span>
+      <span>GM用キャラシアプリの新しいバージョンがあります。</span>
       <button id="applyUpdate" type="button">アプリを更新</button>
       <button id="dismissUpdate" class="ghost" type="button">あとで</button>
     </div>
@@ -57,30 +57,30 @@
       <section id="view-home" class="view active" data-title="総合画面">
         <div class="page-head">
           <div>
-            <div class="eyebrow">PLAYER HOME</div>
+            <div class="eyebrow">GM PLAYER HOME</div>
             <h1>総合画面</h1>
-            <p>Playerアプリの入口。機能の切り替えは共通サイドバーから行います。</p>
+            <p>GM用Playerアプリの入口。GM用キャラクターシートと施設を共通サイドバーから扱います。</p>
           </div>
-          <span class="badge ok">Player</span>
+          <span class="badge ok">GM</span>
         </div>
 
         <div class="grid">
-          <article class="card panel span-12"><div class="card-heading"><div><div class="eyebrow">PLAYER FUNCTIONS</div><h2>利用機能</h2></div><span id="playerCharacterCount" class="badge">読み込み中</span></div><div class="quick-actions"><div class="quick"><h3>キャラクターシート</h3><div class="note">保存済みキャラクターはサイドバーの「キャラクターシート」から直接開きます。新規作成も同じ場所から行えます。</div></div><div class="quick"><h3>施設</h3><div class="note">施設はサイドバーから開きます。ログイン時に紐づけた施設用キーを自動で使用するため、プレイヤーキーの再入力は不要です。</div></div></div></article>
-          <article class="card panel span-12"><h2>アプリ設定</h2><p class="note">カラーテーマは左下から変更できます。キャラクターシートと施設は一度読み込むと、画面を行き来しても状態を保持します。</p><details class="app-advanced"><summary>トラブルシューティング</summary><div class="app-advanced-body"><p class="note">通常は操作不要です。共通DBの取得に失敗した場合や、初期倉庫データを修復したい場合だけ使用してください。</p><div class="app-advanced-actions"><button type="button" class="btn ghost" data-player-maintenance="character-db">キャラシ共通DBを再読込</button><button type="button" class="btn ghost" data-player-maintenance="initial-stock">初期倉庫をDB同期</button><button type="button" class="btn ghost" data-player-maintenance="facility-db">施設共通DBを再読込</button></div></div></details></article>
+          <article class="card panel span-12"><div class="card-heading"><div><div class="eyebrow">GM PLAYER FUNCTIONS</div><h2>利用機能</h2></div><span id="playerCharacterCount" class="badge">読み込み中</span></div><div class="quick-actions"><div class="quick"><h3>キャラクターシート</h3><div class="note">GM用Player Keyに保存されたキャラクターをサイドバーから直接開きます。共通DBの通常アイテムは倉庫登録なしで使用できます。</div></div><div class="quick"><h3>施設</h3><div class="note">施設はサイドバーから開きます。GM用Player Keyに紐づけた施設用キーを自動で使用します。</div></div></div></article>
+          <article class="card panel span-12"><h2>アプリ設定</h2><p class="note">カラーテーマは左下から変更できます。GM用キャラクターシートと施設は一度読み込むと、画面を行き来しても状態を保持します。</p><details class="app-advanced"><summary>トラブルシューティング</summary><div class="app-advanced-body"><p class="note">通常は操作不要です。共通DBの取得に失敗した場合や、初期倉庫データを修復したい場合だけ使用してください。</p><div class="app-advanced-actions"><button type="button" class="btn ghost" data-player-maintenance="character-db">キャラシ共通DBを再読込</button><button type="button" class="btn ghost" data-player-maintenance="initial-stock">初期倉庫をDB同期</button><button type="button" class="btn ghost" data-player-maintenance="facility-db">施設共通DBを再読込</button></div></div></details></article>
         </div>
       </section>
 
-      <section id="view-character" class="view module-view" data-title="キャラクターシート">
+      <section id="view-character" class="view module-view" data-title="GMキャラクターシート">
         <div class="module-head">
           <div>
             <div class="eyebrow">CHARACTER SHEET</div>
-            <h1 id="characterViewName">キャラクター</h1>
+            <h1 id="characterViewName">GMキャラクター</h1>
           </div>
           <span class="module-version">現行 v90.8.800 データ接続</span>
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
           <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="character">再読み込み</button></div></div>
-          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=1.0.36"></iframe>
+          <iframe id="characterFrame" class="module-frame" title="GMキャラクターシート" data-src="modules/character/character.html?embedded=1&gmItems=all&appv=1.0.36"></iframe>
         </div>
       </section>
 

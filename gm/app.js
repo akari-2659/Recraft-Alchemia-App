@@ -1,10 +1,10 @@
 (()=>{'use strict';
-const APP_VERSION='1.0.35';
+const APP_VERSION='1.0.36';
 const ACCOUNT=window.RA_ACCOUNT;
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');
 const views=[...document.querySelectorAll('.view')],nav=[...document.querySelectorAll('.nav-btn')];
-const frames={character:document.querySelector('#characterFrame'),progress:document.querySelector('#progressFrame'),database:document.querySelector('#databaseFrame'),help:document.querySelector('#helpFrame')};
+const frames={progress:document.querySelector('#progressFrame'),database:document.querySelector('#databaseFrame'),help:document.querySelector('#helpFrame')};
 let swRegistration=null;const timers=new Map();
 
   const THEME_STORAGE_KEY='ra-app-theme-color';

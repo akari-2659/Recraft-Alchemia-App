@@ -10,7 +10,7 @@
   const frames={character:document.querySelector('#characterFrame'),facility:document.querySelector('#facilityFrame')};
   let characters=[],selectedCharacterId='',swRegistration=null,waitingWorker=null,characterWarmupScheduled=false,lastListRefreshAt=0;
   const moduleState={character:{ready:false,lastCharacterId:'',revision:0,storageRow:0},facility:{ready:false}};
-  const LAST_CHARACTER_KEY='ra-player-last-character-id';
+  const LAST_CHARACTER_KEY='ra-gm-player-last-character-id';
 
   const THEME_STORAGE_KEY='ra-app-theme-color';
   const THEMES={
@@ -140,7 +140,7 @@
   const ACCOUNT=window.RA_ACCOUNT;
   const accountSession=ACCOUNT?.session?.()||{loginPlayerKey:'',role:'player'};
   let binding=ACCOUNT?.readCachedBinding?.(accountSession.loginPlayerKey)||null;
-  window.RA_PLAYER_CONTEXT={charKey:String(binding?.charKey||'').trim(),facilityKey:String(binding?.facilityKey||'').trim(),characterId:'',loginPlayerKey:String(accountSession.loginPlayerKey||'').trim(),role:accountSession.role||'player'};
+  window.RA_PLAYER_CONTEXT={charKey:String(binding?.charKey||'').trim(),facilityKey:String(binding?.facilityKey||'').trim(),characterId:'',loginPlayerKey:String(accountSession.loginPlayerKey||'').trim(),role:'gm'};
   function closeDrawer(){sidebar.classList.remove('open');backdrop.classList.remove('show')}
   function characterButtons(){return [...document.querySelectorAll('.character-nav-btn')]}
   const frameTimers=new Map();
@@ -208,18 +208,18 @@
   function routeFromHash(){const raw=(location.hash||'#home').slice(1);if(raw==='character/new')return openNewCharacter({writeHash:false});if(raw.startsWith('character/')){const id=decodeURIComponent(raw.slice('character/'.length));if(characters.length&&characters.some(c=>String(c.id)===id))return selectCharacterById(id,{writeHash:false});return;}show(raw,{writeHash:false});}
   addEventListener('popstate',routeFromHash);
   const notice=document.querySelector('#updateNotice'),noticeText=notice?.querySelector('span'),applyUpdateBtn=document.querySelector('#applyUpdate'),dismissUpdateBtn=document.querySelector('#dismissUpdate');
-  const versionState=document.querySelector('#playerVersionState'),currentVersionLabel=document.querySelector('#playerCurrentVersion'),LAST_RUN_VERSION_KEY='ra-player-app-last-run-version';
+  const versionState=document.querySelector('#playerVersionState'),currentVersionLabel=document.querySelector('#playerCurrentVersion'),LAST_RUN_VERSION_KEY='ra-gm-player-app-last-run-version';
   if(currentVersionLabel)currentVersionLabel.textContent=APP_VERSION;
   function setVersionState(text,kind=''){if(!versionState)return;versionState.textContent=text;versionState.dataset.state=kind;}
-  function showAvailableUpdate(version){if(!notice)return;notice.dataset.mode='available';if(noticeText)noticeText.textContent=`Playerアプリの新しいバージョン ${version} があります（現在 ${APP_VERSION}）。`;if(applyUpdateBtn){applyUpdateBtn.hidden=false;applyUpdateBtn.disabled=false;applyUpdateBtn.textContent='アプリを更新';}if(dismissUpdateBtn)dismissUpdateBtn.textContent='あとで';notice.hidden=false;setVersionState(`v${version}あり`,'update');}
-  function showAppliedUpdate(previous){if(!notice)return;notice.dataset.mode='applied';if(noticeText)noticeText.textContent=previous?`Playerアプリを ${APP_VERSION} へ更新しました（前回 ${previous}）。`:`Playerアプリ ${APP_VERSION} を読み込みました。`;if(applyUpdateBtn)applyUpdateBtn.hidden=true;if(dismissUpdateBtn)dismissUpdateBtn.textContent='閉じる';notice.hidden=false;setVersionState('最新版','current');}
+  function showAvailableUpdate(version){if(!notice)return;notice.dataset.mode='available';if(noticeText)noticeText.textContent=`GM用キャラシアプリの新しいバージョン ${version} があります（現在 ${APP_VERSION}）。`;if(applyUpdateBtn){applyUpdateBtn.hidden=false;applyUpdateBtn.disabled=false;applyUpdateBtn.textContent='アプリを更新';}if(dismissUpdateBtn)dismissUpdateBtn.textContent='あとで';notice.hidden=false;setVersionState(`v${version}あり`,'update');}
+  function showAppliedUpdate(previous){if(!notice)return;notice.dataset.mode='applied';if(noticeText)noticeText.textContent=previous?`GM用キャラシアプリを ${APP_VERSION} へ更新しました（前回 ${previous}）。`:`GM用キャラシアプリ ${APP_VERSION} を読み込みました。`;if(applyUpdateBtn)applyUpdateBtn.hidden=true;if(dismissUpdateBtn)dismissUpdateBtn.textContent='閉じる';notice.hidden=false;setVersionState('最新版','current');}
   async function checkPublishedVersion(){setVersionState('確認中','checking');try{const res=await fetch('./version.json?t='+Date.now(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});if(!res.ok){setVersionState('確認失敗','error');return;}const data=await res.json(),published=String(data.version||'').trim();if(published&&published!==APP_VERSION){showAvailableUpdate(published);await swRegistration?.update().catch(()=>{});return;}setVersionState('最新版','current');}catch(_){setVersionState('確認失敗','error');}}
   async function applyUpdate(){if(applyUpdateBtn){applyUpdateBtn.disabled=true;applyUpdateBtn.textContent='アプリ更新中…';}try{if(swRegistration){await swRegistration.update();if(swRegistration.waiting){swRegistration.waiting.postMessage({type:'SKIP_WAITING'});return;}const worker=swRegistration.installing;if(worker){worker.addEventListener('statechange',()=>{if(worker.state==='installed')(swRegistration.waiting||worker).postMessage({type:'SKIP_WAITING'});});return;}}}catch(_){}location.reload();}
   if(applyUpdateBtn)applyUpdateBtn.onclick=applyUpdate;if(dismissUpdateBtn)dismissUpdateBtn.onclick=()=>{if(notice)notice.hidden=true};
   const previousRunVersion=localStorage.getItem(LAST_RUN_VERSION_KEY)||'';if(previousRunVersion&&previousRunVersion!==APP_VERSION)showAppliedUpdate(previousRunVersion);localStorage.setItem(LAST_RUN_VERSION_KEY,APP_VERSION);
-  if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(reg=>{swRegistration=reg;if(reg.waiting&&navigator.serviceWorker.controller)showAvailableUpdate('更新準備済み');reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){if(noticeText)noticeText.textContent='Playerアプリ一式の新しいバージョンを取得しました。更新して切り替えられます。';if(applyUpdateBtn){applyUpdateBtn.hidden=false;applyUpdateBtn.disabled=false;applyUpdateBtn.textContent='アプリを更新';}if(dismissUpdateBtn)dismissUpdateBtn.textContent='あとで';if(notice)notice.hidden=false;setVersionState('更新あり','update');}});});reg.update().catch(()=>{});}).catch(()=>setVersionState('SW未登録','error'));let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});}
+  if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(reg=>{swRegistration=reg;if(reg.waiting&&navigator.serviceWorker.controller)showAvailableUpdate('更新準備済み');reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){if(noticeText)noticeText.textContent='GM用キャラシアプリ一式の新しいバージョンを取得しました。更新して切り替えられます。';if(applyUpdateBtn){applyUpdateBtn.hidden=false;applyUpdateBtn.disabled=false;applyUpdateBtn.textContent='アプリを更新';}if(dismissUpdateBtn)dismissUpdateBtn.textContent='あとで';if(notice)notice.hidden=false;setVersionState('更新あり','update');}});});reg.update().catch(()=>{});}).catch(()=>setVersionState('SW未登録','error'));let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});}
   addEventListener('focus',checkPublishedVersion);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkPublishedVersion()});setInterval(checkPublishedVersion,2*60*1000);
-  function applyBindingContext(next,session){binding=next;window.RA_PLAYER_CONTEXT.charKey=String(next?.charKey||'').trim();window.RA_PLAYER_CONTEXT.facilityKey=String(next?.facilityKey||'').trim();window.RA_PLAYER_CONTEXT.loginPlayerKey=String(session?.loginPlayerKey||'').trim();window.RA_PLAYER_CONTEXT.role=next?.role||session?.role||'player';}
+  function applyBindingContext(next,session){binding=next;window.RA_PLAYER_CONTEXT.charKey=String(next?.charKey||'').trim();window.RA_PLAYER_CONTEXT.facilityKey=String(next?.facilityKey||'').trim();window.RA_PLAYER_CONTEXT.loginPlayerKey=String(session?.loginPlayerKey||'').trim();window.RA_PLAYER_CONTEXT.role='gm';}
   async function refreshBindingInBackground(session,cached){
     try{const result=await ACCOUNT.getBinding(session.loginPlayerKey);if(!result.found||!result.binding){showAuthError('このプレイヤーキーの紐づけを確認できませんでした。共通ログインからやり直してください。');return;}const oldChar=String(window.RA_PLAYER_CONTEXT.charKey||''),oldFacility=String(window.RA_PLAYER_CONTEXT.facilityKey||'');applyBindingContext(result.binding,{...session,role:result.role||session.role});if(oldChar!==window.RA_PLAYER_CONTEXT.charKey){characters=[];selectedCharacterId='';loadCharacterList({background:false});}if(oldFacility!==window.RA_PLAYER_CONTEXT.facilityKey&&moduleState.facility.ready)reloadFrame('facility');}
     catch(error){console.warn('アカウント確認に失敗したため、この端末の前回キャッシュで継続します。',error);}
@@ -227,10 +227,15 @@
   function showAuthError(message='共通ログインからプレイヤーキーでログインしてください。'){if(app)app.classList.add('hidden');if(authError){authError.classList.remove('hidden');const p=authError.querySelector('.note');if(p)p.textContent=message;}}
   async function bootstrapAccount(){
     const session=ACCOUNT?.session?.()||{};
-    if(!session.loginPlayerKey){showAuthError();return false;}
-    const cached=ACCOUNT?.readCachedBinding?.(session.loginPlayerKey);
-    if(cached?.charKey&&cached?.facilityKey){applyBindingContext(cached,session);refreshBindingInBackground(session,cached);return true;}
-    try{const result=await ACCOUNT.getBinding(session.loginPlayerKey);if(!result.found||!result.binding){showAuthError('このプレイヤーキーに紐づくPlayerデータを確認できませんでした。共通ログインから紐づけを確認してください。');return false;}applyBindingContext(result.binding,{...session,role:result.role||session.role});return true;}catch(error){showAuthError('Playerデータをサーバーで確認できませんでした。共通ログインからやり直してください。');return false;}
+    if(!session.loginPlayerKey){showAuthError('共通ログインからGM用プレイヤーキーでログインしてください。');return false;}
+    try{
+      const result=await ACCOUNT.getBinding(session.loginPlayerKey);
+      if(!result.found||!result.binding){showAuthError('このGM用プレイヤーキーに紐づくデータを確認できませんでした。共通ログインから紐づけを確認してください。');return false;}
+      if(result.role!=='gm'){showAuthError('GM権限のあるプレイヤーキーでログインしてください。');return false;}
+      applyBindingContext(result.binding,{...session,role:'gm'});
+      window.RA_PLAYER_CONTEXT.role='gm';
+      return true;
+    }catch(error){showAuthError('GM用Playerデータをサーバーで確認できませんでした。共通ログインからやり直してください。');return false;}
   }
   function bindAccountKeyUi(){const dlg=document.querySelector('#accountKeyDialog'),open=document.querySelector('[data-open-account-key]'),close=document.querySelector('[data-close-account-key]'),btn=document.querySelector('#changeLoginPlayerKeyBtn'),input=document.querySelector('#newLoginPlayerKey'),status=document.querySelector('#accountKeyStatus'),current=document.querySelector('#currentLoginPlayerKey');open?.addEventListener('click',()=>{const s=ACCOUNT.session();current.textContent=s.loginPlayerKey||'-';input.value='';status.textContent='';status.className='account-key-status';dlg.showModal();input.focus();});close?.addEventListener('click',()=>dlg.close());dlg?.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});btn?.addEventListener('click',async()=>{const s=ACCOUNT.session(),next=String(input.value||'').trim();if(!next){status.textContent='新しいプレイヤーキーを入力してください。';status.className='account-key-status error';return;}btn.disabled=true;status.textContent='サーバーへ確認中…';status.className='account-key-status';try{const r=await ACCOUNT.changeLoginKey(s.loginPlayerKey,next);status.textContent=r.mode==='switch'?'既存のプレイヤーキーが見つかったため、そのアカウントへ切り替えます。':'プレイヤーキーを変更しました。';status.className='account-key-status ok';setTimeout(()=>location.reload(),650);}catch(e){status.textContent=e?.message||String(e);status.className='account-key-status error';}finally{btn.disabled=false;}});}
   (async()=>{if(!await bootstrapAccount())return;if(authError)authError.classList.add('hidden');if(app)app.classList.remove('hidden');bindAccountKeyUi();routeFromHash();loadCharacterList();checkPublishedVersion();})();
