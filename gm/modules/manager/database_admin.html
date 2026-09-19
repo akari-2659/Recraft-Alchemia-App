@@ -3899,16 +3899,39 @@ function guildSupportWeaponCategories(char={}){
   });
   return [...new Set(values)];
 }
+const GUILD_SUPPORT_ASSIGNED_SKILLS = {
+  // サポートキャラクターごとに、PCが役割として任せてよい判定を固定する。
+  // 生存用の回避・抵抗など、単に数値が高いだけの技能はここへ含めない。
+  ch_mrfspilf_0vcslwu:['祈祷','鑑定','調合'],           // リネット・アーレン
+  ch_mrhjv1ai_wspdju4:['近接','防御','鼓舞'],           // ユアン・カルディス
+  ch_mrskymwf_iavpdvu:['魔法','近接','知識'],           // レフィナ・アルヴェル
+  ch_mrw7p6l1_axpi8a6:['射撃','採取','探索','感知'],     // フィオナ・エルゼ
+  ch_mrw7zexz_zg21ivd:['力業','近接'],                  // バルド・グレイン
+  ch_mrw8dq1l_5yhss8s:['近接','細工','操作','設計','交渉'],// セシル・ヴァレイン
+  ch_msw12ot0_s1sdol0:['近接'],                         // ノエル
+  ch_mswidjjf_9w14r50:['調合','細工','設計']            // ミューレ
+};
+function guildSupportAssignedSkills(char={}){
+  const id=String(char.id||'').trim();
+  const fixed=GUILD_SUPPORT_ASSIGNED_SKILLS[id];
+  if(Array.isArray(fixed)&&fixed.length)return fixed;
+  // 未登録の候補キャラだけ、従来どおり技能配分の上位を参考表示する。
+  return guildSupportSkillNames(char);
+}
 function guildSupportCharacterText(char={}){
   const categories=guildSupportWeaponCategories(char);
-  return `・${char.name||'名称未設定'}（${categories.length?categories.join('・'):'武器カテゴリ未設定'}）`;
+  const skills=guildSupportAssignedSkills(char);
+  return [
+    `・${char.name||'名称未設定'}(${categories.length?categories.join('・'):'武器カテゴリ未設定'})`,
+    `技能：${skills.length?skills.join('・'):'未設定'}`
+  ].join('\n');
 }
 function guildSupportListText(){
   const rows=guildSupportSelectedCharacters();
   return [
     '【本日のサポート可能キャラクター】',
     '',
-    rows.length?rows.map(guildSupportCharacterText).join('\n'):'・本日の選出はありません'
+    rows.length?rows.map(guildSupportCharacterText).join('\n\n'):'・本日の選出はありません'
   ].join('\n');
 }
 function copyistRecipeKey(row={}){return String(row.id||row.publicId||row.name||row.resultItem||'').trim();}
