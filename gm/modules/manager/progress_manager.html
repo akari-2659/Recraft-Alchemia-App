@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.806</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.809</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.806 / 最終更新日：2026年9月20日</div>
+<div class="ra-build-info">Version：v90.8.809 / 最終更新日：2026年9月20日</div>
 
 <header>
   <div class="header-inner">
@@ -637,7 +637,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 <script src="../../../js/ra_monster_rules.js?v=90.8.801"></script>
 <script>
 'use strict';
-const VERSION='v90.8.806';
+const VERSION='v90.8.809';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -679,12 +679,12 @@ function tokenStatusEntry(label,value,maxValue){const v=tokenNumberOrString(valu
 function tokenAffinityParams(row={}){return [['物',row.physicalAffinity],['火',row.fireAffinity],['水',row.waterAffinity],['風',row.windAffinity],['雷',row.thunderAffinity],['光',row.lightAffinity],['闇',row.darkAffinity],['無',row.neutralAffinity]].map(([label,value])=>({label,value:tokenCompact(value||'-')}));}
 function tokenParseCheckType(value=''){const raw=tokenCompact(value);const m=raw.match(/^(.+?)>=(.+)$/);return m?{left:m[1].trim(),right:m[2].trim(),raw}:{left:raw,right:'',raw};}
 function tokenInferActionType(row={}){const parsed=tokenParseCheckType(row.checkType||'');if(parsed.left==='近接')return'近接攻撃';if(parsed.left==='射撃')return'遠距離攻撃';if(parsed.left==='魔法')return'術式';if(parsed.left==='祈祷')return'祈祷';const name=tokenCompact(row.name),power=tokenCompact(row.power);if(/回復/.test(power)||['泥の再生'].includes(name))return'回復';if(['ぷるぷる防御','跳躍回避','身を固める','潜り込み','樹皮の守り','木登り退避','泥中跳躍','泥の鎧','甲殻封鎖'].includes(name))return'防御';if(['角の構え','根脈の隆起','沼底の脈動','鏡界の収束'].includes(name))return'補助';return'特殊';}
-function tokenNormalizeActionType(row={}){const type=tokenCompact(row.actionType);return['近接攻撃','遠距離攻撃','術式','祈祷','防御','補助','回復','特殊'].includes(type)?type:tokenInferActionType(row);}function tokenInferActionRange(row={}){const target=tokenCompact(row.target);if(target.includes('自身'))return'自身';const type=tokenNormalizeActionType(row);if(type==='近接攻撃')return'近接';if(['遠距離攻撃','術式','祈祷'].includes(type))return'遠距離';if(['防御','補助','回復'].includes(type))return target.includes('自身')?'自身':'特殊';return'特殊';}function tokenNormalizeActionRange(row={}){let range=tokenCompact(row.range||row.distance);if(range==='近距離')range='近接';return['近接','遠距離','自身','特殊'].includes(range)?range:tokenInferActionRange(row);}
+function tokenNormalizeActionType(row={}){let type=tokenCompact(row.actionType);if(type==='術式'||type==='祈祷'){const power=tokenCompact(row.power);type=(power&&power!=='なし'&&power!=='-')?'遠距離攻撃':'特殊';}return['近接攻撃','遠距離攻撃','防御','補助','回復','特殊'].includes(type)?type:tokenInferActionType(row);}function tokenInferActionRange(row={}){const target=tokenCompact(row.target);if(target.includes('自身'))return'自身';const type=tokenNormalizeActionType(row);if(type==='近接攻撃')return'近距離';if(type==='遠距離攻撃')return'遠距離';return'遠距離';}function tokenNormalizeActionRange(row={}){let range=tokenCompact(row.range||row.distance);if(range==='近接')range='近距離';if(range==='特殊')range=tokenCompact(row.target).includes('自身')?'自身':'遠距離';return['近距離','遠距離','自身'].includes(range)?range:tokenInferActionRange(row);}
 function tokenParseActions(value=''){const raw=tokenCompact(value);if(!raw)return[];try{const arr=JSON.parse(raw);if(Array.isArray(arr))return arr.map(r=>({name:r.name||'',actionType:tokenNormalizeActionType(r),range:tokenNormalizeActionRange(r),checkType:r.checkType||'',target:r.target||'',element:r.element||'',power:r.power||'',effect:r.effect||'',baseValue:tokenCompact(r.baseValue),flags:r.flags||r.actionFlags||''}));}catch(_e){}return raw.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{const cols=line.split('\t');while(cols.length<10)cols.push('');const row={name:cols[0],actionType:cols[1],checkType:cols[2],target:cols[3],element:cols[4],power:cols[5],effect:cols[6],baseValue:cols[7],range:cols[8],flags:cols[9]};row.actionType=tokenNormalizeActionType(row);row.range=tokenNormalizeActionRange(row);return row;});}
 function encounterSerializeActions(actions=[]){return(actions||[]).map(a=>[a.name||'',a.actionType||'',a.checkType||'',a.target||'',a.element||'',a.power||'',a.effect||'',a.baseValue??'',tokenNormalizeActionRange(a),a.flags||''].join('\t')).join('\n');}
 function encounterActionIsDirectDamage(action={}){
   const type=tokenNormalizeActionType(action),power=tokenCompact(action.power);
-  return['近接攻撃','遠距離攻撃','術式','祈祷'].includes(type)&&!!power&&power!=='なし'&&power!=='-';
+  return['近接攻撃','遠距離攻撃'].includes(type)&&!!power&&power!=='なし'&&power!=='-';
 }
 function encounterActionReferencedNames(text='',actionNames=new Set()){
   const source=String(text||''),refs=[];
@@ -1694,7 +1694,7 @@ function fixedBattlePerceptionLines(groups=[]){
   const highest=encounterHighestInitiative(groups);
   if(highest===null)return [];
   const composition=(groups||[]).map(g=>`${publicEncounterMonsterName(g.name)}×${Math.max(1,Math.floor(Number(g.count)||1))}`).join('・');
-  return [`感知 / 達成値：${highest}`,composition?`出現：${composition}`:''].filter(Boolean);
+  return [composition?`感知/達成値：${highest}/${composition}`:`感知/達成値：${highest}`];
 }
 function questFixedEventCheckCopyText(q={},e={},resolvedEncounter=null){
   const internal=questBattleInternalCheckInfo(q,e);
@@ -1705,17 +1705,16 @@ function questFixedEventCheckCopyText(q={},e={},resolvedEncounter=null){
     const groups=eventEncounterGroupsForFixedCheck(e,size,resolvedEncounter);
     const detect=fixedBattlePerceptionLines(groups);
     if(detect.length){
-      const name=String(e.eventName||'名称未設定').trim()||'名称未設定';
-      const intro=eventIntroNarrative({...e,areaName:e.areaName||q.areaName||q.questLocation||''});
-      // 成否によって戦闘へ分岐する固定イベントは、元の判定と戦闘発生時の感知を同じコピーへ入れる。
+      // 固定戦闘も他の戦闘判定と同じ1行形式に統一する。
+      // 成否で戦闘へ分岐する場合だけ、元判定と戦闘発生時の感知を2行で併記する。
       if(battleMode==='戦闘予感'){
-        const base=eventCheckCopyText(e,true);
-        return [base||[`【固定：${name}】`,intro].join('\n'),'','【戦闘発生時の感知】',...detect].filter((v,i)=>v!==''||i===1).join('\n');
+        const base=eventCheckInfo(e)?.copy||'';
+        return [base,`戦闘発生時：${detect[0]}`].filter(Boolean).join('\n');
       }
-      return [`【固定：${name}】`,intro,'',...detect].join('\n');
+      return detect[0];
     }
   }
-  // 非戦闘固定イベント、または編成解決不能時は登録済み判定を通常イベントと同じ処理でコピーする。
+  // 非戦闘固定イベントもイベント名・エリア名・描写を付けず判定情報だけコピーする。
   return eventCheckCopyText(e,true);
 }
 function areaFixedEventCheckCopyText(area={},e={},resolvedEncounter=null){
@@ -1724,13 +1723,11 @@ function areaFixedEventCheckCopyText(area={},e={},resolvedEncounter=null){
   const groups=eventEncounterGroupsForFixedCheck(e,selectedPartySize(),resolvedEncounter);
   const detect=fixedBattlePerceptionLines(groups);
   if(!detect.length)return eventCheckCopyText(e,true);
-  const name=String(e.eventName||'名称未設定').trim()||'名称未設定';
-  const intro=eventIntroNarrative({...e,areaName:e.areaName||area.name||''});
   if(battleMode==='戦闘予感'){
-    const base=eventCheckCopyText(e,true);
-    return [base||[`【固定：${name}】`,intro].join('\n'),'','【戦闘発生時の感知】',...detect].filter((v,i)=>v!==''||i===1).join('\n');
+    const base=eventCheckInfo(e)?.copy||'';
+    return [base,`戦闘発生時：${detect[0]}`].filter(Boolean).join('\n');
   }
-  return [`【固定：${name}】`,intro,'',...detect].join('\n');
+  return detect[0];
 }
 function questWorkCheckText(q={}){const e=questWorkEvent(q);return e?questBattleInternalCheckDisplayText(q,e):'';}
 function workQuestReinforcementProfile(q={},size=effectiveQuestPartySize(q)){
@@ -2098,22 +2095,24 @@ function eventCheckDisplayText(e={}){
   return eventCheckInfo(e)?.display||'';
 }
 function eventIntroNarrative(e={}){
-  const explicit=String(e.description||'').trim();if(explicit)return explicit;
-  const name=String(e.eventName||'周囲の異変').trim()||'周囲の異変';
-  const type=String(e.eventType||'').trim(),area=String(e.areaName||'').trim();
-  const where=area||'周囲';
-  if(/採集|採取|群生|露頭|鉱脈|晶|茸|草|苔|根|藻/.test(name))return `${where}に、目的のものがありそうな痕跡が見える。状態の良い場所を見極めて丁寧に探せば、必要なものを確保できそうだ。`;
-  if(/確認|手がかり|記録|読み|測定|観測|調査|選鉱/.test(name))return `${where}で確かめるべき痕跡が見つかった。周囲の状態を順に照らし合わせれば、先へ進むための手掛かりを掴めそうだ。`;
-  if(/点検|交換|繕|清掃|封緘|固定|打ち|作り|再同期|安定化|封鎖|洗浄|塗り|清書|再固定|締め|手入れ|補修|整備|運搬|仕分|選別|調整|修理|整理/.test(name))return `${where}に手を入れる必要のある箇所が残っている。状態を見極め、順序よく作業すれば安全に片付けられそうだ。`;
-  if(/戦闘|遭遇|影|気配|羽音|足音|声/.test(name)||/魔物|遭遇|強敵|ボス|二つ名/.test(type))return `${where}に、何かが近づいている気配がある。音や痕跡を追えば、接触する前に相手の位置を掴めそうだ。`;
-  if(/橋|足場|斜面|扉|隔壁|昇降機|風|雷|噴気|支柱/.test(name)||/障害|危険/.test(type))return `${where}の進路に危険な箇所がある。周囲の状態と動きを見極めれば、安全に抜ける方法を見つけられそうだ。`;
-  return `${where}で「${name}」について確かめる必要がある。周囲の状況をよく見れば、どう進めるべきか判断できそうだ。`;
+  const name=String(e.eventName||'').trim();
+  const type=String(e.eventType||'').trim();
+  // PLへ渡す描写にはエリア名・イベント名・DBの名称入りdescriptionを使用しない。
+  // eventNameは分類判定にだけ使い、出力文には埋め込まない。
+  if(/採集|採取|群生|露頭|鉱脈|晶|茸|草|苔|根|藻/.test(name)||/採取|食材/.test(type))return '足元や周囲に、素材として使えそうなものが見つかる。状態を見極めて丁寧に探せば、傷めずに持ち帰れそうだ。';
+  if(/確認|手がかり|記録|読み|測定|観測|調査|選鉱/.test(name)||/発見|探索/.test(type))return '周囲とは少し違う痕跡が残っている。状態を一つずつ確かめれば、見落とされていた手掛かりまで辿れそうだ。';
+  if(/点検|交換|繕|清掃|封緘|固定|打ち|作り|再同期|安定化|封鎖|洗浄|塗り|清書|再固定|締め|手入れ|補修|整備|運搬|仕分|選別|調整|修理|整理/.test(name)||/操作/.test(type))return '手を入れる必要のある箇所が残っている。状態と手順を見極めれば、安全に作業を進められそうだ。';
+  if(/戦闘|遭遇|影|気配|羽音|足音|声/.test(name)||/魔物|遭遇|強敵|ボス|二つ名|戦闘/.test(type))return '不穏な気配が近くにある。音や痕跡を追えば、接触する前に相手の位置を掴めそうだ。';
+  if(/橋|足場|斜面|扉|隔壁|昇降機|風|雷|噴気|支柱/.test(name)||/障害|危険|異界現象|異常/.test(type))return '進路や周囲に注意を要する箇所がある。状態と動きを見極めれば、安全に抜ける方法を探せそうだ。';
+  if(/休息/.test(type))return '周囲の危険が薄い場所がある。安全を確かめれば、しばらく身体を休められそうだ。';
+  return '周囲に普段とは少し違う変化が見られる。状態を確かめれば、どう対処すべきか判断できそうだ。';
 }
 function eventCheckCopyText(e={},fixed=false){
   const line=eventCheckInfo(e)?.copy||'';
   if(!line)return '';
+  if(fixed)return line;
   const name=String(e.eventName||'名称未設定').trim()||'名称未設定',intro=eventIntroNarrative(e);
-  return [fixed?`【固定：${name}】`:`【${name}】`,intro,'',line].filter((v,i,a)=>v!==''||i===2).join('\n');
+  return [`【${name}】`,intro,'',line].filter((v,i,a)=>v!==''||i===2).join('\n');
 }
 function eventDetailText(e,q=null){
   const partySize=q?effectiveQuestPartySize(q):selectedPartySize();
@@ -3518,7 +3517,7 @@ function individualApplyAttackTendency(monster={},tendency='標準'){
   const precision=({'精密I':1,'精密II':2,'精密III':3})[tendency]||0;
   const strongPower=({'強打I':1,'強打II':2,'強打III':3})[tendency]||0;
   const strongHit=({'強打I':1,'強打II':2,'強打III':2})[tendency]||0;
-  const offensiveTypes=new Set(['近接攻撃','遠距離攻撃','術式','祈祷','特殊']);
+  const offensiveTypes=new Set(['近接攻撃','遠距離攻撃']);
   const actions=tokenParseActions(copy.actions||'');
   actions.forEach(action=>{
     const power=String(action.power||'').trim();
@@ -3731,6 +3730,10 @@ function recipeMerchantRecipeForTreasure(row={}){
 function recipeMerchantIsRegularShopRecipe(row={}){
   return /店売り/u.test(String(row.recipeSource||''));
 }
+function recipeMerchantIsInitialUnlockedRecipe(row={}){
+  const source=String(row.recipeSource||''),tags=String(row.tags||'');
+  return /初期解放/u.test(source)||/初期解放/u.test(tags)||/通常弾/u.test(tags);
+}
 function recipeMerchantIsRecipeItem(row={}){
   const sell=Number(String(row.recipeSellPrice||'').trim());
   return Number.isFinite(sell)&&sell>0;
@@ -3740,7 +3743,7 @@ function recipeMerchantPool(areaName=''){
   (state.recipes||[]).forEach(recipe=>{
     if(!enabledRow(recipe))return;
     if(!recipeMerchantIsRecipeItem(recipe))return;
-    if(recipeMerchantIsRegularShopRecipe(recipe))return;
+    if(recipeMerchantIsRegularShopRecipe(recipe)||recipeMerchantIsInitialUnlockedRecipe(recipe))return;
     if(!treasureUnlockAreaAllowed(recipe.unlockAreaKey,name))return;
     const key=recipeMerchantRecipeKey(recipe);if(key&&!map.has(key))map.set(key,recipe);
   });
@@ -3806,7 +3809,16 @@ function recipeMerchantOfferDisplayText(){
   if(!rows.length)return'';
   return ['【レシピ商人・抽選販売品】',ctx.areaName?`エリア：${ctx.areaName}`:'',...rows.map((r,i)=>`${i+1}. ${r.name||r.resultItem||'名称未設定'} / ${progressPlayerRank(r.rank)||'ランク未設定'} / ${recipeMerchantPrice(r)}G`)].filter(Boolean).join('\n');
 }
+function sanitizeRecipeMerchantOffers(){
+  const ctx=state.lastRecipeMerchantContext||{},areaName=String(ctx.areaName||'').trim();
+  const valid=new Map(recipeMerchantPool(areaName).map(r=>[recipeMerchantRecipeKey(r),r]));
+  state.lastRecipeMerchantOffers=(state.lastRecipeMerchantOffers||[]).map(r=>valid.get(recipeMerchantRecipeKey(r))).filter(Boolean);
+  if(!state.lastRecipeMerchantOffers.some(r=>recipeMerchantRecipeKey(r)===String(state.selectedRecipeMerchantId||''))){
+    state.selectedRecipeMerchantId=recipeMerchantRecipeKey(state.lastRecipeMerchantOffers[0]||{});
+  }
+}
 function renderRecipeMerchantPanel(){
+  sanitizeRecipeMerchantOffers();
   const areaPanel=$('recipeMerchantPanel'),questPanel=$('questRecipeMerchantPanel');
   [areaPanel,questPanel].forEach(panel=>{if(panel){panel.classList.add('hidden');panel.innerHTML='';}});
   const rows=state.lastRecipeMerchantOffers||[];if(!rows.length)return;
@@ -5169,31 +5181,15 @@ eventOutcomeNarrative=function(row={},group={},scope='event'){
   const raw=v775EventOutcomeNarrative(row,group,scope);
   if(!raw)return '';
   const hint=eventSuccessHint(row,group);
-  return [raw,hint].filter(Boolean).join(' ');
+  return stripEventIdentityFromNarrative([raw,hint].filter(Boolean).join(' '),row);
 };
-function eventCopySceneNarrative(row={}){
-  const id=String(row.id||'').trim(),type=String(row.eventType||'').trim(),area=String(row.areaName||'').trim();
-  const restScenes={
-    evt_grass_16:'陽の当たる草地の一角は風も穏やかで、荷を下ろして身体を休めるにはちょうどよさそうだ。',
-    evt_forest_08:'木々のざわめきが遠のく一角では、枝葉が風を遮り、しばらく静かに身体を休められそうだ。',
-    evt_wetland_13:'流れの弱い水辺には乾いた足場が残っており、周囲を警戒しながらなら腰を落ち着けられそうだ。',
-    evt_otherworld_30:'揺らめく反射光が薄い中洲では水面も静まり、異界の中でも短い休息を取れそうだ。',
-    evt_mine_19:'岩壁の隙間から乾いた風が抜けており、粉塵も薄い。呼吸を整えるには都合のいい場所だ。',
-    evt_mine_20:'坑道脇に古い腰掛けと荷置き場が残っている。崩落の気配も薄く、少しなら身体を休められそうだ。',
-    evt_highland_32:'張り出した岩が強風を遮っている。吹きさらしから逃れ、身体を休めるだけの余裕がある。',
-    evt_highland_33:'地面に埋まった石がほのかな熱を保っている。冷えた身体を温めながら息を整えられそうだ。',
-    evt_ashcrown_11:'地熱で温められた湯が岩の窪みに溜まっている。熱気は穏やかで、疲れを和らげるには十分そうだ。'
-  };
-  if(restScenes[id])return restScenes[id];
-  const where=area?`${area}では、`:'';
-  if(/休息/.test(type))return `${where}周囲の危険が薄い場所を見つけた。安全を確かめれば、しばらく身体を休められそうだ。`;
-  if(/採取|食材/.test(type))return `${where}足元や周囲に素材になりそうなものが見つかる。状態を見極めれば、傷めずに持ち帰れそうだ。`;
-  if(/発見|探索|宝箱/.test(type))return `${where}周囲とは少し違う痕跡が残っている。丁寧に確かめれば、見落とされていたものへ辿り着けそうだ。`;
-  if(/障害|危険|操作|異界現象|異常/.test(type))return `${where}進路や周囲に注意を要する箇所がある。状態を見極めて対処する必要がありそうだ。`;
-  if(/魔物|遭遇|強敵|ボス|二つ名/.test(type))return `${where}不穏な気配が濃くなり、何かが近くにいることが分かる。`;
-  if(/拠点イベント/.test(type))return '拠点の一角で、少し手を貸した方がよさそうな状況に出くわした。';
-  if(/レシピ商人/.test(type))return `${where}旅装の人物が荷を広げ、珍しい品を扱っている。`;
-  return `${where}周囲に普段とは少し違う変化が見られる。`;
+function stripEventIdentityFromNarrative(text='',row={}){
+  let out=String(text||'').trim();if(!out)return'';
+  const escapeRe=v=>String(v||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const name=String(row.eventName||'').trim(),area=String(row.areaName||'').trim();
+  if(name){const n=escapeRe(name);out=out.replace(new RegExp(`【\\s*${n}\\s*】`,'g'),'').replace(new RegExp(`「\\s*${n}\\s*」`,'g'),'').replace(new RegExp(n,'g'),'');}
+  if(area){const a=escapeRe(area);out=out.replace(new RegExp(`${a}(?:の|で|では|に|には|から|へ)?`,'g'),'');}
+  return out.replace(/^[のではに、。・：:\s]+/,'').replace(/([。！？])\s*[、。]+/g,'$1').replace(/\s{2,}/g,' ').trim();
 }
 function eventOutcomeSupplementText(row={},group={},partySize=selectedPartySize()){
   let clean=eventOutcomeCleanClause(row,group.clause,partySize);if(!clean)return'';
@@ -5205,7 +5201,7 @@ function eventOutcomeSupplementText(row={},group={},partySize=selectedPartySize(
   if(!clean)return'';
   // 事務的な成否ラベルは描写に置き換える。機械的効果・クエスト成否だけは残す。
   if(!/(?:ダメージ|疲労|回避|抵抗|防御|判定[+\-−－]|HP|MP|クエストクリア|クエスト失敗|進行|解除|補正|回復|解放)/.test(clean))return'';
-  return clean;
+  return stripEventIdentityFromNarrative(clean,row);
 }
 function eventOutcomeCopyText(scope='event',index=0){
   const row=eventOutcomeRow(scope);if(!row)return'';
@@ -5215,8 +5211,7 @@ function eventOutcomeCopyText(scope='event',index=0){
   included.forEach(group=>{const n=eventOutcomeNarrative(row,group,scope),extra=eventOutcomeSupplementText(row,group,partySize);if(n)narratives.push(n);if(extra)narratives.push(extra);});
   const items=eventOutcomeItemsCopyBlock(scope,target);
   if(eventOutcomeIsBattle(row)&&!items)return'';
-  const scene=eventCopySceneNarrative(row);
-  return [scene,...narratives,items].filter(Boolean).join('\n\n');
+  return [...narratives,items].filter(Boolean).join('\n\n');
 }
 function eventContentRewardItemsBlock(scope='event'){
   const rows=eventRewardCombinedSelectedItems(scope);if(!rows.length)return'';
@@ -5242,9 +5237,9 @@ function eventContentCopyText(scope='event'){
     const narrative=eventOutcomeNarrative(row,g,scope),extra=eventOutcomeSupplementText(row,g,partySize);
     if(narrative)lines.push(narrative);if(extra)lines.push(extra);
   });
-  if(!lines.length&&String(rewardBlock||treasure||'').trim())lines.push(eventOutcomeIsBattle(row)?'戦いが終わったあと、周囲を改めて調べると、通常の戦利品とは別に持ち帰れそうなものが残されていた。':'周囲を丁寧に確かめ、見つけたものを無事に回収した。');
-  const scene=eventCopySceneNarrative(row),uniqueLines=[...new Set(lines.filter(Boolean))];
-  return stripOutcomeLabelsForContentCopy([scene,uniqueLines.join('\n'),rewardBlock,treasure].filter(Boolean).join('\n\n'));
+  const uniqueLines=[...new Set(lines.filter(Boolean))];
+  // 内容コピーは判定後の結果だけを出す。判定前の導入・状況説明は含めない。
+  return stripOutcomeLabelsForContentCopy([uniqueLines.join('\n'),rewardBlock,treasure].filter(Boolean).join('\n\n'));
 }
 function updateEventContentCopyButtons(){[['event','copyEventContentBtn'],['quest','copyQuestContentBtn'],['base','copyBaseEventContentBtn']].forEach(([scope,id])=>{const btn=$(id);if(btn)btn.disabled=!String(eventContentCopyText(scope)||'').trim();});}
 
@@ -5684,16 +5679,14 @@ const v737EventContentCopyText=eventContentCopyText;
 eventContentCopyText=function(scope='event'){
   const base=v737EventContentCopyText(scope),applied=progressUiV738.importantApplied[scope],row=v738CurrentEventRow(scope);
   if(!applied||!row||applied.eventKey!==eventUniqueKey(row))return base;
-  const title=`【${row.eventName||'イベント'}】`;
-  let rest=String(base||'').trim();
-  if(rest.startsWith(title))rest=rest.slice(title.length).trim();
-  return [title,applied.narrative,rest,applied.copyText].filter(Boolean).join('\n\n');
+  const narrative=stripEventIdentityFromNarrative(applied.narrative||'',row);
+  return [narrative,String(base||'').trim(),applied.copyText].filter(Boolean).join('\n\n');
 };
 resolveDeclaredImportantItem=function(scope='event'){
   const row=currentRandomEventForImportantUse(scope),result=$(importantUseElementId(scope,'Result'));
   const showResult=text=>{if(result){result.textContent=String(text||'');result.classList.remove('hidden');}};
   if(!row){showResult('先にエリアイベントを抽選してください。');return;}const spec=crossoverImportantSpec(row);if(!spec){showResult('このイベントには対応する越境アイテムがありません。');return;}const item=findImportantItemByPublicId(spec.publicId);if(!item){showResult('対応する越境アイテムをDBから確認できません。');return;}
-  const reward=rollRewardItemTable(spec.tableId,1,row.areaName||'',row.eventName||'イベント');const scene=String(row.description||'').trim();const consumeLine=`使用：《${item.name||'越境アイテム'}》×${spec.consume}`;const narrative=[scene,consumeLine,`《${item.name||'越境アイテム'}》を取り出して「${row.eventName||'周囲'}」で使うと、これまで静かだった場所に変化が現れた。その反応を辿ることで、普段の探索だけでは届かなかった場所まで確かめることができた。`].filter(Boolean).join('\n');
+  const reward=rollRewardItemTable(spec.tableId,1,row.areaName||'',row.eventName||'イベント');const consumeLine=`使用：《${item.name||'越境アイテム'}》×${spec.consume}`;const narrative=[consumeLine,`《${item.name||'越境アイテム'}》を取り出して使うと、これまで静かだった周囲に変化が現れた。その反応を辿ることで、普段の探索だけでは届かなかった場所まで確かめることができた。`].filter(Boolean).join('\n');
   progressUiV738.importantApplied[scope]={eventKey:eventUniqueKey(row),narrative,copyText:reward.copyText||'',displayText:reward.displayText||''};importantUseCopyState[scope]='';showResult([narrative,reward.displayText||''].filter(Boolean).join('\n\n'));const action=$(importantUseElementId(scope,'ActionBtn'));if(action)action.disabled=true;updateEventContentCopyButtons();addLog(`越境アイテム使用：${row.eventName||'イベント'} / ${item.name||'重要アイテム'}`);
 };
 const v737ResetImportantUsePanel=resetImportantUsePanel;
