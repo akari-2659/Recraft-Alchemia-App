@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.803</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.806</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.803 / 最終更新日：2026年9月20日</div>
+<div class="ra-build-info">Version：v90.8.806 / 最終更新日：2026年9月20日</div>
 
 <header>
   <div class="header-inner">
@@ -637,7 +637,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 <script src="../../../js/ra_monster_rules.js?v=90.8.801"></script>
 <script>
 'use strict';
-const VERSION='v90.8.803';
+const VERSION='v90.8.806';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -728,6 +728,10 @@ function encounterActionSelectionEligible(condition='',context={}){
     if(part==='後衛あり')return Number(context.rear||0)>0;
     if(part==='強敵不在')return Number(context.strong||0)===0;
     {const m=part.match(/^同名(\d+)体未満$/);if(m)return Number(context.sameName||0)<Number(m[1]);}
+    {const m=part.match(/^(HP|回避|抵抗):(D|C|B|A|S)(以上|以下)?$/);if(m){const key=m[1]==='HP'?'hp':m[1]==='回避'?'evasion':'resist',order={D:0,C:1,B:2,A:3,S:4},actual=String(context.individual?.[key]||'B'),want=m[2],dir=m[3]||'';if(dir==='以上')return order[actual]>=order[want];if(dir==='以下')return order[actual]<=order[want];return actual===want;}}
+    if(part==='攻撃:精密')return String(context.individual?.attack||'標準').startsWith('精密');
+    if(part==='攻撃:強打')return String(context.individual?.attack||'標準').startsWith('強打');
+    {const m=part.match(/^攻撃:(精密|強打)(I|II|III)以上$/);if(m){const actual=String(context.individual?.attack||'標準'),am=actual.match(/^(精密|強打)(I|II|III)$/);if(!am||am[1]!==m[1])return false;const lv={I:1,II:2,III:3};return lv[am[2]]>=lv[m[2]];}}
     return true;
   });
 }
@@ -745,10 +749,15 @@ function encounterSelectedActionSet(monster={},selectionContext={}){
   if((!normalSelectable&&!namedSelectable)||pool.length<=selectCount)return{poolSize:fullPool.length,eligiblePoolSize:pool.length,actions:pool.slice(),passiveOnlyActions,selectedNames:pool.map(a=>a.name).filter(Boolean),fixedSelectedNames:[],validLoadoutCount:1};
   const explicitFixed=encounterFixedActionNames(monster,actionNames);
   const mandatory=new Set(explicitFixed);
+  const individualAttack=String(selectionContext?.individual?.attack||'標準');
+  const strongIndividual=individualAttack.startsWith('強打');
+  const directPool=pool.filter(encounterActionIsDirectDamage);
+  const maxDirectBase=directPool.reduce((max,action)=>{const value=Number(action.baseValue);return Number.isFinite(value)?Math.max(max,value):max;},-Infinity);
   const candidates=encounterActionCombinations(pool,selectCount).filter(combo=>{
     const selected=new Set(combo.map(a=>String(a.name||'').trim()));
     if([...mandatory].some(name=>!selected.has(name)))return false;
     if(!combo.some(encounterActionIsDirectDamage))return false;
+    if(strongIndividual&&Number.isFinite(maxDirectBase)&&!combo.some(action=>encounterActionIsDirectDamage(action)&&Number(action.baseValue)===maxDirectBase))return false;
     for(const action of combo){
       const refs=encounterActionReferencedNames(action.effect||'',actionNames);
       if(refs.some(name=>!selected.has(name)))return false;
@@ -3466,50 +3475,59 @@ function randomEncounterOptionsForEvent(row={},partySize=selectedPartySize()){
   // ランダム編成には個体数上限を設けない。encounterCountMax は固定・人数指定系イベントだけで使用する。
   return {partySize:size,minCount:Math.max(minCount,reservedGroups.reduce((sum,g)=>sum+Math.max(1,Number(g.count)||1),0)),reservedGroups,excludeNames};
 }
-const INDIVIDUAL_RANK_BOUNTY={hp:{D:-10,C:-5,B:0,A:5,S:10},evasion:{D:-12,C:-6,B:0,A:6,S:12},resist:{D:-8,C:-4,B:0,A:4,S:8}};
-const INDIVIDUAL_ATTACK_BOUNTY={'精密II':6,'精密I':3,'標準':0,'強打I':3,'強打II':6};
-function individualRollRank(width=2){
+const INDIVIDUAL_RANK_BOUNTY={hp:{D:-15,C:-7,B:0,A:7,S:15},evasion:{D:-15,C:-6,B:0,A:6,S:15},resist:{D:-10,C:-4,B:0,A:4,S:10}};
+const INDIVIDUAL_ATTACK_BOUNTY={'精密III':9,'精密II':6,'精密I':3,'標準':0,'強打I':3,'強打II':6,'強打III':9};
+function individualRollRank(width=3){
   const r=Math.random()*100;
   if(Number(width)>=2)return r<10?'D':r<30?'C':r<70?'B':r<90?'A':'S';
   return r<20?'C':r<80?'B':'A';
 }
-function individualRankDelta(rank='B'){return({D:-2,C:-1,B:0,A:1,S:2})[rank]||0;}
-function individualStatWidth(monster={},kind='evasion'){
-  if(kind==='hp')return 2;
-  const value=Number(kind==='resist'?monster.resistValue:monster.evasionValue)||0;
-  return value>=8?2:1;
+function individualRankDelta(rank='B',width=3){
+  const edge=Number(width)>=3?3:Number(width)>=2?2:1;
+  return({D:-edge,C:-1,B:0,A:1,S:edge})[rank]||0;
 }
-function individualAttackWidth(monster={}){return Number(monster.encounterValue)>=2?2:1;}
-function individualRollAttackTendency(width=2){
+function individualStatWidth(monster={},kind='evasion'){
+  if(kind==='hp')return 3;
+  const value=Number(kind==='resist'?monster.resistValue:monster.evasionValue)||0;
+  return value>=8?3:2;
+}
+function individualAttackWidth(monster={}){return Number(monster.encounterValue)>=2?3:2;}
+function individualRollAttackTendency(width=3){
   const r=Math.random()*100;
+  if(Number(width)>=3)return r<8?'精密III':r<20?'精密II':r<35?'精密I':r<65?'標準':r<80?'強打I':r<92?'強打II':'強打III';
   if(Number(width)>=2)return r<10?'精密II':r<30?'精密I':r<70?'標準':r<90?'強打I':'強打II';
   return r<20?'精密I':r<80?'標準':'強打I';
 }
 function individualPrecisionPower(power='',steps=1){
   const raw=String(power||'').trim();if(!raw||raw==='なし'||raw==='-')return raw;
   const terms=raw.replace(/\s+/g,'').split('+').filter(Boolean),dice=[],fixed=[];
-  terms.forEach((term,ti)=>{let m=term.match(/^(\d+)D(\d+)$/i);if(m){for(let i=0;i<Number(m[1]);i++)dice.push({sides:Number(m[2]),protected:false,order:ti});}else if(/^\d+$/.test(term))fixed.push(Number(term));});
+  terms.forEach((term,ti)=>{let m=term.match(/^(\d+)D(\d+)$/i);if(m){for(let i=0;i<Number(m[1]);i++)dice.push({sides:Number(m[2]),order:ti});}else if(/^\d+$/.test(term))fixed.push(Number(term));});
   if(!dice.length)return raw;
-  const protect=dice.find(d=>d.sides===6)||dice[0];protect.protected=true;
   let fixedValue=fixed.reduce((a,b)=>a+b,0);
   for(let n=0;n<Math.max(0,Number(steps)||0);n++){
-    const candidates=dice.filter(d=>!d.protected&&d.sides>0).sort((a,b)=>a.sides-b.sides||a.order-b.order);
-    if(candidates.length){const d=candidates[0];d.sides-=1;if(d.sides<=1){if(d.sides===1)fixedValue+=1;d.sides=0;}continue;}
-    if(fixedValue>0)fixedValue-=1;
+    if(fixedValue>0){fixedValue-=1;continue;}
+    const candidates=dice.filter(d=>d.sides>2).sort((a,b)=>b.sides-a.sides||a.order-b.order);
+    if(!candidates.length)break;
+    candidates[0].sides=Math.max(2,candidates[0].sides-2);
   }
-  const counts=new Map();dice.filter(d=>d.sides>1).forEach(d=>counts.set(d.sides,(counts.get(d.sides)||0)+1));
+  const counts=new Map();dice.forEach(d=>counts.set(d.sides,(counts.get(d.sides)||0)+1));
   const out=[...counts.entries()].sort((a,b)=>b[0]-a[0]).map(([sides,count])=>`${count}D${sides}`);if(fixedValue>0)out.push(String(fixedValue));return out.join('+')||raw;
 }
 function individualApplyAttackTendency(monster={},tendency='標準'){
   const copy=JSON.parse(JSON.stringify(monster));if(tendency==='標準')return copy;
-  const precision=tendency==='精密I'?1:tendency==='精密II'?2:0,strong=tendency==='強打I'?1:tendency==='強打II'?2:0;
+  const precision=({'精密I':1,'精密II':2,'精密III':3})[tendency]||0;
+  const strongPower=({'強打I':1,'強打II':2,'強打III':3})[tendency]||0;
+  const strongHit=({'強打I':1,'強打II':2,'強打III':2})[tendency]||0;
+  const offensiveTypes=new Set(['近接攻撃','遠距離攻撃','術式','祈祷','特殊']);
   const actions=tokenParseActions(copy.actions||'');
   actions.forEach(action=>{
-    const power=String(action.power||'').trim(),direct=power&&power!=='なし'&&power!=='-'&&/\d/.test(power);
+    const power=String(action.power||'').trim();
+    const target=String(action.target||'').trim();
+    const direct=offensiveTypes.has(String(action.actionType||'').trim())&&target!=='自身'&&power&&power!=='なし'&&power!=='-'&&/\d/.test(power);
     if(!direct)return;
-    const base=Number(action.baseValue);if(Number.isFinite(base))action.baseValue=String(base+precision-strong);
+    const base=Number(action.baseValue);if(Number.isFinite(base))action.baseValue=String(base+precision-strongHit);
     if(precision)action.power=individualPrecisionPower(power,precision);
-    if(strong){const m=power.match(/^(.*?)(?:\+(\d+))?$/);const current=m&&m[2]?Number(m[2]):0;action.power=current?`${m[1]}+${current+strong}`:`${power}+${strong}`;}
+    if(strongPower){const m=power.match(/^(.*?)(?:\+(\d+))?$/);const current=m&&m[2]?Number(m[2]):0;action.power=current?`${m[1]}+${current+strongPower}`:`${power}+${strongPower}`;}
   });
   copy.actions=actions.map(a=>[a.name,a.actionType,a.checkType,a.target,a.element,a.power,a.effect,a.baseValue,tokenNormalizeActionRange(a),a.flags||''].join('\t')).join('\n');
   return copy;
@@ -3533,12 +3551,12 @@ function generateEncounterIndividual(monster={},options={}){
   const ranks={hp:forced?'B':individualRollRank(individualStatWidth(monster,'hp')),evasion:forced?'B':individualRollRank(individualStatWidth(monster,'evasion')),resist:forced?'B':individualRollRank(individualStatWidth(monster,'resist'))};
   const attack=forced?'標準':individualRollAttackTendency(individualAttackWidth(monster));
   let variant=individualApplyAttackTendency(monster,attack);
-  const selected=encounterSelectedActionSet(variant,options.selectionContext||{});
+  const selected=encounterSelectedActionSet(variant,{...(options.selectionContext||{}),individual:{...ranks,attack}});
   {const keep=new Set([...(selected.actions||[]),...(selected.passiveOnlyActions||[])].map(a=>String(a.name||'').trim()));variant.actions=encounterSerializeActions(tokenParseActions(variant.actions||'').filter(a=>keep.has(String(a.name||'').trim())));}
-  const baseHp=Math.max(1,Number(monster.hp)||1),hpPct=({D:-10,C:-5,B:0,A:5,S:10})[ranks.hp]||0;
+  const baseHp=Math.max(1,Number(monster.hp)||1),hpPct=({D:-25,C:-12,B:0,A:12,S:25})[ranks.hp]||0;
   variant.hp=String(Math.max(1,Math.round(baseHp*(1+hpPct/100))));
-  variant.evasionValue=String(Math.max(0,(Number(monster.evasionValue)||0)+individualRankDelta(ranks.evasion)));
-  variant.resistValue=String(Math.max(0,(Number(monster.resistValue)||0)+individualRankDelta(ranks.resist)));
+  variant.evasionValue=String(Math.max(0,(Number(monster.evasionValue)||0)+individualRankDelta(ranks.evasion,individualStatWidth(monster,'evasion'))));
+  variant.resistValue=String(Math.max(0,(Number(monster.resistValue)||0)+individualRankDelta(ranks.resist,individualStatWidth(monster,'resist'))));
   const bounty=individualBounty(monster.baseBountyG,ranks,attack);
   return{monster:variant,iv:{fixed:false,...ranks,attack},bountyG:bounty,selectedActionNames:selected.selectedNames,selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,eligibleActionPoolSize:selected.eligiblePoolSize??selected.poolSize,validLoadoutCount:selected.validLoadoutCount};
 }
@@ -5099,6 +5117,10 @@ function eventOutcomeNarrative(row={},group={},scope='event'){
   const victory=trigger.kind==='victory';
   const clear=trigger.kind==='questClear'||/クエストクリア/.test(clause);
   const hasItems=(group.items||[]).length>0||Number(group.tableSlots)>0||/入手|採取|回収|発見/.test(clause);
+  if(/休息/.test(type)){
+    if(failure)return '周囲の安全を十分に確保できず、腰を落ち着ける前にその場を離れた。';
+    return '荷を下ろして身体を休め、短い時間ながら呼吸と調子を整えた。';
+  }
   if(victory){
     if(hasItems)return '戦いが終わったあと、周囲を改めて調べると、通常の戦利品とは別に持ち帰れそうなものが残されていた。';
     return '';
@@ -5147,20 +5169,32 @@ eventOutcomeNarrative=function(row={},group={},scope='event'){
   const raw=v775EventOutcomeNarrative(row,group,scope);
   if(!raw)return '';
   const hint=eventSuccessHint(row,group);
-  const base=[raw,hint].filter(Boolean).join(' ');
-  const failure=['failure','questFailure'].includes(String(group?.trigger?.kind||''));
-  // 失敗時は判定コピーで使った導入descriptionを再掲しない。
-  if(failure)return base;
-  // 「入手なし」等を文字列の「入手」で誤って取得扱いしない。
-  // 実際に解析された取得アイテム／報酬表枠だけを取得ありとして扱う。
-  const hasItems=(group?.items||[]).length>0||Number(group?.tableSlots||0)>0;
-  if(hasItems||eventOutcomeIsBattle(row))return base;
-  const name=String(row.eventName||'イベント').trim()||'イベント';
-  const area=String(row.areaName||'').trim();
-  const description=String(row.description||'').trim();
-  const scene=description?`${area?`${area}の`:''}「${name}」。${description}`:`${area?`${area}の`:''}「${name}」で起きた出来事。`;
-  return `${scene}\n${base}`;
+  return [raw,hint].filter(Boolean).join(' ');
 };
+function eventCopySceneNarrative(row={}){
+  const id=String(row.id||'').trim(),type=String(row.eventType||'').trim(),area=String(row.areaName||'').trim();
+  const restScenes={
+    evt_grass_16:'陽の当たる草地の一角は風も穏やかで、荷を下ろして身体を休めるにはちょうどよさそうだ。',
+    evt_forest_08:'木々のざわめきが遠のく一角では、枝葉が風を遮り、しばらく静かに身体を休められそうだ。',
+    evt_wetland_13:'流れの弱い水辺には乾いた足場が残っており、周囲を警戒しながらなら腰を落ち着けられそうだ。',
+    evt_otherworld_30:'揺らめく反射光が薄い中洲では水面も静まり、異界の中でも短い休息を取れそうだ。',
+    evt_mine_19:'岩壁の隙間から乾いた風が抜けており、粉塵も薄い。呼吸を整えるには都合のいい場所だ。',
+    evt_mine_20:'坑道脇に古い腰掛けと荷置き場が残っている。崩落の気配も薄く、少しなら身体を休められそうだ。',
+    evt_highland_32:'張り出した岩が強風を遮っている。吹きさらしから逃れ、身体を休めるだけの余裕がある。',
+    evt_highland_33:'地面に埋まった石がほのかな熱を保っている。冷えた身体を温めながら息を整えられそうだ。',
+    evt_ashcrown_11:'地熱で温められた湯が岩の窪みに溜まっている。熱気は穏やかで、疲れを和らげるには十分そうだ。'
+  };
+  if(restScenes[id])return restScenes[id];
+  const where=area?`${area}では、`:'';
+  if(/休息/.test(type))return `${where}周囲の危険が薄い場所を見つけた。安全を確かめれば、しばらく身体を休められそうだ。`;
+  if(/採取|食材/.test(type))return `${where}足元や周囲に素材になりそうなものが見つかる。状態を見極めれば、傷めずに持ち帰れそうだ。`;
+  if(/発見|探索|宝箱/.test(type))return `${where}周囲とは少し違う痕跡が残っている。丁寧に確かめれば、見落とされていたものへ辿り着けそうだ。`;
+  if(/障害|危険|操作|異界現象|異常/.test(type))return `${where}進路や周囲に注意を要する箇所がある。状態を見極めて対処する必要がありそうだ。`;
+  if(/魔物|遭遇|強敵|ボス|二つ名/.test(type))return `${where}不穏な気配が濃くなり、何かが近くにいることが分かる。`;
+  if(/拠点イベント/.test(type))return '拠点の一角で、少し手を貸した方がよさそうな状況に出くわした。';
+  if(/レシピ商人/.test(type))return `${where}旅装の人物が荷を広げ、珍しい品を扱っている。`;
+  return `${where}周囲に普段とは少し違う変化が見られる。`;
+}
 function eventOutcomeSupplementText(row={},group={},partySize=selectedPartySize()){
   let clean=eventOutcomeCleanClause(row,group.clause,partySize);if(!clean)return'';
   // アイテム入手の要約は出さず、実データブロックへ任せる。
@@ -5181,7 +5215,8 @@ function eventOutcomeCopyText(scope='event',index=0){
   included.forEach(group=>{const n=eventOutcomeNarrative(row,group,scope),extra=eventOutcomeSupplementText(row,group,partySize);if(n)narratives.push(n);if(extra)narratives.push(extra);});
   const items=eventOutcomeItemsCopyBlock(scope,target);
   if(eventOutcomeIsBattle(row)&&!items)return'';
-  return [`【${row.eventName||'イベント'}】`,...narratives,items].filter(Boolean).join('\n\n');
+  const scene=eventCopySceneNarrative(row);
+  return [scene,...narratives,items].filter(Boolean).join('\n\n');
 }
 function eventContentRewardItemsBlock(scope='event'){
   const rows=eventRewardCombinedSelectedItems(scope);if(!rows.length)return'';
@@ -5208,7 +5243,8 @@ function eventContentCopyText(scope='event'){
     if(narrative)lines.push(narrative);if(extra)lines.push(extra);
   });
   if(!lines.length&&String(rewardBlock||treasure||'').trim())lines.push(eventOutcomeIsBattle(row)?'戦いが終わったあと、周囲を改めて調べると、通常の戦利品とは別に持ち帰れそうなものが残されていた。':'周囲を丁寧に確かめ、見つけたものを無事に回収した。');
-  return stripOutcomeLabelsForContentCopy([`【${row.eventName||'イベント'}】`,lines.join('\n'),rewardBlock,treasure].filter(Boolean).join('\n\n'));
+  const scene=eventCopySceneNarrative(row),uniqueLines=[...new Set(lines.filter(Boolean))];
+  return stripOutcomeLabelsForContentCopy([scene,uniqueLines.join('\n'),rewardBlock,treasure].filter(Boolean).join('\n\n'));
 }
 function updateEventContentCopyButtons(){[['event','copyEventContentBtn'],['quest','copyQuestContentBtn'],['base','copyBaseEventContentBtn']].forEach(([scope,id])=>{const btn=$(id);if(btn)btn.disabled=!String(eventContentCopyText(scope)||'').trim();});}
 

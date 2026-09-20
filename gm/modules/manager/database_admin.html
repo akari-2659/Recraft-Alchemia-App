@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.803</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.806</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.803 / 最終更新日：2026年9月20日</div>
+<div class="ra-build-info">Version：v90.8.806 / 最終更新日：2026年9月20日</div>
 
 <header>
   <div class="title-card">
@@ -2157,8 +2157,8 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.803';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.803';
+const RECRAFT_DB_VERSION = 'v90.8.806';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.806';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -2237,7 +2237,7 @@ FIELD_PLACEHOLDERS.balanceTier='例：標準 / 強力 / 最上位';
 FIELD_PLACEHOLDERS.balanceReason='排出ウェイトを決めた理由や、効果の強さ・条件の狭さを記載。';
 FIELD_PLACEHOLDERS.fixedActionNames='通常の所持技抽選に必ず含めたい行動名をカンマ区切りで指定します（通常魔物0～2個、候補制二つ名0～3個）。パッシブで参照されるだけでは固定選出になりません。例：雷脈充填 / 高空旋回,風脈急襲';
 FIELD_PLACEHOLDERS.passiveOnlyActionNames='固有パッシブからのみ発動し、通常手番の所持技抽選には入れない行動名をカンマ区切りで指定します。チャットパレットには掲載されます。';
-FIELD_PLACEHOLDERS.actionSelectionRules='1行につき「行動名\t候補条件」。条件を満たす遭遇では所持技の抽選候補に入り、条件を満たさない場合は候補外になります。条件成立でも確定所持にはなりません。対応条件：味方あり / 前衛後衛あり / 前衛あり / 後衛あり / 強敵不在 / 同名N体未満。例：鏡像誘導\t味方あり';
+FIELD_PLACEHOLDERS.actionSelectionRules='1行につき「行動名\t候補条件」。条件を満たす遭遇では所持技の抽選候補に入り、条件を満たさない場合は候補外になります。条件成立でも確定所持にはなりません。対応条件：味方あり / 前衛後衛あり / 前衛あり / 後衛あり / 強敵不在 / 同名N体未満 / HP:A以上 / 回避:A以上 / 抵抗:A以上 / 攻撃:精密 / 攻撃:強打 / 攻撃:精密I以上 / 攻撃:強打II以上。複数条件は & で連結します。例：鏡像誘導\t味方あり';
 const FORM_SELECT_FIELDS = new Set(['dataKind','csVisible','itemType','itemCategory','materialType','materialCategory','rank','toolRank','guaranteeUpgradeMaxRank','equipSlot','skill','checkType','type','role','setItem','unlockAreaKey','unlockFacility','equipmentUpgradeEffect','equipmentUpgradeTarget','ammoUse','ammoKind','craftSkill','craftType','baseItem','branchType','enabled','hasLock','hasTrap','scale','requestKind','questType','rewardScope','areaName','bossMonster','areaType','difficulty','eventType','conditionType','conditionValue','rumorScope','treasureTableId','rewardTableId','tableId','tablePurpose','treasureRank','hasLock','hasTrap','hasLock','hasTrap','entryType','entryName','entryPublicId','recipeName','scrollRank','facilityName','spellType','spellRank','monsterType','resultKind','element','enchantTarget','enchantEffectType','enchantDuration','enchantStackRule','physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity','pullRule','category','weaponType','balanceTier','individualValueEnabled']);
 let formState = { key:null, idx:null, mode:'new', defaultDataKind:'', defaultItemType:'' };
 let quickCategoryDirty = false;
@@ -7705,7 +7705,7 @@ function monsterDropRowHtml(row={}, idx=0){
 function monsterActionsEditor(value){
   const rows = parseMonsterActions(value);
   const body = rows.length ? rows.map(monsterActionRowHtml).join('') : monsterActionRowHtml({element:'物'});
-  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は役割に必要な数だけ登録し、選択可能な行動が4個以上なら遭遇時に3個だけ選出します。3個なら全て使用します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体も役割に必要な数だけ登録し、3～4個なら全て使用します。選択可能な行動が5個以上なら遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・術式・祈祷・防御・補助・回復・特殊から選択します。距離は行動種別から独立して近接・遠距離・自身・特殊を指定します。行動種別と距離は別軸です。魔物は行動種別だけを理由に前衛・後衛間を移動しません。位置変更は行動・固有パッシブ・強制移動などに明記された処理でのみ発生します。距離：近接は敵前衛のみ、距離：遠距離は敵前衛・敵後衛を対象にできます。近接攻撃でも、ヴェイルの《虚影刃》のように特性上後衛へ届く技は距離：遠距離にしてください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
+  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は役割に必要な数だけ登録し、選択可能な行動が4個以上なら遭遇時に3個だけ選出します。3個なら全て使用します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体も役割に必要な数だけ登録し、3～4個なら全て使用します。選択可能な行動が5個以上なら遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・術式・祈祷・防御・補助・回復・特殊から選択します。距離は行動種別から独立して近接・遠距離・自身・特殊を指定します。行動種別と距離は別軸です。魔物は行動種別だけを理由に前衛・後衛間を移動しません。位置変更は行動・固有パッシブ・強制移動などに明記された処理でのみ発生します。距離：近接は敵前衛のみ、距離：遠距離は敵前衛・敵後衛を対象にできます。近接攻撃でも、ヴェイルの《虚影刃》のように特性上後衛へ届く技は距離：遠距離にしてください。 効果欄には通常成功を示す「成功時：」「命中時：」は付けず、効果本文だけを入力してください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
 }
 function monsterDropsEditor(value){
   const rows = parseMonsterDrops(value);
