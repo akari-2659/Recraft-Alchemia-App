@@ -708,6 +708,7 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .equipment-damage-formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:1.08rem;letter-spacing:.01em}
 .equipment-upgrade-effect-detail{grid-column:1/-1;border:1px solid var(--line);border-radius:10px;background:rgba(249,245,235,.82);padding:8px 10px;font-size:.82rem;line-height:1.55;white-space:pre-wrap}
 .equipment-upgrade-effect-detail:empty{display:none}
+.copy-toast{position:fixed;right:20px;bottom:20px;z-index:99999;padding:11px 15px;border-radius:12px;background:rgba(36,32,28,.94);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:.16s}.copy-toast.show{opacity:1;transform:translateY(0)}
 </style>
 
 <style id="raBuildInfoStyle">
@@ -1240,7 +1241,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.800 / 最終更新日：2026年9月18日</div>
+<div class="ra-build-info">Version：v90.8.803 / 最終更新日：2026年9月20日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -9614,6 +9615,9 @@ function setOutputStatus(message, ok=true) {
   }
   showToast(message, ok ? 'ok' : 'error');
 }
+let characterCopyToastTimer=null;
+function showCharacterCopyToast(label='内容'){const el=document.getElementById('copyToast');if(!el)return;const clean=String(label||'内容').replace(/\s+/g,' ').replace(/をコピー(?:しました)?$/,'').replace(/コピー$/,'').trim()||'内容';el.textContent=`${clean}をコピーしました`;el.classList.add('show');clearTimeout(characterCopyToastTimer);characterCopyToastTimer=setTimeout(()=>el.classList.remove('show'),1800);}
+function characterCopyActiveLabel(){const b=document.activeElement;return String(b?.dataset?.copyLabel||b?.textContent||'内容').trim();}
 async function copyTextDirect(text) {
   const value = String(text ?? '');
   // Clipboard API は、GAS通信などの await 後にユーザー操作権限や
@@ -10397,5 +10401,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+<div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 </body>
 </html>

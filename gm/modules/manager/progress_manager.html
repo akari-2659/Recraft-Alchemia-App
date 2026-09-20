@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.800</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.803</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -29,7 +29,7 @@ label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0
 #monsterSelectMenu .monster-option:hover,#monsterSelectMenu .monster-option.active,#monsterSelectMenu .monster-option[aria-selected="true"]{color:var(--ink)!important;background:#ead8bc!important;box-shadow:inset 3px 0 0 var(--accent)!important;transform:none!important;filter:none!important}
 #monsterSelectMenu .monster-option-name{display:block!important;flex:0 0 auto!important;width:100%!important;margin:0!important;font-weight:900!important;line-height:1.35!important;color:inherit!important}
 #monsterSelectMenu .monster-option-meta{display:block!important;flex:0 0 auto!important;width:100%!important;margin:0!important;font-size:12px!important;font-weight:400!important;line-height:1.35!important;color:var(--muted)!important;text-shadow:none!important}
-@media(max-width:720px){#monsterSelectMenu{max-height:230px;box-shadow:0 6px 14px rgba(64,44,25,.11)}}.pill{display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;color:var(--muted);background:#fffdf8}.log{max-height:170px;overflow:auto;font-size:12px;line-height:1.6}.log div{border-bottom:1px solid #eee0c9;padding:4px 0}.copy-note{font-size:12px;color:var(--good);font-weight:700;display:none}.copy-note.show{display:inline}.day-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}.day-stat{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:10px}.day-stat b{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}.day-stat strong{font-size:20px}.day-warning{border-color:#e6c985;background:#fff9e8}.day-blocked{border-color:#e1b0aa;background:#fff3f1}.day-rule{margin-top:10px}.event-card{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:10px;margin-top:8px}.event-card.active{border-color:#9bcdad;background:#f4fff7}.event-card.next{border-color:#e6c985;background:#fff9e8}.event-title{font-weight:800;margin-bottom:4px}.tabs{display:flex;gap:8px;flex-wrap:wrap}.event-section{margin-top:10px}.event-section-title{font-weight:900;margin:8px 0 4px;display:flex;gap:8px;align-items:center}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;border:1px solid var(--line);background:#fffdf8;color:var(--muted)}.badge.fixed{background:#fff9e8;color:var(--warn);border-color:#e6c985}.badge.random{background:#f0fff6;color:var(--good);border-color:#9bcdad}.event-card.fixed{border-color:#e6c985;background:#fff9e8}.event-card.random{border-color:#9bcdad;background:#f4fff7}.tab-nav{display:flex;gap:8px;flex-wrap:wrap}.tab-btn{background:#efe0c6;color:var(--ink);box-shadow:none;border:1px solid var(--line)}.tab-btn.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(139,94,52,.18)}.tab-panel{grid-column:1/-1;display:none}.tab-panel.active{display:block}.hidden{display:none!important}
+@media(max-width:720px){#monsterSelectMenu{max-height:230px;box-shadow:0 6px 14px rgba(64,44,25,.11)}}.pill{display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;color:var(--muted);background:#fffdf8}.log{max-height:170px;overflow:auto;font-size:12px;line-height:1.6}.log div{border-bottom:1px solid #eee0c9;padding:4px 0}.copy-note{font-size:12px;color:var(--good);font-weight:700;display:none}.copy-note.show{display:inline}.copy-toast{position:fixed;right:20px;bottom:20px;z-index:99999;max-width:min(420px,calc(100vw - 32px));padding:11px 15px;border-radius:12px;background:rgba(48,39,28,.94);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .16s ease,transform .16s ease}.copy-toast.show{opacity:1;transform:translateY(0)}.base-unlock-section{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:12px;margin-bottom:12px}.base-unlock-section h4{margin:0 0 8px}.base-unlock-select{width:100%;min-height:42px}.base-unlock-otherworld-list{display:grid;gap:8px}.base-unlock-help{margin-top:6px;font-size:12px;color:var(--muted)}.day-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}.day-stat{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:10px}.day-stat b{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}.day-stat strong{font-size:20px}.day-warning{border-color:#e6c985;background:#fff9e8}.day-blocked{border-color:#e1b0aa;background:#fff3f1}.day-rule{margin-top:10px}.event-card{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:10px;margin-top:8px}.event-card.active{border-color:#9bcdad;background:#f4fff7}.event-card.next{border-color:#e6c985;background:#fff9e8}.event-title{font-weight:800;margin-bottom:4px}.tabs{display:flex;gap:8px;flex-wrap:wrap}.event-section{margin-top:10px}.event-section-title{font-weight:900;margin:8px 0 4px;display:flex;gap:8px;align-items:center}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;border:1px solid var(--line);background:#fffdf8;color:var(--muted)}.badge.fixed{background:#fff9e8;color:var(--warn);border-color:#e6c985}.badge.random{background:#f0fff6;color:var(--good);border-color:#9bcdad}.event-card.fixed{border-color:#e6c985;background:#fff9e8}.event-card.random{border-color:#9bcdad;background:#f4fff7}.tab-nav{display:flex;gap:8px;flex-wrap:wrap}.tab-btn{background:#efe0c6;color:var(--ink);box-shadow:none;border:1px solid var(--line)}.tab-btn.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(139,94,52,.18)}.tab-panel{grid-column:1/-1;display:none}.tab-panel.active{display:block}.hidden{display:none!important}
 
 .quest-category-bar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
 .quest-category-btn{border:1px solid var(--line);background:#fffaf0;border-radius:999px;padding:7px 12px;cursor:pointer}
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.800 / 最終更新日：2026年9月18日</div>
+<div class="ra-build-info">Version：v90.8.803 / 最終更新日：2026年9月20日</div>
 
 <header>
   <div class="header-inner">
@@ -625,18 +625,19 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 <div id="baseAreaModal" class="area-select-modal-backdrop hidden" aria-hidden="true">
   <div class="area-select-modal-card" role="dialog" aria-modal="true" aria-labelledby="baseAreaModalTitle">
     <div class="area-select-modal-head">
-      <div><h3 id="baseAreaModalTitle">解放エリア選択</h3><p>進行管理で解放済みとして扱うエリアを選択します。この指定は拠点内ランダムイベントとデイリークエスト抽選の両方に反映されます。異界も個別にON/OFFできます。</p></div>
+      <div><h3 id="baseAreaModalTitle">解放エリア選択</h3><p>通常エリアは「最大解放エリア」を選択すると、そこまでの通常エリアがすべて解放済みとして扱われます。異界は任意解放として個別にON/OFFできます。この指定は拠点内ランダムイベントとデイリークエスト抽選の両方に反映されます。</p></div>
       <button id="closeBaseAreaModalBtn" class="ghost" type="button">閉じる</button>
     </div>
     <div class="area-select-modal-body"><div id="baseUnlockedAreaModalList" class="base-unlock-grid"></div></div>
     <div class="area-select-modal-foot"><button id="cancelBaseAreaModalBtn" class="ghost" type="button">キャンセル</button><button id="applyBaseAreaModalBtn" type="button">選択を適用</button></div>
   </div>
 </div>
+<div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=90.8.800"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.801"></script>
 <script>
 'use strict';
-const VERSION='v90.8.800';
+const VERSION='v90.8.803';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -4540,6 +4541,15 @@ function resolveTreasureTable(tableId,areaName='',options={}){
   const displayText=['【宝箱】',...treasureSetupLines(setup),...treasureContentLines(picked,q)].join('\n');
   return {tableId,setup,picked,quantity:q.text,quantityDetail:q.detail,isEmpty:false,displayText,copyText:treasureContentCopyText(picked,q.text),contentLabel:picked.entryName||picked.recipeName||picked.entryType||'中身'};
 }
+function treasureResultCopyText(result={}){
+  const direct=String(result?.copyText||'').trim();
+  if(direct)return direct;
+  if(result?.picked)return treasureContentCopyText(result.picked,String(result.quantity||'1'));
+  // 宝箱を決定した後は、空箱でも「コピーできない」状態にしない。
+  // 中身がないこと自体を結果として卓へ貼れるようにする。
+  if(result?.isEmpty&&/中身[：:]なし/.test(String(result?.displayText||'')))return '中身：なし';
+  return '';
+}
 function applyTreasureResultToStandalone(result){
   if(!result)return;
   const tableId=String(result.tableId||'');
@@ -4547,7 +4557,7 @@ function applyTreasureResultToStandalone(result){
   state.treasureContext={tableId,areaName:result.setup?.areaName||'',mode:result.setup?.questFixed?'quest-fixed':'normal'};
   state.treasureSetup=result.setup||null;
   state.lastTreasureText=result.displayText||'';
-  state.lastTreasureCopyText=result.copyText||'';
+  state.lastTreasureCopyText=treasureResultCopyText(result);
   renderTreasureTrapInfo();
   if($('treasureResult'))$('treasureResult').textContent=state.lastTreasureText||'宝箱結果がありません。';
   updateTreasureCopyButtons();
@@ -4618,7 +4628,11 @@ function eventTreasureAllowedBySelectedOutcome(scope='event',result={}){
   return true;
 }
 function selectedEventTreasureCopyText(scope='event'){
-  return eventTreasureResults(scope).filter(r=>eventTreasureAllowedBySelectedOutcome(scope,r)).map(r=>r.copyText).filter(Boolean).join('\n\n');
+  return eventTreasureResults(scope)
+    .filter(r=>eventTreasureAllowedBySelectedOutcome(scope,r))
+    .map(r=>treasureResultCopyText(r))
+    .filter(Boolean)
+    .join('\n\n');
 }
 function syncEventTreasureCopyState(scope='event'){
   const results=eventTreasureResults(scope),text=selectedEventTreasureCopyText(scope);
@@ -4832,6 +4846,8 @@ function eventRewardTrigger(clause='',branchKey=''){
   if(threshold)return{kind:'threshold',value:Number(threshold[1]),label:`目標値+${Number(threshold[1])}以上`,branchKey:String(branchKey||'')};
   if(/勝利後/.test(text))return{kind:'victory',value:0,label:'戦闘勝利後',branchKey:''};
   if(/^失敗\s*[：:]/.test(text)||/^判定失敗\s*[：:]/.test(text))return{kind:'failure',value:0,label:'失敗',branchKey:''};
+  const skillFailure=text.match(/^([^：:。]{1,24}?)失敗\s*[：:]/);
+  if(skillFailure&&!/^クエスト/.test(String(skillFailure[1]||'').trim())){const key=String(skillFailure[1]||'').trim()||'判定';return{kind:'failure',value:0,label:key==='判定'?'失敗':`${key}失敗`,branchKey:key};}
   const skillSuccess=text.match(/^([^：:。]{1,24}?)成功\s*[：:]/);
   if(skillSuccess){const key=String(skillSuccess[1]||'').trim()||'判定';return{kind:'success',value:0,label:key==='判定'?'判定成功':`${key}成功`,branchKey:key};}
   if(/^判定成功\s*[：:]/.test(text)||/^成功\s*[：:]/.test(text))return{kind:'success',value:0,label:'判定成功',branchKey:'判定'};
@@ -4935,7 +4951,7 @@ function eventRewardCopyText(scope='event'){
   if(!rows.length)return'';
   return rows.map(item=>{const count=String(item.count||1);return item.row?acquisitionItemCopyBlock(item.row,count):dropPlayerInfoBlock({name:item.name,id:item.row?.id||'',publicId:item.row?.publicId||'',count:`${count}個`});}).join('\n\n');
 }
-function eventRewardGroupText(group={}){const parts=[];const itemText=(group.items||[]).map(item=>`${item.selectedName||item.name}×${item.count}${/D/i.test(item.expr||'')?`（${item.expr}）`:''}`).join('、');if(itemText)parts.push(itemText);if(Number(group.tableSlots)>0)parts.push(`入手アイテム表：${Number(group.tableSlots)}枠`);if(parts.length)return parts.join(' / ');return String(group.clause||'').replace(/^目標値\s*\+\s*\d+\s*以上\s*[：:]\s*/,'').replace(/^勝利後\s*[：:]?\s*/,'').replace(/^失敗\s*[：:]\s*/,'').replace(/^判定成功\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?成功\s*[：:]\s*/,'')||'結果を選択';}
+function eventRewardGroupText(group={}){const parts=[];const itemText=(group.items||[]).map(item=>`${item.selectedName||item.name}×${item.count}${/D/i.test(item.expr||'')?`（${item.expr}）`:''}`).join('、');if(itemText)parts.push(itemText);if(Number(group.tableSlots)>0)parts.push(`入手アイテム表：${Number(group.tableSlots)}枠`);if(parts.length)return parts.join(' / ');return String(group.clause||'').replace(/^目標値\s*\+\s*\d+\s*以上\s*[：:]\s*/,'').replace(/^勝利後\s*[：:]?\s*/,'').replace(/^失敗\s*[：:]\s*/,'').replace(/^判定失敗\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?失敗\s*[：:]\s*/,'').replace(/^判定成功\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?成功\s*[：:]\s*/,'')||'結果を選択';}
 function eventOutcomeKey(scope='event'){
   if(scope==='quest')return String(state.lastQuestOutcomeKey||'');
   if(scope==='base')return String(state.lastBaseOutcomeKey||'');
@@ -5024,6 +5040,8 @@ function eventOutcomeCleanClause(row={},clause='',partySize=selectedPartySize())
   // ドロップ判定そのものはGM処理。後ろに続く「運搬を続ける」「クエストクリア」等だけを内容へ残す。
   text=text.replace(/^(?:出現した)?各魔物のドロップ判定(?:を)?(?:1回ずつ)?行(?:い|って)\s*[、,]?\s*/,'');
   text=text.replace(/^失敗\s*[：:]\s*/,'');
+  text=text.replace(/^判定失敗\s*[：:]\s*/,'');
+  text=text.replace(/^[^：:。]{1,24}?失敗\s*[：:]\s*/,'');
   text=text.replace(/^判定成功\s*[：:]\s*/,'');
   text=text.replace(/^[^：:。]{1,24}?成功\s*[：:]\s*/,'');
   const label=eventOutcomeRewardLabel(row,clause);
@@ -5169,6 +5187,14 @@ function eventContentRewardItemsBlock(scope='event'){
   const rows=eventRewardCombinedSelectedItems(scope);if(!rows.length)return'';
   return rows.map(item=>item.row?acquisitionItemCopyBlock(item.row,String(item.count||1)):dropPlayerInfoBlock({name:item.name,count:`${item.count||1}個`})).join('\n\n');
 }
+function stripOutcomeLabelsForContentCopy(text=''){
+  return String(text||'').split('\n').map(line=>String(line||'')
+    .replace(/^\s*(?:判定)?成功\s*[：:]\s*/,'')
+    .replace(/^\s*[^：:。\n]{1,24}?成功\s*[：:]\s*/,'')
+    .replace(/^\s*(?:判定)?失敗\s*[：:]\s*/,'')
+    .replace(/^\s*[^：:。\n]{1,24}?失敗\s*[：:]\s*/,'')
+  ).join('\n');
+}
 function eventContentCopyText(scope='event'){
   const row=eventOutcomeRow(scope);if(!row)return'';
   const reward=eventRewardState(scope),partySize=eventOutcomePartySize(scope);
@@ -5182,7 +5208,7 @@ function eventContentCopyText(scope='event'){
     if(narrative)lines.push(narrative);if(extra)lines.push(extra);
   });
   if(!lines.length&&String(rewardBlock||treasure||'').trim())lines.push(eventOutcomeIsBattle(row)?'戦いが終わったあと、周囲を改めて調べると、通常の戦利品とは別に持ち帰れそうなものが残されていた。':'周囲を丁寧に確かめ、見つけたものを無事に回収した。');
-  return [`【${row.eventName||'イベント'}】`,lines.join('\n'),rewardBlock,treasure].filter(Boolean).join('\n\n');
+  return stripOutcomeLabelsForContentCopy([`【${row.eventName||'イベント'}】`,lines.join('\n'),rewardBlock,treasure].filter(Boolean).join('\n\n'));
 }
 function updateEventContentCopyButtons(){[['event','copyEventContentBtn'],['quest','copyQuestContentBtn'],['base','copyBaseEventContentBtn']].forEach(([scope,id])=>{const btn=$(id);if(btn)btn.disabled=!String(eventContentCopyText(scope)||'').trim();});}
 
@@ -5296,10 +5322,15 @@ function rollDrops(){
   state.lastDropText=all.join('\n'); state.lastDropSuccessText=got.join('\n');
   $('dropResult').innerHTML=`<div class="drop-list">${html.join('')}</div>`; addLog(`ドロップ判定：${m.name||m.id}${dismantleOk?'（解体成功・全率+10%）':''}`);
 }
-async function copyText(text,noteId){
+let copyToastTimer=null;
+function copyFeedbackLabel(button=null){const raw=String(button?.dataset?.copyLabel||button?.textContent||'').replace(/\s+/g,' ').trim();if(!raw)return'内容';return raw.replace(/をコピー(?:しました)?$/,'').replace(/コピー$/,'').trim()||'内容';}
+function showCopyToast(label='内容'){const el=$('copyToast');if(!el)return;const text=`${String(label||'内容').trim()||'内容'}をコピーしました`;el.textContent=text;el.classList.add('show');clearTimeout(copyToastTimer);copyToastTimer=setTimeout(()=>el.classList.remove('show'),1800);}
+async function copyText(text,noteId,label=''){
   const v=String(text||'').trim(); if(!v)return;
+  const resolved=String(label||'').trim()||copyFeedbackLabel(document.activeElement);
   try{await navigator.clipboard.writeText(v);}catch(e){const ta=document.createElement('textarea'); ta.value=v; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();}
-  if(noteId){const el=$(noteId); el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1200);} addLog('結果をコピーしました。');
+  if(noteId){const el=$(noteId);if(el){el.textContent=`${resolved}をコピーしました`;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1500);}}
+  showCopyToast(resolved);addLog(`${resolved}をコピーしました。`);
 }
 function questMemo(){const q=selected($('questSelect'),state.quests); if(!q)return ''; const p=progressObj('quests',q.id||q.name); const delivery=isDeliveryQuest(q); const qa=areaForQuest(q),qt=(!delivery&&!isBaseQuest(q)&&areaUsesWorldCycle(qa))?selectedTimeSlot():''; return [`【クエスト進行】${q.name||q.id}`,isImportantQuest(q)?'':`依頼区分：${q.requestKind||'未設定'}`,!delivery&&q.recommendedSkills?`推奨技能：${q.recommendedSkills}`:'',`実施場所：${questLocationText(q)}`,`時間帯：${questTimeRestrictionText(q)}`,qt?`現在の時間帯：${qt}`:'',delivery?`納品状況：${clamp(p.value)>=100?'完了':'未完了'}`:`進行度：${clamp(p.value)}%`,q.deliveryItems?`納品物：${q.deliveryItems}`:'',...questBattleRoundLines(q),!questSpecialConditionLabel(q)&&q.clearCondition?`クリア条件：${q.clearCondition}`:'',q.rewardMoney||q.rewardItems||q.rewardTableId||Number(q.bonusPoints||0)>0?`報酬：${[q.rewardMoney,questRewardItemDisplay(q),Number(q.bonusPoints||0)>0?`ボーナスポイント${Number(q.bonusPoints)}点`:'' ].filter(Boolean).join(' / ')}（${q.rewardScope||'各PC'}）`:'',p.note?`メモ：${p.note}`:''].filter(Boolean).join('\n');}
 function questPublicRewardText(q={}){
@@ -5688,6 +5719,7 @@ function bindV738ProgressUi(){
   $('areaSelect')?.addEventListener('change',()=>{v738RefreshMainSelectionUi();renderArea();});$('questSelect')?.addEventListener('change',v738RefreshMainSelectionUi);
   document.addEventListener('click',e=>{const daily=e.target.closest('[data-progress-daily-reroll]');if(daily){rerollDailyQuestsInProgress(String(daily.dataset.progressDailyReroll||''));return;}const hidden=e.target.closest('[data-hidden-area-start]');if(hidden){startHiddenExploration(hidden.dataset.hiddenAreaStart||'',hidden.dataset.hiddenOrigin||'event');return;}});
   document.addEventListener('change',e=>{const sel=e.target?.closest?.('[data-progress-daily-count]');if(!sel)return;const kind=String(sel.dataset.progressDailyCount||'').trim();if(!GUILD_DAILY_REQUEST_KINDS.includes(kind))return;progressUiV738.dailyCounts[kind]=v740NormalizeDailyCount(sel.value,GUILD_DAILY_DEFAULT_COUNTS_V738[kind]);state.lastDailyQuestKeysByKind=state.lastDailyQuestKeysByKind||emptyDailyQuestKeysByKind();state.lastDailyQuestKeysByKind[kind]=[];rerollDailyQuestsInProgress(kind);v740SyncDailyCountControls();addLog(`${kind}の抽選件数を${v740DailyCount(kind)}件に変更しました。`);});
+  document.addEventListener('change',e=>{const max=e.target?.closest?.('#baseMaxNormalAreaSelect');if(max){const normals=baseLinearNormalAreas(),idx=normals.findIndex(a=>baseAreaId(a)===String(max.value||'')),otherworld=new Set(baseAreaModalDraftIds.filter(id=>baseOptionalOtherworldAreas().some(a=>baseAreaId(a)===String(id))));baseAreaModalDraftIds=[...normals.filter((a,i)=>i<=Math.max(0,idx)).map(baseAreaId),...otherworld];renderBaseAreaModal();return;}const ow=e.target?.closest?.('[data-base-otherworld-check]');if(ow){const id=String(ow.dataset.baseOtherworldCheck||''),set=new Set(baseAreaModalDraftIds.map(String));if(ow.checked)set.add(id);else set.delete(id);baseAreaModalDraftIds=baseCanonicalUnlockedIds([...set]);}});
   document.querySelectorAll('.progress-modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target!==m)return;if(m.id==='dropProgressModal')closeCombatDropModal();}));
   const copyDrop=$('copyDropSuccessBtn');copyDrop?.addEventListener('click',()=>setTimeout(()=>{if(!$('dropProgressModal')?.classList.contains('hidden'))closeCombatDropModal();},0));
 }
@@ -5695,8 +5727,16 @@ const v737AreaUsesWorldCycle=areaUsesWorldCycle;
 areaUsesWorldCycle=function(area={}){return isHiddenAreaRow(area)?false:v737AreaUsesWorldCycle(area);};
 const v737DefaultBaseUnlockedAreaIds=defaultBaseUnlockedAreaIds;
 defaultBaseUnlockedAreaIds=function(){const initial=visibleExplorationAreas().filter(a=>String(a.unlockCondition||'').includes('初期解放')).map(a=>String(a.id||a.name||'')).filter(Boolean);if(initial.length)return initial;const first=visibleExplorationAreas()[0];return first?[String(first.id||first.name||'')]:[];};
-normalizeBaseUnlockedAreaIds=function(){const valid=new Set(visibleExplorationAreas().map(a=>String(a.id||a.name||'')).filter(Boolean));let ids=Array.isArray(state.baseUnlockedAreaIds)?state.baseUnlockedAreaIds.map(String).filter(id=>valid.has(id)):[];const required=defaultBaseUnlockedAreaIds();required.forEach(id=>{if(valid.has(id)&&!ids.includes(id))ids.push(id);});if(!ids.length)ids=required;state.baseUnlockedAreaIds=[...new Set(ids)];return state.baseUnlockedAreaIds;};
-renderBaseAreaModal=function(){const modal=$('baseAreaModal'),list=$('baseUnlockedAreaModalList');if(!modal||!list)return;const selected=new Set(baseAreaModalDraftIds.map(String)),required=new Set(defaultBaseUnlockedAreaIds());list.innerHTML=visibleExplorationAreas().map(a=>{const id=String(a.id||a.name||''),checked=selected.has(id)||required.has(id),fixed=required.has(id);return `<label class="base-unlock-item"><input type="checkbox" data-base-area-modal-check="${esc(id)}"${checked?' checked':''}${fixed?' disabled':''}><span>${esc(a.name||id)}<small>${esc(a.areaType||'エリア')} / 解放順 ${esc(a.unlockOrder??'-')}${fixed?' / 初期解放':''}</small></span></label>`;}).join('')||'<div class="muted small">エリアデータがありません。</div>';};
+function baseLinearNormalAreas(){return visibleExplorationAreas().filter(a=>String(a.areaType||'').trim()!=='異界').sort((a,b)=>Number(a.unlockOrder||999)-Number(b.unlockOrder||999)||String(a.name||'').localeCompare(String(b.name||''),'ja'));}
+function baseOptionalOtherworldAreas(){return visibleExplorationAreas().filter(a=>String(a.areaType||'').trim()==='異界').sort((a,b)=>Number(a.unlockOrder||999)-Number(b.unlockOrder||999)||String(a.name||'').localeCompare(String(b.name||''),'ja'));}
+function baseAreaId(a={}){return String(a.id||a.name||'').trim();}
+function baseMaxNormalIdFromIds(ids=[]){const set=new Set((ids||[]).map(String)),rows=baseLinearNormalAreas().filter(a=>set.has(baseAreaId(a)));return rows.length?baseAreaId(rows[rows.length-1]):baseAreaId(baseLinearNormalAreas()[0]||{});}
+function baseCanonicalUnlockedIds(ids=[]){const valid=new Set(visibleExplorationAreas().map(baseAreaId).filter(Boolean)),source=new Set((ids||[]).map(String).filter(id=>valid.has(id))),normals=baseLinearNormalAreas(),otherworld=baseOptionalOtherworldAreas();let maxIndex=-1;normals.forEach((a,i)=>{if(source.has(baseAreaId(a)))maxIndex=Math.max(maxIndex,i);});if(maxIndex<0&&normals.length)maxIndex=0;const next=[];normals.forEach((a,i)=>{if(i<=maxIndex)next.push(baseAreaId(a));});otherworld.forEach(a=>{const id=baseAreaId(a);if(source.has(id))next.push(id);});defaultBaseUnlockedAreaIds().forEach(id=>{if(valid.has(String(id))&&!next.includes(String(id)))next.push(String(id));});return [...new Set(next)];}
+normalizeBaseUnlockedAreaIds=function(){state.baseUnlockedAreaIds=baseCanonicalUnlockedIds(Array.isArray(state.baseUnlockedAreaIds)?state.baseUnlockedAreaIds:defaultBaseUnlockedAreaIds());return state.baseUnlockedAreaIds;};
+renderBaseAreaModal=function(){const modal=$('baseAreaModal'),list=$('baseUnlockedAreaModalList');if(!modal||!list)return;baseAreaModalDraftIds=baseCanonicalUnlockedIds(baseAreaModalDraftIds);const selected=new Set(baseAreaModalDraftIds.map(String)),normals=baseLinearNormalAreas(),otherworld=baseOptionalOtherworldAreas(),maxId=baseMaxNormalIdFromIds(baseAreaModalDraftIds);const normalOptions=normals.map(a=>`<option value="${esc(baseAreaId(a))}"${baseAreaId(a)===maxId?' selected':''}>${esc(a.name||baseAreaId(a))}（解放順 ${esc(a.unlockOrder??'-')}）</option>`).join('');const otherworldHtml=otherworld.length?otherworld.map(a=>{const id=baseAreaId(a);return `<label class="base-unlock-item"><input type="checkbox" data-base-otherworld-check="${esc(id)}"${selected.has(id)?' checked':''}><span>${esc(a.name||id)}<small>異界 / 任意解放</small></span></label>`;}).join(''):'<div class="muted small">現在、任意解放の異界はありません。</div>';list.innerHTML=`<section class="base-unlock-section"><h4>通常エリア</h4><label>最大解放エリア<select id="baseMaxNormalAreaSelect" class="base-unlock-select">${normalOptions}</select></label><div class="base-unlock-help">選択したエリアまでの通常エリアをすべて解放済みとして扱います。</div></section><section class="base-unlock-section"><h4>異界</h4><div class="base-unlock-otherworld-list">${otherworldHtml}</div><div class="base-unlock-help">異界は通常エリアの最大解放位置とは別に、個別に解放状態を指定します。</div></section>`;};
+const v1038OpenBaseAreaModal=openBaseAreaModal;
+openBaseAreaModal=function(){baseAreaModalDraftIds=baseCanonicalUnlockedIds(normalizeBaseUnlockedAreaIds());renderBaseAreaModal();const modal=$('baseAreaModal');if(modal){modal.classList.remove('hidden');modal.setAttribute('aria-hidden','false');document.body.classList.add('area-select-modal-open');}};
+applyBaseAreaModal=function(){const next=baseCanonicalUnlockedIds(baseAreaModalDraftIds);const before=normalizeBaseUnlockedAreaIds().slice().sort().join('|'),after=next.slice().sort().join('|');state.baseUnlockedAreaIds=next;if(before!==after){state.lastBaseEventText='';state.lastBaseEventKey='';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';state.lastBaseRewardText='';state.lastBaseRewardCopyText='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;const q=selected($('questSelect'),state.quests);if(isBaseQuest(q)){state.lastQuestEventText='';state.lastQuestEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';state.lastQuestTreasureCopyText='';state.lastQuestEventTableRewardText='';state.lastQuestEventTableRewardCopyText='';state.lastQuestEventRewardState=null;}}ensureWeatherForUnlockedAreas(false);saveState(false);closeBaseAreaModal();renderBaseEventControls();renderDailyUnlockedAreaControl();renderWeatherManager();renderQuest();updateTreasureCopyButtons();};
 
 
 function bindTabs(){
