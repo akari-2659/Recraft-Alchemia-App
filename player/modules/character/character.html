@@ -709,6 +709,26 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .equipment-upgrade-effect-detail{grid-column:1/-1;border:1px solid var(--line);border-radius:10px;background:rgba(249,245,235,.82);padding:8px 10px;font-size:.82rem;line-height:1.55;white-space:pre-wrap}
 .equipment-upgrade-effect-detail:empty{display:none}
 .copy-toast{position:fixed;right:20px;bottom:20px;z-index:99999;padding:11px 15px;border-radius:12px;background:rgba(36,32,28,.94);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:.16s}.copy-toast.show{opacity:1;transform:translateY(0)}
+
+/* v1.0.51 equipment picker readability */
+.ra-picker-dialog{width:min(1120px,calc(100vw - 28px))!important;max-height:min(90vh,920px)!important}
+.ra-picker-dialog .ra-picker-shell{max-height:min(90vh,920px)!important;padding:18px!important}
+.ra-picker-dialog .ra-picker-search input{min-height:42px!important;font-size:.96rem!important}
+.ra-picker-dialog .ra-picker-tabs{display:flex!important;flex-wrap:wrap!important;align-content:flex-start!important;overflow:visible!important;max-height:132px!important;overflow-y:auto!important;gap:7px!important;padding:0 0 12px!important}
+.ra-picker-dialog .ra-picker-tabs button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;max-width:none!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;text-align:center!important;padding:8px 12px!important;border-radius:999px!important;line-height:1.2!important}
+.ra-picker-dialog .ra-picker-body{grid-template-columns:minmax(360px,.92fr) minmax(420px,1.08fr)!important;min-height:0!important}
+.ra-picker-dialog .ra-picker-list{padding:12px!important;gap:8px!important;min-height:0!important}
+.ra-picker-dialog .ra-picker-card{grid-template-columns:minmax(0,1fr) auto!important;padding:11px 12px!important;gap:10px!important}
+.ra-picker-dialog .ra-picker-name{font-size:.96rem!important;line-height:1.35!important}
+.ra-picker-dialog .ra-picker-meta{margin-top:3px!important;line-height:1.45!important}
+.ra-picker-dialog .ra-picker-actions{flex-wrap:nowrap!important}
+.ra-picker-dialog .ra-picker-actions button{width:auto!important;min-width:60px!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;text-align:center!important}
+.ra-picker-dialog .ra-picker-detail{padding:18px!important;min-width:0!important}
+.ra-picker-dialog .ra-picker-detail h4{margin:0 0 4px!important;font-size:1.2rem!important}
+.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:110px minmax(0,1fr)!important;gap:9px 14px!important;font-size:.93rem!important;line-height:1.55!important}
+.ra-picker-dialog .ra-picker-detail-grid dt{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important}
+.ra-picker-dialog .ra-picker-detail-grid dd{overflow-wrap:anywhere!important}
+@media(max-width:760px){.ra-picker-dialog{width:calc(100vw - 14px)!important}.ra-picker-dialog .ra-picker-shell{padding:10px!important}.ra-picker-dialog .ra-picker-tabs{max-height:150px!important}.ra-picker-dialog .ra-picker-body{grid-template-columns:1fr!important}.ra-picker-dialog .ra-picker-detail{max-height:38vh!important;border-left:0!important;border-top:1px solid var(--line)!important}.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:92px minmax(0,1fr)!important}}
 </style>
 
 <style id="raBuildInfoStyle">
@@ -2033,15 +2053,19 @@ async function setAutoSaveEnabled(enabled){
 }
 
 function autoSaveDraftSoon(section='all'){
-  if(!autoSaveEnabled || !autoSaveReady || currentMode==='view' || !currentCharacter)return;
+  if(!autoSaveReady || currentMode==='view' || !currentCharacter)return;
   const sections=(Array.isArray(section)?section:[section]).filter(Boolean).map(value=>String(value));
   sections.forEach(value=>autoSaveDirtySections.add(value));
   if(autoSaveDirtySections.has('all')) autoSaveDirtySections=new Set(['all']);
-  // 空の予約要求だけでDirty扱いにしない。保存中の重複呼び出しが空予約へ変わっても、
-  // それを新しいフル保存として再発火させない。
+  // 自動保存OFFでも変更区分だけは記録する。手動「保存」でも既存キャラなら
+  // フルJSONではなく差分だけを送れるようにする。
   if(autoSaveDirtySections.size===0)return;
   autoSaveDirty=true;
   clearAutoSaveTimer();
+  if(!autoSaveEnabled){
+    if(!autoSaveBusy)setAutoSaveStatus('未保存の変更があります。','warn');
+    return;
+  }
   if(!autoSaveBusy)setAutoSaveStatus('変更を検出しました。差分自動保存を待機中…','warn');
   autoSaveTimer=setTimeout(()=>{
     autoSaveTimer=null;
@@ -2100,7 +2124,9 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     if(autoSaveDirtySections.size>0)autoSavePending=true;
     return {saved:false,pending:true};
   }
-  const usePatch=automatic&&!force&&autoSaveDirtySections.size>0;
+  // v1.0.51: 既存キャラは自動/手動を問わず、変更区分が分かる限り差分保存を使う。
+  // 新規作成と明示forceだけがDrive全体保存になる。
+  const usePatch=!force&&currentMode!=='new'&&cloudCharacterRowHint>=2&&autoSaveDirtySections.size>0;
   const patch=usePatch?buildAutoSavePatch(autoSaveDirtySections):null;
   const data=usePatch?null:collectData(true);
   const name=usePatch?(Object.prototype.hasOwnProperty.call(patch,'name')?patch.name:currentCharacter?.name):data?.name;
@@ -8655,10 +8681,10 @@ async function savePatchItem(id,patch={}){
   if(!auth.playerKey&&!auth.newPlayerKey)throw new Error('クラウド保存にはプレイヤーキーが必要です。');
   const cleanPatch=stripRuntimeOnlyData(patch||{});
   const effectivePlayerKey=auth.newPlayerKey||auth.playerKey;
-  // v90.8.721: 既にブラウザが持つ現在データへpatchを浅く合成し、完成スナップショットも送る。
-  // GAS側はこれを直接Driveへ書くため、通常の差分保存でDriveのread 1回を省略できる。
-  const snapshot=stripRuntimeOnlyData({...(currentCharacter||{}),...cleanPatch,id});
-  const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,snapshot,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint});
+  // v1.0.51: 差分保存なのに毎回送っていたキャラ全体snapshotを廃止。
+  // GAS側はCharactersシートへ累積差分を永続化するため、通常編集ではpatchだけで足りる。
+  const localSnapshot=stripRuntimeOnlyData({...(currentCharacter||{}),...cleanPatch,id});
+  const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint});
   if(saveResult&&saveResult.sentNoCors){
     const verify=await verifyCloudCharacterPatch(id,cleanPatch,effectivePlayerKey);
     cloudCharacterRevision=Number(verify?.revision||cloudCharacterRevision)||0;
@@ -8668,9 +8694,9 @@ async function savePatchItem(id,patch={}){
     cloudCharacterRowHint=Number(saveResult.storageRow||cloudCharacterRowHint)||0;
   }
   if(auth.newPlayerKey){currentCloudPlayerKey=auth.newPlayerKey;if($('playerKey'))$('playerKey').value=auth.newPlayerKey;if($('newPlayerKey'))$('newPlayerKey').value='';if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=auth.newPlayerKey;}
-  characterDataCachePut(effectivePlayerKey,snapshot,cloudCharacterRevision,cloudCharacterRowHint);
+  characterDataCachePut(effectivePlayerKey,localSnapshot,cloudCharacterRevision,cloudCharacterRowHint);
   if(auth.newPlayerKey&&auth.playerKey&&auth.playerKey!==auth.newPlayerKey)characterDataCacheDelete(auth.playerKey,id);
-  return {saved:true,patched:true,acknowledged:!!(saveResult&&saveResult.acknowledged)};
+  return {saved:true,patched:true,stagedPatch:!!saveResult?.stagedPatch,acknowledged:!!(saveResult&&saveResult.acknowledged)};
 }
 
 async function refreshList() {
@@ -9679,7 +9705,9 @@ async function copyShareUrlForListItem(id) {
 
 async function onSave() {
   clearAutoSaveTimer();
-  await saveCharacterNow({automatic:false,force:true});
+  // v1.0.51: 既存キャラの手動保存も、変更区分が分かる限り高速差分保存を使う。
+  // 新規キャラはsaveCharacterNow側で自動的にフル保存へ切り替わる。
+  await saveCharacterNow({automatic:false,force:false});
 }
 
 function bindEvents() {

@@ -709,6 +709,32 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .equipment-upgrade-effect-detail{grid-column:1/-1;border:1px solid var(--line);border-radius:10px;background:rgba(249,245,235,.82);padding:8px 10px;font-size:.82rem;line-height:1.55;white-space:pre-wrap}
 .equipment-upgrade-effect-detail:empty{display:none}
 .copy-toast{position:fixed;right:20px;bottom:20px;z-index:99999;padding:11px 15px;border-radius:12px;background:rgba(36,32,28,.94);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:.16s}.copy-toast.show{opacity:1;transform:translateY(0)}
+
+/* v1.0.51 equipment picker readability */
+.ra-picker-dialog{width:min(1120px,calc(100vw - 28px))!important;max-height:min(90vh,920px)!important}
+.ra-picker-dialog .ra-picker-shell{max-height:min(90vh,920px)!important;padding:18px!important}
+.ra-picker-dialog .ra-picker-search input{min-height:42px!important;font-size:.96rem!important}
+.ra-picker-dialog .ra-picker-tabs{display:flex!important;flex-wrap:wrap!important;align-content:flex-start!important;overflow:visible!important;max-height:132px!important;overflow-y:auto!important;gap:7px!important;padding:0 0 12px!important}
+.ra-picker-dialog .ra-picker-tabs button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;max-width:none!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;text-align:center!important;padding:8px 12px!important;border-radius:999px!important;line-height:1.2!important}
+.ra-picker-dialog .ra-picker-body{grid-template-columns:minmax(360px,.92fr) minmax(420px,1.08fr)!important;min-height:0!important}
+.ra-picker-dialog .ra-picker-list{padding:12px!important;gap:8px!important;min-height:0!important}
+.ra-picker-dialog .ra-picker-card{grid-template-columns:minmax(0,1fr) auto!important;padding:11px 12px!important;gap:10px!important}
+.ra-picker-dialog .ra-picker-name{font-size:.96rem!important;line-height:1.35!important}
+.ra-picker-dialog .ra-picker-meta{margin-top:3px!important;line-height:1.45!important}
+.ra-picker-dialog .ra-picker-actions{flex-wrap:nowrap!important}
+.ra-picker-dialog .ra-picker-actions button{width:auto!important;min-width:60px!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;text-align:center!important}
+.ra-picker-dialog .ra-picker-detail{padding:18px!important;min-width:0!important}
+.ra-picker-dialog .ra-picker-detail h4{margin:0 0 4px!important;font-size:1.2rem!important}
+.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:110px minmax(0,1fr)!important;gap:9px 14px!important;font-size:.93rem!important;line-height:1.55!important}
+.ra-picker-dialog .ra-picker-detail-grid dt{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important}
+.ra-picker-dialog .ra-picker-detail-grid dd{overflow-wrap:anywhere!important}
+@media(max-width:760px){.ra-picker-dialog{width:calc(100vw - 14px)!important}.ra-picker-dialog .ra-picker-shell{padding:10px!important}.ra-picker-dialog .ra-picker-tabs{max-height:150px!important}.ra-picker-dialog .ra-picker-body{grid-template-columns:1fr!important}.ra-picker-dialog .ra-picker-detail{max-height:38vh!important;border-left:0!important;border-top:1px solid var(--line)!important}.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:92px minmax(0,1fr)!important}}
+
+/* v1.0.51 GM all-item catalog */
+.gm-catalog-card{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;align-items:center!important}
+.gm-catalog-main{min-width:0}.gm-catalog-name{font-weight:900;color:var(--accent2);font-size:.98rem}.gm-catalog-meta{margin-top:4px;color:var(--muted);font-size:.82rem;line-height:1.45}
+.gm-catalog-actions{display:grid;grid-template-columns:92px auto auto;gap:7px;align-items:center}.gm-catalog-actions input{width:92px;min-height:38px}.gm-catalog-actions button{width:auto!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;text-align:center!important}
+@media(max-width:620px){.gm-catalog-card{grid-template-columns:1fr!important}.gm-catalog-actions{grid-template-columns:minmax(80px,110px) 1fr 1fr!important}.gm-catalog-actions input{width:100%}}
 </style>
 
 <style id="raBuildInfoStyle">
@@ -1624,6 +1650,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
           </details>
           <div id="inventoryModeTabs" class="inventory-mode-tabs" aria-label="所持・習得表示切り替え">
             <button type="button" class="ghost active" data-inventory-mode="warehouse">所持品（倉庫）</button>
+            <button type="button" class="ghost" data-inventory-mode="catalog">全アイテム</button>
             <button type="button" class="ghost" data-inventory-mode="learned">習得系</button>
           </div>
           <div id="learnedKindPickerWrap" class="inventory-mode-tabs" aria-label="習得系カテゴリ選択" hidden>
@@ -2068,15 +2095,19 @@ async function setAutoSaveEnabled(enabled){
 }
 
 function autoSaveDraftSoon(section='all'){
-  if(!autoSaveEnabled || !autoSaveReady || currentMode==='view' || !currentCharacter)return;
+  if(!autoSaveReady || currentMode==='view' || !currentCharacter)return;
   const sections=(Array.isArray(section)?section:[section]).filter(Boolean).map(value=>String(value));
   sections.forEach(value=>autoSaveDirtySections.add(value));
   if(autoSaveDirtySections.has('all')) autoSaveDirtySections=new Set(['all']);
-  // 空の予約要求だけでDirty扱いにしない。保存中の重複呼び出しが空予約へ変わっても、
-  // それを新しいフル保存として再発火させない。
+  // 自動保存OFFでも変更区分だけは記録する。手動「保存」でも既存キャラなら
+  // フルJSONではなく差分だけを送れるようにする。
   if(autoSaveDirtySections.size===0)return;
   autoSaveDirty=true;
   clearAutoSaveTimer();
+  if(!autoSaveEnabled){
+    if(!autoSaveBusy)setAutoSaveStatus('未保存の変更があります。','warn');
+    return;
+  }
   if(!autoSaveBusy)setAutoSaveStatus('変更を検出しました。差分自動保存を待機中…','warn');
   autoSaveTimer=setTimeout(()=>{
     autoSaveTimer=null;
@@ -2135,7 +2166,9 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     if(autoSaveDirtySections.size>0)autoSavePending=true;
     return {saved:false,pending:true};
   }
-  const usePatch=automatic&&!force&&autoSaveDirtySections.size>0;
+  // v1.0.51: 既存キャラは自動/手動を問わず、変更区分が分かる限り差分保存を使う。
+  // 新規作成と明示forceだけがDrive全体保存になる。
+  const usePatch=!force&&currentMode!=='new'&&cloudCharacterRowHint>=2&&autoSaveDirtySections.size>0;
   const patch=usePatch?buildAutoSavePatch(autoSaveDirtySections):null;
   const data=usePatch?null:collectData(true);
   const name=usePatch?(Object.prototype.hasOwnProperty.call(patch,'name')?patch.name:currentCharacter?.name):data?.name;
@@ -6155,7 +6188,8 @@ function renderInventoryTabs() {
   if (locationArea) {
     locationArea.innerHTML = INVENTORY_LOCATION_FILTERS.map(v => `<button type="button" class="ghost ${inventoryViewFilter.location === v ? 'active' : ''}" data-inventory-filter="location" data-value="${esc(v)}">${esc(v)}</button>`).join('');
   }
-  const smallCategories = inventorySmallCategories();
+  const catalogSets = inventoryDisplayMode==='catalog' ? gmCatalogCategorySets() : null;
+  const smallCategories = catalogSets ? ['全て', ...INVENTORY_SMALL_CATEGORY_ORDER.filter(v=>catalogSets.small.has(v)), ...[...catalogSets.small].filter(v=>!INVENTORY_SMALL_CATEGORY_ORDER.includes(v)).sort((a,b)=>a.localeCompare(b,'ja',{numeric:true}))] : inventorySmallCategories();
   if (!smallCategories.includes(inventoryViewFilter.itemType)) {
     inventoryViewFilter.itemType = '全て';
     inventoryViewFilter.category = '全て';
@@ -6163,7 +6197,7 @@ function renderInventoryTabs() {
   if (kindArea) {
     kindArea.innerHTML = smallCategories.map(v => `<button type="button" class="ghost ${inventoryViewFilter.itemType === v ? 'active' : ''}" data-inventory-filter="itemType" data-value="${esc(v)}">${esc(v)}</button>`).join('');
   }
-  const internal = inventoryInternalCategories(inventoryViewFilter.itemType);
+  const internal = catalogSets ? (inventoryViewFilter.itemType==='全て' ? [] : ['全て', ...[...(catalogSets.internal.get(inventoryViewFilter.itemType)||new Set())].sort((a,b)=>a.localeCompare(b,'ja',{numeric:true}))]) : inventoryInternalCategories(inventoryViewFilter.itemType);
   if (!internal.includes(inventoryViewFilter.category)) inventoryViewFilter.category = '全て';
   if (categoryRow) categoryRow.hidden = internal.length <= 1;
   if (categoryArea) {
@@ -6193,7 +6227,7 @@ function applyInventoryFilters() {
     const type = inventoryViewFilter.itemType === '全て' ? '全小カテゴリ' : inventoryViewFilter.itemType;
     const category = inventoryViewFilter.category === '全て' ? '' : ` / ${inventoryViewFilter.category}`;
     const searchText = search ? ` / 検索「${search}」` : '';
-    filterStatus.textContent = `倉庫 / ${type}${category}${searchText}：${visible}件表示（全${rows.length}件）`;
+    filterStatus.textContent = `${inventoryDisplayMode==='catalog'?'全アイテム':'倉庫'} / ${type}${category}${searchText}：${visible}件表示（全${rows.length}件）`;
   }
   if ($('inventoryEmptyStatus')) $('inventoryEmptyStatus').style.display = rows.length ? 'none' : '';
 }
@@ -6399,21 +6433,23 @@ function applyLearnedKnowledgeSearch() {
 function updateInventoryModeUi() {
   document.querySelectorAll('#inventoryModeTabs [data-inventory-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.inventoryMode === inventoryDisplayMode));
   const learned = inventoryDisplayMode === 'learned';
+  const catalog = inventoryDisplayMode === 'catalog';
   const label = learnedContentLabel();
   if ($('learnedKindTabs')) $('learnedKindTabs').hidden = true;
   if ($('learnedKindPickerWrap')) $('learnedKindPickerWrap').hidden = !learned;
   if (learned) renderLearnedKindTabs();
-  if ($('inventoryListTitle')) $('inventoryListTitle').textContent = learned ? `習得済み${label}` : '所持品（倉庫）一覧';
+  if ($('inventoryListTitle')) $('inventoryListTitle').textContent = learned ? `習得済み${label}` : (catalog ? '全アイテム一覧' : '所持品（倉庫）一覧');
   if ($('inventoryListHint')) $('inventoryListHint').textContent = learned
     ? `習得済みの${label}だけを表示します。「習得内容を選択」から切り替えられます。`
-    : '倉庫に所持している物を表示します。所持レシピもここで確認できます。';
-  if ($('sortInventoryItemBtn')) $('sortInventoryItemBtn').hidden = learned;
+    : (catalog ? '共通DBのアイテムから数量を指定して、このキャラクター固有の倉庫へ追加します。' : '倉庫に所持している物を表示します。所持レシピもここで確認できます。');
+  if ($('sortInventoryItemBtn')) $('sortInventoryItemBtn').hidden = learned || catalog;
   if ($('inventoryFilterPanel')) $('inventoryFilterPanel').hidden = learned;
   const registration = document.querySelector('.inventory-registration-card');
-  if (registration) registration.hidden = learned;
+  if (registration) registration.hidden = learned || catalog;
 }
 function setInventoryDisplayMode(mode='warehouse') {
-  inventoryDisplayMode = mode === 'learned' ? 'learned' : 'warehouse';
+  inventoryDisplayMode = ['learned','catalog'].includes(mode) ? mode : 'warehouse';
+  inventoryViewFilter.itemType='全て'; inventoryViewFilter.category='全て';
   renderInventory({refreshLinked:false});
 }
 function setLearnedContentType(type='spell') {
@@ -6586,6 +6622,54 @@ function inventoryLinkedRefreshForItems(...items){
   if(bag)renderBagSelect();
   if(quiver)renderQuiverControls();
 }
+function gmCatalogRows(){
+  return gmMasterVirtualRows().slice().sort((a,b)=>String(inventorySmallCategory(a)||'').localeCompare(String(inventorySmallCategory(b)||''),'ja')||String(a.name||'').localeCompare(String(b.name||''),'ja',{numeric:true}));
+}
+function gmCatalogCategorySets(){
+  const small=new Set(), internal=new Map();
+  for(const row of gmCatalogRows()){
+    const s=inventorySmallCategory(row), c=inventoryInternalCategory(row);
+    if(s)small.add(s);
+    if(s&&c){if(!internal.has(s))internal.set(s,new Set());internal.get(s).add(c);}
+  }
+  return {small,internal};
+}
+function gmCatalogCardHtml(item,index){
+  const key=String(inventoryItemKey(item)||item.id||item.masterId||item.publicId||item.name||index);
+  const small=inventorySmallCategory(item)||'その他', category=inventoryInternalCategory(item)||'未分類';
+  const rank=inventoryRankLabel(item)||'—';
+  const meta=[small,category,rank,item.power?`威力 ${item.power}`:'',item.effect||''].filter(Boolean);
+  const search=[item.name,small,category,item.publicId,item.description,item.effect,item.source,item.tags,item.power,item.element].filter(Boolean).join(' ');
+  return `<article class="inventory-card inventory-card-static gm-catalog-card" data-inventory-row="catalog-${index}" data-inventory-location="倉庫" data-inventory-item-type="${esc(small)}" data-inventory-category="${esc(category)}" data-inventory-search="${esc(search)}" data-gm-catalog-key="${esc(key)}"><div class="gm-catalog-main"><div class="gm-catalog-name">${esc(item.name||'名称未設定')}</div><div class="gm-catalog-meta">${esc(meta.slice(0,4).join(' / '))}</div></div><div class="gm-catalog-actions"><input type="number" min="1" max="9999" value="1" inputmode="numeric" aria-label="${esc(item.name||'アイテム')}の追加数" data-gm-catalog-count="${esc(key)}"><button type="button" class="ghost public-view-allowed" data-gm-catalog-detail="${esc(key)}">詳細</button><button type="button" data-gm-catalog-add="${esc(key)}">倉庫へ追加</button></div></article>`;
+}
+function renderGmCatalog(){
+  const area=$('inventoryArea'); if(!area)return;
+  const rows=gmCatalogRows();
+  area.innerHTML=rows.map(gmCatalogCardHtml).join('');
+  if($('inventoryEmptyStatus')){$('inventoryEmptyStatus').textContent='共通DBに表示できるアイテムがありません。';$('inventoryEmptyStatus').style.display=rows.length?'none':'';}
+  renderInventoryTabs(); applyInventoryFilters(); setReadOnly(currentMode==='view');
+}
+function gmCatalogFindByKey(key=''){
+  const raw=String(key||'').trim();
+  return gmMasterVirtualFind(raw,'')||gmCatalogRows().find(row=>String(inventoryItemKey(row)||row.id||row.masterId||row.publicId||row.name||'').trim()===raw)||null;
+}
+function addGmCatalogItemToWarehouse(key='',amount=1){
+  if(currentMode==='view')return;
+  const source=gmCatalogFindByKey(key); if(!source){showToast('追加元のアイテムが見つかりません。','warn');return;}
+  const add=clampInt(amount,1,9999);
+  const masterId=String(source.masterId||source.id||'').trim(), publicId=String(source.publicId||'').trim().toUpperCase(), name=String(source.name||'').trim();
+  let index=(inventoryItemsState||[]).findIndex(raw=>{const row=normalizeInventoryItem(raw||{});return !isAntiqueIndividualItem(row)&&((masterId&&String(row.masterId||'').trim()===masterId)||(publicId&&String(row.publicId||'').trim().toUpperCase()===publicId)||(!masterId&&!publicId&&name&&String(row.name||'').trim()===name));});
+  if(index>=0){inventoryItemsState[index]=mergePublicIdInventoryItem(inventoryItemsState[index],source,add);}else{
+    const localId='inv_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
+    const preset={...source}; delete preset.__gmMasterDirect;
+    inventoryItemsState.push(normalizeInventoryItem({...preset,id:localId,masterId:masterId||String(source.id||'').trim(),count:add,location:'倉庫'}));
+    index=inventoryItemsState.length-1;
+  }
+  invalidateInventoryDerivedCache();
+  inventoryLinkedRefreshForItems(inventoryItemsState[index]); updateSummary();
+  if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon('inventory');
+  showToast(`${name||'アイテム'}を倉庫へ${add}個追加しました。`,'ok');
+}
 function renderInventory({refreshLinked=true}={}) {
   const area=$('inventoryArea');
   if(!area)return;
@@ -6595,6 +6679,7 @@ function renderInventory({refreshLinked=true}={}) {
   const cache=inventoryDerived();
   learnedRecipesState=normalizeLearnedRecipes(learnedRecipesState);
   updateInventoryModeUi();
+  if(inventoryDisplayMode==='catalog'){ renderGmCatalog(); return; }
   if(inventoryDisplayMode==='learned'){
     const rows=learnedContentRows();
     if(learnedContentType==='recipe')area.innerHTML=rows.map(learnedRecipeCardHtml).join('');
@@ -8705,10 +8790,10 @@ async function savePatchItem(id,patch={}){
   if(!auth.playerKey&&!auth.newPlayerKey)throw new Error('クラウド保存にはプレイヤーキーが必要です。');
   const cleanPatch=stripRuntimeOnlyData(patch||{});
   const effectivePlayerKey=auth.newPlayerKey||auth.playerKey;
-  // v90.8.721: 既にブラウザが持つ現在データへpatchを浅く合成し、完成スナップショットも送る。
-  // GAS側はこれを直接Driveへ書くため、通常の差分保存でDriveのread 1回を省略できる。
-  const snapshot=stripRuntimeOnlyData({...(currentCharacter||{}),...cleanPatch,id});
-  const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,snapshot,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint});
+  // v1.0.51: 差分保存なのに毎回送っていたキャラ全体snapshotを廃止。
+  // GAS側はCharactersシートへ累積差分を永続化するため、通常編集ではpatchだけで足りる。
+  const localSnapshot=stripRuntimeOnlyData({...(currentCharacter||{}),...cleanPatch,id});
+  const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint});
   if(saveResult&&saveResult.sentNoCors){
     const verify=await verifyCloudCharacterPatch(id,cleanPatch,effectivePlayerKey);
     cloudCharacterRevision=Number(verify?.revision||cloudCharacterRevision)||0;
@@ -8718,9 +8803,9 @@ async function savePatchItem(id,patch={}){
     cloudCharacterRowHint=Number(saveResult.storageRow||cloudCharacterRowHint)||0;
   }
   if(auth.newPlayerKey){currentCloudPlayerKey=auth.newPlayerKey;if($('playerKey'))$('playerKey').value=auth.newPlayerKey;if($('newPlayerKey'))$('newPlayerKey').value='';if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=auth.newPlayerKey;}
-  characterDataCachePut(effectivePlayerKey,snapshot,cloudCharacterRevision,cloudCharacterRowHint);
+  characterDataCachePut(effectivePlayerKey,localSnapshot,cloudCharacterRevision,cloudCharacterRowHint);
   if(auth.newPlayerKey&&auth.playerKey&&auth.playerKey!==auth.newPlayerKey)characterDataCacheDelete(auth.playerKey,id);
-  return {saved:true,patched:true,acknowledged:!!(saveResult&&saveResult.acknowledged)};
+  return {saved:true,patched:true,stagedPatch:!!saveResult?.stagedPatch,acknowledged:!!(saveResult&&saveResult.acknowledged)};
 }
 
 async function refreshList() {
@@ -9729,7 +9814,9 @@ async function copyShareUrlForListItem(id) {
 
 async function onSave() {
   clearAutoSaveTimer();
-  await saveCharacterNow({automatic:false,force:true});
+  // v1.0.51: 既存キャラの手動保存も、変更区分が分かる限り高速差分保存を使う。
+  // 新規キャラはsaveCharacterNow側で自動的にフル保存へ切り替わる。
+  await saveCharacterNow({automatic:false,force:false});
 }
 
 function bindEvents() {
@@ -9859,6 +9946,10 @@ function bindEvents() {
     if(unlearnBtn){e.preventDefault();e.stopPropagation();unlearnRecipeByKey(unlearnBtn.dataset.unlearnRecipe||'');return;}
     const skillBtn=e.target.closest('[data-skill-remove]');
     if(skillBtn){e.preventDefault();e.stopPropagation();removeSkillFromWarehouse(skillBtn.dataset.skillRemove||'');return;}
+    const catalogDetail=e.target.closest('[data-gm-catalog-detail]');
+    if(catalogDetail){e.preventDefault();e.stopPropagation();const row=gmCatalogFindByKey(catalogDetail.dataset.gmCatalogDetail||'');if(row)openCharacterItemDetail(row,1,-1);return;}
+    const catalogAdd=e.target.closest('[data-gm-catalog-add]');
+    if(catalogAdd){e.preventDefault();e.stopPropagation();const key=catalogAdd.dataset.gmCatalogAdd||'';const input=$('inventoryArea')?.querySelector(`[data-gm-catalog-count="${CSS.escape(key)}"]`);addGmCatalogItemToWarehouse(key,Number(input?.value||1));return;}
     const btn = e.target.closest('[data-inventory-action]'); if (!btn) return;
     e.preventDefault();
     e.stopPropagation();
