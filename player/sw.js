@@ -2,7 +2,7 @@ const APP_VERSION='1.0.52';
 const CACHE=`ra-player-app-v${APP_VERSION}`;
 const PREFIX='ra-player-app-v';
 const APP_FILES=[
-  './','./index.html','./app.css','./app.js','./manifest.webmanifest',
+  './','./index.html','./app.css','./app.js','./ra_startup_overlay.js','./manifest.webmanifest',
   '../assets/common.css','../assets/account.js','../icons/player-app-v4-180.png','../icons/player-app-v4-192.png','../icons/player-app-v4-512.png','../icons/player-app-v4.ico',
   './modules/character/character.html','./modules/facility/facility.html'
 ];
