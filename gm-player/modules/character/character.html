@@ -260,7 +260,7 @@
   .inventory-chip-row button { flex: 0 1 auto; min-height: 34px; padding: 7px 10px; }
   .inventory-chip-row button.active { background: #8f5728; color: #fffaf2; border-color: #8f5728; }
   .inventory-filter-status { margin-top: 8px; font-size: .86rem; color: var(--muted); }
-  .inventory-card.inventory-hidden { display: none; }
+  .inventory-card.inventory-hidden { display: none !important; }
   .inventory-list { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .inventory-card { border: 1px solid rgba(221, 203, 176, .9); background: rgba(255, 253, 248, .78); border-radius: 14px; padding: 12px; }
   .inventory-card > summary { list-style: none; cursor: pointer; }
@@ -710,7 +710,7 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .equipment-upgrade-effect-detail:empty{display:none}
 .copy-toast{position:fixed;right:20px;bottom:20px;z-index:99999;padding:11px 15px;border-radius:12px;background:rgba(36,32,28,.94);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:.16s}.copy-toast.show{opacity:1;transform:translateY(0)}
 
-/* v1.0.51 equipment picker readability */
+/* v1.0.52 equipment picker readability */
 .ra-picker-dialog{width:min(1120px,calc(100vw - 28px))!important;max-height:min(90vh,920px)!important}
 .ra-picker-dialog .ra-picker-shell{max-height:min(90vh,920px)!important;padding:18px!important}
 .ra-picker-dialog .ra-picker-search input{min-height:42px!important;font-size:.96rem!important}
@@ -730,7 +730,7 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .ra-picker-dialog .ra-picker-detail-grid dd{overflow-wrap:anywhere!important}
 @media(max-width:760px){.ra-picker-dialog{width:calc(100vw - 14px)!important}.ra-picker-dialog .ra-picker-shell{padding:10px!important}.ra-picker-dialog .ra-picker-tabs{max-height:150px!important}.ra-picker-dialog .ra-picker-body{grid-template-columns:1fr!important}.ra-picker-dialog .ra-picker-detail{max-height:38vh!important;border-left:0!important;border-top:1px solid var(--line)!important}.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:92px minmax(0,1fr)!important}}
 
-/* v1.0.51 GM all-item catalog */
+/* v1.0.52 GM all-item catalog */
 .gm-catalog-card{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;align-items:center!important}
 .gm-catalog-main{min-width:0}.gm-catalog-name{font-weight:900;color:var(--accent2);font-size:.98rem}.gm-catalog-meta{margin-top:4px;color:var(--muted);font-size:.82rem;line-height:1.45}
 .gm-catalog-actions{display:grid;grid-template-columns:92px auto auto;gap:7px;align-items:center}.gm-catalog-actions input{width:92px;min-height:38px}.gm-catalog-actions button{width:auto!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;text-align:center!important}
@@ -1809,11 +1809,11 @@ let DB_RECIPE_MASTER = [];
 let DB_SKILL_MASTER = [];
 let lastAppliedCharacterSheetMasterRef = null;
 
-/* GM_APP_MASTER_ITEM_DIRECT_V1 */
-const GM_MASTER_ITEM_DIRECT_MODE = true;
+/* GM_ALL_ITEM_CATALOG_V1 */
+const GM_ALL_ITEM_CATALOG_MODE = true;
 let gmMasterVirtualCache = { source:null, rows:[], byLookup:new Map(), byName:new Map() };
 function gmMasterVirtualRows(){
-  if(!GM_MASTER_ITEM_DIRECT_MODE)return [];
+  if(!GM_ALL_ITEM_CATALOG_MODE)return [];
   const source=DB_INITIAL_ITEM_MASTER||[];
   if(gmMasterVirtualCache.source===source)return gmMasterVirtualCache.rows;
   const rows=[];const byLookup=new Map(),byName=new Map();const seen=new Set();
@@ -1826,7 +1826,7 @@ function gmMasterVirtualRows(){
       if(!identity||seen.has(identity))continue;seen.add(identity);
       const maxStack=Math.max(1,Number(raw?.maxStack||item?.spellSlots||99)||99);
       const row=normalizeInventoryItem({...item,count:Math.max(9999,maxStack)});
-      row.__gmMasterDirect=true;
+      row.__gmCatalog=true;
       rows.push(row);
       for(const value of [inventoryItemKey(row),row.id,row.masterId,String(row.publicId||'').trim().toUpperCase()]){const key=String(value||'').trim();if(key&&!byLookup.has(key))byLookup.set(key,row);}
       const name=String(row.name||'').trim();if(name&&!byName.has(name))byName.set(name,row);
@@ -2166,7 +2166,7 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     if(autoSaveDirtySections.size>0)autoSavePending=true;
     return {saved:false,pending:true};
   }
-  // v1.0.51: 既存キャラは自動/手動を問わず、変更区分が分かる限り差分保存を使う。
+  // v1.0.52: 既存キャラは自動/手動を問わず、変更区分が分かる限り差分保存を使う。
   // 新規作成と明示forceだけがDrive全体保存になる。
   const usePatch=!force&&currentMode!=='new'&&cloudCharacterRowHint>=2&&autoSaveDirtySections.size>0;
   const patch=usePatch?buildAutoSavePatch(autoSaveDirtySections):null;
@@ -3813,7 +3813,7 @@ function specialUpgradeTargetTokensForSlot(slotKey=''){
   const type=normalizeEquipmentType(item?.itemCategory||item?.category||$('equip_'+slotKey+'_type')?.value||'なし');
   const kind=String(item?.kind||'').trim();
   const tokens=new Set();
-  if(['盾','大盾'].includes(type)||String(item?.itemType||'')==='盾')tokens.add('盾');
+  if(['盾','大盾'].includes(type)||String(item?.itemType||'')==='盾'){tokens.add('防具');tokens.add('盾');}
   else if(kind==='防具'||slotKey==='armor')tokens.add('防具');
   else if(kind==='装飾品'||/^accessory/.test(slotKey))return tokens;
   else if(spellContainerKind(type)){
@@ -4941,7 +4941,7 @@ function inventoryDerived(){
     if(inventoryItemsState[index]!==normalized) inventoryItemsState[index]=normalized;
     return normalized;
   });
-  const virtualRows=gmMasterVirtualRows();
+  const virtualRows=gmMasterVirtualRows(); // 「全アイテム」カタログ専用。装備・倉庫候補には混ぜない。
   const indexByLookup=new Map(), rowByLookup=new Map(), rowByName=new Map();
   const equipmentRows=[], equipmentBySlotKind={hand:[],armor:[],accessory:[],carry:[]};
   const equipmentByKey=new Map(), equipmentByName=new Map();
@@ -4986,11 +4986,7 @@ function inventoryDerived(){
       }
     }
   });
-  // GM版では共通DBアイテムを仮想倉庫として候補へ追加する。保存データには混ぜない。
-  for(const row of virtualRows){
-    const key=inventoryItemKey(row);if(key&&rowByLookup.has(key))continue; // キャラ固有登録品を優先
-    addCandidateRow(row,-1,{actual:false});
-  }
+  // 共通DBは「全アイテム」タブから倉庫へ追加した後にだけ、装備・バッグ・矢筒・矢弾候補になる。
   inventoryDerivedCache={
     revision:inventoryStateRevision,masterSource:DB_INITIAL_ITEM_MASTER, rows, virtualRows, warehouseRows, warehouseCount:warehouseRows.length,
     indexByLookup,rowByLookup,rowByName,equipmentRows,equipmentBySlotKind,equipmentByKey,equipmentByName,
@@ -5459,12 +5455,9 @@ function warehouseItemIndex(itemId='', itemName='') {
 }
 function warehouseItemByKey(itemId='', itemName='') {
   const index = warehouseItemIndex(itemId, itemName);
-  if(index >= 0) return inventoryItemsState[index];
-  return gmMasterVirtualFind(itemId,itemName);
+  return index >= 0 ? inventoryItemsState[index] : null;
 }
 function adjustWarehouseItemCount(itemId='', delta=0, itemName='') {
-  // 共通DB直参照アイテムは全キャラ共通・登録不要のため、倉庫在庫を増減させない。
-  if(gmMasterVirtualFind(itemId,itemName))return true;
   const index = warehouseItemIndex(itemId, itemName);
   if (index < 0) return false;
   const row = inventoryItemsState[index];
@@ -5696,12 +5689,10 @@ function parseNamedProcessingMaterials(text=''){
 }
 function inventoryCountByName(name=''){
   const target=String(name||'').trim();
-  if(gmMasterVirtualHasName(target))return 9999;
   return (inventoryItemsState||[]).reduce((sum,raw)=>sum+(String(raw?.name||'').trim()===target?Math.max(0,Number(raw.count||0)):0),0);
 }
 function consumeInventoryByName(name='',amount=0){
   let remain=Math.max(0,Number(amount)||0),target=String(name||'').trim();
-  if(gmMasterVirtualHasName(target))return true;
   for(let i=0;i<inventoryItemsState.length&&remain>0;i++){
     const raw=inventoryItemsState[i];if(String(raw?.name||'').trim()!==target)continue;
     const have=Math.max(0,Number(raw.count||0)),take=Math.min(have,remain);if(!take)continue;
@@ -5758,7 +5749,7 @@ function renderQuiverControls() {
   const cap = selectedQuiverCapacity();
   const q = selectedQuiverItem();
   if (!q || cap <= 0) {
-    status.textContent = '共通DBまたは倉庫から矢筒を装備してください。';
+    status.textContent = '倉庫から矢筒を装備してください。';
     area.innerHTML = '';
     return;
   }
@@ -5774,7 +5765,7 @@ function renderQuiverControls() {
     }) || null;
     const options = ammo.map(a => {
       const id = inventoryItemKey(a);
-      return `<option value="${esc(id)}" ${id === selectedId ? 'selected' : ''}>${esc(a.name)} / ${a.__gmMasterDirect?'共通DB':`倉庫${esc(a.count)}`}</option>`;
+      return `<option value="${esc(id)}" ${id === selectedId ? 'selected' : ''}>${esc(a.name)} / 倉庫${esc(a.count)}</option>`;
     }).join('');
     const count = state?.count || 1;
     const maxStack = state?.maxStack || 99;
@@ -6450,6 +6441,7 @@ function updateInventoryModeUi() {
 function setInventoryDisplayMode(mode='warehouse') {
   inventoryDisplayMode = ['learned','catalog'].includes(mode) ? mode : 'warehouse';
   inventoryViewFilter.itemType='全て'; inventoryViewFilter.category='全て';
+  if(inventoryDisplayMode==='catalog') inventoryViewFilter.location='全て';
   renderInventory({refreshLinked:false});
 }
 function setLearnedContentType(type='spell') {
@@ -6661,7 +6653,7 @@ function addGmCatalogItemToWarehouse(key='',amount=1){
   let index=(inventoryItemsState||[]).findIndex(raw=>{const row=normalizeInventoryItem(raw||{});return !isAntiqueIndividualItem(row)&&((masterId&&String(row.masterId||'').trim()===masterId)||(publicId&&String(row.publicId||'').trim().toUpperCase()===publicId)||(!masterId&&!publicId&&name&&String(row.name||'').trim()===name));});
   if(index>=0){inventoryItemsState[index]=mergePublicIdInventoryItem(inventoryItemsState[index],source,add);}else{
     const localId='inv_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
-    const preset={...source}; delete preset.__gmMasterDirect;
+    const preset={...source}; delete preset.__gmCatalog;
     inventoryItemsState.push(normalizeInventoryItem({...preset,id:localId,masterId:masterId||String(source.id||'').trim(),count:add,location:'倉庫'}));
     index=inventoryItemsState.length-1;
   }
@@ -8349,7 +8341,7 @@ function refreshEquipmentItemSelects({slotKinds=null,slotKeys=null}={}) {
       const key = inventoryItemKey(row);
       const duplicateSlot = slot.kind!=='carry' ? duplicateRestrictedEquipmentOtherSlot(slot.key,row) : null;
       const multi=(nameCounts.get(String(row.name||'').trim())||0)>1;const individual=isAntiqueIndividualItem(row)||multi;const instance=individual?inventoryIndividualShortId(row):'';const individualStats=individual?[row.power?`威力:${row.power}`:'',row.defense?`防御:${row.defense}`:'',row.guard?`防御行動:${row.guard}`:'',`${isAntiqueIndividualItem(row)?'固定枠':'枠'}:${equipmentUpgradeUsedSlots(parseUpgradeLines(row.upgradeEntries||row.upgradeLines||''))}/${resolvedEquipmentUpgradeLimit(row)||0}`,antiqueIndividualEnhancementSummary(row)].filter(Boolean).join(' / '):'';
-      const sourceLabel=row.__gmMasterDirect?'共通DB':(slot.kind === 'carry' ? '倉庫:' + row.count : '');
+      const sourceLabel=slot.kind === 'carry' ? '倉庫:' + row.count : '';
       const label = [row.name,instance,row.kind,row.category,sourceLabel,row.element ? '属性:' + row.element : '',individualStats,duplicateSlot ? `${duplicateSlot.name}に装備中` : ''].filter(Boolean).join(' / ');
       return `<option value="${esc(key)}"${duplicateSlot?' disabled':''}>${esc(label)}</option>`;
     }));
@@ -8790,7 +8782,7 @@ async function savePatchItem(id,patch={}){
   if(!auth.playerKey&&!auth.newPlayerKey)throw new Error('クラウド保存にはプレイヤーキーが必要です。');
   const cleanPatch=stripRuntimeOnlyData(patch||{});
   const effectivePlayerKey=auth.newPlayerKey||auth.playerKey;
-  // v1.0.51: 差分保存なのに毎回送っていたキャラ全体snapshotを廃止。
+  // v1.0.52: 差分保存なのに毎回送っていたキャラ全体snapshotを廃止。
   // GAS側はCharactersシートへ累積差分を永続化するため、通常編集ではpatchだけで足りる。
   const localSnapshot=stripRuntimeOnlyData({...(currentCharacter||{}),...cleanPatch,id});
   const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint});
@@ -9814,7 +9806,7 @@ async function copyShareUrlForListItem(id) {
 
 async function onSave() {
   clearAutoSaveTimer();
-  // v1.0.51: 既存キャラの手動保存も、変更区分が分かる限り高速差分保存を使う。
+  // v1.0.52: 既存キャラの手動保存も、変更区分が分かる限り高速差分保存を使う。
   // 新規キャラはsaveCharacterNow側で自動的にフル保存へ切り替わる。
   await saveCharacterNow({automatic:false,force:false});
 }
