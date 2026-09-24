@@ -14,7 +14,7 @@ fetch(url.toString(),{cache:'no-store'})
 .catch(err=>{
  console.error('[RA App 1.0.53] app bootstrap failed',err);
  const auth=document.querySelector('#authError');
- const app=document.querySelector('#playerApp');
+ const app=document.querySelector('#playerApp')||document.querySelector('#gmApp');
  if(app)app.classList.add('hidden');
  if(auth){
    auth.classList.remove('hidden');
