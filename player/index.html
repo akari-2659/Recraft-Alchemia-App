@@ -6,7 +6,7 @@
   <link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
   <meta name="theme-color" content="#30231c"><meta name="application-name" content="Recraft Alchemia Player">
   <title>Recraft Alchemia - Player</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.0.54"><link rel="icon" href="../icons/player-app-v4.ico?rev=4" sizes="any"><link rel="icon" href="../icons/player-app-v4-192.png?rev=4" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v4-180.png?rev=4"><meta name="msapplication-TileImage" content="../icons/player-app-v4-512.png?rev=4">
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.55"><link rel="icon" href="../icons/player-app-v4.ico?rev=4" sizes="any"><link rel="icon" href="../icons/player-app-v4-192.png?rev=4" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v4-180.png?rev=4"><meta name="msapplication-TileImage" content="../icons/player-app-v4-512.png?rev=4">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -36,7 +36,7 @@
       <label for="themeColorSelect">カラーテーマ</label>
       <select id="themeColorSelect" aria-label="カラーテーマ"><option value="red">レッド</option><option value="blue">ブルー</option><option value="green">グリーン</option><option value="purple">パープル</option><option value="orange">オレンジ</option><option value="yellow">イエロー</option><option value="pink">ピンク</option><option value="cyan">シアン</option><option value="navy">ネイビー</option><option value="brown">ブラウン</option></select><button class="account-key-button" type="button" data-open-account-key>プレイヤーキー変更</button>
     </div>
-    <div class="side-footer">Based on RA v90.8.809<br><span class="player-app-version">App v<span id="playerCurrentVersion">1.0.54</span>・<span id="playerVersionState">更新確認中</span></span></div>
+    <div class="side-footer">Based on RA v90.8.809<br><span class="player-app-version">App v<span id="playerCurrentVersion">1.0.55</span>・<span id="playerVersionState">更新確認中</span></span></div>
   </aside>
 
   <div id="backdrop" class="drawer-backdrop"></div>
@@ -80,7 +80,7 @@
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
           <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="character">再読み込み</button></div></div>
-          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=1.0.54"></iframe>
+          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=1.0.55"></iframe>
         </div>
       </section>
 
@@ -94,12 +94,12 @@
         </div>
         <div class="module-frame-wrap" data-loading-for="facility">
           <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="facility">再読み込み</button></div></div>
-          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1&appv=1.0.54"></iframe>
+          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1&appv=1.0.55"></iframe>
         </div>
       </section>
     </main>
   </div>
 </div>
-<script src="../assets/account.js?v=1.0.54"></script><script src="ra_startup_overlay.js?v=1.0.54"></script><script src="app.js?v=1.0.54"></script>
+<script src="../assets/account.js?v=1.0.55"></script><script src="ra_startup_overlay.js?v=1.0.55"></script><script src="app.js?v=1.0.55"></script>
 <dialog id="accountKeyDialog" class="account-key-dialog"><form method="dialog" class="account-key-card"><div class="account-key-head"><div><div class="eyebrow">ACCOUNT</div><h2>プレイヤーキー変更</h2></div><button type="button" class="btn ghost" data-close-account-key>閉じる</button></div><p class="note">未使用のキーなら現在の紐づけを新しいキーへ移行します。すでに登録済みのキーなら、そのアカウントへログインし直します。</p><div class="field"><label>現在のプレイヤーキー</label><div id="currentLoginPlayerKey" class="account-key-current">-</div></div><div class="field"><label for="newLoginPlayerKey">新しいプレイヤーキー</label><input id="newLoginPlayerKey" class="input" autocomplete="off" placeholder="新しいプレイヤーキー"></div><div id="accountKeyStatus" class="account-key-status" aria-live="polite"></div><div class="account-key-actions"><button type="button" class="btn primary" id="changeLoginPlayerKeyBtn">変更する</button></div></form></dialog></body>
 </html>

@@ -286,6 +286,25 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
   }
 
 
+  const STARTUP_APP_VERSION = '1.0.55';
+  const STARTUP_SESSION_KEY = `ra-startup-shown:${location.pathname}`;
+  const LAST_RUN_VERSION_KEY = location.pathname.includes('/gm-player/')
+    ? 'ra-gm-player-app-last-run-version'
+    : 'ra-player-app-last-run-version';
+
+  let lastRunVersionAtLoad = '';
+  try { lastRunVersionAtLoad = localStorage.getItem(LAST_RUN_VERSION_KEY) || ''; } catch (_) {}
+  const isVersionTransition = !!lastRunVersionAtLoad && lastRunVersionAtLoad !== STARTUP_APP_VERSION;
+
+  function startupAlreadyShown() {
+    try { return sessionStorage.getItem(STARTUP_SESSION_KEY) === '1'; }
+    catch (_) { return false; }
+  }
+
+  function markStartupShown() {
+    try { sessionStorage.setItem(STARTUP_SESSION_KEY, '1'); } catch (_) {}
+  }
+
   let autoStarted = false;
   let autoObserver = null;
 
@@ -310,6 +329,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     if (app.classList.contains('hidden')) return;
 
     autoStarted = true;
+    markStartupShown();
     try {
       await play();
     } finally {
@@ -322,6 +342,14 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     const app = document.querySelector('#playerApp');
     const authError = document.querySelector('#authError');
     if (!app || !authError) return;
+
+    // A normal reload, Service Worker update reload, or version transition must not
+    // replay the startup sequence during the same app launch session.
+    if (startupAlreadyShown() || isVersionTransition) {
+      markStartupShown();
+      disarmPlayer();
+      return;
+    }
 
     // Prevent the Player UI from flashing for one frame before the overlay appears.
     document.body.classList.add('ra-su-armed');

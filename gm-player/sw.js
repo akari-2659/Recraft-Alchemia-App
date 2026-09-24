@@ -1,4 +1,4 @@
-const APP_VERSION='1.0.54';
+const APP_VERSION='1.0.55';
 const CACHE=`ra-gm-player-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-player-app-v';
 const APP_FILES=[
@@ -11,21 +11,7 @@ self.addEventListener('activate',event=>{event.waitUntil(Promise.all([caches.key
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting();});
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
-  const url=new URL(event.request.url);
-  if(url.origin!==location.origin)return;
+  const url=new URL(event.request.url);if(url.origin!==location.origin)return;
   if(url.pathname.endsWith('/gm-player/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
-  event.respondWith((async()=>{
-    const cache=await caches.open(CACHE);
-    const cached=await cache.match(event.request,{ignoreSearch:true});
-    if(cached)return cached;
-    try{
-      const response=await fetch(event.request);
-      if(response.ok)cache.put(event.request,response.clone());
-      return response;
-    }catch(error){
-      const fallback=await caches.match(event.request,{ignoreSearch:true});
-      if(fallback)return fallback;
-      throw error;
-    }
-  })());
+  event.respondWith((async()=>{const cache=await caches.open(CACHE);const cached=await cache.match(event.request,{ignoreSearch:true});if(cached)return cached;try{const response=await fetch(event.request);if(response.ok)cache.put(event.request,response.clone());return response;}catch(error){const fallback=await caches.match(event.request,{ignoreSearch:true});if(fallback)return fallback;throw error;}})());
 });
