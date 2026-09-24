@@ -1,9 +1,9 @@
-const APP_VERSION='1.0.55';
+const APP_VERSION='1.0.56';
 const CACHE=`ra-gm-player-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-player-app-v';
 const APP_FILES=[
   './','./index.html','./app.js','./ra_startup_overlay.js','./manifest.webmanifest',
-  '../player/app.css','../assets/common.css','../assets/account.js','../icons/player-app-v4-180.png','../icons/player-app-v4-192.png','../icons/player-app-v4-512.png','../icons/player-app-v4.ico',
+  '../player/app.css','../assets/common.css','../assets/account.js','../assets/ra_magic_loader.js','../icons/player-app-v4-180.png','../icons/player-app-v4-192.png','../icons/player-app-v4-512.png','../icons/player-app-v4.ico',
   './modules/character/character.html','./modules/facility/facility.html'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_FILES.map(path=>new Request(path,{cache:'reload'})))));});

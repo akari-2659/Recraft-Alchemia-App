@@ -17,7 +17,7 @@
   const LATIN_POOL = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
   const RA_POOL = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
-  let startup, decodeArea, translationArea, statusLabel;
+  let startup, decodeArea, translationArea, statusLabel, magicLoaderHost, magicLoaderController;
   let timers = [];
   let currentResolver = null;
 
@@ -55,13 +55,8 @@
 .ra-su-jp-layer svg,.ra-su-en-layer svg{width:100%;height:100%;display:block}
 .ra-su-jp-slot.scrambling .ra-su-jp-layer,.ra-su-en-slot.scrambling .ra-su-en-layer{animation:ra-su-flicker .07s linear infinite alternate}
 .ra-su-jp-slot.locked .ra-su-jp-layer,.ra-su-en-slot.locked .ra-su-en-layer{animation:ra-su-lockIn .22s ease}
-.ra-su-analysis-rail{width:min(72vw,500px);height:1px;margin:35px auto 0;background:rgba(255,255,255,.08);position:relative;overflow:hidden}
-.ra-su-analysis-rail::after{content:"";position:absolute;inset:0;transform-origin:left;transform:scaleX(0);background:rgba(223,196,160,.58);transition:transform .36s ease}
-.ra-su-overlay[data-progress="1"] .ra-su-analysis-rail::after{transform:scaleX(.17)}
-.ra-su-overlay[data-progress="2"] .ra-su-analysis-rail::after{transform:scaleX(.62)}
-.ra-su-overlay[data-progress="3"] .ra-su-analysis-rail::after{transform:scaleX(.82)}
-.ra-su-overlay[data-progress="4"] .ra-su-analysis-rail::after{transform:scaleX(1)}
 
+.ra-su-magic-loader{margin:30px auto 0;color:#d8bea0}
 body.ra-su-armed #playerApp{visibility:hidden!important}
 @media(max-width:520px){.ra-su-stage{min-height:390px;padding-inline:6px}.ra-su-decode-area,.ra-su-translation-area{gap:18px}.ra-su-char-slot{height:52px}.ra-su-jp-slot,.ra-su-en-slot{height:38px}.ra-su-status-row{gap:10px}}
 `;
@@ -70,7 +65,18 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
 
   function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
-  function setProgress(n) { startup.dataset.progress = String(n); }
+  function setProgress(n) {
+    startup.dataset.progress = String(n);
+    const steps=[
+      {p:6,phase:'Data Scan'},
+      {p:24,phase:'Data Scan'},
+      {p:52,phase:'Decode'},
+      {p:78,phase:'Sync'},
+      {p:100,phase:'Ready'}
+    ];
+    const step=steps[Math.max(0,Math.min(4,Number(n)||0))];
+    magicLoaderController?.setProgress(step.p,step.phase);
+  }
 
   function ensureRoot() {
     ensureStyle();
@@ -86,7 +92,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       <div id="raSuDecodeArea" class="ra-su-decode-area"></div>
       <div id="raSuTranslationArea" class="ra-su-translation-area"></div>
     </div>
-    <div class="ra-su-analysis-rail"></div>
+    <div id="raSuMagicLoader" class="ra-su-magic-loader"></div>
   </div></div>
 </div>`;
       document.body.appendChild(root);
@@ -95,6 +101,8 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     decodeArea = root.querySelector('#raSuDecodeArea');
     translationArea = root.querySelector('#raSuTranslationArea');
     statusLabel = root.querySelector('#raSuStatusLabel');
+    magicLoaderHost = root.querySelector('#raSuMagicLoader');
+    magicLoaderController = window.RAMagicLoader?.mount(magicLoaderHost,{large:true,auto:false,label:'Now Loading'}) || null;
     startup.onpointerdown = skip;
     return root;
   }
@@ -223,7 +231,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     clearTimers();
     const root = document.getElementById(ROOT_ID);
     if (root) root.remove();
-    startup = decodeArea = translationArea = statusLabel = null;
+    startup = decodeArea = translationArea = statusLabel = magicLoaderHost = magicLoaderController = null;
   }
 
   function finish() {
@@ -251,7 +259,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       setGlyph(slot, kind === 'latin' ? VECTORS.latin[t] : VECTORS.jp[t]);
       slot.classList.add('locked');
     });
-    statusLabel.textContent = 'SYSTEM STATUS';
+    statusLabel.textContent = 'READY';
     setProgress(4);
     later(250, finish);
   }
@@ -266,16 +274,16 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
 
     return new Promise((resolve) => {
       currentResolver = resolve;
-      later(600, () => { statusLabel.textContent = 'CHARACTER ANALYSIS'; setProgress(1); });
+      later(600, () => { statusLabel.textContent = 'SCRIPT SCAN'; setProgress(1); });
       later(1300, () => {
-        statusLabel.textContent = 'DECODING';
+        statusLabel.textContent = 'DECODE';
         setProgress(2);
         const englishTime = decodeToEnglish();
         later(englishTime + 850, () => {
-          statusLabel.textContent = 'MEANING ANALYSIS';
+          statusLabel.textContent = 'DATA SYNC';
           setProgress(3);
           later(650, () => {
-            statusLabel.textContent = 'SYSTEM STATUS';
+            statusLabel.textContent = 'READY';
             setProgress(4);
             const statusTime = translateToStatuses();
             later(statusTime + 1000, finish);
@@ -286,7 +294,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
   }
 
 
-  const STARTUP_APP_VERSION = '1.0.55';
+  const STARTUP_APP_VERSION = '1.0.56';
   const STARTUP_SESSION_KEY = `ra-startup-shown:${location.pathname}`;
   const LAST_RUN_VERSION_KEY = location.pathname.includes('/gm-player/')
     ? 'ra-gm-player-app-last-run-version'
