@@ -17,7 +17,7 @@
   const LATIN_POOL = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
   const RA_POOL = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
-  let startup, decodeArea, translationArea, statusLabel, magicLoaderHost, magicLoaderController;
+  let startup, decodeArea, translationArea, statusLabel;
   let timers = [];
   let currentResolver = null;
 
@@ -57,7 +57,6 @@
 .ra-su-jp-slot.scrambling .ra-su-jp-layer,.ra-su-en-slot.scrambling .ra-su-en-layer{animation:ra-su-flicker .07s linear infinite alternate}
 .ra-su-jp-slot.locked .ra-su-jp-layer,.ra-su-en-slot.locked .ra-su-en-layer{animation:ra-su-lockIn .22s ease}
 
-.ra-su-magic-loader{margin:30px auto 0;color:#d8bea0}
 body.ra-su-armed #playerApp{visibility:hidden!important}
 @media(max-width:520px){.ra-su-stage{min-height:390px;padding-inline:6px}.ra-su-decode-area,.ra-su-translation-area{gap:18px}.ra-su-char-slot{height:52px}.ra-su-jp-slot,.ra-su-en-slot{height:38px}.ra-su-status-row{gap:10px}}
 `;
@@ -66,18 +65,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
 
   function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
-  function setProgress(n) {
-    startup.dataset.progress = String(n);
-    const steps=[
-      {p:6,phase:'Data Scan'},
-      {p:24,phase:'Data Scan'},
-      {p:52,phase:'Decode'},
-      {p:78,phase:'Sync'},
-      {p:100,phase:'Ready'}
-    ];
-    const step=steps[Math.max(0,Math.min(4,Number(n)||0))];
-    magicLoaderController?.setProgress(step.p,step.phase);
-  }
+  function setProgress(n) { startup.dataset.progress = String(n); }
 
   function ensureRoot() {
     ensureStyle();
@@ -93,7 +81,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       <div id="raSuDecodeArea" class="ra-su-decode-area"></div>
       <div id="raSuTranslationArea" class="ra-su-translation-area"></div>
     </div>
-    <div id="raSuMagicLoader" class="ra-su-magic-loader"></div>
+    
   </div></div>
 </div>`;
       document.body.appendChild(root);
@@ -102,8 +90,6 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     decodeArea = root.querySelector('#raSuDecodeArea');
     translationArea = root.querySelector('#raSuTranslationArea');
     statusLabel = root.querySelector('#raSuStatusLabel');
-    magicLoaderHost = root.querySelector('#raSuMagicLoader');
-    magicLoaderController = window.RAMagicLoader?.mount(magicLoaderHost,{large:true,auto:false,label:'Now Loading'}) || null;
     startup.onpointerdown = skip;
     return root;
   }
@@ -236,7 +222,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     clearTimers();
     const root = document.getElementById(ROOT_ID);
     if (root) root.remove();
-    startup = decodeArea = translationArea = statusLabel = magicLoaderHost = magicLoaderController = null;
+    startup = decodeArea = translationArea = statusLabel = null;
   }
 
   function finish() {
@@ -299,7 +285,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
   }
 
 
-  const STARTUP_APP_VERSION = '1.0.59';
+  const STARTUP_APP_VERSION = '1.0.60';
   const STARTUP_SESSION_KEY = `ra-startup-shown:${location.pathname}`;
   const LAST_RUN_VERSION_KEY = location.pathname.includes('/gm-player/')
     ? 'ra-gm-player-app-last-run-version'
