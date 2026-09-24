@@ -10,33 +10,30 @@
     const s=document.createElement('style');
     s.id=STYLE_ID;
     s.textContent=`
-.ra-ml-host{width:min(72vw,430px);display:grid;gap:10px;place-items:center;color:var(--accent,#d9c0a2);margin-inline:auto}
-.ra-ml-host.ra-ml-large{width:min(82vw,620px);gap:14px}
-.ra-ml-runes{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.45vw,5px);min-height:24px;color:color-mix(in srgb,currentColor 82%,#fff 18%);filter:drop-shadow(0 0 5px color-mix(in srgb,currentColor 18%,transparent))}
-.ra-ml-host.ra-ml-large .ra-ml-runes{min-height:34px;gap:clamp(3px,.55vw,7px)}
-.ra-ml-english{font:500 13px/1.2 "Times New Roman",Times,serif;letter-spacing:.16em;color:color-mix(in srgb,currentColor 74%,#fff 26%);text-align:center;text-shadow:0 0 8px color-mix(in srgb,currentColor 18%,transparent)}
-.ra-ml-english.ra-ml-phase-text{font-size:11px;letter-spacing:.14em;opacity:.72}
-.ra-ml-host.ra-ml-large .ra-ml-english{font-size:16px;letter-spacing:.19em}
-.ra-ml-host.ra-ml-large .ra-ml-english.ra-ml-phase-text{font-size:12px}
+.ra-ml-host{width:min(74vw,520px);display:grid;gap:10px;place-items:center;color:var(--accent,#d9c0a2);margin-inline:auto}
+.ra-ml-text-stage{position:relative;display:grid;place-items:center;min-height:34px;width:100%;overflow:visible}
+.ra-ml-runes,.ra-ml-english{grid-area:1/1;transition:opacity .34s ease,filter .34s ease,transform .34s ease}
+.ra-ml-runes{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.45vw,5px);min-height:28px;color:color-mix(in srgb,currentColor 82%,#fff 18%);filter:drop-shadow(0 0 6px color-mix(in srgb,currentColor 26%,transparent));opacity:1}
+.ra-ml-english{font:500 15px/1.2 "Times New Roman",Times,serif;letter-spacing:.18em;color:color-mix(in srgb,currentColor 82%,#fff 18%);text-align:center;text-shadow:0 0 8px color-mix(in srgb,currentColor 22%,transparent);opacity:0}
+.ra-ml-text-stage.show-english .ra-ml-runes{opacity:0;filter:blur(2px);transform:scale(.985)}
+.ra-ml-text-stage.show-english .ra-ml-english{opacity:1}
 .ra-ml-glyph{width:18px;height:25px;display:grid;place-items:center;flex:0 0 auto}
-.ra-ml-large .ra-ml-glyph{width:24px;height:34px}
 .ra-ml-glyph svg{width:100%;height:100%;display:block}
 .ra-ml-space{width:10px;flex:0 0 auto}
-.ra-ml-large .ra-ml-space{width:14px}
-.ra-ml-phase{opacity:.58}
-.ra-ml-circuit{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 7px color-mix(in srgb,currentColor 18%,transparent))}
-.ra-ml-track{fill:none;stroke:color-mix(in srgb,currentColor 18%,transparent);stroke-width:2;vector-effect:non-scaling-stroke}
-.ra-ml-track.ra-ml-main{stroke-width:2.5}
-.ra-ml-flow{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.88}
-.ra-ml-flow.ra-ml-main{stroke-width:3}
-.ra-ml-active-group{clip-path:var(--ra-ml-clip)}
-.ra-ml-reveal-rect{transition:width .34s cubic-bezier(.2,.7,.2,1)}
-.ra-ml-pulse{fill:none;stroke:color-mix(in srgb,currentColor 72%,#fff 28%);stroke-width:1.4;stroke-dasharray:2 12;stroke-linecap:round;opacity:.5;animation:ra-ml-pulse 1.35s linear infinite}
-@keyframes ra-ml-pulse{to{stroke-dashoffset:-28}}
-.ra-ml-node{fill:currentColor;stroke:currentColor;stroke-width:1.4;filter:drop-shadow(0 0 5px currentColor)}
+.ra-ml-circuit{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 8px color-mix(in srgb,currentColor 16%,transparent))}
+.ra-ml-track{fill:none;stroke:color-mix(in srgb,currentColor 16%,transparent);stroke-width:1.8;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.ra-ml-track.ra-ml-main{stroke-width:2.3}
+.ra-ml-flow{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.78}
+.ra-ml-flow.ra-ml-main{stroke-width:2.8}
+.ra-ml-lit-group{clip-path:var(--ra-ml-lit-clip)}
+.ra-ml-head-group{clip-path:var(--ra-ml-head-clip);filter:drop-shadow(0 0 7px currentColor)}
+.ra-ml-head{fill:none;stroke:color-mix(in srgb,currentColor 68%,#fff 32%);stroke-width:3.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.95}
+.ra-ml-head-main{stroke-width:3.6}
+.ra-ml-nodes circle{fill:currentColor;stroke:currentColor;stroke-width:1.2;filter:drop-shadow(0 0 5px currentColor)}
+.ra-ml-lit-rect,.ra-ml-head-rect{transition:x .30s cubic-bezier(.2,.7,.2,1),width .30s cubic-bezier(.2,.7,.2,1)}
+.ra-ml-phase-line{font:500 11px/1.2 "Times New Roman",Times,serif;letter-spacing:.15em;opacity:.6;text-align:center;min-height:14px}
 .ra-ml-host.ready{color:color-mix(in srgb,var(--accent,#d9c0a2) 78%,#fff 22%)}
-.ra-ml-host.error{color:var(--bad,#a64e4e);filter:none}
-.ra-ml-host.error .ra-ml-pulse{animation:none;opacity:.15}
+.ra-ml-host.error{color:var(--bad,#a64e4e)}
 .frame-loading .loading-spinner,.character-nav-status.loading .mini-spinner{display:none!important}
 .module-frame-wrap:not(.load-error) .frame-loading-text{display:none!important}
 .module-frame-wrap.load-error .frame-loading-text{display:block!important;margin-top:8px}
@@ -68,48 +65,60 @@
   }
 
   const circuit=`
-<svg class="ra-ml-circuit" viewBox="0 0 640 104" aria-hidden="true">
+<svg class="ra-ml-circuit" viewBox="0 0 700 126" aria-hidden="true">
   <defs>
-    <clipPath id="ra-ml-reveal-${Math.random().toString(36).slice(2)}" class="ra-ml-reveal-clip">
-      <rect class="ra-ml-reveal-rect" x="0" y="0" width="0" height="104"></rect>
+    <clipPath class="ra-ml-lit-clip">
+      <rect class="ra-ml-lit-rect" x="26" y="0" width="0" height="126"></rect>
+    </clipPath>
+    <clipPath class="ra-ml-head-clip">
+      <rect class="ra-ml-head-rect" x="26" y="0" width="0" height="126"></rect>
     </clipPath>
   </defs>
 
-  <!-- Base circuit: all branches are continuous from left edge to right edge. -->
   <g class="ra-ml-track">
     <path class="ra-ml-track ra-ml-main"
-      d="M18 52H112L150 26H248L286 52H354L392 78H490L528 52H622"/>
+      d="M26 63H102L136 31H214L248 63H302L338 95H424L460 63H512L548 31H622L658 63H674"/>
     <path
-      d="M18 52H96L138 82H232L276 52H366L410 22H504L546 52H622"/>
+      d="M26 63H84L122 97H202L240 63H318L356 29H444L482 63H528L566 97H640L674 63"/>
     <path
-      d="M18 52H126L164 18H224L262 52H378L416 86H476L514 52H622"/>
+      d="M26 63H116L150 45H234L268 63H432L466 45H550L584 63H674"/>
     <path
-      d="M18 52H82L122 34H190L228 52H414L452 34H520L560 52H622"/>
+      d="M26 63H68L108 21H182L224 63H474L516 105H590L632 63H674"/>
+    <path
+      d="M26 63H148L178 79H270L302 63H398L430 79H522L552 63H674"/>
   </g>
 
-  <!-- Active layer is revealed by one global left-to-right clip. -->
-  <g class="ra-ml-active-group">
+  <g class="ra-ml-lit-group">
     <path class="ra-ml-flow ra-ml-main"
-      d="M18 52H112L150 26H248L286 52H354L392 78H490L528 52H622"/>
+      d="M26 63H102L136 31H214L248 63H302L338 95H424L460 63H512L548 31H622L658 63H674"/>
     <path class="ra-ml-flow"
-      d="M18 52H96L138 82H232L276 52H366L410 22H504L546 52H622"/>
+      d="M26 63H84L122 97H202L240 63H318L356 29H444L482 63H528L566 97H640L674 63"/>
     <path class="ra-ml-flow"
-      d="M18 52H126L164 18H224L262 52H378L416 86H476L514 52H622"/>
+      d="M26 63H116L150 45H234L268 63H432L466 45H550L584 63H674"/>
     <path class="ra-ml-flow"
-      d="M18 52H82L122 34H190L228 52H414L452 34H520L560 52H622"/>
-    <path class="ra-ml-pulse"
-      d="M18 52H112L150 26H248L286 52H354L392 78H490L528 52H622"/>
-
+      d="M26 63H68L108 21H182L224 63H474L516 105H590L632 63H674"/>
+    <path class="ra-ml-flow"
+      d="M26 63H148L178 79H270L302 63H398L430 79H522L552 63H674"/>
     <g class="ra-ml-nodes">
-      <circle class="ra-ml-node" cx="112" cy="52" r="4"/>
-      <circle class="ra-ml-node" cx="150" cy="26" r="4"/>
-      <circle class="ra-ml-node" cx="228" cy="52" r="4"/>
-      <circle class="ra-ml-node" cx="286" cy="52" r="4"/>
-      <circle class="ra-ml-node" cx="366" cy="52" r="4"/>
-      <circle class="ra-ml-node" cx="410" cy="22" r="4"/>
-      <circle class="ra-ml-node" cx="452" cy="34" r="4"/>
-      <circle class="ra-ml-node" cx="528" cy="52" r="4"/>
+      <circle cx="102" cy="63" r="4"/><circle cx="136" cy="31" r="4"/>
+      <circle cx="240" cy="63" r="4"/><circle cx="302" cy="63" r="4"/>
+      <circle cx="356" cy="29" r="4"/><circle cx="460" cy="63" r="4"/>
+      <circle cx="516" cy="105" r="4"/><circle cx="584" cy="63" r="4"/>
+      <circle cx="658" cy="63" r="4"/>
     </g>
+  </g>
+
+  <g class="ra-ml-head-group">
+    <path class="ra-ml-head ra-ml-head-main"
+      d="M26 63H102L136 31H214L248 63H302L338 95H424L460 63H512L548 31H622L658 63H674"/>
+    <path class="ra-ml-head"
+      d="M26 63H84L122 97H202L240 63H318L356 29H444L482 63H528L566 97H640L674 63"/>
+    <path class="ra-ml-head"
+      d="M26 63H116L150 45H234L268 63H432L466 45H550L584 63H674"/>
+    <path class="ra-ml-head"
+      d="M26 63H68L108 21H182L224 63H474L516 105H590L632 63H674"/>
+    <path class="ra-ml-head"
+      d="M26 63H148L178 79H270L302 63H398L430 79H522L552 63H674"/>
   </g>
 </svg>`;
 
@@ -132,41 +141,85 @@
     host.setAttribute('aria-live','polite');
     host.setAttribute('aria-label',label);
     host.innerHTML=`
-      <div class="ra-ml-runes ra-ml-title" aria-hidden="true">${runeHTML(label)}</div>
-      <div class="ra-ml-english ra-ml-title-text">${label}</div>
+      <div class="ra-ml-text-stage">
+        <div class="ra-ml-runes" aria-hidden="true">${runeHTML(label)}</div>
+        <div class="ra-ml-english">${label}</div>
+      </div>
       ${circuit}
-      <div class="ra-ml-runes ra-ml-phase" aria-hidden="true">${runeHTML('Data Scan')}</div>
-      <div class="ra-ml-english ra-ml-phase-text">Data Scan</div>`;
+      <div class="ra-ml-phase-line">Data Scan</div>`;
 
     const svg=host.querySelector('.ra-ml-circuit');
-    const clipPath=svg?.querySelector('.ra-ml-reveal-clip');
-    const revealRect=svg?.querySelector('.ra-ml-reveal-rect');
-    const activeGroup=svg?.querySelector('.ra-ml-active-group');
-    if(clipPath && activeGroup){
-      const clipId=clipPath.id;
-      activeGroup.style.clipPath=`url(#${clipId})`;
-      activeGroup.style.setProperty('--ra-ml-clip',`url(#${clipId})`);
+    const litClip=svg?.querySelector('.ra-ml-lit-clip');
+    const litRect=svg?.querySelector('.ra-ml-lit-rect');
+    const headClip=svg?.querySelector('.ra-ml-head-clip');
+    const headRect=svg?.querySelector('.ra-ml-head-rect');
+    const litGroup=svg?.querySelector('.ra-ml-lit-group');
+    const headGroup=svg?.querySelector('.ra-ml-head-group');
+    const textStage=host.querySelector('.ra-ml-text-stage');
+    const runeEl=host.querySelector('.ra-ml-runes');
+    const englishEl=host.querySelector('.ra-ml-english');
+    const phaseLine=host.querySelector('.ra-ml-phase-line');
+
+    const clipToken='ra-ml-'+Math.random().toString(36).slice(2);
+    if(litClip){
+      litClip.id=clipToken+'-lit';
+      if(litGroup)litGroup.style.clipPath=`url(#${litClip.id})`;
     }
-    const phase=host.querySelector('.ra-ml-phase');
-    const phaseTextEl=host.querySelector('.ra-ml-phase-text');
+    if(headClip){
+      headClip.id=clipToken+'-head';
+      if(headGroup)headGroup.style.clipPath=`url(#${headClip.id})`;
+    }
+
     let progress=0;
+    let morphTimer=null;
+    let morphEnglish=false;
+
+    function setTextPhrase(text){
+      if(runeEl)runeEl.innerHTML=runeHTML(text);
+      if(englishEl)englishEl.textContent=text;
+    }
+
+    function startMorph(){
+      if(morphTimer)return;
+      morphEnglish=false;
+      textStage?.classList.remove('show-english');
+      morphTimer=setInterval(()=>{
+        morphEnglish=!morphEnglish;
+        textStage?.classList.toggle('show-english',morphEnglish);
+      },760);
+    }
+
+    function stopMorph(showEnglish=false){
+      if(morphTimer)clearInterval(morphTimer);
+      morphTimer=null;
+      morphEnglish=!!showEnglish;
+      textStage?.classList.toggle('show-english',morphEnglish);
+    }
     let timer=null;
     let active=false;
 
     function render(p,phaseText){
       progress=Math.max(0,Math.min(100,Number(p)||0));
-      // One shared left-to-right reveal frontier for every circuit line.
-      // This prevents a branch on the right from lighting before the left side catches up.
-      if(revealRect){
-        const left=18;
-        const right=622;
-        const width=Math.max(0,(right-left)*(progress/100));
-        revealRect.setAttribute('x',String(left));
-        revealRect.setAttribute('width',String(width));
+
+      const left=26;
+      const right=674;
+      const span=right-left;
+      const frontier=left+span*(progress/100);
+
+      if(litRect){
+        litRect.setAttribute('x',String(left));
+        litRect.setAttribute('width',String(Math.max(0,frontier-left)));
       }
+
+      if(headRect){
+        const headWidth=42;
+        const hx=Math.max(left,frontier-headWidth);
+        headRect.setAttribute('x',String(hx));
+        headRect.setAttribute('width',String(Math.max(0,Math.min(headWidth,frontier-left))));
+      }
+
       const text=phaseText||phaseFor(progress);
-      phase.innerHTML=runeHTML(text);
-      if(phaseTextEl)phaseTextEl.textContent=text;
+      if(phaseLine)phaseLine.textContent=text;
       host.setAttribute('aria-label',label+' — '+text);
       host.classList.toggle('ready',progress>=100);
     }
@@ -178,18 +231,21 @@
       stop();
       active=true;
       host.classList.remove('ready','error');
-      progress=Math.min(progress||7,12);
+      setTextPhrase(label);
+      startMorph();
+      progress=Math.min(progress||4,10);
       render(progress,'Data Scan');
       timer=setInterval(()=>{
-        if(progress>=87){stop();return;}
-        const gain=Math.max(.45,(88-progress)*.055);
-        render(Math.min(87,progress+gain));
+        if(progress>=88){stop();return;}
+        const gain=Math.max(.45,(89-progress)*.052);
+        render(Math.min(88,progress+gain));
       },150);
     }
 
     function setProgress(p,phaseText){
       stop();
       host.classList.remove('error');
+      if(progress<100)startMorph();
       render(p,phaseText);
     }
 
@@ -197,30 +253,31 @@
       stop();
       host.classList.remove('error');
 
-      // Even when the real data load finishes instantly, finish the visual
-      // analysis sequence before revealing the destination screen.
       const remaining=[
-        {p:36,phase:'Data Scan',hold:140},
-        {p:66,phase:'Decode',hold:170},
-        {p:92,phase:'Sync',hold:190},
-        {p:100,phase:'Ready',hold:360}
+        {p:36,phase:'Data Scan',hold:150},
+        {p:66,phase:'Decode',hold:180},
+        {p:92,phase:'Sync',hold:220}
       ];
 
       for(const step of remaining){
         if(progress < step.p){
           render(step.p,step.phase);
           await new Promise(resolve=>setTimeout(resolve,step.hold));
-        }else if(step.phase==='Ready'){
-          render(100,'Ready');
-          await new Promise(resolve=>setTimeout(resolve,step.hold));
         }
       }
+
+      stopMorph(true);
+      setTextPhrase('Ready');
+      render(100,'Ready');
+      await new Promise(resolve=>setTimeout(resolve,2000));
     }
 
     function error(){
       stop();
+      stopMorph(true);
       host.classList.add('error');
-      render(Math.max(progress,64),'Data Scan');
+      setTextPhrase('Load Error');
+      render(Math.max(progress,64),'Load Error');
     }
 
     const controller={host,start,setProgress,complete,error,stop,get progress(){return progress;}};
