@@ -14,6 +14,10 @@
 .ra-ml-host.ra-ml-large{width:min(82vw,620px);gap:14px}
 .ra-ml-runes{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.45vw,5px);min-height:24px;color:color-mix(in srgb,currentColor 82%,#fff 18%);filter:drop-shadow(0 0 5px color-mix(in srgb,currentColor 18%,transparent))}
 .ra-ml-host.ra-ml-large .ra-ml-runes{min-height:34px;gap:clamp(3px,.55vw,7px)}
+.ra-ml-english{font:500 13px/1.2 "Times New Roman",Times,serif;letter-spacing:.16em;color:color-mix(in srgb,currentColor 74%,#fff 26%);text-align:center;text-shadow:0 0 8px color-mix(in srgb,currentColor 18%,transparent)}
+.ra-ml-english.ra-ml-phase-text{font-size:11px;letter-spacing:.14em;opacity:.72}
+.ra-ml-host.ra-ml-large .ra-ml-english{font-size:16px;letter-spacing:.19em}
+.ra-ml-host.ra-ml-large .ra-ml-english.ra-ml-phase-text{font-size:12px}
 .ra-ml-glyph{width:18px;height:25px;display:grid;place-items:center;flex:0 0 auto}
 .ra-ml-large .ra-ml-glyph{width:24px;height:34px}
 .ra-ml-glyph svg{width:100%;height:100%;display:block}
@@ -23,12 +27,13 @@
 .ra-ml-circuit{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 7px color-mix(in srgb,currentColor 18%,transparent))}
 .ra-ml-track{fill:none;stroke:color-mix(in srgb,currentColor 18%,transparent);stroke-width:2;vector-effect:non-scaling-stroke}
 .ra-ml-track.ra-ml-main{stroke-width:2.5}
-.ra-ml-flow{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .34s cubic-bezier(.2,.7,.2,1),opacity .25s ease;opacity:.88}
+.ra-ml-flow{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.88}
 .ra-ml-flow.ra-ml-main{stroke-width:3}
+.ra-ml-active-group{clip-path:var(--ra-ml-clip)}
+.ra-ml-reveal-rect{transition:width .34s cubic-bezier(.2,.7,.2,1)}
 .ra-ml-pulse{fill:none;stroke:color-mix(in srgb,currentColor 72%,#fff 28%);stroke-width:1.4;stroke-dasharray:2 12;stroke-linecap:round;opacity:.5;animation:ra-ml-pulse 1.35s linear infinite}
 @keyframes ra-ml-pulse{to{stroke-dashoffset:-28}}
-.ra-ml-node{fill:color-mix(in srgb,currentColor 12%,transparent);stroke:color-mix(in srgb,currentColor 26%,transparent);stroke-width:1.4;transition:fill .2s ease,stroke .2s ease,filter .2s ease}
-.ra-ml-node.active{fill:currentColor;stroke:currentColor;filter:drop-shadow(0 0 5px currentColor)}
+.ra-ml-node{fill:currentColor;stroke:currentColor;stroke-width:1.4;filter:drop-shadow(0 0 5px currentColor)}
 .ra-ml-host.ready{color:color-mix(in srgb,var(--accent,#d9c0a2) 78%,#fff 22%)}
 .ra-ml-host.error{color:var(--bad,#a64e4e);filter:none}
 .ra-ml-host.error .ra-ml-pulse{animation:none;opacity:.15}
@@ -63,34 +68,50 @@
   }
 
   const circuit=`
-<svg class="ra-ml-circuit" viewBox="0 0 640 94" aria-hidden="true">
+<svg class="ra-ml-circuit" viewBox="0 0 640 104" aria-hidden="true">
+  <defs>
+    <clipPath id="ra-ml-reveal-${Math.random().toString(36).slice(2)}" class="ra-ml-reveal-clip">
+      <rect class="ra-ml-reveal-rect" x="0" y="0" width="0" height="104"></rect>
+    </clipPath>
+  </defs>
+
+  <!-- Base circuit: all branches are continuous from left edge to right edge. -->
   <g class="ra-ml-track">
-    <path class="ra-ml-track ra-ml-main" pathLength="100" d="M18 47H622"/>
-    <path pathLength="100" d="M82 47L138 17H274L316 47H444L500 17H588"/>
-    <path pathLength="100" d="M50 47L108 77H242L286 47H404L456 77H578"/>
-    <path pathLength="100" d="M184 17L230 47L184 77M428 17L474 47L428 77"/>
+    <path class="ra-ml-track ra-ml-main"
+      d="M18 52H112L150 26H248L286 52H354L392 78H490L528 52H622"/>
+    <path
+      d="M18 52H96L138 82H232L276 52H366L410 22H504L546 52H622"/>
+    <path
+      d="M18 52H126L164 18H224L262 52H378L416 86H476L514 52H622"/>
+    <path
+      d="M18 52H82L122 34H190L228 52H414L452 34H520L560 52H622"/>
   </g>
-  <g>
-    <path class="ra-ml-flow ra-ml-main" data-line="0" pathLength="100" d="M18 47H622"/>
-    <path class="ra-ml-flow" data-line="1" pathLength="100" d="M82 47L138 17H274L316 47H444L500 17H588"/>
-    <path class="ra-ml-flow" data-line="2" pathLength="100" d="M50 47L108 77H242L286 47H404L456 77H578"/>
-    <path class="ra-ml-flow" data-line="3" pathLength="100" d="M184 17L230 47L184 77M428 17L474 47L428 77"/>
-    <path class="ra-ml-pulse" pathLength="100" d="M18 47H622"/>
-  </g>
-  <g>
-    <circle class="ra-ml-node" data-at="8" cx="82" cy="47" r="4"/>
-    <circle class="ra-ml-node" data-at="22" cx="138" cy="17" r="4"/>
-    <circle class="ra-ml-node" data-at="36" cx="286" cy="47" r="4"/>
-    <circle class="ra-ml-node" data-at="52" cx="404" cy="47" r="4"/>
-    <circle class="ra-ml-node" data-at="68" cx="500" cy="17" r="4"/>
-    <circle class="ra-ml-node" data-at="82" cx="456" cy="77" r="4"/>
-    <circle class="ra-ml-node" data-at="96" cx="588" cy="47" r="4"/>
+
+  <!-- Active layer is revealed by one global left-to-right clip. -->
+  <g class="ra-ml-active-group">
+    <path class="ra-ml-flow ra-ml-main"
+      d="M18 52H112L150 26H248L286 52H354L392 78H490L528 52H622"/>
+    <path class="ra-ml-flow"
+      d="M18 52H96L138 82H232L276 52H366L410 22H504L546 52H622"/>
+    <path class="ra-ml-flow"
+      d="M18 52H126L164 18H224L262 52H378L416 86H476L514 52H622"/>
+    <path class="ra-ml-flow"
+      d="M18 52H82L122 34H190L228 52H414L452 34H520L560 52H622"/>
+    <path class="ra-ml-pulse"
+      d="M18 52H112L150 26H248L286 52H354L392 78H490L528 52H622"/>
+
+    <g class="ra-ml-nodes">
+      <circle class="ra-ml-node" cx="112" cy="52" r="4"/>
+      <circle class="ra-ml-node" cx="150" cy="26" r="4"/>
+      <circle class="ra-ml-node" cx="228" cy="52" r="4"/>
+      <circle class="ra-ml-node" cx="286" cy="52" r="4"/>
+      <circle class="ra-ml-node" cx="366" cy="52" r="4"/>
+      <circle class="ra-ml-node" cx="410" cy="22" r="4"/>
+      <circle class="ra-ml-node" cx="452" cy="34" r="4"/>
+      <circle class="ra-ml-node" cx="528" cy="52" r="4"/>
+    </g>
   </g>
 </svg>`;
-
-  function scaled(value,start,mult){
-    return Math.max(0,Math.min(100,(value-start)*mult));
-  }
 
   function phaseFor(p){
     if(p<36)return 'Data Scan';
@@ -112,28 +133,40 @@
     host.setAttribute('aria-label',label);
     host.innerHTML=`
       <div class="ra-ml-runes ra-ml-title" aria-hidden="true">${runeHTML(label)}</div>
+      <div class="ra-ml-english ra-ml-title-text">${label}</div>
       ${circuit}
-      <div class="ra-ml-runes ra-ml-phase" aria-hidden="true">${runeHTML('Data Scan')}</div>`;
+      <div class="ra-ml-runes ra-ml-phase" aria-hidden="true">${runeHTML('Data Scan')}</div>
+      <div class="ra-ml-english ra-ml-phase-text">Data Scan</div>`;
 
-    const flows=[...host.querySelectorAll('.ra-ml-flow')];
-    const nodes=[...host.querySelectorAll('.ra-ml-node')];
+    const svg=host.querySelector('.ra-ml-circuit');
+    const clipPath=svg?.querySelector('.ra-ml-reveal-clip');
+    const revealRect=svg?.querySelector('.ra-ml-reveal-rect');
+    const activeGroup=svg?.querySelector('.ra-ml-active-group');
+    if(clipPath && activeGroup){
+      const clipId=clipPath.id;
+      activeGroup.style.clipPath=`url(#${clipId})`;
+      activeGroup.style.setProperty('--ra-ml-clip',`url(#${clipId})`);
+    }
     const phase=host.querySelector('.ra-ml-phase');
+    const phaseTextEl=host.querySelector('.ra-ml-phase-text');
     let progress=0;
     let timer=null;
     let active=false;
 
     function render(p,phaseText){
       progress=Math.max(0,Math.min(100,Number(p)||0));
-      const vals=[
-        progress,
-        scaled(progress,7,1.08),
-        scaled(progress,17,1.20),
-        scaled(progress,38,1.62)
-      ];
-      flows.forEach((path,i)=>path.style.strokeDashoffset=String(100-(vals[i]||0)));
-      nodes.forEach(n=>n.classList.toggle('active',progress>=Number(n.dataset.at||101)));
+      // One shared left-to-right reveal frontier for every circuit line.
+      // This prevents a branch on the right from lighting before the left side catches up.
+      if(revealRect){
+        const left=18;
+        const right=622;
+        const width=Math.max(0,(right-left)*(progress/100));
+        revealRect.setAttribute('x',String(left));
+        revealRect.setAttribute('width',String(width));
+      }
       const text=phaseText||phaseFor(progress);
       phase.innerHTML=runeHTML(text);
+      if(phaseTextEl)phaseTextEl.textContent=text;
       host.setAttribute('aria-label',label+' — '+text);
       host.classList.toggle('ready',progress>=100);
     }
@@ -160,11 +193,28 @@
       render(p,phaseText);
     }
 
-    function complete(){
+    async function complete(){
       stop();
       host.classList.remove('error');
-      render(100,'Ready');
-      return new Promise(resolve=>setTimeout(resolve,240));
+
+      // Even when the real data load finishes instantly, finish the visual
+      // analysis sequence before revealing the destination screen.
+      const remaining=[
+        {p:36,phase:'Data Scan',hold:140},
+        {p:66,phase:'Decode',hold:170},
+        {p:92,phase:'Sync',hold:190},
+        {p:100,phase:'Ready',hold:360}
+      ];
+
+      for(const step of remaining){
+        if(progress < step.p){
+          render(step.p,step.phase);
+          await new Promise(resolve=>setTimeout(resolve,step.hold));
+        }else if(step.phase==='Ready'){
+          render(100,'Ready');
+          await new Promise(resolve=>setTimeout(resolve,step.hold));
+        }
+      }
     }
 
     function error(){
