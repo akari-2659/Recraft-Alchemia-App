@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.810</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.813</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.810 / 最終更新日：2026年9月20日</div>
+<div class="ra-build-info">Version：v90.8.813 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="title-card">
@@ -2157,8 +2157,8 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.810';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.810';
+const RECRAFT_DB_VERSION = 'v90.8.813';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.813';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -7700,7 +7700,7 @@ function monsterDropRowHtml(row={}, idx=0){
 function monsterActionsEditor(value){
   const rows = parseMonsterActions(value);
   const body = rows.length ? rows.map(monsterActionRowHtml).join('') : monsterActionRowHtml({element:'物'});
-  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は役割に必要な数だけ登録し、選択可能な行動が4個以上なら遭遇時に3個だけ選出します。3個なら全て使用します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体も役割に必要な数だけ登録し、3～4個なら全て使用します。選択可能な行動が5個以上なら遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・防御・補助・回復・特殊から選択します。術式・祈祷は魔物の行動種別には使用しません。直接ダメージを与える行動は近接攻撃または遠距離攻撃、敵へ状態異常・弱体だけを与える行動は特殊、自身・味方の能力を変える行動は補助、自身・味方を回復する行動は回復です。距離は行動種別とは別軸で近距離・遠距離・自身を指定します。近距離は敵前衛のみ、遠距離は敵前衛・敵後衛を対象にできます。近接攻撃は行動時に前衛へ移動します。遠距離攻撃は自身以外の味方前衛がいる場合は後衛へ移動し、いない場合は前衛で行動します。防御・補助・回復・特殊は原則その場で処理し、自身以外の味方前衛がいない場合だけ前衛へ移動します。前衛限定の遠距離攻撃は『距離：近距離／対象：敵○体』で表現し、距離：遠距離と対象：敵前衛○体を重複させません。 効果欄には通常成功を示す「成功時：」「命中時：」は付けず、効果本文だけを入力してください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
+  return `<div class="monster-line-editor" data-monster-actions-editor><textarea data-form-field="actions" class="hidden-monster-raw internal-raw-field" hidden aria-hidden="true" tabindex="-1" style="display:none!important">${escapeHtml(serializeMonsterActions(rows))}</textarea><div class="form-help">行動は1行動ずつ入力します。通常魔物は役割に必要な数だけ登録し、選択可能な行動が4個以上なら遭遇時に3個だけ選出します。3個なら全て使用します。ただし「固定選出技」に指定した0～2技は必ず採用し、残り枠だけをランダム選出します。固有パッシブが特定行動を参照する場合も必須枠として扱います。二つ名個体も役割に必要な数だけ登録し、3～4個なら全て使用します。選択可能な行動が5個以上なら遭遇時に4個だけ選出できます。ボスは4個固定です。固有パッシブは技数に含めません。エリアボスは、前衛が残っていても後衛へ直接ダメージを与えられる行動を最低1つ必ず持たせます。判定を行う行動には、その行動固有の基礎技能値を0以上の整数で設定します。判定式は「2D6+基礎技能値+{補正}>=回避値/抵抗値/固定値」です。{補正}には妨害-2、行動・パッシブによる一時的な強化など、戦闘中に変動する補正だけを加算します。防御・補助・回復も自動成功にはせず、基礎技能値を使う固定値判定を設定します。直接ダメージ式はD6を必ず含め、最大構成はxD6+yD2～D5+z、補助ダイス個数y<=D6個数x、固定値zは0以上です。条件成立時の追加ダメージや継続ダメージは基礎式制限から除外します。行動種別は近接攻撃・遠距離攻撃・防御・補助・回復・特殊から選択します。術式・祈祷は魔物の行動種別には使用しません。直接ダメージを与える行動は近接攻撃または遠距離攻撃、敵へ状態異常・弱体だけを与える行動は特殊、自身・味方の能力を変える行動は補助、自身・味方を回復する行動は回復です。距離は行動種別とは別軸で近距離・遠距離・自身を指定します。近距離は敵前衛のみ、遠距離は敵前衛・敵後衛を対象にできます。近接攻撃は行動時に前衛へ移動します。遠距離攻撃は自身以外の味方前衛がいる場合は後衛へ移動し、いない場合は前衛で行動します。防御・補助・回復・特殊は原則その場で処理し、自身以外の味方前衛がいない場合だけ前衛へ移動します。前衛限定の遠距離攻撃は『距離：近距離／対象：敵○体』で表現し、距離：遠距離と対象：敵前衛○体を重複させません。重複狙い可能な多段攻撃は対象を『敵1体×2回』『敵1体×3回』のように表記します。各回で対象を選び直せるため、同じPCへ集中しても別々のPCへ振り分けても構いません。 効果欄には通常成功を示す「成功時：」「命中時：」は付けず、効果本文だけを入力してください。</div><div class="monster-line-head action-head"><span>行動名</span><span>行動種別</span><span>距離</span><span>判定</span><span>基礎技能値</span><span>対象</span><span>属性</span><span>威力</span><span>効果</span><span></span></div><div data-monster-action-list>${body}</div><button type="button" class="secondary" data-monster-action-add>行動を追加</button></div>`;
 }
 function monsterDropsEditor(value){
   const rows = parseMonsterDrops(value);
