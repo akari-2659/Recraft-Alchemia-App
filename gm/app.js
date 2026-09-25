@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='1.0.62';
+const APP_VERSION='1.0.63';
 const ACCOUNT=window.RA_ACCOUNT;
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');

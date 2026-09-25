@@ -1,4 +1,4 @@
-const APP_VERSION='1.0.62';
+const APP_VERSION='1.0.63';
 const CACHE=`ra-gm-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-app-v';
 const APP_FILES=["../js/ra_monster_rules.js", "./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "../assets/common.css", "../assets/account.js", "../assets/ra_magic_loader.js", "../icons/gm-app-v4-180.png", "../icons/gm-app-v4-192.png", "../icons/gm-app-v4-512.png", "../icons/gm-app-v4.ico", "./modules/manager/database_admin.html", "./modules/manager/progress_manager.html", "./modules/manager/help.html", "./modules/manager/data/recraft_alchemia_initial_data.json", "./modules/manager/data/public/manifest.json", "./modules/manager/data/public/recraft_alchemia_master.json", "./modules/manager/assets/vendor/jszip.min.js", "./modules/manager/assets/vendor/JSZip_LICENSE.md"];
