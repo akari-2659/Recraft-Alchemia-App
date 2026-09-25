@@ -17,7 +17,7 @@
   const LATIN_POOL = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
   const RA_POOL = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
-  let startup, decodeArea, translationArea, statusLabel;
+  let startup, decodeArea, translationArea;
   let timers = [];
   let currentResolver = null;
 
@@ -31,7 +31,6 @@
 @keyframes ra-su-overlay-out{to{opacity:0;visibility:hidden}}
 .ra-su-stage{width:min(95vw,920px);min-height:450px;padding:34px 16px;display:grid;place-items:center}
 .ra-su-core{width:100%;text-align:center;position:relative}
-.ra-su-status-label{height:18px;margin-bottom:30px;font:400 11px/1 "Times New Roman",Times,serif;letter-spacing:.26em;color:rgba(235,220,201,.46)}
 .ra-su-content-stack{position:relative;min-height:220px}
 .ra-su-decode-area,.ra-su-translation-area{position:absolute;inset:0;display:grid;align-content:center;gap:26px}
 .ra-su-decode-line{min-height:65px;display:flex;justify-content:center;align-items:center;gap:clamp(3px,.65vw,7px)}
@@ -45,7 +44,7 @@
 .ra-su-char-slot.locked .ra-su-glyph-layer{color:#f1e7da;animation:ra-su-lockIn .22s ease}
 @keyframes ra-su-lockIn{0%{opacity:.35;transform:scale(.91)}100%{opacity:1;transform:scale(1)}}
 .ra-su-translation-area{opacity:0;pointer-events:none}
-.ra-su-overlay.meaning .ra-su-decode-area{opacity:.10;filter:blur(.8px);transition:opacity .28s ease,filter .28s ease}
+.ra-su-overlay.meaning .ra-su-decode-area{opacity:.10;transition:opacity .28s ease}
 .ra-su-overlay.meaning .ra-su-translation-area{opacity:1;transition:opacity .28s ease}
 .ra-su-status-row{min-height:44px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;width:min(90vw,560px);margin:0 auto}
 .ra-su-status-left,.ra-su-status-right{display:flex;align-items:center;justify-content:flex-start;gap:3px}
@@ -57,6 +56,9 @@
 .ra-su-jp-slot.scrambling .ra-su-jp-layer,.ra-su-en-slot.scrambling .ra-su-en-layer{animation:ra-su-flicker .07s linear infinite alternate}
 .ra-su-jp-slot.locked .ra-su-jp-layer,.ra-su-en-slot.locked .ra-su-en-layer{animation:ra-su-lockIn .22s ease}
 
+.ra-su-ready-morph{display:flex;justify-content:center;align-items:center;gap:4px;min-height:34px;margin:14px auto 0;opacity:0;color:#f1e7da}
+.ra-su-ready-morph.visible{opacity:1}
+.ra-su-ready-morph .ra-su-char-slot{width:22px;height:30px}
 body.ra-su-armed #playerApp{visibility:hidden!important}
 @media(max-width:520px){.ra-su-stage{min-height:390px;padding-inline:6px}.ra-su-decode-area,.ra-su-translation-area{gap:18px}.ra-su-char-slot{height:52px}.ra-su-jp-slot,.ra-su-en-slot{height:38px}.ra-su-status-row{gap:10px}}
 `;
@@ -76,7 +78,6 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       root.innerHTML = `
 <div id="raSuStartup" class="ra-su-overlay" data-progress="0" aria-hidden="true">
   <div class="ra-su-stage"><div class="ra-su-core">
-    <div id="raSuStatusLabel" class="ra-su-status-label">UNKNOWN SCRIPT</div>
     <div class="ra-su-content-stack">
       <div id="raSuDecodeArea" class="ra-su-decode-area"></div>
       <div id="raSuTranslationArea" class="ra-su-translation-area"></div>
@@ -89,7 +90,6 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     startup = root.querySelector('#raSuStartup');
     decodeArea = root.querySelector('#raSuDecodeArea');
     translationArea = root.querySelector('#raSuTranslationArea');
-    statusLabel = root.querySelector('#raSuStatusLabel');
     startup.onpointerdown = skip;
     return root;
   }
@@ -101,6 +101,53 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
 
   function finalLatinGlyph(ch) {
     return '<span class="ra-su-latin-final">' + String(ch || '') + '</span>';
+  }
+
+  function buildReadySlots() {
+    const host = startup?.querySelector('#raSuReadyMorph');
+    if (!host) return [];
+    host.innerHTML = '';
+    host.classList.add('visible');
+    return [...'Ready'].map((ch) => {
+      const slot = document.createElement('div');
+      slot.className = 'ra-su-char-slot';
+      slot.dataset.target = ch;
+      slot.innerHTML = '<div class="ra-su-glyph-layer">' + (VECTORS.ra[ch.toUpperCase()] || '') + '</div>';
+      host.appendChild(slot);
+      return slot;
+    });
+  }
+
+  function scrambleReadySlot(slot, order) {
+    const target = slot.dataset.target || '';
+    const seed = order + 17;
+    slot.classList.add('scrambling');
+
+    for (let step=0; step<4; step++) {
+      later(step*48, () => setGlyph(slot, VECTORS.ra[deterministicPick(RA_POOL, seed, step)]));
+    }
+    for (let step=0; step<4; step++) {
+      later(210+step*52, () => setGlyph(slot, VECTORS.latin[deterministicPick(LATIN_POOL, seed+11, step)]));
+    }
+    later(430, () => {
+      setGlyph(slot, finalLatinGlyph(target));
+      slot.classList.remove('scrambling');
+      slot.classList.add('locked');
+    });
+  }
+
+  function revealReadyMorph() {
+    const slots = buildReadySlots();
+    slots.forEach((slot, i) => later(i*72, () => scrambleReadySlot(slot, i)));
+    return slots.length ? (slots.length-1)*72 + 520 : 0;
+  }
+
+  function showReadyFinal() {
+    const slots = buildReadySlots();
+    slots.forEach((slot) => {
+      setGlyph(slot, finalLatinGlyph(slot.dataset.target || ''));
+      slot.classList.add('locked');
+    });
   }
 
   function buildDecodeArea() {
@@ -163,6 +210,12 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       row.appendChild(right);
       translationArea.appendChild(row);
     });
+
+    const ready = document.createElement('div');
+    ready.id = 'raSuReadyMorph';
+    ready.className = 'ra-su-ready-morph';
+    ready.setAttribute('aria-label','Ready');
+    translationArea.appendChild(ready);
   }
 
   function build() { buildDecodeArea(); buildTranslationArea(); }
@@ -222,7 +275,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     clearTimers();
     const root = document.getElementById(ROOT_ID);
     if (root) root.remove();
-    startup = decodeArea = translationArea = statusLabel = null;
+    startup = decodeArea = translationArea = null;
   }
 
   function finish() {
@@ -250,8 +303,8 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       setGlyph(slot, kind === 'latin' ? VECTORS.latin[t] : VECTORS.jp[t]);
       slot.classList.add('locked');
     });
-    statusLabel.textContent = 'Ready';
     setProgress(4);
+    showReadyFinal();
     later(250, finish);
   }
 
@@ -261,23 +314,22 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     startup.className = 'ra-su-overlay';
     setProgress(0);
     build();
-    statusLabel.textContent = 'Unknown Script';
 
     return new Promise((resolve) => {
       currentResolver = resolve;
-      later(600, () => { statusLabel.textContent = 'Script Scan'; setProgress(1); });
+      later(600, () => { setProgress(1); });
       later(1300, () => {
-        statusLabel.textContent = 'Decode';
         setProgress(2);
         const englishTime = decodeToEnglish();
         later(englishTime + 850, () => {
-          statusLabel.textContent = 'Data Sync';
           setProgress(3);
           later(650, () => {
-            statusLabel.textContent = 'Ready';
             setProgress(4);
             const statusTime = translateToStatuses();
-            later(statusTime + 1000, finish);
+            later(statusTime + 350, () => {
+              const readyTime = revealReadyMorph();
+              later(readyTime + 900, finish);
+            });
           });
         });
       });
@@ -285,7 +337,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
   }
 
 
-  const STARTUP_APP_VERSION = '1.0.60';
+  const STARTUP_APP_VERSION = '1.0.62';
   const STARTUP_SESSION_KEY = `ra-startup-shown:${location.pathname}`;
   const LAST_RUN_VERSION_KEY = location.pathname.includes('/gm-player/')
     ? 'ra-gm-player-app-last-run-version'
