@@ -1,4 +1,4 @@
-/* Recraft-Alchemia v90.8.809 — 管理画面・進行管理で共用する状態定義 */
+/* Recraft-Alchemia v90.8.810 — 管理画面・進行管理で共用する状態定義 */
 (function(root){
 'use strict';
 const definitions = {
