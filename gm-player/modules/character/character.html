@@ -1400,16 +1400,6 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
             </div>
           </div>
 
-          <div class="mini-card">
-            <h3>いあきゃらテキスト読込</h3>
-            <p class="hint">いあきゃらのテキストファイル出力を選択すると、名前・性別・年齢・能力値へすぐ反映します。</p>
-            <div class="button-row">
-              <button id="txtFileBtn" class="secondary">txtファイルを選択</button>
-              <input id="txtFileInput" class="hidden-file" type="file" accept=".txt,text/plain" />
-            </div>
-            <div id="parseStatus" class="status-box">未読込です。</div>
-          </div>
-
           <h3>能力値</h3>
           <div id="abilityOutput" class="ability-grid"></div>
           <h3>戦闘参照値</h3>
@@ -1491,12 +1481,6 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
       <details class="big-section" open>
         <summary>技能ボーナス</summary>
         <div class="section-body">
-          <div class="mini-card" style="margin-top:12px;">
-            <h3>自動技能ボーナス</h3>
-            <p class="hint">読み込んだ元能力値が通常最大値を超えていた場合、対応する技能カテゴリの分類ポイントが+1されます。</p>
-            <div id="autoCategoryBonuses" class="pill-list"></div>
-          </div>
-
           <div class="mini-card">
             <h3>追加技能ボーナス</h3>
             <p class="hint">成長や依頼報酬などで後から増えたカテゴリ別の分類ポイントを入力できます。</p>
@@ -1508,7 +1492,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
       <details class="big-section" open>
         <summary>技能</summary>
         <div class="section-body">
-          <p class="hint">各分類ポイントは分類ごとに2点＋ボーナス、自由ポイントは合計3点です。「その他」には装備・強化内容などの補正値合計が自動で反映されます。</p>
+          <p class="hint">各分類ポイントは分類ごとに2点＋追加技能ボーナス、自由ポイントは合計3点です。「その他」には装備・強化内容などの補正値合計が自動で反映されます。</p>
           <div id="skillPointStatus" class="status-box">技能ポイントを確認します。</div>
           <div class="skill-maintenance-tools">
             <input id="skillSearchInput" type="search" autocomplete="off" placeholder="技能名・説明で検索" aria-label="技能検索" />
@@ -1860,16 +1844,6 @@ const ABILITIES = [
 ];
 const ABILITY_NAMES = Object.fromEntries(ABILITIES.map(a => [a.key, a.name]));
 
-const STAT_CATEGORY_BONUS = {
-  STR:'body', CON:'body', SIZ:'body',
-  DEX:'dexterity', INT:'sense', EDU:'intellect',
-  POW:'will', APP:'charm',
-};
-const STAT_CATEGORY_BONUS_LABEL = {
-  STR:'体力系', CON:'体力系', SIZ:'体力系',
-  DEX:'器用系', INT:'感覚系', EDU:'知性系',
-  POW:'意志系', APP:'魅力系',
-};
 
 const SKILL_CATEGORIES = [
   { key:'body', name:'体力系', ability:'body', skills:[
@@ -2177,9 +2151,9 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     else{$('editorStatus').className='status-box error';$('editorStatus').textContent='キャラクター名を入力してください。';showToast('キャラクター名を入力してください。','error');}
     return {saved:false,reason:'name'};
   }
-  if(!usePatch || autoSaveDirtySections.has('skills') || autoSaveDirtySections.has('stats') || autoSaveDirtySections.has('manualCategoryBonuses')){
-    const skillData=usePatch?{skills:patch.skills||currentCharacter.skills,stats:patch.stats||currentCharacter.stats,manualCategoryBonuses:patch.manualCategoryBonuses||currentCharacter.manualCategoryBonuses}:data;
-    const check=validateSkills(skillData.skills,skillData.stats,skillData.manualCategoryBonuses||emptyCategoryBonus());
+  if(!usePatch || autoSaveDirtySections.has('skills') || autoSaveDirtySections.has('manualCategoryBonuses')){
+    const skillData=usePatch?{skills:patch.skills||currentCharacter.skills,manualCategoryBonuses:patch.manualCategoryBonuses||currentCharacter.manualCategoryBonuses}:data;
+    const check=validateSkills(skillData.skills,skillData.manualCategoryBonuses||emptyCategoryBonus());
     if(check.errors.length){
       if(automatic){autoSaveDirty=true;setAutoSaveStatus('技能ポイントに問題があるため、自動保存を保留しています。','error');}
       else{$('editorStatus').className='status-box error';$('editorStatus').textContent='技能ポイントに問題があるため保存前に確認してください。\n'+check.errors.join('\n');showToast('技能ポイントに問題があるため保存できません。','error');}
@@ -2358,22 +2332,6 @@ function computeAbilities(stats) {
 function emptyCategoryBonus() {
   return Object.fromEntries(SKILL_CATEGORIES.map(c => [c.key, 0]));
 }
-function computeAutoCategoryBonuses(stats=getStats()) {
-  const bonus = emptyCategoryBonus();
-  for (const stat of STAT_ORDER) {
-    if (nval(stats[stat]) > (STAT_MAX[stat] || 18)) {
-      const cat = STAT_CATEGORY_BONUS[stat];
-      if (cat) bonus[cat] = 1; // 同じ分類への自動ボーナスは最大+1
-    }
-  }
-  return bonus;
-}
-function computeAutoCategoryBonusDetails(stats=getStats()) {
-  const bonus = computeAutoCategoryBonuses(stats);
-  return SKILL_CATEGORIES
-    .filter(cat => (bonus[cat.key] || 0) > 0)
-    .map(cat => ({ category: cat.key, categoryName: cat.name }));
-}
 function getManualCategoryBonuses() {
   const bonus = emptyCategoryBonus();
   for (const c of SKILL_CATEGORIES) bonus[c.key] = clampInt($('manualBonus_' + c.key)?.value || 0, 0, 99);
@@ -2382,10 +2340,9 @@ function getManualCategoryBonuses() {
 function setManualCategoryBonuses(values={}) {
   for (const c of SKILL_CATEGORIES) if ($('manualBonus_' + c.key)) $('manualBonus_' + c.key).value = clampInt(values?.[c.key] || 0, 0, 99);
 }
-function categoryPointLimits(stats=getStats(), manual=getManualCategoryBonuses()) {
-  const auto = computeAutoCategoryBonuses(stats);
+function categoryPointLimits(manual=getManualCategoryBonuses()) {
   const limits = {};
-  for (const c of SKILL_CATEGORIES) limits[c.key] = 2 + (auto[c.key] || 0) + (manual[c.key] || 0);
+  for (const c of SKILL_CATEGORIES) limits[c.key] = 2 + (manual[c.key] || 0);
   return limits;
 }
 function defaultSkillAlloc() {
@@ -2427,10 +2384,10 @@ function skillTotals(abilities=computeAbilities(), alloc=getSkillAlloc(), equipm
   }
   return totals;
 }
-function validateSkills(alloc=getSkillAlloc(), stats=getStats(), manual=getManualCategoryBonuses()) {
+function validateSkills(alloc=getSkillAlloc(), manual=getManualCategoryBonuses()) {
   const errors = [];
   const catSums = Object.fromEntries(SKILL_CATEGORIES.map(c => [c.key, 0]));
-  const catLimits = categoryPointLimits(stats, manual);
+  const catLimits = categoryPointLimits(manual);
   let freeSum = 0;
   for (const [key, v] of Object.entries(alloc)) {
     const sk = SKILL_BY_KEY[key];
@@ -2666,12 +2623,6 @@ function updateAbilities() {
   }
   return effective;
 }
-function updateCategoryBonuses() {
-  const details = computeAutoCategoryBonusDetails();
-  $('autoCategoryBonuses').innerHTML = details.length ? details.map(d =>
-    `<span class="pill">${d.categoryName} +1</span>`
-  ).join('') : '<span class="pill empty">自動技能ボーナスなし</span>';
-}
 function updateSkills() {
   const abilities = computeEffectiveAbilities(getAbilityValues(), getEquipmentState());
   const alloc = getSkillAlloc();
@@ -2681,7 +2632,7 @@ function updateSkills() {
     if ($('skill_other_' + key)) $('skill_other_' + key).textContent = signedNumberText(t.other || 0);
     if ($('skill_total_' + key)) $('skill_total_' + key).textContent = t.total;
   }
-  const check = validateSkills(alloc, getStats(), getManualCategoryBonuses());
+  const check = validateSkills(alloc, getManualCategoryBonuses());
   for (const cat of SKILL_CATEGORIES) {
     const el = document.querySelector(`[data-cat="${cat.key}"] .skill-category-title .small`);
     if (el) el.textContent = `基礎能力：${ABILITY_NAMES[cat.ability]} / 分類P ${check.catSums[cat.key]}/${check.catLimits[cat.key]}`;
@@ -2702,8 +2653,7 @@ function makeSummary() {
   const abilities = data.effectiveAbilities || computeEffectiveAbilities(data.abilities || getAbilityValues(), data.equipment || getEquipmentState());
   const totals = skillTotals(abilities, data.skills, data.equipment || {});
   const manualBonus = data.manualCategoryBonuses || emptyCategoryBonus();
-  const autoBonus = computeAutoCategoryBonuses(data.stats || {});
-  const catLimits = categoryPointLimits(data.stats || {}, manualBonus);
+  const catLimits = categoryPointLimits(manualBonus);
   const res = computeResources(abilities, data.resources || getResourceState(), data.equipment || getEquipmentState());
   const lines = [];
   lines.push(`【リクラフト・アルケミア キャラクター】`);
@@ -2724,7 +2674,7 @@ function makeSummary() {
   pushEquipmentSummaryLines(lines, data.equipment || {});
   lines.push('');
   lines.push(`■ 技能カテゴリポイント`);
-  lines.push(SKILL_CATEGORIES.map(c => `${c.name}:${catLimits[c.key]}（基本2+自動${autoBonus[c.key] || 0}+追加${manualBonus[c.key] || 0}）`).join(' / '));
+  lines.push(SKILL_CATEGORIES.map(c => `${c.name}:${catLimits[c.key]}（基本2+追加${manualBonus[c.key] || 0}）`).join(' / '));
   lines.push('');
   lines.push('■ 技能値');
   for (const cat of SKILL_CATEGORIES) {
@@ -3356,7 +3306,7 @@ function updateResources() {
 function updateSummary() {
   /* 出力欄はボタンから開くため常時表示しない。保存変更検知は入力元/操作元で区分管理する。 */
 }
-function updateAll() { updateAbilities(); updateCategoryBonuses(); updateResources(); updateSkills(); updateCombatStats(); updateSpellSlotHints(); updateEquipmentSummaries(); applyBagCapacityToEquipmentSlots();
+function updateAll() { updateAbilities(); updateResources(); updateSkills(); updateCombatStats(); updateSpellSlotHints(); updateEquipmentSummaries(); applyBagCapacityToEquipmentSlots();
   renderQuiverControls(); updateSummary(); }
 
 function spellContainerKind(type) {
@@ -7923,7 +7873,7 @@ function setReadOnly(readOnly) {
   if ($('addInventoryItemBtn')) $('addInventoryItemBtn').disabled = readOnly;
   if ($('sortInventoryItemBtn')) $('sortInventoryItemBtn').disabled = readOnly;
   if ($('addInitialWeaponSetBtn')) $('addInitialWeaponSetBtn').disabled = readOnly;
-  const editOnly = ['saveBtn','rollBtn','txtFileBtn'];
+  const editOnly = ['saveBtn','rollBtn'];
   for (const id of editOnly) if ($(id)) $(id).disabled = readOnly;
   if($('autoSaveToggle')) $('autoSaveToggle').disabled=readOnly;
   for (const btn of document.querySelectorAll('[data-reroll-ability]')) btn.disabled = readOnly;
@@ -8847,82 +8797,6 @@ function rollSet() {
   return set;
 }
 
-function parseIacharaText(text) {
-  const source=String(text||'').replace(/\u3000/g,' ').replace(/\r/g,'');
-  const result = { stats: {}, name: '', gender: '', age: '' };
-  const nameMatch = source.match(/名前\s*[:：]\s*([^\n]+)/);
-  if (nameMatch) result.name = nameMatch[1].trim();
-  const ageMatch = source.match(/年齢\s*[:：]\s*([^\/\n]+)/);
-  if (ageMatch) result.age = ageMatch[1].trim();
-  const genderMatch = source.match(/性別\s*[:：]\s*([^\/\n]+)/);
-  if (genderMatch) result.gender = genderMatch[1].trim();
-
-  const lines = source.split('\n').map(line=>line.trim()).filter(Boolean);
-  for (const line of lines) {
-    const m = line.match(/^(STR|CON|POW|DEX|APP|SIZ|INT|EDU)(?:\s*[（(][^）)]*[）)])?\s*(?:[:：=|｜\t]\s*|\s+)(-?\d+(?:\.\d+)?)/i);
-    if (m) result.stats[m[1].toUpperCase()] = Number(m[2]);
-  }
-
-  // 横表形式（STR CON ... の次行に「現在値 12 10 ...」などが並ぶ形式）にも対応。
-  if (Object.keys(result.stats).length < STAT_ORDER.length) {
-    for (let i=0;i<lines.length;i++) {
-      const upper=lines[i].toUpperCase();
-      if (!STAT_ORDER.every(stat=>upper.includes(stat))) continue;
-      const candidates=[];
-      for (let j=i+1;j<Math.min(lines.length,i+7);j++) {
-        const nums=(lines[j].match(/-?\d+(?:\.\d+)?/g)||[]).map(Number);
-        if(nums.length<STAT_ORDER.length) continue;
-        const priority=/現在値/.test(lines[j])?3:/能力値/.test(lines[j])?2:1;
-        candidates.push({nums:nums.slice(0,STAT_ORDER.length),priority});
-      }
-      candidates.sort((a,b)=>b.priority-a.priority);
-      if(candidates[0]) STAT_ORDER.forEach((stat,index)=>{ if(!Number.isFinite(result.stats[stat])) result.stats[stat]=candidates[0].nums[index]; });
-      if(Object.keys(result.stats).length===STAT_ORDER.length) break;
-    }
-  }
-
-  if (Object.keys(result.stats).length < STAT_ORDER.length) {
-    for (const stat of STAT_ORDER) {
-      const reg = new RegExp('(?:^|[\\s|｜])' + stat + '(?:\\s*[（(][^）)]*[）)])?\\s*[:：=]?\\s*(-?\\d+(?:\\.\\d+)?)', 'im');
-      const m = source.match(reg);
-      if (m) result.stats[stat] = Number(m[1]);
-    }
-  }
-  return result;
-}
-function applyParsedText(text, options={}) {
-  const quiet = !!options.quiet;
-  const parsed = parseIacharaText(text || '');
-  const missing = STAT_ORDER.filter(k => !Number.isFinite(parsed.stats[k]));
-  if (missing.length) {
-    if (!quiet) {
-      $('parseStatus').className = 'status-box error';
-      $('parseStatus').textContent = '能力値の読み取りに失敗しました。不足: ' + missing.join(', ');
-    }
-    return false;
-  }
-  // 変換処理を先に検証し、途中で名前だけが反映される状態を防ぐ。
-  const convertedAbilities = computeAbilitiesFromStats(parsed.stats);
-  if (parsed.name) $('charName').value = parsed.name;
-  if (parsed.gender) $('charGender').value = parsed.gender;
-  if (parsed.age) $('charAge').value = parsed.age;
-  for (const stat of STAT_ORDER) if ($('stat_' + stat)) $('stat_' + stat).value = parsed.stats[stat];
-  setAbilityValues(convertedAbilities);
-  if ($('currentHp')) $('currentHp').value = '';
-  if ($('currentMp')) $('currentMp').value = '';
-  updateAll();
-  $('parseStatus').className = 'status-box ok';
-  $('parseStatus').textContent = `読み取り成功：${parsed.name || '名前なし'}。能力値と技能ボーナスを反映しました。`;
-  return true;
-}
-async function readTextFile(file) {
-  const buf = await file.arrayBuffer();
-  let text = new TextDecoder('utf-8').decode(buf);
-  if (text.includes('\uFFFD')) {
-    try { text = new TextDecoder('shift_jis').decode(buf); } catch (e) {}
-  }
-  return text;
-}
 
 function generateTokenExport(data=collectData(false)) {
   const abilities = resolveAbilities(data);
@@ -8938,7 +8812,7 @@ function generateTokenExport(data=collectData(false)) {
   const params = ABILITIES.map(a => ({ label:a.name, value:String(abilities[a.key] ?? 0) }));
   params.push({label:'疲労度',value:String(res.fatigue||0)},{label:'疲労判定補正',value:String(res.fatiguePenalty||0)});
 
-  // いあきゃらのココフォリア駒出力と同じ CharacterClipboardData 形式。
+  // ココフォリアの CharacterClipboardData 形式。
   const token = {
     kind: 'character',
     data: {
@@ -9866,20 +9740,6 @@ function bindEvents() {
   });
   $('rollBtn').addEventListener('click', rollAllConvertedAbilities);
   $('abilityOutput').addEventListener('click', e => { const btn = e.target.closest('[data-reroll-ability]'); if (!btn) return; rerollOneAbility(btn.dataset.rerollAbility); });
-  $('txtFileBtn').addEventListener('click', () => $('txtFileInput').click());
-  $('txtFileInput').addEventListener('change', async e => {
-    const file = e.target.files?.[0]; if (!file) return;
-    try {
-      const text = await readTextFile(file);
-      applyParsedText(text);
-    } catch (err) {
-      $('parseStatus').className = 'status-box error';
-      $('parseStatus').textContent = `読み込みに失敗しました：${err.message}`;
-      showToast('いあきゃらtxtの読み込みに失敗しました。', 'error');
-    } finally {
-      e.target.value = '';
-    }
-  });
   $('outputBtn').addEventListener('click', () => openOutputDialog(collectData(false)));
   $('shareBtn').addEventListener('click', copyShareData);
   $('actionBarToggleBtn').addEventListener('click', () => setActionBarCollapsed(!$('editorActionBar').classList.contains('collapsed')));
