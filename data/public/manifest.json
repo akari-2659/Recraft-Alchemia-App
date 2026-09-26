@@ -1,7 +1,7 @@
 {
   "format": "recraft-alchemia-public-manifest",
-  "version": "90.8.813",
-  "updatedAt": "2026-09-20T17:50:00+09:00",
+  "version": "90.8.815",
+  "updatedAt": "2026-09-26T11:00:00+09:00",
   "files": {
     "master": {
       "file": "recraft_alchemia_master.json",
