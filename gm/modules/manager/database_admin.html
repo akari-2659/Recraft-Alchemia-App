@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.813</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.815</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.813 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.815 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="title-card">
@@ -2157,8 +2157,8 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.813';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.813';
+const RECRAFT_DB_VERSION = 'v90.8.815';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.815';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -11758,6 +11758,11 @@ document.addEventListener('click', (ev) => {
 #recordItemTypeTabs .ra-manager-picker-button,#recordMaterialTypeTabs .ra-manager-picker-button,#recordInternalCategoryTabs .ra-manager-picker-button{margin-top:0!important;min-height:44px!important}
 .ra-manager-picker-tabs{flex-wrap:wrap;overflow-x:visible!important}
 .ra-manager-picker.generic .ra-manager-picker-body{grid-template-columns:minmax(0,1fr)!important}.ra-manager-picker.generic .ra-manager-picker-detail{display:none!important}.ra-manager-picker.category-only .ra-manager-picker-search,.ra-manager-picker.category-only .ra-manager-picker-tabs,.ra-manager-picker.category-only .ra-manager-picker-detail{display:none!important}.ra-manager-picker.category-only .ra-manager-picker-body{grid-template-columns:1fr!important}.ra-manager-picker.category-only .ra-manager-picker-list{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}.ra-manager-picker.category-only .ra-manager-picker-card{grid-template-columns:1fr;cursor:pointer;text-align:center}.ra-manager-picker-category-choice{min-height:58px;align-items:center;justify-items:center}
+.ra-manager-picker.antique-gear-category .ra-manager-picker-list{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;padding:16px}
+.ra-manager-picker.antique-gear-category .ra-manager-picker-category-choice{min-height:62px;padding:12px 14px;background:#fffaf3!important;border:1px solid #c5a17d!important;box-shadow:none!important;filter:none!important}
+.ra-manager-picker.antique-gear-category .ra-manager-picker-category-choice:hover,.ra-manager-picker.antique-gear-category .ra-manager-picker-category-choice:focus-visible{background:#f7ead7!important;border-color:#a96f37!important;transform:none!important;filter:none!important;outline:2px solid rgba(169,111,55,.22);outline-offset:1px}
+.ra-manager-picker.antique-gear-category .ra-manager-picker-category-choice.selected{background:#efe0cb!important;border-color:#a96f37!important;box-shadow:inset 0 0 0 1px rgba(169,111,55,.18)!important}
+.ra-manager-picker.antique-gear-category .ra-manager-picker-name{color:#2c241b!important;-webkit-text-fill-color:#2c241b!important;text-shadow:none!important;font-size:1.04rem!important;font-weight:900!important;line-height:1.3!important;letter-spacing:.01em!important;opacity:1!important;filter:none!important}
 .facility-meal-area-modal .ra-manager-picker-shell{grid-template-rows:auto minmax(0,1fr)}.facility-meal-area-modal .ra-manager-picker-body{border-top:1px solid var(--line)}.ra-meal-area-choice{width:100%;text-align:left;cursor:pointer}.ra-meal-area-choice.active{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent);background:#f8efe3}.ra-meal-area-choice .facility-chip{justify-self:end}
 /* v90.8.678: 動的選択モーダルを管理HTML既存のmodal-card系デザインへ統一 */
 .ra-manager-picker{width:min(980px,calc(100vw - 24px));max-height:min(88vh,900px);border:0;background:transparent;padding:0;box-shadow:none}
@@ -11808,17 +11813,17 @@ function run(){
  function syncButton(el){const btn=el.parentElement?.querySelector(':scope > .ra-manager-picker-button'),label=btn?.querySelector('[data-ra-manager-label]');if(!label)return;const next=triggerLabel(el);if(label.textContent!==next)label.textContent=next}
  function choose(x){if(!target||!x)return;target.value=x.value;target.dispatchEvent(new Event('input',{bubbles:true}));target.dispatchEvent(new Event('change',{bubbles:true}));syncButton(target);dialog.close()}
  function visibleFieldLabel(el){const label=el?.id?document.querySelector(`label[for="${CSS.escape(el.id)}"]`):null;const own=txt(label?.textContent||el?.closest?.('.field,div')?.querySelector?.(':scope > label')?.textContent||el?.getAttribute?.('aria-label')||el?.placeholder||'');return own.replace(/一覧を開く\s*▾?/gu,'').replace(/モーダルで選択\s*▾?/gu,'').replace(/を選択$/u,'').trim()}
- function pickerTitle(){if(mode==='upgradeEquipment')return '強化する装備を選択';if(mode==='upgradeMaterial')return target?.id==='facilityRemovalMaterialSelect'?'現在付いている強化を選択':'強化素材を選択';if(mode==='category')return '武器種を選択';if(mode==='generic'){const t=visibleFieldLabel(target);return (t||'項目')+'を選択';}return '武器・武器種を選択'}
+ function pickerTitle(){if(mode==='upgradeEquipment')return '強化する装備を選択';if(mode==='upgradeMaterial')return target?.id==='facilityRemovalMaterialSelect'?'現在付いている強化を選択':'強化素材を選択';if(mode==='category'){if(target?.id==='facilityAntiqueGearCategory'){const k=String(document.getElementById('facilityAntiqueGearKind')?.value||'武器');return k==='防具'?'防具種を選択':k==='盾'?'盾種を選択':'武器種を選択';}return '武器種を選択';}if(mode==='generic'){const t=visibleFieldLabel(target);return (t||'項目')+'を選択';}return '武器・武器種を選択'}
  function pickerSearchPlaceholder(){if(mode==='upgradeMaterial')return '素材名・強化内容・効果説明・入手先で検索';if(mode==='upgradeEquipment')return '装備名・種別・説明・効果で検索';if(mode==='generic')return '候補名で検索';return '名称・武器種・効果で検索'}
  function metaText(x){const r=x.raw||{};if(mode==='upgradeMaterial')return [r.rank?`★${r.rank}`:'',r.equipmentUpgradeSlotCost?`消費${r.equipmentUpgradeSlotCost}枠`:'',r.equipmentUpgradeEffect,r.materialCategory].map(txt).filter(Boolean).join(' / ');if(mode==='upgradeEquipment')return [x.category,r.rank?`★${r.rank}`:'',r.upgradeLimit?`強化枠${r.upgradeLimit}`:'',r.upgradeMaterialMinRank?`最低素材★${r.upgradeMaterialMinRank}`:''].map(txt).filter(Boolean).join(' / ');if(mode==='generic')return x.category||'';return [x.category,r.rank?`★${r.rank}`:'',r.power||''].filter(Boolean).join(' / ')}
  function detailPairs(x){const r=x.raw||{};if(mode==='upgradeMaterial')return [['ランク',r.rank?`★${r.rank}`:''],['分類',r.materialCategory],['強化内容',r.equipmentUpgradeEffect],['消費枠',r.equipmentUpgradeSlotCost?`${r.equipmentUpgradeSlotCost}枠`:'' ],['強化対象',r.equipmentUpgradeTarget],['効果説明',r.equipmentUpgradeDetail],['入手先',r.source],['説明',r.description]].filter(([,v])=>txt(v));if(mode==='upgradeEquipment')return [['種別',txt(r.itemType)==='盾'?'盾':x.category],['ランク',r.rank?`★${r.rank}`:''],['属性',r.element],['威力',r.power],['強化枠',r.upgradeLimit],['強化素材最低ランク',r.upgradeMaterialMinRank?`★${r.upgradeMaterialMinRank}`:''],['説明',r.description],['効果',r.effect]].filter(([,v])=>txt(v));if(mode==='generic')return [['分類',x.category]].filter(([,v])=>txt(v));return [['武器種',x.category],['ランク',r.rank?`★${r.rank}`:''],['属性',r.element],['ダメージ',r.power],['命中・補正',r.modifiers],['強化枠',r.upgradeLimit],['説明',r.description],['効果',r.effect]].filter(([,v])=>txt(v))}
  function render(){
    const categoryOnly=mode==='category';
-   dialog.classList.toggle('generic',mode==='generic');dialog.classList.toggle('category-only',categoryOnly);dialog.querySelector('.ra-manager-picker-head h3').textContent=pickerTitle();search.placeholder=pickerSearchPlaceholder();
+   dialog.classList.toggle('generic',mode==='generic');dialog.classList.toggle('category-only',categoryOnly);dialog.classList.toggle('antique-gear-category',categoryOnly&&target?.id==='facilityAntiqueGearCategory');dialog.querySelector('.ra-manager-picker-head h3').textContent=pickerTitle();search.placeholder=pickerSearchPlaceholder();
    const all=rows();
    if(categoryOnly){
      category='すべて';tabs.innerHTML='';detail.innerHTML='';
-     list.innerHTML=all.length?all.map(x=>`<button type="button" class="ra-manager-picker-card ra-manager-picker-category-choice" data-ra-manager-choose="${escHtml(x.key)}"><span class="ra-manager-picker-name">${escHtml(x.name)}</span></button>`).join(''):'<p class="notice">選択できる武器種がありません。</p>';
+     list.innerHTML=all.length?all.map(x=>`<button type="button" class="ra-manager-picker-card ra-manager-picker-category-choice ${txt(target?.value)===x.value?'selected':''}" data-ra-manager-choose="${escHtml(x.key)}"><span class="ra-manager-picker-name">${escHtml(x.name)}</span></button>`).join(''):'<p class="notice">選択できる武器種がありません。</p>';
      return;
    }
    const extraCats=[...new Set(all.map(x=>x.category).filter(Boolean))],cats=['すべて',...extraCats];if(!cats.includes(category))category='すべて';
