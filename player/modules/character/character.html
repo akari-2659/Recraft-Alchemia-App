@@ -1607,7 +1607,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
           <details class="mini-card inventory-registration-card" open>
             <summary>倉庫へ登録</summary>
             <div class="inventory-registration-body">
-            <p class="hint">GMや進行管理HTMLから受け取った登録IDを入力して追加します。骨董装備も通常と同じ RCA-XXXX-XXXX 形式で登録できます。装備・素材・道具・レシピなどは倉庫へ、術式・スキルは習得系へ反映されます。所持数を持つものは指定した個数で追加でき、0個でも登録・保存できます。</p>
+            <p class="hint">GMや進行管理HTMLから受け取った登録IDを入力して追加します。骨董装備も通常と同じ RCA-XXXX-XXXX 形式で登録できます。装備・素材・道具・レシピなどは倉庫へ、術式・スキルは習得系へ反映されます。所持数を持つものは指定した個数で追加できます。武器・防具は指定個数ぶんを別々の装備個体として登録し、それぞれ個別に強化内容を保持します。</p>
             <div class="inventory-form-grid">
               <div class="field">
                 <label for="publicIdInput">登録ID</label>
@@ -5238,6 +5238,28 @@ function ensureDefaultBagItem() {
   invalidateInventoryDerivedCache();
 }
 
+function expandIndividualEquipmentInventoryRows(rows=[]) {
+  const out = [];
+  const usedIds = new Set();
+  for (const raw of (Array.isArray(rows) ? rows : [])) {
+    if (!raw) continue;
+    const rawCount = clampInt(raw.count ?? raw.quantity ?? 1, 0, 9999);
+    const normalized = normalizeInventoryItem({ ...raw, count:1, location:'倉庫' });
+    if (!inventoryKindUsesIndividualRecord(normalized.kind)) {
+      out.push(normalized);
+      continue;
+    }
+    // 骨董個体は登録ID自体が個体IDなので、壊れた旧データにcount>1があっても複製しない。
+    const copies = isAntiqueIndividualItem(normalized) ? (rawCount > 0 ? 1 : 0) : rawCount;
+    for (let i=0; i<copies; i++) {
+      let id = i === 0 ? String(normalized.id || '').trim() : '';
+      if (!id || usedIds.has(id)) id = newInventoryInstanceId();
+      usedIds.add(id);
+      out.push(normalizeInventoryItem({ ...normalized, id, count:1, location:'倉庫' }));
+    }
+  }
+  return out;
+}
 function normalizeInventoryState(inventory) {
   const src = Array.isArray(inventory)
     ? inventory
@@ -5250,7 +5272,7 @@ function normalizeInventoryState(inventory) {
     ? (Array.isArray(inventory.learnedRecipes) ? inventory.learnedRecipes : (Array.isArray(inventory.knownRecipes) ? inventory.knownRecipes : []))
     : [];
   return {
-    items: src.filter(Boolean).map(item => normalizeInventoryItem({ ...item, location:'倉庫' })),
+    items: expandIndividualEquipmentInventoryRows(src.filter(Boolean)),
     learnedRecipes: learnedSrc.filter(Boolean).map(item => normalizeInventoryItem({ ...item, kind:'レシピ', count:1, location:'倉庫' })),
     bagId:String(inventory && !Array.isArray(inventory) ? (inventory.bagId || inventory.selectedBagId || inventory.selectedBag || '') : '').trim(),
     quiverId:String(inventory && !Array.isArray(inventory) ? (inventory.quiverId || inventory.selectedQuiverId || inventory.selectedQuiver || '') : '').trim(),
@@ -5270,6 +5292,15 @@ function defaultInventoryKind() {
 function normalizeInventoryLocation(location) { return '倉庫'; }
 function inventoryKindSupportsUpgradeLimit(kind='') {
   return ['武器','防具'].includes(String(kind || '').trim());
+}
+// 武器・防具は強化内容を個体ごとに保持するため、常に「1個体=1レコード」で保存する。
+function inventoryKindUsesIndividualRecord(kind='') {
+  return ['武器','防具'].includes(String(kind || '').trim());
+}
+let inventoryInstanceSequence = 0;
+function newInventoryInstanceId() {
+  inventoryInstanceSequence = (inventoryInstanceSequence + 1) % 1679616;
+  return 'inv_' + Date.now().toString(36) + '_' + inventoryInstanceSequence.toString(36).padStart(4,'0') + '_' + Math.random().toString(36).slice(2,7);
 }
 function normalizeInventoryKind(kind) {
   const raw = String(kind || '').trim();
@@ -5927,7 +5958,7 @@ function normalizeInventoryItem(item={}) {
     materialType: resolvedMaterialType,
     materialCategory: resolvedMaterialCategory || String(((kind === '素材' || ['素材','食材'].includes(String(item.itemType || '').trim()) || resolvedMaterialType) ? (item.category || item.type || '') : '')).trim(),
     category: String(item.category || item.type || item.itemCategory || item.materialCategory || '').trim(),
-    count: clampInt(item.count ?? item.quantity ?? 1, 0, 9999),
+    count: inventoryKindUsesIndividualRecord(kind) ? 1 : clampInt(item.count ?? item.quantity ?? 1, 0, 9999),
     capacity: kind === 'バッグ' ? parseBagCapacity(item) : 0,
     bagCapacity: kind === 'バッグ' ? parseBagCapacity(item) : '',
     quiverCapacity: kind === '矢筒' ? parseQuiverCapacity(item) : '',
@@ -6445,10 +6476,12 @@ function inventoryWarehouseDetailHtml(item,index){
     ? [item.materialType||'素材',item.materialCategory||item.category||''].filter(Boolean).join(' / ')
     : (item.category||displayCategory||'—');
   const disabled=currentMode==='view'?'disabled':'';
+  const individualRecord=inventoryKindUsesIndividualRecord(item.kind);
+  const countDisabled=(currentMode==='view'||individualRecord)?'disabled':'';
   return `<div class="inventory-card-meta">
     <div class="meta-item"><span class="meta-label">カテゴリ</span>${esc(categoryDisplay)}</div>
     ${item.publicId?`<div class="meta-item"><span class="meta-label">登録ID</span>${esc(item.publicId)}</div>`:''}
-    <div class="meta-item"><span class="meta-label">個数</span><div class="inventory-count-editor"><input type="number" min="0" max="9999" inputmode="numeric" value="${esc(item.count??0)}" data-inventory-count-index="${index}" aria-label="${esc(title)}の個数" ${disabled}/></div></div>
+    <div class="meta-item"><span class="meta-label">個数</span><div class="inventory-count-editor"><input type="number" min="${individualRecord?'1':'0'}" max="${individualRecord?'1':'9999'}" inputmode="numeric" value="${esc(individualRecord?1:(item.count??0))}" data-inventory-count-index="${index}" aria-label="${esc(title)}の個数" ${countDisabled}/>${individualRecord?'<span class="small">個体管理</span>':''}</div></div>
     ${bagMeta?`<div class="meta-item"><span class="meta-label">バッグ容量</span>${esc(item.capacity||0)}</div>`:''}
     <div class="meta-item"><span class="meta-label">ランク</span>${esc(inventoryRankLabel(item)||'—')}</div>
     ${(!isAntiqueIndividualItem(item)&&sameNameEquipmentCount(item)>1)?`<div class="meta-item"><span class="meta-label">個体識別</span>${esc(inventoryIndividualShortId(item))}</div>`:''}
@@ -6566,6 +6599,16 @@ function updateInventoryFormVisibility() {
     const show = String(el.dataset.inventoryKindField || '').split(/\s+/).includes(token);
     el.style.display = show ? '' : 'none';
   }
+  const countInput=$('inventoryFormCount');
+  if(countInput){
+    const editing=Number($('inventoryEditIndex')?.value??-1)>=0;
+    const individual=inventoryKindUsesIndividualRecord(kind);
+    countInput.min=individual?'1':'0';
+    countInput.max=individual?(editing?'1':'9999'):'9999';
+    countInput.disabled=individual&&editing;
+    if(individual&&editing)countInput.value='1';
+    countInput.title=individual?(editing?'装備個体は1レコード1個で管理します。':'入力した個数ぶん、別々の装備個体として追加します。'):'';
+  }
   refreshInventoryFormContextOptions();
 }
 function openInventoryDialog(index=-1) {
@@ -6573,7 +6616,7 @@ function openInventoryDialog(index=-1) {
   const existing = index >= 0 ? inventoryItemsState[index] : null;
   const item = normalizeInventoryItem(existing || emptyInventoryItem());
   if ($('inventoryEditIndex')) $('inventoryEditIndex').value = String(index);
-  if ($('inventoryDialogTitle')) $('inventoryDialogTitle').textContent = '倉庫アイテムを追加';
+  if ($('inventoryDialogTitle')) $('inventoryDialogTitle').textContent = index>=0?'倉庫アイテムを編集':'倉庫アイテムを追加';
   fillInventoryDialogOptions(item);
   if ($('inventoryFormName')) $('inventoryFormName').value = item.name || '';
   if ($('inventoryFormCount')) $('inventoryFormCount').value = item.count ?? 1;
@@ -6663,6 +6706,7 @@ function collectInventoryDialogItem() {
 }
 function saveInventoryDialog() {
   const index = Number($('inventoryEditIndex')?.value ?? -1);
+  const requestedCount=clampInt($('inventoryFormCount')?.value||1,1,9999);
   const item = collectInventoryDialogItem();
   if (!item.name && !item.category && !item.description && !item.effect) {
     if ($('inventoryDialogStatus')) { $('inventoryDialogStatus').className = 'status-box error'; $('inventoryDialogStatus').textContent = '名称・カテゴリ・説明・効果のいずれかを入力してください。'; }
@@ -6673,7 +6717,7 @@ function saveInventoryDialog() {
   if (index >= 0 && inventoryItemsState[index]) {
     previous = inventoryItemsState[index];
     const oldItem = inventoryItemsState[index];
-    item.id = oldItem.id || item.id || ('inv_' + Date.now().toString(36));
+    item.id = oldItem.id || item.id || newInventoryInstanceId();
     item.publicId = oldItem.publicId || item.publicId || '';
     item.masterId = oldItem.masterId || item.masterId || '';
     item.masterSheet = oldItem.masterSheet || item.masterSheet || '';
@@ -6685,29 +6729,40 @@ function saveInventoryDialog() {
     if(isAntiqueIndividualItem(oldItem)){item.power=oldItem.power||'';item.element=oldItem.element||'';item.upgradeLimit=oldItem.upgradeLimit||'';item.modifiers=oldItem.modifiers||'';}
     item.upgradeEntries = oldItem.upgradeEntries || [];
     item.upgradeLines = oldItem.upgradeLines || serializeUpgradeEntries(oldItem.upgradeEntries || []);
+    item.count=inventoryKindUsesIndividualRecord(item.kind)?1:item.count;
     inventoryItemsState[index] = normalizeInventoryItem(item);
+  } else if(inventoryKindUsesIndividualRecord(item.kind)) {
+    // 新規の武器・防具は入力個数ぶん、独立した強化データを持つ個体として追加する。
+    const copies=Math.max(1,requestedCount);
+    for(let i=0;i<copies;i++){
+      inventoryItemsState.push(normalizeInventoryItem({...item,id:newInventoryInstanceId(),count:1}));
+    }
+    targetIndex=inventoryItemsState.length-1;
   } else {
-    item.id = item.id || ('inv_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,6));
+    item.id = item.id || newInventoryInstanceId();
     inventoryItemsState.push(normalizeInventoryItem(item));
     targetIndex=inventoryItemsState.length-1;
   }
   invalidateInventoryDerivedCache();
   const updated=inventoryItemsState[targetIndex];
-  if(!refreshInventoryCardAt(targetIndex,{appendIfMissing:true})) renderInventory({refreshLinked:false});
+  renderInventory({refreshLinked:false});
   inventoryLinkedRefreshForItems(previous,updated);
   updateSummary();
   $('inventoryDialog')?.close();
 }
 function addInventoryItem(item=null) {
   if (item) {
-    const normalized=normalizeInventoryItem(item);
-    inventoryItemsState.push(normalized);
+    const rawCount=clampInt(item.count??item.quantity??1,0,9999);
+    const probe=normalizeInventoryItem({...item,count:1});
+    const rows=inventoryKindUsesIndividualRecord(probe.kind)
+      ? expandIndividualEquipmentInventoryRows([{...item,count:rawCount}])
+      : [normalizeInventoryItem(item)];
+    inventoryItemsState.push(...rows);
     invalidateInventoryDerivedCache();
-    const index=inventoryItemsState.length-1;
-    if(!refreshInventoryCardAt(index,{appendIfMissing:true}))renderInventory({refreshLinked:false});
-    inventoryLinkedRefreshForItems(normalized);
+    renderInventory({refreshLinked:false});
+    rows.forEach(row=>inventoryLinkedRefreshForItems(row));
     updateSummary();
-    return;
+    return rows.length===1?rows[0]:rows;
   }
   openInventoryDialog(-1);
 }
@@ -7488,7 +7543,7 @@ async function addInventoryByPublicIdPaste(){
   }
   let idx=-1,existed=false,previous=null,updated=null;
   if(equipmentInstance){
-    const copies=Math.max(1,count);for(let i=0;i<copies;i++){const instanceId='inv_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);inventoryItemsState.push(normalizeInventoryItem({...preset,id:instanceId,count:1,location:'倉庫'}));idx=inventoryItemsState.length-1;}
+    const copies=Math.max(1,count);for(let i=0;i<copies;i++){const instanceId=newInventoryInstanceId();inventoryItemsState.push(normalizeInventoryItem({...preset,id:instanceId,count:1,location:'倉庫'}));idx=inventoryItemsState.length-1;}
     invalidateInventoryDerivedCache();updated=inventoryItemsState[idx];renderInventory({refreshLinked:false});inventoryLinkedRefreshForItems(updated);updateSummary();if(status){status.className='status-box ok';status.textContent=`装備を個体として追加しました：${preset.name} x${copies}`;}
   }else{
     const pid = String(preset.publicId || '').trim().toUpperCase();const mid = String(preset.masterId || preset.id || '').trim();idx = pid ? inventoryIndexByLookup(pid,'') : -1;if(idx<0 && mid)idx=inventoryIndexByLookup(mid,'');existed=idx>=0;previous=existed?inventoryItemsState[idx]:null;
@@ -8129,14 +8184,39 @@ function loadCachedCsItems() { /* v50: 倉庫を候補にするためDBアイテ
 
 function duplicateRestrictedEquipmentIdentity(row={}){
   const kind=normalizeInventoryKind(row.kind||row.itemType||row.itemCategory||row.category||'');
-  if(!['武器','装飾品'].includes(kind))return '';
-  const master=String(row.masterId||'').trim();
-  const publicId=String(row.publicId||'').trim().toUpperCase();
   const name=String(row.name||'').trim().normalize('NFKC');
-  const fallbackId=String(row.id||'').trim();
-  if(isAntiqueIndividualItem(row)){const individual=String(row.id||fallbackId||name).trim();return individual?`${kind}:個体:${individual}`:'';}
-  const identity=master||publicId||name||fallbackId;
-  return identity?`${kind}:${identity}`:'';
+
+  // 装飾品の既存「同一品2個同時装備不可」は維持する。
+  if(kind==='装飾品'){
+    const master=String(row.masterId||'').trim();
+    const publicId=String(row.publicId||'').trim().toUpperCase();
+    const fallbackId=String(row.id||'').trim();
+    const identity=master||publicId||name||fallbackId;
+    return identity?`装飾品:${identity}`:'';
+  }
+
+  // 左右手の制限対象は片手装備だけ。両手装備は既存の両手ロックで処理する。
+  if(slotKindForCsItem(row)!=='hand'||isTwoHandCsItem(row))return '';
+
+  if(isAntiqueIndividualItem(row)){
+    // 骨董は個体名ではなく武器種/盾種単位。同じカテゴリの骨董を左右へ2つ持てない。
+    const category=String(normalizeEquipmentType(row.itemCategory||row.category||row.type||'')).trim().normalize('NFKC');
+    return category?`手装備:骨董:${category}`:(name?`手装備:骨董:${name}`:'');
+  }
+
+  // 通常の片手武器・盾は「同名」だけ禁止。別名の同武器種は左右同時装備可。
+  return name?`手装備:通常:${name}`:'';
+}
+function duplicateRestrictedEquipmentMessage(row={},otherSlot=null){
+  const name=String(row?.name||'').trim()||'名称未設定';
+  if(slotKindForCsItem(row)==='hand'){
+    if(isAntiqueIndividualItem(row)){
+      const category=String(normalizeEquipmentType(row.itemCategory||row.category||row.type||'')).trim()||'同武器種';
+      return `骨董装備は同じ武器種・盾種「${category}」を右手・左手へ同時に装備できません。`;
+    }
+    return `同名の片手武器・盾「${name}」は右手・左手へ同時に装備できません。`;
+  }
+  return `同じ装飾品「${name}」は2つ同時に装備できません。`;
 }
 function duplicateRestrictedEquipmentOtherSlot(slotKey='',row={}){
   const key=duplicateRestrictedEquipmentIdentity(row);
@@ -8169,7 +8249,7 @@ function enforceUniqueWeaponAccessoryEquipment({notify=false}={}){
     seen.set(key,slot);
   }
   if(cleared.length&&notify){
-    showToast('同じ武器・同じ装飾品は2つ同時に装備できないため、重複分を外しました。','warn');
+    showToast('左右手の装備制限、または同一装飾品の制限により、重複分を外しました。','warn');
   }
   return cleared;
 }
@@ -8304,7 +8384,7 @@ function applyCsItemToEquipmentSlot(slotKey) {
         select.value=previousItemKey&&Array.from(select.options).some(o=>o.value===previousItemKey)?previousItemKey:'';
         if(typeof window.raSyncEquipmentPickerTrigger==='function')window.raSyncEquipmentPickerTrigger(select);
       }
-      showToast(`同じ${normalizeInventoryKind(row.kind||row.itemType||'装備')}「${row.name||''}」は2つ同時に装備できません。`,'warn');
+      showToast(duplicateRestrictedEquipmentMessage(row,duplicateSlot),'warn');
       const slotKind=EQUIPMENT_SLOTS.find(v=>v.key===slotKey)?.kind;
       if(slotKind)refreshEquipmentItemSelects({slotKinds:[slotKind]});
       return;
@@ -9798,9 +9878,15 @@ function bindEvents() {
       const index=Number(e.target.dataset.inventoryCountIndex);
       if(Number.isInteger(index)&&index>=0&&inventoryItemsState[index]){
         const current=normalizeInventoryItem(inventoryItemsState[index]);
-        inventoryItemsState[index]=normalizeInventoryItem({...current,count:clampInt(e.target.value||0,0,9999)});
+        if(inventoryKindUsesIndividualRecord(current.kind)){
+          inventoryItemsState[index]=normalizeInventoryItem({...current,count:1});
+          e.target.value='1';
+          showToast('武器・防具は1個体ずつ管理します。複数個は別々の個体として登録してください。','warn');
+        }else{
+          inventoryItemsState[index]=normalizeInventoryItem({...current,count:clampInt(e.target.value||0,0,9999)});
+          e.target.value=String(inventoryItemsState[index].count);
+        }
         invalidateInventoryDerivedCache();
-        e.target.value=String(inventoryItemsState[index].count);
         refreshWarehouseQuantityViews();
         if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon('inventory');
       }
