@@ -2370,6 +2370,7 @@ let currentGuildSupportDate = '';
 let currentGuildSupportIds = [];
 let currentGuildSupportCharacters = [];
 let currentGuildSupportLoading = false;
+let currentGuildSupportLoaded = false;
 let currentGuildSupportError = '';
 
 function guildSupportTodayKey(){
@@ -3787,7 +3788,7 @@ function guildSupportCharacterCardHtml(char={}){
   const url=guildSupportCharacterUrl(char.id||'');
   const gender=String(char.gender||'').trim();
   const age=String(char.age||'').trim();
-  const skills=guildSupportAssignedSkills(char);
+  const skillGroups=guildSupportSkillGroups(char);
   const meta=[gender,age?`${age}歳`:''].filter(Boolean);
   return `<div class="guild-support-card">
     <div class="guild-support-card-head">
@@ -3795,7 +3796,8 @@ function guildSupportCharacterCardHtml(char={}){
       <span class="guild-support-card-meta">${meta.map(v=>`<span class="facility-chip">${escapeHtml(v)}</span>`).join('')}</span>
     </div>
     <div class="guild-support-card-line"><b>主な装備：</b>${escapeHtml(guildSupportEquipmentText(char))}</div>
-    <div class="guild-support-card-line"><b>サポート可能技能：</b>${escapeHtml(skills.length?skills.join('・'):'未設定')}</div>
+    <div class="guild-support-card-line"><b>戦闘技能：</b>${escapeHtml(skillGroups.battle.length?skillGroups.battle.join('・'):'未設定')}</div>
+    <div class="guild-support-card-line"><b>探索技能：</b>${escapeHtml(skillGroups.exploration.length?skillGroups.exploration.join('・'):'未設定')}</div>
     ${url?`<div class="guild-support-card-actions"><a class="guild-support-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">キャラクターシートを開く</a></div>`:''}
   </div>`;
 }
@@ -3806,12 +3808,14 @@ function guildSupportPanelHtml(){
     : currentGuildSupportError
       ? currentGuildSupportError
       : currentGuildSupportCharacters.length
-        ? `候補${currentGuildSupportCharacters.length}人から、本日${selected.length}人を選出しています。`
-        : 'akariキーから候補を読み込んでください。';
+        ? `選出対象${currentGuildSupportCharacters.length}人から、本日${selected.length}人を選出しています。`
+        : currentGuildSupportLoaded
+          ? 'GMキャラシで「サポート選出対象」がONになっているキャラクターはいません。'
+          : 'akariキーから候補を読み込んでください。';
   const disabled=currentGuildSupportLoading?' disabled':'';
   return `<section class="guild-quest-section">
     <h4>本日のサポート可能キャラクター <span class="view-mode-chip">${selected.length}人</span></h4>
-    <p class="table-toolbar-note">キャラクターシートのプレイヤーキー「akari」に保存されている全キャラクターを候補にし、指定人数を選出します。選出結果は日付ごとに保存されます。</p>
+    <p class="table-toolbar-note">プレイヤーキー「akari」に保存され、GMキャラシで「サポート選出対象」がONになっているキャラクターだけを候補にします。技能表示もGMキャラシ側の戦闘・探索設定を使用します。選出結果は日付ごとに保存されます。</p>
     <div class="guild-support-controls">
       <label>表示人数
         <select data-guild-support-count>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}"${n===currentGuildSupportCount?' selected':''}>${n}人</option>`).join('')}</select>
@@ -3845,14 +3849,16 @@ async function loadGuildSupportCharacters(showMessage=true){
         return {id:String(item?.id||''),name:String(item?.name||'名称未設定'),updatedAt:item?.updatedAt||''};
       }
     }));
-    currentGuildSupportCharacters=loaded.filter(row=>String(row.id||'').trim()).sort((a,b)=>compareValues(a.name||'',b.name||''));
+    currentGuildSupportCharacters=loaded.filter(row=>String(row.id||'').trim()&&guildSupportIsEligible(row)).sort((a,b)=>compareValues(a.name||'',b.name||''));
+    currentGuildSupportLoaded=true;
     const valid=new Set(currentGuildSupportCharacters.map(row=>String(row.id||'')));
     currentGuildSupportIds=(currentGuildSupportIds||[]).filter(id=>valid.has(String(id)));
     guildSupportSelectedCharacters();
     saveGuildSupportState();
-    if(showMessage)toast(`akariキーからサポート候補を${currentGuildSupportCharacters.length}人読み込みました`);
+    if(showMessage)toast(`akariキーからサポート選出対象を${currentGuildSupportCharacters.length}人読み込みました`);
   }catch(e){
     currentGuildSupportCharacters=[];
+    currentGuildSupportLoaded=true;
     currentGuildSupportError=String(e?.message||e||'キャラクター候補の読み込みに失敗しました。');
     if(showMessage)toast(currentGuildSupportError,'error');
   }finally{
@@ -3892,30 +3898,58 @@ function guildSupportWeaponCategories(char={}){
   });
   return [...new Set(values)];
 }
-const GUILD_SUPPORT_ASSIGNED_SKILLS = {
-  // 画面表示・コピー共通の唯一のサポート可能技能リスト。
-  // 『数値が高い技能』ではなく、PCがそのキャラクターへ任せてよい判定だけを登録する。
-  // 戦闘中に任せる判定技能は含めるが、生存用の回避・抵抗や役割外の技能は含めない。
-  ch_mrfspilf_0vcslwu:['祈祷','鑑定'],                  // リネット・アーレン
-  ch_mrhjv1ai_wspdju4:['近接','防御','鼓舞'],           // ユアン・カルディス
-  ch_mrskymwf_iavpdvu:['魔法','近接','知識'],           // レフィナ・アルヴェル
-  ch_mrw7p6l1_axpi8a6:['射撃','採取','探索','感知'],     // フィオナ・エルゼ
-  ch_mrw7zexz_zg21ivd:['力業','近接'],                  // バルド・グレイン
-  ch_mrw8dq1l_5yhss8s:['近接','細工','設計','交渉'],     // セシル・ヴァレイン
-  ch_msw12ot0_s1sdol0:['近接'],                         // ノエル
-  ch_mswidjjf_9w14r50:['調合','細工','設計']            // ミューレ
-};
-function guildSupportAssignedSkills(char={}){
-  const id=String(char.id||'').trim();
-  const fixed=GUILD_SUPPORT_ASSIGNED_SKILLS[id];
-  return Array.isArray(fixed)?fixed:[];
+const GUILD_SUPPORT_LEGACY_SKILL_KEYS = Object.freeze({
+  // v1.0.76移行用。supportSettings未保存の既存8人だけ旧設定を仮引継ぎする。
+  ch_mrfspilf_0vcslwu:['prayer','appraise'],
+  ch_mrhjv1ai_wspdju4:['melee','guard','leadership'],
+  ch_mrskymwf_iavpdvu:['magic','melee','knowledge'],
+  ch_mrw7p6l1_axpi8a6:['shoot','gather','search','detect'],
+  ch_mrw7zexz_zg21ivd:['force','melee'],
+  ch_mrw8dq1l_5yhss8s:['melee','craft','design','negotiate'],
+  ch_msw12ot0_s1sdol0:['melee'],
+  ch_mswidjjf_9w14r50:['alchemy','craft','design']
+});
+function guildSupportNormalizeMode(value='none'){
+  const raw=String(value||'none').trim().toLowerCase();
+  if(['battle','戦闘'].includes(raw))return 'battle';
+  if(['exploration','探索'].includes(raw))return 'exploration';
+  if(['both','どちらも','両方'].includes(raw))return 'both';
+  return 'none';
+}
+function guildSupportHasExplicitSettings(char={}){
+  const value=char&&char.supportSettings;
+  return !!(value&&typeof value==='object'&&(Object.prototype.hasOwnProperty.call(value,'eligible')||(value.skillModes&&typeof value.skillModes==='object')));
+}
+function guildSupportNormalizedSettings(char={}){
+  const explicit=guildSupportHasExplicitSettings(char);
+  const raw=explicit?char.supportSettings:null;
+  const skillModes=Object.fromEntries(Object.keys(GUILD_SUPPORT_SKILL_LABELS).map(key=>[key,'none']));
+  if(explicit){
+    const source=raw&&typeof raw.skillModes==='object'?raw.skillModes:{};
+    for(const key of Object.keys(skillModes))skillModes[key]=guildSupportNormalizeMode(source[key]);
+    return {eligible:raw?.eligible===true,skillModes,legacy:false};
+  }
+  const legacy=GUILD_SUPPORT_LEGACY_SKILL_KEYS[String(char.id||'').trim()]||[];
+  legacy.forEach(key=>{if(key in skillModes)skillModes[key]='both';});
+  return {eligible:legacy.length>0,skillModes,legacy:legacy.length>0};
+}
+function guildSupportIsEligible(char={}){return guildSupportNormalizedSettings(char).eligible===true;}
+function guildSupportSkillGroups(char={}){
+  const settings=guildSupportNormalizedSettings(char),battle=[],exploration=[];
+  for(const [key,label] of Object.entries(GUILD_SUPPORT_SKILL_LABELS)){
+    const mode=guildSupportNormalizeMode(settings.skillModes?.[key]);
+    if(mode==='battle'||mode==='both')battle.push(label);
+    if(mode==='exploration'||mode==='both')exploration.push(label);
+  }
+  return {battle,exploration};
 }
 function guildSupportCharacterText(char={}){
   const categories=guildSupportWeaponCategories(char);
-  const skills=guildSupportAssignedSkills(char);
+  const skillGroups=guildSupportSkillGroups(char);
   return [
     `・${char.name||'名称未設定'}(${categories.length?categories.join('・'):'武器カテゴリ未設定'})`,
-    `サポート可能技能：${skills.length?skills.join('・'):'未設定'}`
+    `戦闘技能：${skillGroups.battle.length?skillGroups.battle.join('・'):'未設定'}`,
+    `探索技能：${skillGroups.exploration.length?skillGroups.exploration.join('・'):'未設定'}`
   ].join('\n');
 }
 function guildSupportListText(){
@@ -11331,7 +11365,7 @@ document.addEventListener('click',e=>{
   const facilitySection=e.target.closest('[data-facility-section]'); if(facilitySection){
     currentFacilitySectionByName[currentFacilityView]=facilitySection.dataset.facilitySection||facilitySectionDefs(currentFacilityView)[0][0];
     renderFacilitiesPanel();
-    if(currentFacilityView==='ギルド' && currentFacilitySectionByName[currentFacilityView]==='support' && currentGuildSupportPlayerKey && !currentGuildSupportCharacters.length && !currentGuildSupportLoading){
+    if(currentFacilityView==='ギルド' && currentFacilitySectionByName[currentFacilityView]==='support' && currentGuildSupportPlayerKey && !currentGuildSupportLoaded && !currentGuildSupportLoading){
       loadGuildSupportCharacters(false);
     }
     return;

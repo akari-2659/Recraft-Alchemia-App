@@ -196,7 +196,7 @@
   .skill-category-card { margin-bottom: 12px; }
   .skill-row {
     display: grid;
-    grid-template-columns: 1.2fr .6fr .6fr .6fr .6fr .6fr;
+    grid-template-columns: 1.18fr .54fr .54fr .54fr .54fr .54fr 1fr;
     gap: 8px;
     align-items: center;
     border-top: 1px dashed rgba(221, 203, 176, .78);
@@ -204,6 +204,12 @@
   }
   .skill-row.header { font-weight: 900; color: var(--muted); border-top: 0; padding-top: 0; font-size: .82rem; }
   .skill-row input { padding: 7px 6px; }
+  .skill-support-select { width:100%; min-width:0; padding:7px 6px; font-weight:800; }
+  .support-setting-panel { display:grid; gap:10px; }
+  .support-eligible-line { display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border:1px solid rgba(168,116,61,.28); border-radius:12px; background:rgba(255,255,255,.64); cursor:pointer; }
+  .support-eligible-line input { margin-top:4px; flex:0 0 auto; }
+  .support-eligible-line strong { display:block; color:var(--accent2); }
+  .support-settings-summary { padding:8px 10px; border-radius:10px; background:rgba(184,119,56,.07); color:var(--muted); font-size:.82rem; font-weight:800; }
   .skill-name { font-weight: 900; }
   .skill-detail { margin-top: 4px; font-weight: 500; }
   .skill-detail > summary { display: inline-block; cursor: pointer; color: var(--accent2); font-size: .78rem; font-weight: 900; padding: 1px 8px; border: 1px solid rgba(143,87,40,.24); border-radius: 999px; background: rgba(184,119,56,.08); }
@@ -219,6 +225,8 @@
     .skill-cell.free::before { content: "自由P"; }
     .skill-cell.other::before { content: "その他"; }
     .skill-cell.total::before { content: "技能値"; }
+    .skill-cell.support { grid-column:1 / -1; display:grid; grid-template-columns:72px minmax(0,1fr); gap:8px; align-items:center; }
+    .skill-cell.support::before { content: "サポート"; margin:0; }
   }
 
   .formula-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -1479,6 +1487,20 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 
     <div id="tabSkills" class="editor-tab-page">
       <details class="big-section" open>
+        <summary>サポート設定</summary>
+        <div class="section-body">
+          <div class="support-setting-panel">
+            <label class="support-eligible-line" for="supportEligible">
+              <input id="supportEligible" data-support-setting-input="1" type="checkbox" />
+              <span><strong>サポート選出対象</strong><span class="small">ONのキャラクターだけがGM管理アプリのサポート選出候補になります。</span></span>
+            </label>
+            <div id="supportSettingsSummary" class="support-settings-summary">戦闘技能 0件 / 探索技能 0件</div>
+            <p class="hint">各技能の「サポート」欄で、対象外・戦闘・探索・どちらもの4種類から指定します。「どちらも」は戦闘技能と探索技能の両方へ表示されます。</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="big-section" open>
         <summary>技能ボーナス</summary>
         <div class="section-body">
           <div class="mini-card">
@@ -1948,6 +1970,65 @@ const EQUIPMENT_SLOTS = BASE_EQUIPMENT_SLOTS.concat(Array.from({ length:CARRY_SL
 const SKILL_BY_KEY = {};
 for (const cat of SKILL_CATEGORIES) for (const sk of cat.skills) SKILL_BY_KEY[sk.key] = { ...sk, category: cat.key, ability: cat.ability, categoryName: cat.name };
 
+const SUPPORT_SKILL_MODES = Object.freeze([
+  ['none','対象外'],['battle','戦闘'],['exploration','探索'],['both','どちらも']
+]);
+const LEGACY_SUPPORT_SKILL_KEYS_BY_CHARACTER_ID = Object.freeze({
+  ch_mrfspilf_0vcslwu:['prayer','appraise'],
+  ch_mrhjv1ai_wspdju4:['melee','guard','leadership'],
+  ch_mrskymwf_iavpdvu:['magic','melee','knowledge'],
+  ch_mrw7p6l1_axpi8a6:['shoot','gather','search','detect'],
+  ch_mrw7zexz_zg21ivd:['force','melee'],
+  ch_mrw8dq1l_5yhss8s:['melee','craft','design','negotiate'],
+  ch_msw12ot0_s1sdol0:['melee'],
+  ch_mswidjjf_9w14r50:['alchemy','craft','design']
+});
+function normalizeSupportSkillMode(value='none'){
+  const raw=String(value||'none').trim().toLowerCase();
+  if(['battle','戦闘'].includes(raw))return 'battle';
+  if(['exploration','探索'].includes(raw))return 'exploration';
+  if(['both','どちらも','両方'].includes(raw))return 'both';
+  return 'none';
+}
+function emptySupportSkillModes(){return Object.fromEntries(Object.keys(SKILL_BY_KEY).map(key=>[key,'none']));}
+function defaultSupportSettings(){return {eligible:false,skillModes:emptySupportSkillModes()};}
+function supportSettingsHasExplicitValue(value){return !!(value&&typeof value==='object'&&(Object.prototype.hasOwnProperty.call(value,'eligible')||(value.skillModes&&typeof value.skillModes==='object')));}
+function legacySupportSettingsForCharacterId(characterId=''){
+  const keys=LEGACY_SUPPORT_SKILL_KEYS_BY_CHARACTER_ID[String(characterId||'').trim()]||[];
+  const skillModes=emptySupportSkillModes();
+  keys.forEach(key=>{if(SKILL_BY_KEY[key])skillModes[key]='both';});
+  return {eligible:keys.length>0,skillModes};
+}
+function normalizeSupportSettings(value=null,characterId=''){
+  const explicit=supportSettingsHasExplicitValue(value);
+  const source=explicit?value:legacySupportSettingsForCharacterId(characterId);
+  const modes=emptySupportSkillModes();
+  const rawModes=source&&typeof source.skillModes==='object'?source.skillModes:{};
+  for(const key of Object.keys(modes))modes[key]=normalizeSupportSkillMode(rawModes[key]);
+  return {eligible:source?.eligible===true,skillModes:modes};
+}
+function supportSkillModeOptionsHtml(current='none'){
+  const mode=normalizeSupportSkillMode(current);
+  return SUPPORT_SKILL_MODES.map(([value,label])=>`<option value="${value}"${value===mode?' selected':''}>${label}</option>`).join('');
+}
+function getSupportSettings(){
+  const skillModes=emptySupportSkillModes();
+  for(const key of Object.keys(skillModes))skillModes[key]=normalizeSupportSkillMode($('support_skill_'+key)?.value||'none');
+  return {eligible:!!$('supportEligible')?.checked,skillModes};
+}
+function setSupportSettings(value=null,characterId=''){
+  const settings=normalizeSupportSettings(value,characterId);
+  if($('supportEligible'))$('supportEligible').checked=!!settings.eligible;
+  for(const [key,mode] of Object.entries(settings.skillModes||{}))if($('support_skill_'+key))$('support_skill_'+key).value=normalizeSupportSkillMode(mode);
+  updateSupportSettingsSummary();
+}
+function updateSupportSettingsSummary(){
+  const summary=$('supportSettingsSummary');if(!summary)return;
+  const settings=getSupportSettings();let battle=0,exploration=0;
+  Object.values(settings.skillModes||{}).forEach(mode=>{if(mode==='battle'||mode==='both')battle++;if(mode==='exploration'||mode==='both')exploration++;});
+  summary.textContent=`${settings.eligible?'選出対象 / ':'選出対象外 / '}戦闘技能 ${battle}件 / 探索技能 ${exploration}件`;
+}
+
 let currentCloudPlayerKey = '';
 let currentMode = 'edit'; // new/edit/view
 let currentCharacter = null;
@@ -2096,6 +2177,7 @@ function autoSaveSectionForTarget(target){
   if(id.startsWith('stat_'))return ['stats','abilities','resources'];
   if(id.startsWith('ability_')||target.dataset?.abilityInput!==undefined)return ['abilities','resources'];
   if(id.startsWith('skill_')||target.dataset?.skillInput!==undefined)return 'skills';
+  if(id==='supportEligible'||target.dataset?.supportSettingInput!==undefined||target.dataset?.supportSkillMode!==undefined)return 'supportSettings';
   if(id.startsWith('manualBonus_'))return 'manualCategoryBonuses';
   if(['currentHp','currentMp','hpBonus','mpBonus','fatigueLevel'].includes(id))return 'resources';
   if(id.startsWith('equip_')||target.dataset?.equipmentInput!==undefined||id==='equipmentMemo'||id==='bagSelect')return ['equipment','inventory'];
@@ -2121,6 +2203,7 @@ function buildAutoSavePatch(sectionsSet=autoSaveDirtySections){
   if(sections.has('stats'))patch.stats=getStats();
   if(sections.has('abilities'))patch.abilities=baseAbilities();
   if(sections.has('skills'))patch.skills=getSkillAlloc();
+  if(sections.has('supportSettings'))patch.supportSettings=getSupportSettings();
   if(sections.has('manualCategoryBonuses'))patch.manualCategoryBonuses=getManualCategoryBonuses();
   if(sections.has('resources'))patch.resources=computeResources(effectiveAbilities(),getResourceState(),equipment());
   if(sections.has('equipment')||sections.has('inventory')){
@@ -2441,7 +2524,7 @@ function renderStatic() {
       <summary class="skill-category-title"><span>${cat.name}</span><span class="small">基礎能力：${ABILITY_NAMES[cat.ability]} / 分類P 0/2</span></summary>
       <div class="skill-category-body">
         <div class="skill-row header">
-          <div>技能</div><div>能力</div><div>分類P</div><div>自由P</div><div>その他</div><div>技能値</div>
+          <div>技能</div><div>能力</div><div>分類P</div><div>自由P</div><div>その他</div><div>技能値</div><div>サポート</div>
         </div>
         ${cat.skills.map(sk => `
           <div class="skill-row" data-skill-search="${esc([sk.name,sk.detail||sk.desc||''].join(' '))}">
@@ -2451,6 +2534,7 @@ function renderStatic() {
             <div class="skill-cell free"><input id="skill_free_${sk.key}" data-skill-input="1" type="number" min="0" max="3" value="0" /></div>
             <div class="skill-cell other"><div id="skill_other_${sk.key}" class="skill-other-auto">0</div></div>
             <div class="skill-cell total computed-value" id="skill_total_${sk.key}">0</div>
+            <div class="skill-cell support"><select id="support_skill_${sk.key}" class="skill-support-select" data-support-skill-mode="${sk.key}" aria-label="${sk.name}のサポート使用範囲">${supportSkillModeOptionsHtml('none')}</select></div>
           </div>
         `).join('')}
       </div>
@@ -5283,6 +5367,28 @@ function ensureDefaultBagItem() {
   invalidateInventoryDerivedCache();
 }
 
+function expandIndividualEquipmentInventoryRows(rows=[]) {
+  const out = [];
+  const usedIds = new Set();
+  for (const raw of (Array.isArray(rows) ? rows : [])) {
+    if (!raw) continue;
+    const rawCount = clampInt(raw.count ?? raw.quantity ?? 1, 0, 9999);
+    const normalized = normalizeInventoryItem({ ...raw, count:1, location:'倉庫' });
+    if (!inventoryKindUsesIndividualRecord(normalized.kind)) {
+      out.push(normalized);
+      continue;
+    }
+    // 骨董個体は登録ID自体が個体IDなので、壊れた旧データにcount>1があっても複製しない。
+    const copies = isAntiqueIndividualItem(normalized) ? (rawCount > 0 ? 1 : 0) : rawCount;
+    for (let i=0; i<copies; i++) {
+      let id = i === 0 ? String(normalized.id || '').trim() : '';
+      if (!id || usedIds.has(id)) id = newInventoryInstanceId();
+      usedIds.add(id);
+      out.push(normalizeInventoryItem({ ...normalized, id, count:1, location:'倉庫' }));
+    }
+  }
+  return out;
+}
 function normalizeInventoryState(inventory) {
   const src = Array.isArray(inventory)
     ? inventory
@@ -5295,7 +5401,7 @@ function normalizeInventoryState(inventory) {
     ? (Array.isArray(inventory.learnedRecipes) ? inventory.learnedRecipes : (Array.isArray(inventory.knownRecipes) ? inventory.knownRecipes : []))
     : [];
   return {
-    items: src.filter(Boolean).map(item => normalizeInventoryItem({ ...item, location:'倉庫' })),
+    items: expandIndividualEquipmentInventoryRows(src.filter(Boolean)),
     learnedRecipes: learnedSrc.filter(Boolean).map(item => normalizeInventoryItem({ ...item, kind:'レシピ', count:1, location:'倉庫' })),
     bagId:String(inventory && !Array.isArray(inventory) ? (inventory.bagId || inventory.selectedBagId || inventory.selectedBag || '') : '').trim(),
     quiverId:String(inventory && !Array.isArray(inventory) ? (inventory.quiverId || inventory.selectedQuiverId || inventory.selectedQuiver || '') : '').trim(),
@@ -5315,6 +5421,15 @@ function defaultInventoryKind() {
 function normalizeInventoryLocation(location) { return '倉庫'; }
 function inventoryKindSupportsUpgradeLimit(kind='') {
   return ['武器','防具'].includes(String(kind || '').trim());
+}
+// 武器・防具は強化内容を個体ごとに保持するため、常に「1個体=1レコード」で保存する。
+function inventoryKindUsesIndividualRecord(kind='') {
+  return ['武器','防具'].includes(String(kind || '').trim());
+}
+let inventoryInstanceSequence = 0;
+function newInventoryInstanceId() {
+  inventoryInstanceSequence = (inventoryInstanceSequence + 1) % 1679616;
+  return 'inv_' + Date.now().toString(36) + '_' + inventoryInstanceSequence.toString(36).padStart(4,'0') + '_' + Math.random().toString(36).slice(2,7);
 }
 function normalizeInventoryKind(kind) {
   const raw = String(kind || '').trim();
@@ -5973,7 +6088,7 @@ function normalizeInventoryItem(item={}) {
     materialType: resolvedMaterialType,
     materialCategory: resolvedMaterialCategory || String(((kind === '素材' || ['素材','食材'].includes(String(item.itemType || '').trim()) || resolvedMaterialType) ? (item.category || item.type || '') : '')).trim(),
     category: String(item.category || item.type || item.itemCategory || item.materialCategory || '').trim(),
-    count: clampInt(item.count ?? item.quantity ?? 1, 0, 9999),
+    count: inventoryKindUsesIndividualRecord(kind) ? 1 : clampInt(item.count ?? item.quantity ?? 1, 0, 9999),
     capacity: kind === 'バッグ' ? parseBagCapacity(item) : 0,
     bagCapacity: kind === 'バッグ' ? parseBagCapacity(item) : '',
     quiverCapacity: kind === '矢筒' ? parseQuiverCapacity(item) : '',
@@ -6495,10 +6610,12 @@ function inventoryWarehouseDetailHtml(item,index){
     ? [item.materialType||'素材',item.materialCategory||item.category||''].filter(Boolean).join(' / ')
     : (item.category||displayCategory||'—');
   const disabled=currentMode==='view'?'disabled':'';
+  const individualRecord=inventoryKindUsesIndividualRecord(item.kind);
+  const countDisabled=(currentMode==='view'||individualRecord)?'disabled':'';
   return `<div class="inventory-card-meta">
     <div class="meta-item"><span class="meta-label">カテゴリ</span>${esc(categoryDisplay)}</div>
     ${item.publicId?`<div class="meta-item"><span class="meta-label">登録ID</span>${esc(item.publicId)}</div>`:''}
-    <div class="meta-item"><span class="meta-label">個数</span><div class="inventory-count-editor"><input type="number" min="0" max="9999" inputmode="numeric" value="${esc(item.count??0)}" data-inventory-count-index="${index}" aria-label="${esc(title)}の個数" ${disabled}/></div></div>
+    <div class="meta-item"><span class="meta-label">個数</span><div class="inventory-count-editor"><input type="number" min="${individualRecord?'1':'0'}" max="${individualRecord?'1':'9999'}" inputmode="numeric" value="${esc(individualRecord?1:(item.count??0))}" data-inventory-count-index="${index}" aria-label="${esc(title)}の個数" ${countDisabled}/>${individualRecord?'<span class="small">個体管理</span>':''}</div></div>
     ${bagMeta?`<div class="meta-item"><span class="meta-label">バッグ容量</span>${esc(item.capacity||0)}</div>`:''}
     <div class="meta-item"><span class="meta-label">ランク</span>${esc(inventoryRankLabel(item)||'—')}</div>
     ${(!isAntiqueIndividualItem(item)&&sameNameEquipmentCount(item)>1)?`<div class="meta-item"><span class="meta-label">個体識別</span>${esc(inventoryIndividualShortId(item))}</div>`:''}
@@ -6665,6 +6782,16 @@ function updateInventoryFormVisibility() {
     const show = String(el.dataset.inventoryKindField || '').split(/\s+/).includes(token);
     el.style.display = show ? '' : 'none';
   }
+  const countInput=$('inventoryFormCount');
+  if(countInput){
+    const editing=Number($('inventoryEditIndex')?.value??-1)>=0;
+    const individual=inventoryKindUsesIndividualRecord(kind);
+    countInput.min=individual?'1':'0';
+    countInput.max=individual?(editing?'1':'9999'):'9999';
+    countInput.disabled=individual&&editing;
+    if(individual&&editing)countInput.value='1';
+    countInput.title=individual?(editing?'装備個体は1レコード1個で管理します。':'入力した個数ぶん、別々の装備個体として追加します。'):'';
+  }
   refreshInventoryFormContextOptions();
 }
 function openInventoryDialog(index=-1) {
@@ -6672,7 +6799,7 @@ function openInventoryDialog(index=-1) {
   const existing = index >= 0 ? inventoryItemsState[index] : null;
   const item = normalizeInventoryItem(existing || emptyInventoryItem());
   if ($('inventoryEditIndex')) $('inventoryEditIndex').value = String(index);
-  if ($('inventoryDialogTitle')) $('inventoryDialogTitle').textContent = '倉庫アイテムを追加';
+  if ($('inventoryDialogTitle')) $('inventoryDialogTitle').textContent = index>=0?'倉庫アイテムを編集':'倉庫アイテムを追加';
   fillInventoryDialogOptions(item);
   if ($('inventoryFormName')) $('inventoryFormName').value = item.name || '';
   if ($('inventoryFormCount')) $('inventoryFormCount').value = item.count ?? 1;
@@ -6762,6 +6889,7 @@ function collectInventoryDialogItem() {
 }
 function saveInventoryDialog() {
   const index = Number($('inventoryEditIndex')?.value ?? -1);
+  const requestedCount=clampInt($('inventoryFormCount')?.value||1,1,9999);
   const item = collectInventoryDialogItem();
   if (!item.name && !item.category && !item.description && !item.effect) {
     if ($('inventoryDialogStatus')) { $('inventoryDialogStatus').className = 'status-box error'; $('inventoryDialogStatus').textContent = '名称・カテゴリ・説明・効果のいずれかを入力してください。'; }
@@ -6772,7 +6900,7 @@ function saveInventoryDialog() {
   if (index >= 0 && inventoryItemsState[index]) {
     previous = inventoryItemsState[index];
     const oldItem = inventoryItemsState[index];
-    item.id = oldItem.id || item.id || ('inv_' + Date.now().toString(36));
+    item.id = oldItem.id || item.id || newInventoryInstanceId();
     item.publicId = oldItem.publicId || item.publicId || '';
     item.masterId = oldItem.masterId || item.masterId || '';
     item.masterSheet = oldItem.masterSheet || item.masterSheet || '';
@@ -6784,29 +6912,40 @@ function saveInventoryDialog() {
     if(isAntiqueIndividualItem(oldItem)){item.power=oldItem.power||'';item.element=oldItem.element||'';item.upgradeLimit=oldItem.upgradeLimit||'';item.modifiers=oldItem.modifiers||'';}
     item.upgradeEntries = oldItem.upgradeEntries || [];
     item.upgradeLines = oldItem.upgradeLines || serializeUpgradeEntries(oldItem.upgradeEntries || []);
+    item.count=inventoryKindUsesIndividualRecord(item.kind)?1:item.count;
     inventoryItemsState[index] = normalizeInventoryItem(item);
+  } else if(inventoryKindUsesIndividualRecord(item.kind)) {
+    // 新規の武器・防具は入力個数ぶん、独立した強化データを持つ個体として追加する。
+    const copies=Math.max(1,requestedCount);
+    for(let i=0;i<copies;i++){
+      inventoryItemsState.push(normalizeInventoryItem({...item,id:newInventoryInstanceId(),count:1}));
+    }
+    targetIndex=inventoryItemsState.length-1;
   } else {
-    item.id = item.id || ('inv_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,6));
+    item.id = item.id || newInventoryInstanceId();
     inventoryItemsState.push(normalizeInventoryItem(item));
     targetIndex=inventoryItemsState.length-1;
   }
   invalidateInventoryDerivedCache();
   const updated=inventoryItemsState[targetIndex];
-  if(!refreshInventoryCardAt(targetIndex,{appendIfMissing:true})) renderInventory({refreshLinked:false});
+  renderInventory({refreshLinked:false});
   inventoryLinkedRefreshForItems(previous,updated);
   updateSummary();
   $('inventoryDialog')?.close();
 }
 function addInventoryItem(item=null) {
   if (item) {
-    const normalized=normalizeInventoryItem(item);
-    inventoryItemsState.push(normalized);
+    const rawCount=clampInt(item.count??item.quantity??1,0,9999);
+    const probe=normalizeInventoryItem({...item,count:1});
+    const rows=inventoryKindUsesIndividualRecord(probe.kind)
+      ? expandIndividualEquipmentInventoryRows([{...item,count:rawCount}])
+      : [normalizeInventoryItem(item)];
+    inventoryItemsState.push(...rows);
     invalidateInventoryDerivedCache();
-    const index=inventoryItemsState.length-1;
-    if(!refreshInventoryCardAt(index,{appendIfMissing:true}))renderInventory({refreshLinked:false});
-    inventoryLinkedRefreshForItems(normalized);
+    renderInventory({refreshLinked:false});
+    rows.forEach(row=>inventoryLinkedRefreshForItems(row));
     updateSummary();
-    return;
+    return rows.length===1?rows[0]:rows;
   }
   openInventoryDialog(-1);
 }
@@ -7588,7 +7727,7 @@ async function addInventoryByPublicIdPaste(){
   }
   let idx=-1,existed=false,previous=null,updated=null;
   if(equipmentInstance){
-    const copies=Math.max(1,count);for(let i=0;i<copies;i++){const instanceId='inv_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);inventoryItemsState.push(normalizeInventoryItem({...preset,id:instanceId,count:1,location:'倉庫'}));idx=inventoryItemsState.length-1;}
+    const copies=Math.max(1,count);for(let i=0;i<copies;i++){const instanceId=newInventoryInstanceId();inventoryItemsState.push(normalizeInventoryItem({...preset,id:instanceId,count:1,location:'倉庫'}));idx=inventoryItemsState.length-1;}
     invalidateInventoryDerivedCache();updated=inventoryItemsState[idx];renderInventory({refreshLinked:false});inventoryLinkedRefreshForItems(updated);updateSummary();if(status){status.className='status-box ok';status.textContent=`装備を個体として追加しました：${preset.name} x${copies}`;}
   }else{
     const pid = String(preset.publicId || '').trim().toUpperCase();const mid = String(preset.masterId || preset.id || '').trim();idx = pid ? inventoryIndexByLookup(pid,'') : -1;if(idx<0 && mid)idx=inventoryIndexByLookup(mid,'');existed=idx>=0;previous=existed?inventoryItemsState[idx]:null;
@@ -7786,7 +7925,7 @@ function sortInventoryItems() {
 function emptyCharacter() {
   const stats = Object.fromEntries(STAT_ORDER.map(k => [k, '']));
   const abilities = Object.fromEntries(ABILITIES.map(a => [a.key, 0]));
-  return { id: uuid(), name: '', gender: '', age: '', stats, abilities, skills: defaultSkillAlloc(), manualCategoryBonuses: emptyCategoryBonus(), resources: { hpBonus:0, mpBonus:0, currentHp:'', currentMp:'', fatigue:0 }, equipment: defaultEquipment(), inventory: defaultInventory(), loadoutPresets:defaultLoadoutPresets(), skillGacha:defaultSkillGachaState(), autoSaveEnabled:true, memo: '', createdAt: nowIso(), updatedAt: nowIso() };
+  return { id: uuid(), name: '', gender: '', age: '', stats, abilities, skills: defaultSkillAlloc(), supportSettings:defaultSupportSettings(), manualCategoryBonuses: emptyCategoryBonus(), resources: { hpBonus:0, mpBonus:0, currentHp:'', currentMp:'', fatigue:0 }, equipment: defaultEquipment(), inventory: defaultInventory(), loadoutPresets:defaultLoadoutPresets(), skillGacha:defaultSkillGachaState(), autoSaveEnabled:true, memo: '', createdAt: nowIso(), updatedAt: nowIso() };
 }
 function collectData(updateTime=true) {
   const base = currentCharacter || emptyCharacter();
@@ -7804,6 +7943,7 @@ function collectData(updateTime=true) {
     abilities: baseAbilities,
     effectiveAbilities: abilities,
     skills: getSkillAlloc(),
+    supportSettings: getSupportSettings(),
     manualCategoryBonuses: getManualCategoryBonuses(),
     resources: computeResources(abilities, getResourceState(), equipment),
     equipment,
@@ -7817,6 +7957,7 @@ function collectData(updateTime=true) {
   };
 }
 function applyData(data) {
+  const rawSupportSettings=data&&typeof data==='object'?data.supportSettings:null;
   currentCharacter = { ...emptyCharacter(), ...(data || {}) };
   currentCharacter.autoSaveEnabled=currentCharacter.autoSaveEnabled!==false;
   autoSaveEnabled=currentCharacter.autoSaveEnabled;
@@ -7828,6 +7969,8 @@ function applyData(data) {
   setStats(currentCharacter.stats || {}, false);
   setAbilityValues(currentCharacter.abilities || computeAbilitiesFromStats(currentCharacter.stats || {}));
   setSkillAlloc(currentCharacter.skills || {});
+  setSupportSettings(rawSupportSettings,currentCharacter.id||'');
+  currentCharacter.supportSettings=getSupportSettings();
   setManualCategoryBonuses(currentCharacter.manualCategoryBonuses || {});
   setResourceState(currentCharacter.resources || {});
   legacyEquipmentUpgradeMigrationCount=0;
@@ -7855,6 +7998,8 @@ function setReadOnly(readOnly) {
   for (const stat of STAT_ORDER) if ($('stat_' + stat)) $('stat_' + stat).disabled = readOnly;
   for (const a of ABILITIES) if ($('ability_' + a.key)) $('ability_' + a.key).disabled = readOnly;
   for (const c of SKILL_CATEGORIES) if ($('manualBonus_' + c.key)) $('manualBonus_' + c.key).disabled = readOnly;
+  if($('supportEligible'))$('supportEligible').disabled=readOnly;
+  for(const el of document.querySelectorAll('[data-support-setting-input],[data-support-skill-mode]'))el.disabled=readOnly;
   for (const key of Object.keys(SKILL_BY_KEY)) {
     if ($('skill_cat_' + key)) $('skill_cat_' + key).disabled = readOnly;
     if ($('skill_free_' + key)) $('skill_free_' + key).disabled = readOnly;
@@ -8229,14 +8374,39 @@ function loadCachedCsItems() { /* v50: 倉庫を候補にするためDBアイテ
 
 function duplicateRestrictedEquipmentIdentity(row={}){
   const kind=normalizeInventoryKind(row.kind||row.itemType||row.itemCategory||row.category||'');
-  if(!['武器','装飾品'].includes(kind))return '';
-  const master=String(row.masterId||'').trim();
-  const publicId=String(row.publicId||'').trim().toUpperCase();
   const name=String(row.name||'').trim().normalize('NFKC');
-  const fallbackId=String(row.id||'').trim();
-  if(isAntiqueIndividualItem(row)){const individual=String(row.id||fallbackId||name).trim();return individual?`${kind}:個体:${individual}`:'';}
-  const identity=master||publicId||name||fallbackId;
-  return identity?`${kind}:${identity}`:'';
+
+  // 装飾品の既存「同一品2個同時装備不可」は維持する。
+  if(kind==='装飾品'){
+    const master=String(row.masterId||'').trim();
+    const publicId=String(row.publicId||'').trim().toUpperCase();
+    const fallbackId=String(row.id||'').trim();
+    const identity=master||publicId||name||fallbackId;
+    return identity?`装飾品:${identity}`:'';
+  }
+
+  // 左右手の制限対象は片手装備だけ。両手装備は既存の両手ロックで処理する。
+  if(slotKindForCsItem(row)!=='hand'||isTwoHandCsItem(row))return '';
+
+  if(isAntiqueIndividualItem(row)){
+    // 骨董は個体名ではなく武器種/盾種単位。同じカテゴリの骨董を左右へ2つ持てない。
+    const category=String(normalizeEquipmentType(row.itemCategory||row.category||row.type||'')).trim().normalize('NFKC');
+    return category?`手装備:骨董:${category}`:(name?`手装備:骨董:${name}`:'');
+  }
+
+  // 通常の片手武器・盾は「同名」だけ禁止。別名の同武器種は左右同時装備可。
+  return name?`手装備:通常:${name}`:'';
+}
+function duplicateRestrictedEquipmentMessage(row={},otherSlot=null){
+  const name=String(row?.name||'').trim()||'名称未設定';
+  if(slotKindForCsItem(row)==='hand'){
+    if(isAntiqueIndividualItem(row)){
+      const category=String(normalizeEquipmentType(row.itemCategory||row.category||row.type||'')).trim()||'同武器種';
+      return `骨董装備は同じ武器種・盾種「${category}」を右手・左手へ同時に装備できません。`;
+    }
+    return `同名の片手武器・盾「${name}」は右手・左手へ同時に装備できません。`;
+  }
+  return `同じ装飾品「${name}」は2つ同時に装備できません。`;
 }
 function duplicateRestrictedEquipmentOtherSlot(slotKey='',row={}){
   const key=duplicateRestrictedEquipmentIdentity(row);
@@ -8269,7 +8439,7 @@ function enforceUniqueWeaponAccessoryEquipment({notify=false}={}){
     seen.set(key,slot);
   }
   if(cleared.length&&notify){
-    showToast('同じ武器・同じ装飾品は2つ同時に装備できないため、重複分を外しました。','warn');
+    showToast('左右手の装備制限、または同一装飾品の制限により、重複分を外しました。','warn');
   }
   return cleared;
 }
@@ -8405,7 +8575,7 @@ function applyCsItemToEquipmentSlot(slotKey) {
         select.value=previousItemKey&&Array.from(select.options).some(o=>o.value===previousItemKey)?previousItemKey:'';
         if(typeof window.raSyncEquipmentPickerTrigger==='function')window.raSyncEquipmentPickerTrigger(select);
       }
-      showToast(`同じ${normalizeInventoryKind(row.kind||row.itemType||'装備')}「${row.name||''}」は2つ同時に装備できません。`,'warn');
+      showToast(duplicateRestrictedEquipmentMessage(row,duplicateSlot),'warn');
       const slotKind=EQUIPMENT_SLOTS.find(v=>v.key===slotKey)?.kind;
       if(slotKind)refreshEquipmentItemSelects({slotKinds:[slotKind]});
       return;
@@ -9899,13 +10069,20 @@ function bindEvents() {
     if (e.target.id?.startsWith('stat_') || e.target.dataset.abilityInput || e.target.dataset.skillInput || e.target.id?.startsWith('manualBonus_') || ['currentHp','currentMp','hpBonus','mpBonus','fatigueLevel'].includes(e.target.id)) updateAll();
   });
   document.addEventListener('change', e => {
+    if(e.target.id==='supportEligible'||e.target.dataset?.supportSkillMode!==undefined){updateSupportSettingsSummary();return;}
     if(e.target.matches('[data-inventory-count-index]')){
       const index=Number(e.target.dataset.inventoryCountIndex);
       if(Number.isInteger(index)&&index>=0&&inventoryItemsState[index]){
         const current=normalizeInventoryItem(inventoryItemsState[index]);
-        inventoryItemsState[index]=normalizeInventoryItem({...current,count:clampInt(e.target.value||0,0,9999)});
+        if(inventoryKindUsesIndividualRecord(current.kind)){
+          inventoryItemsState[index]=normalizeInventoryItem({...current,count:1});
+          e.target.value='1';
+          showToast('武器・防具は1個体ずつ管理します。複数個は別々の個体として登録してください。','warn');
+        }else{
+          inventoryItemsState[index]=normalizeInventoryItem({...current,count:clampInt(e.target.value||0,0,9999)});
+          e.target.value=String(inventoryItemsState[index].count);
+        }
         invalidateInventoryDerivedCache();
-        e.target.value=String(inventoryItemsState[index].count);
         refreshWarehouseQuantityViews();
         if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon('inventory');
       }
