@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.815</title>
+<title>リクラフト・アルケミア キャラクター作成ツール v90.8.816</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -729,6 +729,25 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .ra-picker-dialog .ra-picker-detail-grid dt{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important}
 .ra-picker-dialog .ra-picker-detail-grid dd{overflow-wrap:anywhere!important}
 @media(max-width:760px){.ra-picker-dialog{width:calc(100vw - 14px)!important}.ra-picker-dialog .ra-picker-shell{padding:10px!important}.ra-picker-dialog .ra-picker-tabs{max-height:150px!important}.ra-picker-dialog .ra-picker-body{grid-template-columns:1fr!important}.ra-picker-dialog .ra-picker-detail{max-height:38vh!important;border-left:0!important;border-top:1px solid var(--line)!important}.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:92px minmax(0,1fr)!important}}
+
+/* v1.0.79: データ整合性チェック / 復元履歴 */
+.data-maintenance-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.data-maintenance-card{border:1px solid var(--line);border-radius:14px;background:#fffdf8;padding:14px;min-width:0}
+.data-maintenance-card h3{margin:0 0 8px}
+.integrity-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
+.integrity-list{display:grid;gap:8px}
+.integrity-item{border:1px solid var(--line);border-radius:11px;background:#fff;padding:0;overflow:hidden}
+.integrity-item>button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;border-radius:0;background:transparent;color:inherit;padding:10px 12px;text-align:left}
+.integrity-item.ok{border-color:#bdd9c0;background:#f4fbf4}.integrity-item.warn{border-color:#e8c181;background:#fff8e8}.integrity-item.error{border-color:#e8a39b;background:#fff1ef}
+.integrity-detail{padding:0 12px 12px;white-space:pre-wrap;font-size:.88rem;line-height:1.55}
+.history-list{display:grid;gap:8px;max-height:420px;overflow:auto}
+.history-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 12px}
+.history-row .history-meta{font-size:.78rem;color:var(--muted);margin-top:2px}
+@media(max-width:760px){.data-maintenance-grid{grid-template-columns:1fr}.history-row{grid-template-columns:1fr}.history-row button{width:100%}}
+
+/* v1.0.79: 作成リスト（作成目標 / お気に入り） */
+.craft-list-switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.craft-list-switch button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.craft-list-grid{display:grid;gap:10px}.craft-list-card{border:1px solid var(--line);border-radius:14px;background:#fffdf8;padding:12px;display:grid;gap:9px}.craft-list-card-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}.craft-list-card h3{margin:0}.craft-material-list{display:grid;gap:5px}.craft-material-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border-radius:9px;padding:6px 8px;font-size:.88rem}.craft-material-row.met{background:rgba(90,140,70,.13);color:#355522}.craft-material-row.missing{background:rgba(176,70,55,.10);color:#7c3027}.craft-material-row .craft-material-count{font-weight:900;white-space:nowrap}.craft-list-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-actions input[type=number]{width:86px}.craft-favorite-name{appearance:none;border:0;background:transparent;padding:0;color:var(--accent2);font:inherit;font-weight:900;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.craft-create-dialog .dialog-inner{width:min(620px,calc(100vw - 28px))}.craft-dialog-materials{display:grid;gap:6px;margin:10px 0}.craft-result-summary{font-weight:900;margin:6px 0}.craft-list-empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
 </style>
 
 <style id="raBuildInfoStyle">
@@ -1261,7 +1280,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.815 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.816 / 最終更新日：2026年9月25日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -1344,6 +1363,8 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
       <button type="button" class="editor-tab-btn" data-editor-tab="equipment">装備</button>
       <button type="button" class="editor-tab-btn" data-editor-tab="carry">所持品</button>
       <button type="button" class="editor-tab-btn" data-editor-tab="inventory">倉庫・習得</button>
+      <button type="button" class="editor-tab-btn" data-editor-tab="craftList" data-private-view="1">作成リスト</button>
+      <button type="button" class="editor-tab-btn" data-editor-tab="dataMaintenance" data-private-view="1">データ管理</button>
     </div>
 
     <div id="editorActionBar" class="editor-action-bar collapsed" aria-label="編集操作">
@@ -1352,6 +1373,25 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
         <button id="saveBtn" type="button">保存</button>
         <button id="outputBtn" type="button" class="secondary">出力</button>
         <button id="shareBtn" type="button" class="blue">共有</button>
+      </div>
+    </div>
+
+    <div id="tabDataMaintenance" class="editor-tab-page">
+      <div class="data-maintenance-grid">
+        <section class="data-maintenance-card">
+          <h3>データ整合性チェック</h3>
+          <p class="hint">現在のキャラクターデータと共通DBを照合します。警告を押すと、何が・どこで・なぜ問題なのかを確認できます。自動修復は行いません。</p>
+          <div class="button-row"><button id="runIntegrityCheckBtn" type="button" class="secondary">チェックを実行</button></div>
+          <div id="integritySummary" class="integrity-summary"><span>未チェック</span><span class="pill">―</span></div>
+          <div id="integrityList" class="integrity-list"></div>
+        </section>
+        <section class="data-maintenance-card">
+          <h3>復元履歴</h3>
+          <p class="hint">手動保存時と一定間隔の自動保存時に復元ポイントを残します。復元前には現在状態を自動バックアップします。</p>
+          <div class="button-row"><button id="refreshHistoryBtn" type="button" class="secondary">履歴を更新</button><button id="createHistoryBtn" type="button" class="ghost">今の状態を復元ポイントに保存</button></div>
+          <div id="historyStatus" class="status-box">履歴を読み込んでいません。</div>
+          <div id="historyList" class="history-list"></div>
+        </section>
       </div>
     </div>
 
@@ -1674,8 +1714,34 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
         </div>
       </details>
     </div>
+
+    <div id="tabCraftList" class="editor-tab-page" data-private-view="1">
+      <details class="big-section" open>
+        <summary>作成リスト</summary>
+        <div class="section-body">
+          <p class="hint">施設で登録した作成目標とお気に入りです。素材所持数は倉庫・所持品・装備を含む現在のキャラクターデータから常に再計算します。</p>
+          <div class="craft-list-switch" aria-label="作成リスト切り替え">
+            <button type="button" class="ghost active" data-craft-list-view="goals">作成目標</button>
+            <button type="button" class="ghost" data-craft-list-view="favorites">お気に入り</button>
+          </div>
+          <div id="craftListStatus" class="status-box">施設で作成目標・お気に入りを登録すると、ここに表示されます。</div>
+          <div id="craftListArea" class="craft-list-grid"></div>
+        </div>
+      </details>
+    </div>
 </div>
 </main>
+
+<dialog id="craftCreateDialog" class="output-dialog craft-create-dialog">
+  <div class="dialog-inner">
+    <div id="craftCreateDialogTitle" class="dialog-title">作成</div>
+    <div class="field"><label for="craftCreateRuns">作成回数</label><input id="craftCreateRuns" type="number" min="1" max="999" value="1" inputmode="numeric" /></div>
+    <div id="craftCreateResultSummary" class="craft-result-summary"></div>
+    <div id="craftCreateMaterials" class="craft-dialog-materials"></div>
+    <div id="craftCreateStatus" class="status-box">必要素材を確認してください。</div>
+    <div class="button-row"><button id="craftCreateConfirmBtn" type="button">作成する</button><button id="craftCreateCloseBtn" type="button" class="ghost">閉じる</button></div>
+  </div>
+</dialog>
 
 <dialog id="learnedKindDialog" class="output-dialog learned-kind-dialog">
   <div class="dialog-inner">
@@ -1923,6 +1989,8 @@ let autoSaveLastSavedHash = '';
 let autoSaveDirtySections = new Set();
 let cloudCharacterRevision = 0;
 let cloudCharacterRowHint = 0;
+let cloudCharacterFolderReady = false;
+let characterLastHistoryAt = 0;
 
 function setAutoSaveStatus(message='', state=''){
   const el=$('autoSaveStatus');
@@ -1932,6 +2000,33 @@ function setAutoSaveStatus(message='', state=''){
 }
 function autoSaveTimeLabel(){
   return new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function characterSaveProgressText(percent=0,{automatic=false,usePatch=false}={}){
+  const p=Math.max(0,Math.min(100,Math.floor(Number(percent)||0)));
+  if(p<=10)return automatic?'自動保存データを準備中（10%）':'保存データを準備中（10%）';
+  if(p<=30){
+    if(automatic)return usePatch?'変更部分だけクラウドへ自動保存中（30%）':'クラウドへ自動保存中（30%）';
+    return usePatch?'変更部分だけクラウドへ保存中（30%）':'クラウドへ保存中（30%）';
+  }
+  if(p<=90)return automatic?'クラウド保存完了・反映中（90%）':'クラウド保存完了・反映中（90%）';
+  return automatic?'自動保存処理完了（100%）':'保存処理完了（100%）';
+}
+function setCharacterSaveProgress(percent=0,{automatic=false,usePatch=false}={}){
+  const text=characterSaveProgressText(percent,{automatic,usePatch});
+  if(automatic){
+    setAutoSaveStatus(text,'saving');
+    return;
+  }
+  const el=$('editorStatus');
+  if(!el)return;
+  el.className='status-box';
+  el.textContent=text;
+}
+async function yieldCharacterSaveProgressFrame(){
+  await new Promise(resolve=>{
+    if(typeof requestAnimationFrame==='function')requestAnimationFrame(()=>requestAnimationFrame(resolve));
+    else setTimeout(resolve,0);
+  });
 }
 function autoSaveContentHash(data){
   // v90.8.457: 自動保存の変更判定は1回のJSON走査だけで行う。
@@ -2088,10 +2183,42 @@ function buildAutoSavePatch(sectionsSet=autoSaveDirtySections){
   }
   if(sections.has('loadoutPresets'))patch.loadoutPresets=normalizeLoadoutPresets(loadoutPresetsState);
   if(sections.has('skillGacha'))patch.skillGacha=getSkillGachaState();
+  if(sections.has('craftLists'))patch.craftLists=getCraftListsState();
   if(sections.has('settings'))patch.autoSaveEnabled=autoSaveEnabled!==false;
   if(sections.has('memo'))patch.memo=$('charMemo').value;
   return patch;
 }
+
+function setCharacterSpecialSaveStatus(message,{automatic=false}={}){
+  if(automatic){setAutoSaveStatus(String(message||''),'saving');return;}
+  const el=$('editorStatus');if(!el)return;el.className='status-box';el.textContent=String(message||'');
+}
+async function characterEnsureStorageBeforeSave({automatic=false}={}){
+  if(currentMode==='new'||!currentCharacter?.id||cloudCharacterRowHint<2||cloudCharacterFolderReady)return;
+  setCharacterSpecialSaveStatus('既存キャラクターデータを移行しています…',{automatic});
+  const auth=getCloudAuth();
+  const res=await cloudRequest('ensureStorageStructure',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint});
+  cloudCharacterFolderReady=!!res?.ready;
+}
+async function characterCreateHistoryBeforeSave({automatic=false,force=false}={}){
+  if(currentMode==='new'||!currentCharacter?.id||cloudCharacterRowHint<2)return;
+  const due=!automatic||force||!characterLastHistoryAt||(Date.now()-characterLastHistoryAt>=10*60*1000);
+  if(!due)return;
+  setCharacterSpecialSaveStatus('復元ポイントを作成しています…',{automatic});
+  try{
+    const auth=getCloudAuth();
+    const result=await cloudRequest('historyCreate',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint,kind:automatic?'auto':'manual'});
+    characterLastHistoryAt=Date.now();
+    if(Number(result?.trimmed||0)>0){
+      setCharacterSpecialSaveStatus('古い復元履歴を整理しています…',{automatic});
+      await yieldCharacterSaveProgressFrame();
+    }
+  }catch(error){
+    setCharacterSpecialSaveStatus('復元ポイントの作成に失敗しました。保存処理は続行します…',{automatic});
+    await yieldCharacterSaveProgressFrame();
+  }
+}
+
 async function saveCharacterNow({automatic=false,force=false}={}){
   if(autoSaveBusy){
     // 保存中に同じ保存要求が重なっても、未送信のDirtyが無ければ再保存は不要。
@@ -2101,6 +2228,15 @@ async function saveCharacterNow({automatic=false,force=false}={}){
   // v1.0.52: 既存キャラは自動/手動を問わず、変更区分が分かる限り差分保存を使う。
   // 新規作成と明示forceだけがDrive全体保存になる。
   const usePatch=!force&&currentMode!=='new'&&cloudCharacterRowHint>=2&&autoSaveDirtySections.size>0;
+  try{
+    await characterEnsureStorageBeforeSave({automatic});
+    await characterCreateHistoryBeforeSave({automatic,force});
+  }catch(sequenceError){
+    if(automatic)setAutoSaveStatus(`保存前処理に失敗しました：${sequenceError.message||sequenceError}`,'error');
+    else{$('editorStatus').className='status-box error';$('editorStatus').textContent=sequenceError.message||String(sequenceError);}
+    return {saved:false,reason:'pre-save',error:sequenceError};
+  }
+  setCharacterSaveProgress(10,{automatic,usePatch});
   const patch=usePatch?buildAutoSavePatch(autoSaveDirtySections):null;
   const data=usePatch?null:collectData(true);
   const name=usePatch?(Object.prototype.hasOwnProperty.call(patch,'name')?patch.name:currentCharacter?.name):data?.name;
@@ -2129,9 +2265,11 @@ async function saveCharacterNow({automatic=false,force=false}={}){
   autoSaveDirty=autoSaveDirtySections.size>0;
   autoSaveBusy=true;autoSavePending=false;
   let saveFailed=false;
-  if(automatic)setAutoSaveStatus(usePatch?'変更部分だけクラウドへ自動保存中…':'クラウドへ自動保存中…','saving');
+  setCharacterSaveProgress(30,{automatic,usePatch});
   try{
     const result=usePatch?await savePatchItem(currentCharacter.id,patch):await saveItem(data);
+    setCharacterSaveProgress(90,{automatic,usePatch});
+    cloudCharacterFolderReady=true;
     if(usePatch){currentCharacter={...(currentCharacter||{}),...patch};}
     else{currentCharacter=data;autoSaveLastSavedHash=autoSaveContentHash(data);}
     const listMayHaveChanged=currentMode==='new'||(!usePatch&&String(currentCharacter?.name||'')!==String(data?.name||''))||(usePatch&&Object.prototype.hasOwnProperty.call(patch||{},'name'));
@@ -2140,6 +2278,8 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     if(listMayHaveChanged){try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_LIST_CHANGED'},location.origin)}catch(_){}}
     autoSaveDirty=autoSaveDirtySections.size>0;
     syncAutoSaveToggle();
+    setCharacterSaveProgress(100,{automatic,usePatch});
+    await yieldCharacterSaveProgressFrame();
     if(automatic)setAutoSaveStatus(`差分自動保存しました（${autoSaveTimeLabel()}）`,'ok');
     else{$('editorStatus').className=result?.reason?'status-box warn':'status-box ok';$('editorStatus').textContent='クラウドへ保存しました。';setAutoSaveStatus(autoSaveEnabled?`保存しました（${autoSaveTimeLabel()}）`:'自動保存：OFF','ok');showToast('クラウドへ保存しました。','ok');}
     return {saved:true,result};
@@ -4603,11 +4743,12 @@ function updateEquipmentHandLocks(clearOpposite=true) {
   updateEquipmentFieldAvailability();
 }
 function showEditorTab(tab) {
-  const map = { ability:'tabAbility', skills:'tabSkills', skillCrystal:'tabSkillCrystal', equipment:'tabEquipment', carry:'tabCarry', inventory:'tabInventory' };
+  const map = { ability:'tabAbility', skills:'tabSkills', skillCrystal:'tabSkillCrystal', equipment:'tabEquipment', carry:'tabCarry', inventory:'tabInventory', craftList:'tabCraftList',dataMaintenance:'tabDataMaintenance' };
   const target = $(map[tab] || 'tabAbility');
   if (!target) return;
   // 倉庫は初回表示時だけDOMを構築する。キャラを開く瞬間の数百件カード生成を避ける。
   if (tab === 'inventory' && inventoryUiDirty) renderInventory({refreshLinked:false});
+  if (tab === 'craftList') renderCraftLists();
   if (target.classList.contains('active')) return;
   for (const page of document.querySelectorAll('.editor-tab-page')) page.classList.toggle('active', page === target);
   for (const btn of document.querySelectorAll('.editor-tab-btn')) btn.classList.toggle('active', btn.dataset.editorTab === tab);
@@ -7738,11 +7879,128 @@ function sortInventoryItems() {
   renderInventory();
   updateSummary();
 }
+
+function normalizeCraftLists(raw={}){
+  const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+  const normalizeRef=(entry={})=>({
+    recipeId:String(entry.recipeId||entry.id||'').trim(),publicId:String(entry.publicId||'').trim(),resultName:String(entry.resultName||entry.resultItem||entry.name||'').trim(),craftType:String(entry.craftType||'').trim(),resultKind:String(entry.resultKind||entry.itemType||'').trim(),resultCount:Math.max(1,Math.floor(Number(entry.resultCount)||1)),requiredMaterials:String(entry.requiredMaterials||'').trim(),addedAt:String(entry.addedAt||'').trim()
+  });
+  const goals=[];for(const entry of (Array.isArray(src.goals)?src.goals:[])){const ref=normalizeRef(entry);if(!ref.resultName)continue;ref.targetRuns=Math.max(1,Math.floor(Number(entry.targetRuns||entry.runs)||1));goals.push(ref);}
+  const favorites=[];const seen=new Set();for(const entry of (Array.isArray(src.favorites)?src.favorites:[])){const ref=normalizeRef(entry);if(!ref.resultName)continue;const key=craftListEntryKey(ref);if(seen.has(key))continue;seen.add(key);favorites.push(ref);}
+  return {goals,favorites};
+}
+function craftListEntryKey(entry={}){return String(entry.recipeId||entry.publicId||`${entry.craftType||''}::${entry.resultName||''}`).trim();}
+let craftListsState=normalizeCraftLists();
+let craftListView='goals';
+let craftDialogContext=null;
+function getCraftListsState(){craftListsState=normalizeCraftLists(craftListsState);return JSON.parse(JSON.stringify(craftListsState));}
+function setCraftListsState(raw={}){craftListsState=normalizeCraftLists(raw);renderCraftLists();}
+function parseCraftRequiredMaterials(text=''){
+  return String(text||'').split(/[,、\n]+/).map(v=>v.trim()).filter(Boolean).map(part=>{const m=part.match(/^(.*?)\s*×\s*(\d+)\s*$/);return m?{name:m[1].trim(),count:Math.max(0,Number(m[2])||0)}:null;}).filter(Boolean);
+}
+function craftRecipeForEntry(entry={}){
+  const recipes=Array.isArray(DB_RECIPE_MASTER)?DB_RECIPE_MASTER:[];
+  const rid=String(entry.recipeId||'').trim(),pid=String(entry.publicId||'').trim().toUpperCase(),name=String(entry.resultName||'').trim(),type=String(entry.craftType||'').trim();
+  return recipes.find(r=>rid&&String(r.id||'').trim()===rid)||recipes.find(r=>pid&&String(r.publicId||'').trim().toUpperCase()===pid)||recipes.find(r=>String(r.resultItem||r.name||'').trim()===name&&(!type||String(r.craftType||'').trim()===type))||null;
+}
+function craftResolvedEntry(entry={}){const r=craftRecipeForEntry(entry)||{};return {...entry,recipeId:String(r.id||entry.recipeId||''),publicId:String(r.publicId||entry.publicId||''),resultName:String(r.resultItem||entry.resultName||r.name||''),craftType:String(r.craftType||entry.craftType||''),resultKind:String(r.resultKind||r.itemType||entry.resultKind||''),resultCount:Math.max(1,Math.floor(Number(r.resultCount||entry.resultCount)||1)),requiredMaterials:String(r.requiredMaterials||entry.requiredMaterials||'')};}
+function craftInventoryCountByName(name=''){const target=String(name||'').trim();return (inventoryItemsState||[]).reduce((sum,raw)=>sum+(String(raw?.name||'').trim()===target?Math.max(0,Number(raw.count||0)):0),0);}
+function craftRequirementState(entry={},runs=1){const ref=craftResolvedEntry(entry),mult=Math.max(1,Math.floor(Number(runs)||1));return parseCraftRequiredMaterials(ref.requiredMaterials).map(row=>{const need=row.count*mult,have=craftInventoryCountByName(row.name);return {...row,need,have,met:have>=need};});}
+function craftMaterialRowsHtml(rows=[]){return rows.map(row=>`<div class="craft-material-row ${row.met?'met':'missing'}"><span>${row.met?'✓':'不足'} ${esc(row.name)}</span><span class="craft-material-count">${esc(String(row.have))} / ${esc(String(row.need))}</span></div>`).join('');}
+function craftCanMake(entry={},runs=1){const rows=craftRequirementState(entry,runs);return rows.length>0&&rows.every(x=>x.met);}
+function craftMaxRuns(entry={},cap=999){const ref=craftResolvedEntry(entry),req=parseCraftRequiredMaterials(ref.requiredMaterials);if(!req.length)return 0;let max=Infinity;for(const row of req)max=Math.min(max,Math.floor(craftInventoryCountByName(row.name)/Math.max(1,row.count)));return Math.max(0,Math.min(Math.floor(Number(cap)||999),Number.isFinite(max)?max:0));}
+function renderCraftLists(){
+  const area=$('craftListArea'),status=$('craftListStatus');if(!area)return;
+  craftListsState=normalizeCraftLists(craftListsState);
+  document.querySelectorAll('[data-craft-list-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.craftListView===craftListView));
+  const entries=craftListView==='favorites'?craftListsState.favorites:craftListsState.goals;
+  if(!entries.length){area.innerHTML=`<div class="craft-list-empty">${craftListView==='favorites'?'お気に入りはまだ登録されていません。':'作成目標はまだ登録されていません。'}</div>`;if(status){status.className='status-box';status.textContent='施設から登録できます。';}return;}
+  if(status){status.className='status-box ok';status.textContent=`${entries.length}件を表示しています。素材所持数は現在値です。`;}
+  area.innerHTML=entries.map((raw,index)=>{const e=craftResolvedEntry(raw),runs=craftListView==='goals'?Math.max(1,Number(e.targetRuns)||1):1,resultTotal=e.resultCount*runs,req=craftRequirementState(e,runs),maxRuns=craftMaxRuns(e,craftListView==='goals'?runs:999);if(craftListView==='favorites')return `<article class="craft-list-card"><div class="craft-list-card-head"><button type="button" class="craft-favorite-name" data-craft-favorite-open="${index}">${esc(e.resultName)}</button><button type="button" class="ghost" data-craft-favorite-remove="${index}">お気に入りから削除</button></div><div class="muted">クリックすると作成回数と必要素材を確認できます。</div></article>`;return `<article class="craft-list-card"><div class="craft-list-card-head"><div><h3>${esc(e.resultName)}</h3><div class="muted">残り ${runs}回 / ${resultTotal}個</div></div><button type="button" class="ghost" data-craft-goal-reduce="${index}">目標を減らす</button></div><div class="craft-material-list">${craftMaterialRowsHtml(req)}</div><div class="craft-list-actions"><label>今回の作成回数 <input type="number" min="1" max="${runs}" value="${Math.max(1,Math.min(runs,maxRuns||1))}" data-craft-goal-runs="${index}"></label><button type="button" data-craft-goal-make="${index}" ${maxRuns<1?'disabled':''}>作成する</button></div></article>`;}).join('');
+  area.querySelectorAll('[data-craft-goal-runs]').forEach(input=>input.addEventListener('input',()=>{const index=Number(input.dataset.craftGoalRuns),entry=craftListsState.goals[index],runs=Math.max(1,Math.min(Number(entry?.targetRuns)||1,Math.floor(Number(input.value)||1))),btn=area.querySelector(`[data-craft-goal-make="${index}"]`);if(btn)btn.disabled=!craftCanMake(entry,runs);}));
+}
+function craftEquippedItemIds(){const ids=new Set();const eq=getEquipmentState();Object.values(eq||{}).forEach(row=>{const id=String(row?.itemId||'').trim();if(id)ids.add(id);});return ids;}
+function craftConsumeMaterials(entry={},runs=1){const req=craftRequirementState(entry,runs);if(!req.length||req.some(x=>!x.met))throw new Error('必要素材が不足しています。');const equipped=craftEquippedItemIds(),willUseEquipped=[];for(const row of req){let nonEq=0;for(const raw of inventoryItemsState){if(String(raw?.name||'').trim()!==row.name)continue;const id=String(inventoryItemKey(normalizeInventoryItem(raw))||'').trim();if(!equipped.has(id))nonEq+=Math.max(0,Number(raw.count||0));}if(nonEq<row.need)willUseEquipped.push(`${row.name} ×${row.need-nonEq}`);}if(willUseEquipped.length&&!window.confirm(`装備中のアイテムを素材として使用します。\n${willUseEquipped.join('\n')}\n\n作成を続けますか？`))return false;for(const row of req){let remain=row.need;const order=[...inventoryItemsState.keys()].sort((a,b)=>{const ai=equipped.has(String(inventoryItemKey(normalizeInventoryItem(inventoryItemsState[a]))||'')),bi=equipped.has(String(inventoryItemKey(normalizeInventoryItem(inventoryItemsState[b]))||''));return Number(ai)-Number(bi);});for(const i of order){if(remain<=0)break;const raw=inventoryItemsState[i];if(!raw||String(raw.name||'').trim()!==row.name)continue;const have=Math.max(0,Number(raw.count||0));if(!have)continue;const take=Math.min(have,remain);inventoryItemsState[i]=normalizeInventoryItem({...raw,count:have-take});remain-=take;}}inventoryItemsState=inventoryItemsState.filter(raw=>Math.max(0,Number(raw.count||0))>0);invalidateInventoryDerivedCache();return true;}
+function craftOutputPreset(entry={}){const ref=craftResolvedEntry(entry),name=String(ref.resultName||'').trim();const row=(Array.isArray(DB_INITIAL_ITEM_MASTER)?DB_INITIAL_ITEM_MASTER:[]).find(x=>String(x.name||'').trim()===name);if(row)return dbItemToInventoryItem(row);return normalizeInventoryItem({name,kind:ref.resultKind||'アイテム',category:ref.resultKind||'',count:1,location:'倉庫'});}
+function craftAddOutput(entry={},runs=1){const ref=craftResolvedEntry(entry),amount=Math.max(1,ref.resultCount)*Math.max(1,Math.floor(Number(runs)||1)),preset=craftOutputPreset(ref),kind=normalizeInventoryKind(preset.kind||ref.resultKind||'アイテム');if(inventoryKindUsesIndividualRecord(kind)){for(let i=0;i<amount;i++)inventoryItemsState.push(normalizeInventoryItem({...preset,id:newInventoryInstanceId(),count:1,location:'倉庫'}));}else{let idx=inventoryItemsState.findIndex(raw=>String(raw?.name||'').trim()===String(preset.name||'').trim()&&normalizeInventoryKind(raw?.kind||'')===kind);if(idx>=0)inventoryItemsState[idx]=normalizeInventoryItem({...inventoryItemsState[idx],count:Math.max(0,Number(inventoryItemsState[idx].count||0))+amount});else inventoryItemsState.push(normalizeInventoryItem({...preset,count:amount,location:'倉庫'}));}invalidateInventoryDerivedCache();return amount;}
+async function craftExecute(entry={},runs=1,{goalIndex=-1}={}){runs=Math.max(1,Math.floor(Number(runs)||1));if((!Array.isArray(DB_INITIAL_ITEM_MASTER)||!DB_INITIAL_ITEM_MASTER.length)&&typeof loadCharacterSheetMasterFromDbForInitial==='function'){try{await loadCharacterSheetMasterFromDbForInitial();}catch(_){}}if(!craftCanMake(entry,runs)){showToast('必要素材が不足しています。','error');return false;}if(!craftConsumeMaterials(entry,runs))return false;const amount=craftAddOutput(entry,runs);if(goalIndex>=0&&craftListsState.goals[goalIndex]){craftListsState.goals[goalIndex].targetRuns=Math.max(0,(Number(craftListsState.goals[goalIndex].targetRuns)||1)-runs);if(craftListsState.goals[goalIndex].targetRuns<=0)craftListsState.goals.splice(goalIndex,1);}markInventoryUiDirty();try{setEquipmentState(getEquipmentState());}catch(_){}renderCraftLists();updateSummary();autoSaveDraftSoon(['inventory','equipment','craftLists']);showToast(`${craftResolvedEntry(entry).resultName}を${amount}個作成し、倉庫へ登録しました。`,'ok');return true;}
+function openCraftCreateDialog(index){const entry=craftListsState.favorites[index];if(!entry)return;craftDialogContext={type:'favorite',index};$('craftCreateDialogTitle').textContent=craftResolvedEntry(entry).resultName;$('craftCreateRuns').value='1';updateCraftCreateDialog();$('craftCreateDialog').showModal();}
+function updateCraftCreateDialog(){if(!craftDialogContext)return;const entry=craftListsState.favorites[craftDialogContext.index];if(!entry)return;const runs=Math.max(1,Math.floor(Number($('craftCreateRuns').value)||1)),ref=craftResolvedEntry(entry),req=craftRequirementState(ref,runs);$('craftCreateResultSummary').textContent=`完成数：${ref.resultCount*runs}個`;$('craftCreateMaterials').innerHTML=craftMaterialRowsHtml(req);const can=req.length>0&&req.every(x=>x.met);$('craftCreateConfirmBtn').disabled=!can;$('craftCreateStatus').className=can?'status-box ok':'status-box warn';$('craftCreateStatus').textContent=can?'必要素材を満たしています。':'必要素材が不足しています。';}
+
 function emptyCharacter() {
   const stats = Object.fromEntries(STAT_ORDER.map(k => [k, '']));
   const abilities = Object.fromEntries(ABILITIES.map(a => [a.key, 0]));
-  return { id: uuid(), name: '', gender: '', age: '', stats, abilities, skills: defaultSkillAlloc(), manualCategoryBonuses: emptyCategoryBonus(), resources: { hpBonus:0, mpBonus:0, currentHp:'', currentMp:'', fatigue:0 }, equipment: defaultEquipment(), inventory: defaultInventory(), loadoutPresets:defaultLoadoutPresets(), skillGacha:defaultSkillGachaState(), autoSaveEnabled:true, memo: '', createdAt: nowIso(), updatedAt: nowIso() };
+  return { id: uuid(), name: '', gender: '', age: '', stats, abilities, skills: defaultSkillAlloc(), manualCategoryBonuses: emptyCategoryBonus(), resources: { hpBonus:0, mpBonus:0, currentHp:'', currentMp:'', fatigue:0 }, equipment: defaultEquipment(), inventory: defaultInventory(), loadoutPresets:defaultLoadoutPresets(), skillGacha:defaultSkillGachaState(), craftLists:normalizeCraftLists(), autoSaveEnabled:true, memo: '', createdAt: nowIso(), updatedAt: nowIso() };
 }
+
+function integrityMasterItemIndex(){
+  const rows=[...(DB_INITIAL_ITEM_MASTER||[])],byId=new Map(),byPublic=new Map();
+  rows.forEach(r=>{if(r.id)byId.set(String(r.id),r);if(r.publicId)byPublic.set(String(r.publicId),r);});
+  return{rows,byId,byPublic};
+}
+function characterIntegrityIssues(){
+  const data=collectData(false),issues=[],inv=Array.isArray(data?.inventory?.items)?data.inventory.items:[],index=integrityMasterItemIndex();
+  const add=(severity,title,where,reason,detail='')=>issues.push({severity,title,where,reason,detail});
+  const ids=new Map();
+  inv.forEach((raw,i)=>{
+    const item=normalizeInventoryItem(raw),id=String(item.id||'').trim();
+    if(id){if(ids.has(id))add('error','装備・倉庫個体IDが重複しています',`倉庫 ${ids.get(id)+1}件目 / ${i+1}件目`,`1つのキャラクター内で個体IDは一意である必要があります。`,`重複ID：${id}`);else ids.set(id,i);}
+    if(inventoryKindUsesIndividualRecord(item.kind)&&Number(raw.count||1)!==1)add('warn','個体管理装備の個数が1ではありません',`倉庫：${item.name||'名称未設定'}`,`武器・防具は個体ごとに別レコードで管理するため、1レコードの個数は1である必要があります。`,`保存値：${raw.count}`);
+    const used=equipmentUpgradeUsedSlots(parseUpgradeLines(item.upgradeEntries||item.upgradeLines||'')),limit=Math.max(0,Number(item.upgradeLimit||0));
+    if(limit&&used>limit)add('error','装備強化枠を超過しています',`倉庫：${item.name||'名称未設定'}`,`使用中の強化枠が装備の上限を超えています。`,`使用 ${used}枠 / 上限 ${limit}枠`);
+    const masterId=String(item.masterId||'').trim(),publicId=String(item.publicId||'').trim(),antique=/antique/i.test(String(item.masterSheet||''))||/^antique/i.test(id);
+    if(masterId&&!index.byId.has(masterId)&&!antique)add('warn','共通DBに存在しないアイテムIDを参照しています',`倉庫：${item.name||'名称未設定'}`,`保存されているmasterIdが現在の共通DBに見つかりません。古いデータまたは削除済みデータの可能性があります。`,`masterId：${masterId}`);
+    if(publicId&&!index.byPublic.has(publicId)&&!antique)add('warn','共通DBに存在しない登録IDを参照しています',`倉庫：${item.name||'名称未設定'}`,`登録IDが現在の共通DBに見つかりません。個別発行品でない場合は確認してください。`,`登録ID：${publicId}`);
+  });
+  const eq=data.equipment||{},a=normalizeInventoryItem(eq.rightHand||{}),b=normalizeInventoryItem(eq.leftHand||{});
+  if(String(a.name||'').trim()&&String(b.name||'').trim()){
+    const ai=duplicateRestrictedEquipmentIdentity(a),bi=duplicateRestrictedEquipmentIdentity(b);
+    if(ai&&bi&&ai===bi)add('error','左右手の装備ルールに違反しています','装備 > 右手 / 左手','同時装備できない組み合わせが保存されています。',`${a.name} / ${b.name}`);
+    if(isTwoHandCsItem(a)||isTwoHandCsItem(b))add('error','両手装備と副手装備が同時設定されています','装備 > 右手 / 左手','両手装備を使用している間、反対の手には装備できません。',`${a.name} / ${b.name}`);
+  }
+  const sg=normalizeSkillGachaState(data.skillGacha||{}),skillIds=new Set((DB_SKILL_MASTER||[]).map(r=>String(r.id||'')));
+  sg.acquiredSkillIds.forEach(id=>{if(id&&!skillIds.has(String(id)))add('warn','存在しないスキルを所持しています','スキルクリスタル > 倉庫','取得済みスキルIDが現在の共通DBに見つかりません。',`ID：${id}`);});
+  sg.equippedSkillIds.filter(Boolean).forEach(id=>{if(!skillIds.has(String(id)))add('error','存在しないスキルを装着しています','スキルクリスタル > 設定スキル','装着中のスキルIDが現在の共通DBに見つかりません。',`ID：${id}`);});
+  const setIds=sg.equippedSkillIds.filter(Boolean);if(new Set(setIds).size!==setIds.length)add('error','同じスキルが複数枠に設定されています','スキルクリスタル > 設定スキル','同一スキルを複数の装着枠へ設定することはできません。');
+  const presets=Array.isArray(data.loadoutPresets)?data.loadoutPresets:Object.values(data.loadoutPresets||{});
+  presets.forEach((preset,pi)=>Object.values(preset?.data?.slots||preset?.slots||{}).forEach(slot=>{const itemId=String(slot?.itemId||'').trim();if(itemId&&!inv.some(r=>String(r.id||'')===itemId))add('warn','装備プリセットが存在しない倉庫個体を参照しています',`装備プリセット ${pi+1}`,'プリセット保存後に対象装備が削除された可能性があります。',`itemId：${itemId}`);}));
+  return issues;
+}
+function renderIntegrityCheck(){
+  const list=$('integrityList'),summary=$('integritySummary');if(!list||!summary)return;
+  const issues=characterIntegrityIssues(),errors=issues.filter(x=>x.severity==='error').length,warns=issues.filter(x=>x.severity==='warn').length;
+  summary.innerHTML=issues.length?`<span>${errors?`エラー ${errors}件 / `:''}警告 ${warns}件</span><span class="pill">${issues.length}件</span>`:`<span>問題は見つかりませんでした。</span><span class="pill">OK</span>`;
+  list.innerHTML=issues.length?issues.map((x,i)=>`<div class="integrity-item ${esc(x.severity)}"><button type="button" data-integrity-toggle="${i}"><span>${x.severity==='error'?'⚠':'△'} ${esc(x.title)}</span><span>${esc(x.where)}</span></button><div class="integrity-detail" data-integrity-detail="${i}" hidden><b>検出箇所：</b>${esc(x.where)}\n<b>理由：</b>${esc(x.reason)}${x.detail?`\n<b>詳細：</b>${esc(x.detail)}`:''}</div></div>`).join(''):`<div class="integrity-item ok"><button type="button" disabled><span>✓ データ整合性に問題はありません。</span></button></div>`;
+}
+async function refreshCharacterHistory(){
+  const status=$('historyStatus'),list=$('historyList');if(!status||!list)return;
+  if(currentMode==='new'||!currentCharacter?.id){status.className='status-box warn';status.textContent='新規キャラクターは初回保存後に履歴を利用できます。';list.innerHTML='';return;}
+  status.className='status-box';status.textContent='復元履歴を読み込み中です。';list.innerHTML='';
+  try{
+    const auth=getCloudAuth(),res=await cloudRequest('historyList',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint}),items=res.items||[];
+    cloudCharacterFolderReady=!!res.folderReady;
+    status.className='status-box ok';
+    status.textContent=!res.folderReady?'次回保存時に既存キャラクターデータを新しいフォルダ構成へ移行します。復元履歴は移行後から利用できます。':(items.length?`${items.length}件の復元ポイントがあります。`:'復元ポイントはまだありません。');
+    list.innerHTML=items.map(row=>{const d=new Date(row.createdAt),label=Number.isNaN(d.getTime())?row.createdAt:d.toLocaleString('ja-JP');return `<div class="history-row"><div><b>${esc(label)}</b><div class="history-meta">${row.kind==='manual'?'手動保存':'自動復元ポイント'} / revision ${esc(row.revision||0)}</div></div><button type="button" class="secondary" data-history-restore="${esc(row.fileId)}">この時点へ復元</button></div>`;}).join('');
+  }catch(e){status.className='status-box error';status.textContent=e.message||String(e);}
+}
+async function createCharacterHistoryNow(){
+  if(currentMode==='new'||!currentCharacter?.id)return;
+  const status=$('historyStatus');try{if(status){status.className='status-box';status.textContent='復元ポイントを作成しています…';}await characterEnsureStorageBeforeSave({automatic:false});const auth=getCloudAuth();await cloudRequest('historyCreate',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint,kind:'manual'});characterLastHistoryAt=Date.now();await refreshCharacterHistory();}catch(e){if(status){status.className='status-box error';status.textContent=e.message||String(e);}}
+}
+async function restoreCharacterHistory(fileId){
+  if(!fileId||!currentCharacter?.id)return;
+  if(!confirm('この時点へ復元しますか？\n現在の状態は復元直前バックアップとして保存してから復元します。'))return;
+  const status=$('historyStatus');
+  try{
+    if(status){status.className='status-box';status.textContent='現在状態をバックアップして復元しています…';}
+    const auth=getCloudAuth(),res=await cloudRequest('historyRestore',{id:currentCharacter.id,historyFileId:fileId,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint});
+    cloudCharacterRevision=Number(res.revision||cloudCharacterRevision)||0;cloudCharacterRowHint=Number(res.storageRow||cloudCharacterRowHint)||0;cloudCharacterFolderReady=true;
+    applyData(res.data||{});autoSaveDirty=false;autoSaveDirtySections.clear();autoSaveLastSavedHash=autoSaveContentHash(res.data||{});
+    showToast('復元しました。','ok');await refreshCharacterHistory();renderIntegrityCheck();
+  }catch(e){if(status){status.className='status-box error';status.textContent=e.message||String(e);}showToast(e.message||String(e),'error');}
+}
+
 function collectData(updateTime=true) {
   const base = currentCharacter || emptyCharacter();
   syncAllEquipmentUpgradesToInventory();
@@ -7765,6 +8023,7 @@ function collectData(updateTime=true) {
     inventory: getInventoryState(),
     loadoutPresets: normalizeLoadoutPresets(loadoutPresetsState),
     skillGacha: getSkillGachaState(),
+    craftLists: getCraftListsState(),
     combatStats: computeCombatStats(abilities, getSkillAlloc(), equipment),
     autoSaveEnabled: autoSaveEnabled!==false,
     memo: $('charMemo').value,
@@ -7795,6 +8054,7 @@ function applyData(data) {
   // 倉庫カードは「倉庫」タブを開くまで生成しない。編集画面への遷移を倉庫件数から切り離す。
   renderQuiverControls();
   setSkillGachaState(currentCharacter.skillGacha || {});
+  setCraftListsState(currentCharacter.craftLists || {});
   if(legacyEquipmentUpgradeMigrationCount>0){
     setTimeout(()=>showToast(`旧形式の装備強化${legacyEquipmentUpgradeMigrationCount}件を新形式へ引き継ぎました。次回保存時に確定します。`,'ok'),0);
   }
@@ -7816,6 +8076,7 @@ function setReadOnly(readOnly) {
     if ($('skill_other_' + key)) $('skill_other_' + key).disabled = readOnly;
   }
   for (const el of document.querySelectorAll('[data-equipment-input]')) el.disabled = readOnly;
+  for (const btn of [$('createHistoryBtn')]) if(btn) btn.disabled=readOnly;
   for (const el of document.querySelectorAll('[data-inventory-input]')) {
     const quiverSlot = el.dataset?.quiverAmmoCount || '';
     const quiverState = quiverSlot ? normalizeQuiverAmmoSlotState(quiverAmmoSlotsState[quiverSlot]) : null;
@@ -7824,6 +8085,7 @@ function setReadOnly(readOnly) {
   for (const btn of document.querySelectorAll('[data-inventory-action]')) btn.disabled = readOnly && btn.dataset.inventoryAction !== 'detail';
   for (const el of document.querySelectorAll('[data-skill-crystal-input]')) el.disabled = readOnly;
   for (const el of document.querySelectorAll('[data-loadout-preset-input],[data-loadout-preset-action]')) el.disabled = readOnly;
+  for (const el of document.querySelectorAll('[data-craft-goal-runs],[data-craft-goal-make],[data-craft-goal-reduce],[data-craft-favorite-remove]')) el.disabled = readOnly;
   for (const btn of document.querySelectorAll('[data-skill-remove],#addSkillByPublicIdBtn,#clearSkillPublicIdBtn')) btn.disabled = readOnly || (btn.dataset.skillRemove && normalizeSkillGachaState(skillGachaState||{}).equippedSkillIds.includes(btn.dataset.skillRemove));
   if ($('addInventoryItemBtn')) $('addInventoryItemBtn').disabled = readOnly;
   if ($('sortInventoryItemBtn')) $('sortInventoryItemBtn').disabled = readOnly;
@@ -7892,7 +8154,7 @@ function openEditor(mode, data=null) {
   autoSaveReady=false;
   clearAutoSaveTimer();
   currentMode = mode;
-  if(mode==='new'){ cloudCharacterRevision=0; cloudCharacterRowHint=0; }
+  if(mode==='new'){ cloudCharacterRevision=0; cloudCharacterRowHint=0; cloudCharacterFolderReady=false; characterLastHistoryAt=0; }
   applyData(data || emptyCharacter());
   const publicShareView = mode === 'view' && typeof isPublicViewMode === 'function' && isPublicViewMode();
   const title = mode === 'new' ? '新規作成' : mode === 'view' ? (publicShareView ? '共有キャラクター閲覧' : 'キャラクター閲覧') : 'キャラクター編集';
@@ -7949,7 +8211,7 @@ function setGasUrl(url) { localStorage.setItem(GAS_URL_KEY, gasUrl()); }
 function masterAdminKey() { return ''; }
 function setMasterAdminKey(key) { /* v37: カテゴリ系マスタは管理キーに関係なく参照する */ }
 function equipmentScopeKey() { return 'global'; }
-const CLOUD_JSONP_ACTIONS = new Set(['list','load','equipmentCategories','equipmentCategoriesMeta','characterSheetMaster','resolveRegistrationId']);
+const CLOUD_JSONP_ACTIONS = new Set(['list','load','historyList','equipmentCategories','equipmentCategoriesMeta','characterSheetMaster','resolveRegistrationId']);
 function cloudJsonpRequest(action, payload={}) {
   return new Promise((resolve,reject)=>{
     const raw = gasUrl();
@@ -8046,7 +8308,7 @@ async function cloudRequest(action, payload={}) {
     }
     throw lastError||new Error('DB読み込みに失敗しました。');
   }
-  if (action === 'save' || action === 'savePatch' || action === 'delete') {
+  if (action === 'save' || action === 'savePatch' || action === 'delete' || action === 'ensureStorageStructure' || action === 'historyCreate' || action === 'historyRestore') {
     // v90.8.594: 1回の応答付きPOSTで完了する。旧no-cors経路は互換フォールバックのみ。
     try{
       return await cloudPostMessageRequest(action,payload);
@@ -8635,6 +8897,7 @@ async function loadItem(id,{expectedRevision=0,rowHint=0,force=false}={}) {
   const res = await cloudRequest('load', { id, playerKey: currentCloudPlayerKey, rowHint:Number(rowHint||cached?.storageRow||0)||0 });
   cloudCharacterRevision=Number(res.revision||0)||0;
   cloudCharacterRowHint=Number(res.storageRow||0)||0;
+  cloudCharacterFolderReady=!!res.folderReady;
   if(res?.data)characterDataCachePut(currentCloudPlayerKey,res.data,cloudCharacterRevision,cloudCharacterRowHint);
   if(res&&res.migratedToDrive){showToast('旧スプレッドシート保存をGoogle Driveへ移行しました。','ok');}
   return res.data;
@@ -9723,7 +9986,22 @@ function bindEvents() {
   $('shareBtn').addEventListener('click', copyShareData);
   $('actionBarToggleBtn').addEventListener('click', () => setActionBarCollapsed(!$('editorActionBar').classList.contains('collapsed')));
 
-  document.querySelectorAll('.editor-tab-btn').forEach(btn => btn.addEventListener('click', () => showEditorTab(btn.dataset.editorTab)));
+  
+document.querySelectorAll('[data-craft-list-view]').forEach(btn=>btn.addEventListener('click',()=>{craftListView=btn.dataset.craftListView==='favorites'?'favorites':'goals';renderCraftLists();}));
+$('craftListArea')?.addEventListener('click',async e=>{const favOpen=e.target.closest('[data-craft-favorite-open]');if(favOpen){openCraftCreateDialog(Number(favOpen.dataset.craftFavoriteOpen));return;}const favRemove=e.target.closest('[data-craft-favorite-remove]');if(favRemove){const i=Number(favRemove.dataset.craftFavoriteRemove),entry=craftListsState.favorites[i];if(entry&&window.confirm(`「${craftResolvedEntry(entry).resultName}」をお気に入りから削除しますか？`)){craftListsState.favorites.splice(i,1);renderCraftLists();autoSaveDraftSoon('craftLists');}return;}const reduce=e.target.closest('[data-craft-goal-reduce]');if(reduce){const i=Number(reduce.dataset.craftGoalReduce),entry=craftListsState.goals[i];if(!entry)return;const current=Math.max(1,Number(entry.targetRuns)||1),value=window.prompt(`減らす作成回数を入力してください。\n現在の残り：${current}回\n全て削除する場合は ${current} を入力してください。`,'1');if(value===null)return;const n=Math.floor(Number(value)||0);if(n<1||n>current){showToast('1～残り回数の範囲で入力してください。','error');return;}entry.targetRuns=current-n;if(entry.targetRuns<=0)craftListsState.goals.splice(i,1);renderCraftLists();autoSaveDraftSoon('craftLists');return;}const make=e.target.closest('[data-craft-goal-make]');if(make){const i=Number(make.dataset.craftGoalMake),entry=craftListsState.goals[i],input=$('craftListArea')?.querySelector(`[data-craft-goal-runs="${i}"]`),runs=Math.max(1,Math.min(Number(entry?.targetRuns)||1,Math.floor(Number(input?.value)||1)));await craftExecute(entry,runs,{goalIndex:i});return;}});
+$('craftCreateRuns')?.addEventListener('input',updateCraftCreateDialog);
+$('craftCreateCloseBtn')?.addEventListener('click',()=>{$('craftCreateDialog')?.close();craftDialogContext=null;});
+$('craftCreateConfirmBtn')?.addEventListener('click',async()=>{if(!craftDialogContext)return;const entry=craftListsState.favorites[craftDialogContext.index],runs=Math.max(1,Math.floor(Number($('craftCreateRuns')?.value)||1));if(await craftExecute(entry,runs)){$('craftCreateDialog')?.close();craftDialogContext=null;}});
+
+document.querySelectorAll('.editor-tab-btn').forEach(btn => btn.addEventListener('click', () => {
+  showEditorTab(btn.dataset.editorTab);
+  if(btn.dataset.editorTab==='dataMaintenance'){renderIntegrityCheck();refreshCharacterHistory();}
+}));
+$('runIntegrityCheckBtn')?.addEventListener('click',renderIntegrityCheck);
+$('refreshHistoryBtn')?.addEventListener('click',refreshCharacterHistory);
+$('createHistoryBtn')?.addEventListener('click',createCharacterHistoryNow);
+$('integrityList')?.addEventListener('click',e=>{const b=e.target.closest('[data-integrity-toggle]');if(!b)return;const d=document.querySelector(`[data-integrity-detail="${b.dataset.integrityToggle}"]`);if(d)d.hidden=!d.hidden;});
+$('historyList')?.addEventListener('click',e=>{const b=e.target.closest('[data-history-restore]');if(b)restoreCharacterHistory(b.dataset.historyRestore);});
   document.addEventListener('toggle', e => {
     const d=e.target;
     if(!(d instanceof HTMLDetailsElement)) return;

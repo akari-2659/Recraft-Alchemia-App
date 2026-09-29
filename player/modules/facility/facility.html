@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.815</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.816</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -176,6 +176,9 @@ button.weapon-material-part:hover{background:#e2f2f5;transform:none}
  .branch-graph-node.has-named-processing{min-height:116px!important}
  .branch-graph-node.has-named-processing .branch-graph-node-trigger{min-height:110px!important;padding:13px 14px 15px!important}
 }
+
+/* v1.0.79: キャラクター別 作成目標 / お気に入り登録 */
+.craft-list-register-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #dec8a9}.craft-list-register-actions button{flex:0 1 auto}.craft-list-assign-dialog{width:min(560px,calc(100vw - 24px));border:0;border-radius:18px;padding:0;box-shadow:0 20px 55px rgba(45,28,12,.28)}.craft-list-assign-dialog::backdrop{background:rgba(35,24,14,.45)}.craft-list-assign-shell{padding:18px;display:grid;gap:12px}.craft-list-assign-shell h3{margin:0}.craft-list-assign-summary{font-weight:900}.craft-list-assign-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-assign-actions button{flex:1 1 150px}.craft-list-assign-dialog .field{display:grid;gap:5px}
 </style>
 
 <style id="raMaintenanceV287">
@@ -652,7 +655,7 @@ html.ra-embedded-facility #sectionDescription{
 </style>
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.815 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.816 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -670,7 +673,7 @@ html.ra-embedded-facility #sectionDescription{
 </details>
 <section class="panel facility-catalog-panel">
   <div class="facility-nav-stack">
-    <div class="facility-switch"><button type="button" data-facility="smith" class="active">鍛冶屋</button><button type="button" data-facility="apothecary">薬屋</button><button type="button" data-facility="antique">骨董屋</button><button type="button" data-facility="eatery">食事処</button><button type="button" data-facility="plaza">広場</button></div>
+    <div class="facility-switch"><button type="button" data-facility="smith" class="active">鍛冶屋</button><button type="button" data-facility="apothecary">薬屋</button><button type="button" data-facility="antique">骨董屋</button><button type="button" data-facility="eatery">食事処</button><button type="button" data-facility="plaza">広場</button><button type="button" data-facility="bestiary">魔物図鑑</button></div>
     <div id="sectionTabs" class="section-tabs"></div>
   </div>
   <div class="summary-line">
@@ -727,6 +730,22 @@ html.ra-embedded-facility #sectionDescription{
     <div id="accessoryUpgradeDetailBody" class="material-source-body"></div>
   </div>
 </div>
+<dialog id="craftListAssignModal" class="craft-list-assign-dialog">
+  <div class="craft-list-assign-shell">
+    <div><div class="muted">キャラクター作成リスト</div><h3 id="craftListAssignTitle">登録</h3></div>
+    <div id="craftListAssignCharacterWrap" class="field"><label for="craftListAssignCharacter">登録先キャラクター</label><select id="craftListAssignCharacter"></select></div>
+    <div id="craftListAssignRunsWrap" class="field"><label for="craftListAssignRuns">作成回数</label><input id="craftListAssignRuns" type="number" min="1" max="999" value="1" inputmode="numeric"></div>
+    <div id="craftListAssignSummary" class="craft-list-assign-summary"></div>
+    <div id="craftListAssignStatus" class="status">登録内容を確認してください。</div>
+    <div class="craft-list-assign-actions"><button id="craftListAssignConfirm" type="button">登録する</button><button id="craftListAssignCancel" type="button" class="ghost">閉じる</button></div>
+  </div>
+</dialog>
+<div id="bestiaryModal" class="bestiary-modal" hidden aria-hidden="true">
+  <div class="bestiary-dialog" role="dialog" aria-modal="true" aria-labelledby="bestiaryModalTitle">
+    <header class="bestiary-head"><div><div class="muted">MONSTER ENCYCLOPEDIA</div><h3 id="bestiaryModalTitle">魔物図鑑</h3></div><button type="button" class="ghost" data-close-bestiary aria-label="閉じる">×</button></header>
+    <div id="bestiaryModalBody" class="bestiary-body"></div>
+  </div>
+</div>
 <div id="unlockedAreaModal" class="unlock-area-modal" hidden aria-hidden="true">
   <div class="unlock-area-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="unlockedAreaModalTitle">
     <header class="unlock-area-modal-header"><h3 id="unlockedAreaModalTitle">解放済みエリア</h3><button type="button" class="ghost" data-close-unlocked-area-modal aria-label="閉じる">×</button></header>
@@ -744,9 +763,10 @@ const SECTION_DEFS={
  apothecary:[['sales','販売商品','薬屋で購入できる調合品・調合道具と、その段階で解放される常設店売りレシピです。宝箱限定レシピはここには表示しません。'],['alchemy','調合品作成','薬品・香・爆弾・瓶などの調合です。'],['materials','素材加工','一般の加工素材はレシピ不要です。魔導インク・祈祷紙は対応レシピが必要な特殊加工としてここに表示します。施設依頼はどちらもレシピ不要・判定不要です。']],
  antique:[['sales','常設販売','骨董屋で常時購入できる品と店売りレシピです。骨董装備はG販売ではなく、魔物素材を使うガチャで入手します。武器種・防具種と★帯を選び、個体ごとに基礎性能・属性・強化枠・固定強化内容が変化します。抽選後の強化追加・変更はできません。抽選個体には通常と同じ形式の登録IDが発行されます。'],['scrolls','未鑑定スクロール価格','販売内容はランダムのため、各ランクの価格だけを表示します。']],
  eatery:[['meals','食材持ち込み料理','必要食材と調理代を確認できます。食事効果は次の探索・依頼から帰還するまで継続し、同時に1種類のみ有効です。']],
- plaza:[['gathering','共同採取設備','通常エリアの到達に応じて整備計画が増えます。全員で納品数を共有し、完成後は1人1日1回、卓上で採取量を決定できます。異界では共同採取設備は増えません。']]
+ plaza:[['gathering','共同採取設備','通常エリアの到達に応じて整備計画が増えます。全員で納品数を共有し、完成後は1人1日1回、卓上で採取量を決定できます。異界では共同採取設備は増えません。']],
+ bestiary:[['catalog','魔物図鑑','解放済みエリアで確認した魔物情報を閲覧できます。未開示の魔物は「？？？」で表示され、詳細は開けません。']]
 };
-let catalog={smith:{sales:[],craft:[],accessory:[],materials:[],crystal:[],branches:[]},apothecary:{sales:[],alchemy:[],materials:[]},antique:{sales:[],scrolls:[]},eatery:{meals:[]},plaza:{gathering:[]}};
+let catalog={smith:{sales:[],craft:[],accessory:[],materials:[],crystal:[],branches:[]},apothecary:{sales:[],alchemy:[],materials:[]},antique:{sales:[],scrolls:[]},eatery:{meals:[]},plaza:{gathering:[]},bestiary:{catalog:[]}};
 const BRANCH_LABEL_COLLAPSE_STORAGE_KEY='recraft_alchemia.player_facility.branch_labels_collapsed';
 const raStorage={
   get(key){try{return window.localStorage?window.localStorage.getItem(key):null;}catch(error){console.warn('保存情報を読み込めませんでした。',error);return null;}},
@@ -991,7 +1011,7 @@ async function jsonpAction(action,params={},options={}){const attempts=Math.max(
 function facilityPostAction(action,params={},timeoutMs=30000){return new Promise((resolve,reject)=>{const token='raFacilityPost_'+Date.now()+'_'+Math.random().toString(36).slice(2),frame=document.createElement('iframe'),frameName='raFacilityFrame_'+Date.now()+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');form.method='POST';const actionUrl=new URL(DEFAULT_GAS_WEB_APP_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';const payloadField=document.createElement('textarea');payloadField.name='payload';payloadField.value=JSON.stringify({...params,token});payloadField.style.display='none';form.appendChild(payloadField);let settled=false;const timer=setTimeout(()=>finishReject(new Error('施設データの保存応答がタイムアウトしました。')),timeoutMs);function cleanup(){clearTimeout(timer);window.removeEventListener('message',onMessage);setTimeout(()=>{try{form.remove();frame.remove();}catch(_e){}},0);}function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}function onMessage(event){if(event.source!==frame.contentWindow)return;const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'施設保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'施設データの保存に失敗しました。'));return;}finishResolve(result);}window.addEventListener('message',onMessage);document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(e){finishReject(e);}});}
 
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
-const FACILITY_EXPECTED_DB_VERSION='v90.8.815';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.816';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}
@@ -1702,6 +1722,18 @@ function itemTextRows(r){
   }
   return rows.filter(x=>String(x[1]||'').trim());
 }
+
+let craftListRecipeIndex=Object.create(null),craftListAssignContext=null;
+function facilityCraftListKey(r={}){return String(r.id||r.publicId||`${r.craftType||''}::${r.resultItem||r.name||''}`).trim();}
+function facilityCraftListEligible(r={}){return !r.locked&&!!String(r.requiredMaterials||'').trim()&&!!String(r.resultItem||r.name||'').trim();}
+function facilityCraftListActionHtml(r={}){if(!facilityCraftListEligible(r))return '';const key=facilityCraftListKey(r);craftListRecipeIndex[key]=r;return `<div class="craft-list-register-actions"><button type="button" class="secondary" data-craft-list-add="goal" data-craft-list-key="${esc(key)}">作成目標に追加</button><button type="button" class="ghost" data-craft-list-add="favorite" data-craft-list-key="${esc(key)}">お気に入りに追加</button></div>`;}
+function facilityNormalizeCraftLists(raw={}){const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};return{goals:Array.isArray(src.goals)?src.goals.filter(Boolean).map(x=>({...x})):[],favorites:Array.isArray(src.favorites)?src.favorites.filter(Boolean).map(x=>({...x})):[]};}
+function facilityCraftRef(r={}){return{recipeId:String(r.id||'').trim(),publicId:String(r.publicId||'').trim(),resultName:String(r.resultItem||r.name||'').trim(),craftType:String(r.craftType||'').trim(),resultKind:String(r.resultKind||r.itemType||'').trim(),resultCount:Math.max(1,Math.floor(Number(r.resultCount)||1)),requiredMaterials:String(r.requiredMaterials||'').trim(),addedAt:new Date().toISOString()};}
+async function facilityCraftCharacterList(){const playerKey=playerKeyValue();if(!playerKey)throw new Error('先にプレイヤーキーを入力してください。');const res=await jsonpAction('list',{playerKey},{attempts:2,timeoutMs:20000});if(res?.ok===false)throw new Error(res.error||'キャラクター一覧を取得できませんでした。');return Array.isArray(res?.items)?res.items:[];}
+async function openFacilityCraftListAssign(row,type){if(!facilityCraftListEligible(row))return;const status=$('craftListAssignStatus');try{if(status){status.className='status';status.textContent='登録先キャラクターを確認しています…';}const chars=await facilityCraftCharacterList();if(!chars.length)throw new Error('このプレイヤーキーに保存されたキャラクターがありません。');craftListAssignContext={row,type:type==='favorite'?'favorite':'goal',chars};const select=$('craftListAssignCharacter');select.innerHTML=chars.map(c=>`<option value="${esc(c.id)}">${esc(c.name||'名称未設定')}</option>`).join('');$('craftListAssignCharacterWrap').hidden=chars.length===1;$('craftListAssignRunsWrap').hidden=craftListAssignContext.type==='favorite';$('craftListAssignRuns').value='1';$('craftListAssignTitle').textContent=craftListAssignContext.type==='favorite'?'お気に入りに追加':'作成目標に追加';updateFacilityCraftAssignSummary();if(status){status.className='status';status.textContent=chars.length===1?`「${chars[0].name||'名称未設定'}」へ登録します。`:'登録先キャラクターを選択してください。';}$('craftListAssignModal').showModal();}catch(e){setStatus(`作成リスト登録に失敗しました：${e.message||e}`,'bad');}}
+function updateFacilityCraftAssignSummary(){if(!craftListAssignContext)return;const r=craftListAssignContext.row,runs=Math.max(1,Math.floor(Number($('craftListAssignRuns')?.value)||1)),count=Math.max(1,Math.floor(Number(r.resultCount)||1));$('craftListAssignSummary').textContent=craftListAssignContext.type==='favorite'?`${r.resultItem||r.name} をお気に入りへ登録`:`${r.resultItem||r.name}：${runs}回 / ${count*runs}個を作成目標へ登録`;}
+async function confirmFacilityCraftListAssign(){if(!craftListAssignContext)return;const playerKey=playerKeyValue(),charId=String($('craftListAssignCharacter')?.value||craftListAssignContext.chars[0]?.id||''),meta=craftListAssignContext.chars.find(c=>String(c.id)===charId)||craftListAssignContext.chars[0],status=$('craftListAssignStatus');if(!charId)return;try{$('craftListAssignConfirm').disabled=true;if(status){status.className='status';status.textContent='キャラクターデータへ登録しています…';}const loaded=await jsonpAction('load',{id:charId,playerKey,rowHint:meta?.storageRow||''},{attempts:2,timeoutMs:25000});if(loaded?.ok===false)throw new Error(loaded.error||'キャラクターを読み込めませんでした。');const data=loaded.data||{},lists=facilityNormalizeCraftLists(data.craftLists||{}),ref=facilityCraftRef(craftListAssignContext.row),key=ref.recipeId||ref.publicId||`${ref.craftType}::${ref.resultName}`;if(craftListAssignContext.type==='favorite'){const exists=lists.favorites.some(x=>(x.recipeId||x.publicId||`${x.craftType||''}::${x.resultName||''}`)===key);if(!exists)lists.favorites.push(ref);}else{const runs=Math.max(1,Math.floor(Number($('craftListAssignRuns')?.value)||1)),existing=lists.goals.find(x=>(x.recipeId||x.publicId||`${x.craftType||''}::${x.resultName||''}`)===key);if(existing)existing.targetRuns=Math.max(1,Math.floor(Number(existing.targetRuns)||1))+runs;else lists.goals.push({...ref,targetRuns:runs});}await facilityPostAction('savePatch',{id:charId,playerKey,baseRevision:loaded.revision,patch:{craftLists:lists,updatedAt:new Date().toISOString()},snapshot:data,rowHint:loaded.storageRow||meta?.storageRow||''},30000);$('craftListAssignModal').close();setStatus(`${ref.resultName}を「${meta?.name||data.name||'キャラクター'}」の${craftListAssignContext.type==='favorite'?'お気に入り':'作成目標'}へ登録しました。`,'ok');craftListAssignContext=null;}catch(e){if(status){status.className='status bad';status.textContent=`登録に失敗しました：${e.message||e}`;}}finally{if($('craftListAssignConfirm'))$('craftListAssignConfirm').disabled=false;}}
+
 let itemDetailIndex=Object.create(null);
 function itemDetailKey(r={}){return [r.resultItem||r.name||'item',r.craftType||r.itemType||r.dataKind||''].join('::');}
 function namedProcessDiffPair(before='',after=''){
@@ -1721,9 +1753,9 @@ function genericItemModalHtml(r={}){
   add('説明',r.description);if(!['武器','防具','盾'].includes(String(r.itemType||'').trim()))add('効果',r.effect);if(r.source)add(String(r.materialType||'')==='魔物素材'?'ドロップ元':'入手先',r.source);if(String(r.upgradeLimit??'').trim())add('強化枠',`${r.upgradeLimit}枠`);if(r.baseItem)add('派生元',r.baseItem);if(r.requiredMaterials)add('必要素材',r.requiredMaterials);if(String(r.resultCount??'').trim())add('完成数',`${r.resultCount}個`);if(String(r.price||''))add(currentFacility==='eatery'?'調理代':'施設依頼',`${r.price}G`);if(String(r.buyPrice||''))add('買値',`${r.buyPrice}G`);if(Number(r.bundleCount)>0&&Number(r.bundlePrice)>0)add('まとめ買い',`${r.bundleCount}本 ${r.bundlePrice}G`);if(String(r.sellPrice||''))add('売値',`${r.sellPrice}G`);if(r.difficulty)add('基礎作成難易度',r.difficulty);
   return `<div class="chips">${chips.filter(Boolean).map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${performanceHtml(r.performance)}<dl class="weapon-modal-details">${weaponModalDetailRowsHtml(pairs)}</dl>${facilityEquipmentEffectHtml(r)}${namedProcessingHtml(r.namedProcessingOptions)}`;
 }
-function openItemDetailModal(key,trigger=null){const r=itemDetailIndex[key];if(!r)return;const modal=$('itemDetailModal');$('itemDetailModalTitle').textContent=`${r.resultItem||r.name||'詳細'}　${rankLabel(r.rank)}`;$('itemDetailModalBody').innerHTML=genericItemModalHtml(r);modal.hidden=false;modal.setAttribute('aria-hidden','false');document.documentElement.classList.add('weapon-modal-open');requestAnimationFrame(()=>modal.querySelector('[data-close-item-detail]')?.focus({preventScroll:true}));}
+function openItemDetailModal(key,trigger=null){const r=itemDetailIndex[key];if(!r)return;const modal=$('itemDetailModal');$('itemDetailModalTitle').textContent=`${r.resultItem||r.name||'詳細'}　${rankLabel(r.rank)}`;$('itemDetailModalBody').innerHTML=genericItemModalHtml(r)+facilityCraftListActionHtml(r);modal.hidden=false;modal.setAttribute('aria-hidden','false');document.documentElement.classList.add('weapon-modal-open');requestAnimationFrame(()=>modal.querySelector('[data-close-item-detail]')?.focus({preventScroll:true}));}
 function closeItemDetailModal(){const modal=$('itemDetailModal');if(!modal)return;modal.hidden=true;modal.setAttribute('aria-hidden','true');document.documentElement.classList.remove('weapon-modal-open');}
-function itemCard(r){const chips=uniqueChips([rankLabel(r.rank),r.dataKind==='素材'?(r.materialType||'素材'):(r.itemType||r.dataKind||''),r.dataKind==='素材'?(r.materialCategory||''):(r.itemCategory||r.materialCategory||''),Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'異名加工可':'']);const key=itemDetailKey(r);itemDetailIndex[key]=r;const bundleLine=Number(r.bundleCount)>0&&Number(r.bundlePrice)>0?`<div class="muted"><b>まとめ買い：</b>${esc(String(r.bundleCount))}本 ${esc(String(r.bundlePrice))}G${String(r.buyPrice||'').trim()?`（単価 ${esc(String(r.buyPrice))}G）`:''}</div>`:'';return `<article class="card compact-detail ${Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'has-named-processing':''}"><h3>${esc(r.name)}</h3><div class="chips">${chips.filter(Boolean).map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${performanceHtml(r.performance)}${bundleLine}<button type="button" class="ghost item-detail-button" data-open-item-detail="${esc(key)}">詳細を見る</button></article>`;}
+function itemCard(r){const chips=uniqueChips([rankLabel(r.rank),r.dataKind==='素材'?(r.materialType||'素材'):(r.itemType||r.dataKind||''),r.dataKind==='素材'?(r.materialCategory||''):(r.itemCategory||r.materialCategory||''),Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'異名加工可':'']);const key=itemDetailKey(r);itemDetailIndex[key]=r;const bundleLine=Number(r.bundleCount)>0&&Number(r.bundlePrice)>0?`<div class="muted"><b>まとめ買い：</b>${esc(String(r.bundleCount))}本 ${esc(String(r.bundlePrice))}G${String(r.buyPrice||'').trim()?`（単価 ${esc(String(r.buyPrice))}G）`:''}</div>`:'';return `<article class="card compact-detail ${Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'has-named-processing':''}"><h3>${esc(r.name)}</h3><div class="chips">${chips.filter(Boolean).map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${performanceHtml(r.performance)}${bundleLine}<button type="button" class="ghost item-detail-button" data-open-item-detail="${esc(key)}">詳細を見る</button>${facilityCraftListActionHtml(r)}</article>`;}
 function scrollPriceCard(r){const price=String(r.price||'')?`${r.price}G`:'未設定';const title=String(r.name||`未鑑定の${r.type||'術式'}スクロール`).trim();return `<article class="card"><h3>${esc(title)}：${esc(rankLabel(r.rank))}</h3><div class="chips"><span class="chip">${esc(r.type||'術式')}</span><span class="chip">${esc(rankLabel(r.rank))}</span><span class="chip">ランダム販売</span></div><dl><dt>価格</dt><dd>${esc(price)}</dd></dl></article>`;}
 function crystalCard(r){const chips=uniqueChips([rankLabel(r.rank),'スキルクリスタル',r.craftType]);const pairs=[['強化段階',`${r.baseItem||'?'} → ${r.resultItem||'?'}`],['必要素材',r.requiredMaterials||'未設定'],['強化費用',String(r.price||'')?`${r.price}G`:'未設定']];if(r.description)pairs.push(['説明',r.description]);if(r.effect)pairs.push(['効果',r.effect]);return `<article class="card"><h3>${esc(r.name||'クリスタル強化')}</h3><div class="chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div><dl>${pairs.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></article>`;}
 let accessoryDetailIndex=Object.create(null);
@@ -1765,7 +1797,7 @@ function openAccessoryUpgradeModal(name){
   const display=String(row.resultItem||row.name||'装飾品').trim();
   title.textContent=display;
   const pairs=accessoryUpgradeDetailPairs(row);
-  body.innerHTML=`<div class="chips">${uniqueChips([rankLabel(row.rank),row.branchType||row.itemCategory||'装飾品',accessoryUpgradeKindLabel(row)]).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div><dl>${pairs.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
+  body.innerHTML=`<div class="chips">${uniqueChips([rankLabel(row.rank),row.branchType||row.itemCategory||'装飾品',accessoryUpgradeKindLabel(row)]).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div><dl>${pairs.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`+facilityCraftListActionHtml(row);
   modal.hidden=false;modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 }
 function closeAccessoryUpgradeModal(){const modal=$('accessoryUpgradeDetailModal');if(!modal)return;modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
@@ -1846,7 +1878,7 @@ function recipeCard(r){
     const supportText=craftSupportText(r);if(supportText)pairs.push(['任意の作成補助材',supportText]);
     if(r.description)pairs.push(['説明',r.description]);
     if(r.effect)pairs.push(['効果',r.effect]);
-    const key=itemDetailKey(r);itemDetailIndex[key]=r;return `<article class="card compact-detail ${Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'has-named-processing':''}"><h3>${esc(r.resultItem||r.name||'名称未設定')}</h3><div class="chips">${chips.map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${resultCountLine}<button type="button" class="ghost item-detail-button" data-open-item-detail="${esc(key)}">詳細を見る</button></article>`;
+    const key=itemDetailKey(r);itemDetailIndex[key]=r;return `<article class="card compact-detail ${Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'has-named-processing':''}"><h3>${esc(r.resultItem||r.name||'名称未設定')}</h3><div class="chips">${chips.map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${resultCountLine}<button type="button" class="ghost item-detail-button" data-open-item-detail="${esc(key)}">詳細を見る</button>${facilityCraftListActionHtml(r)}</article>`;
   }
   if(r.baseItem)pairs.push(['派生元',r.baseItem]);
   if(r.isProcessingRecipe)pairs.push(['レシピ','必要']);
@@ -1868,7 +1900,7 @@ function recipeCard(r){
   }
   if(!r.locked&&r.description)pairs.push(['説明',r.description]);
   if(r.effect)pairs.push(['効果',r.effect]);
-  if(r.locked)return `<article class="card locked"><h3>？？？</h3><div class="chips">${chips.map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div></article>`;const key=itemDetailKey(r);itemDetailIndex[key]=r;return `<article class="card compact-detail ${Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'has-named-processing':''}"><h3>${esc(r.resultItem||r.name||'名称未設定')}</h3><div class="chips">${chips.map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${performanceHtml(r.performance)}${resultCountLine}<button type="button" class="ghost item-detail-button" data-open-item-detail="${esc(key)}">詳細を見る</button></article>`;
+  if(r.locked)return `<article class="card locked"><h3>？？？</h3><div class="chips">${chips.map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div></article>`;const key=itemDetailKey(r);itemDetailIndex[key]=r;return `<article class="card compact-detail ${Array.isArray(r.namedProcessingOptions)&&r.namedProcessingOptions.length?'has-named-processing':''}"><h3>${esc(r.resultItem||r.name||'名称未設定')}</h3><div class="chips">${chips.map(c=>`<span class="chip ${c==='異名加工可'?'named':''}">${esc(c)}</span>`).join('')}</div>${performanceHtml(r.performance)}${resultCountLine}<button type="button" class="ghost item-detail-button" data-open-item-detail="${esc(key)}">詳細を見る</button>${facilityCraftListActionHtml(r)}</article>`;
 }
 
 function salesCategoryLabel(r){
@@ -2267,7 +2299,7 @@ function openWeaponModal(name,trigger=null){
   branchRouteRestoredFocus=null;
   clearAllBranchRouteFocus();
   $('weaponModalTitle').textContent=`${entry.actualResultItem||entry.name||entry.resultItem||'武器詳細'}　${rankLabel(entry.rank)}`;
-  body.innerHTML=weaponModalHtml(entry);
+  body.innerHTML=weaponModalHtml(entry)+facilityCraftListActionHtml(entry);
   body.scrollTop=0;
   modal.hidden=false;
   modal.setAttribute('aria-hidden','false');
@@ -2343,6 +2375,49 @@ function syncBranchLabelToggle(){
   });
 }
 
+
+let bestiaryState={areas:[],error:'',loadedForKey:''};
+const BESTIARY_AFFINITY_LABELS={physical:'物',fire:'火',water:'水',wind:'風',thunder:'雷',light:'光',dark:'闇',neutral:'無'};
+async function loadBestiaryCatalog({quiet=false}={}){
+  const key=playerKeyValue();
+  if(!key){bestiaryState={areas:[],error:'先にプレイヤーキーを入力してください。',loadedForKey:''};if(currentFacility==='bestiary')render();return bestiaryState;}
+  try{
+    const res=await jsonpAction('bestiaryPlayerCatalog',{playerKey:key},{attempts:quiet?1:2,timeoutMs:25000});
+    if(!res||res.ok===false)throw new Error(res?.error||'魔物図鑑を取得できませんでした。');
+    bestiaryState={areas:Array.isArray(res.areas)?res.areas:[],error:'',loadedForKey:key};
+  }catch(e){bestiaryState={areas:bestiaryState.areas||[],error:String(e?.message||e),loadedForKey:key};}
+  if(currentFacility==='bestiary')render();
+  return bestiaryState;
+}
+function bestiaryCatalogHtml(){
+  if(bestiaryState.error&&!bestiaryState.areas.length)return `<div class="empty">${esc(bestiaryState.error)}</div>`;
+  if(!bestiaryState.areas.length)return '<div class="empty">解放済みエリアの図鑑情報はまだありません。</div>';
+  return `<div class="bestiary-area-list">${bestiaryState.areas.map((area,index)=>`<details class="bestiary-area" ${index===0?'open':''}><summary>${esc(area.name||'エリア')}</summary><div class="bestiary-monster-list">${(area.monsters||[]).map(m=>m.known?`<button type="button" class="bestiary-monster" data-bestiary-monster="${esc(m.id)}">${esc(m.name)}</button>`:`<div class="bestiary-monster unknown" aria-disabled="true">？？？</div>`).join('')}</div></details>`).join('')}</div>`;
+}
+function bestiaryMonsterById(id){
+  for(const area of bestiaryState.areas||[]){const found=(area.monsters||[]).find(m=>String(m.id)===String(id));if(found)return found;}return null;
+}
+function bestiaryAffinityHtml(m){
+  return `<div class="bestiary-affinities">${Object.entries(BESTIARY_AFFINITY_LABELS).map(([key,label])=>`<div class="bestiary-affinity"><small>${label}</small>${esc(m?.affinities?.[key]??'？')}</div>`).join('')}</div>`;
+}
+function bestiaryStatsHtml(m){
+  const s=m.stats||{};
+  return `<div class="bestiary-stats">${[['HP',s.hp],['MP',s.mp],['先制',s.initiative],['回避',s.evasion],['抵抗',s.resist],['防御',s.defense]].map(([k,v])=>`<div class="bestiary-stat"><span>${k}</span><b>${esc(v??'？？？')}</b></div>`).join('')}</div><div class="bestiary-passive"><h4>固有パッシブ</h4>${m.passive?.name?`<b>${esc(m.passive.name)}</b><div style="margin-top:5px;white-space:pre-wrap">${esc(m.passive.effect||'')}</div>`:`<div class="muted">？？？</div>`}</div>`;
+}
+function bestiaryActionsHtml(m){
+  const actions=Array.isArray(m.actions)?m.actions:[];
+  if(!actions.length)return '<div class="empty">行動情報はありません。</div>';
+  return `<div class="bestiary-actions">${actions.map(a=>a.known?`<details class="bestiary-action"><summary>${esc(a.name)}</summary><div class="bestiary-action-body"><div class="bestiary-action-meta"><div><b>種別</b><br>${esc(a.actionType||'なし')}</div><div><b>距離</b><br>${esc(a.range||'なし')}</div><div><b>対象</b><br>${esc(a.target||'なし')}</div><div><b>属性</b><br>${esc(a.element||'なし')}</div><div><b>命中</b><br>${esc(a.hit||'なし')}</div><div><b>判定</b><br>${esc(a.reference||'なし')}</div></div><div class="bestiary-action-effect"><b>効果</b><br>${a.effect!==null?`${a.power&&a.power!=='なし'?`威力：${esc(a.power)}<br>`:''}${esc(a.effect||'なし')}`:'？？？'}</div></div></details>`:`<details class="bestiary-action"><summary>？？？</summary><div class="bestiary-action-body"><div class="bestiary-action-meta"><div>種別：？？？</div><div>距離：？？？</div><div>対象：？？？</div><div>属性：？？？</div><div>命中：？？？</div><div>判定：？？？</div></div><div class="bestiary-action-effect">効果：？？？</div></div></details>`).join('')}</div>`;
+}
+function openBestiaryMonster(id){
+  const m=bestiaryMonsterById(id);if(!m||!m.known)return;
+  $('bestiaryModalTitle').textContent=m.name||'魔物図鑑';
+  const visual=m.imageUrl?`<div class="bestiary-visual"><img src="${esc(m.imageUrl)}" alt="${esc(m.name)}"></div>`:`<div class="bestiary-visual"><div class="bestiary-image-placeholder">IMAGE NOT REGISTERED</div></div>`;
+  $('bestiaryModalBody').innerHTML=`${visual}${bestiaryAffinityHtml(m)}<div class="bestiary-tabs"><button type="button" class="bestiary-tab active" data-bestiary-tab="stats">能力値</button><button type="button" class="bestiary-tab" data-bestiary-tab="actions">行動</button></div><section class="bestiary-pane" data-bestiary-pane="stats">${bestiaryStatsHtml(m)}</section><section class="bestiary-pane" data-bestiary-pane="actions" hidden>${bestiaryActionsHtml(m)}</section>`;
+  $('bestiaryModal').hidden=false;$('bestiaryModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+}
+function closeBestiaryModal(){const modal=$('bestiaryModal');if(!modal)return;modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+
 let communityGatheringState={facilities:[],error:''};
 async function loadCommunityGatheringState({quiet=false}={}){
   try{
@@ -2369,6 +2444,11 @@ function communityGatheringCatalog(){
   }).join('');
 }
 function renderSpecialFacility(){
+  if(currentFacility==='bestiary'){
+    $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
+    if($('catalogSearchCount'))$('catalogSearchCount').textContent='';
+    $('cards').className='catalog-wide';$('cards').innerHTML=bestiaryCatalogHtml();return true;
+  }
   if(currentFacility==='smith'&&currentSection==='upgrade'){
     $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
     if($('catalogSearchCount'))$('catalogSearchCount').textContent='';
@@ -2470,7 +2550,7 @@ async function loadCatalog(playerKey,{unlockKey='',force=false,reset=false}={}){
       built=buildFacilityCatalogFromGithub(commonMaster,reconciled);
       catalog=built.catalog||catalog;facilityUpgradeData=built.upgradeData||facilityUpgradeData;
       reconciled={...reconciled,gmAllAreas:!!built.gmAllAreas,storedUnlockAreaIds:built.storedUnlockAreaIds||storageUnlockIds(reconciled),unlockedAreaIds:built.unlockedAreaIds||[],unlockedAreas:built.unlockedAreas||[]};
-      currentUnlockState=reconciled;renderUnlockedAreas(reconciled);render();
+      currentUnlockState=reconciled;renderUnlockedAreas(reconciled);render();if(currentFacility==='bestiary')loadBestiaryCatalog({quiet:true});
       const mergedIdsForCloud=storageUnlockIds(reconciled);
       if(facilityUnlockIdsEqual(cloudIds,mergedIdsForCloud)){
         setStatus(`${prefix}${Math.max(1,reconciled.unlockedAreas.length)}エリアを表示しました。 / GitHub共通DB${built.version?' v'+built.version:''}${(commonMaster.versionWarning||commonMaster.uiVersionWarning)?'（版差あり）':''}`,(commonMaster.versionWarning||commonMaster.uiVersionWarning)?'':'ok');
@@ -2642,6 +2722,7 @@ document.addEventListener('click',e=>{
     scheduleBranchConnections();
     return;
   }
+  const craftAdd=e.target.closest('[data-craft-list-add]');if(craftAdd){const row=craftListRecipeIndex[String(craftAdd.dataset.craftListKey||'')];if(row)openFacilityCraftListAssign(row,craftAdd.dataset.craftListAdd||'goal');return;}
   const accessoryDetail=e.target.closest('[data-open-accessory-upgrade]');if(accessoryDetail){openAccessoryUpgradeModal(accessoryDetail.dataset.openAccessoryUpgrade||'');return;}
   if(e.target.closest('[data-close-accessory-upgrade]')){closeAccessoryUpgradeModal();return;}
   const accessoryModal=$('accessoryUpgradeDetailModal');if(e.target===accessoryModal){closeAccessoryUpgradeModal();return;}
@@ -2656,13 +2737,15 @@ document.addEventListener('click',e=>{
   const modalLink=e.target.closest('[data-modal-weapon]');if(modalLink){openWeaponModal(modalLink.dataset.modalWeapon||'',modalLink);return;}
   if(e.target.closest('[data-close-weapon-modal]')){closeWeaponModal();return;}
   const modal=$('weaponDetailModal');if(e.target===modal){closeWeaponModal();return;}
-  const f=e.target.closest('.facility-switch [data-facility]');if(f){closeWeaponModal();closeAccessoryUpgradeModal();currentFacility=f.dataset.facility;currentSection=SECTION_DEFS[currentFacility][0][0];currentRank='all';document.querySelectorAll('.facility-switch [data-facility]').forEach(b=>b.classList.toggle('active',b===f));render();if(currentFacility==='plaza')loadCommunityGatheringState({quiet:true});return;}
+  const f=e.target.closest('.facility-switch [data-facility]');if(f){closeWeaponModal();closeAccessoryUpgradeModal();closeBestiaryModal();currentFacility=f.dataset.facility;currentSection=SECTION_DEFS[currentFacility][0][0];currentRank='all';document.querySelectorAll('.facility-switch [data-facility]').forEach(b=>b.classList.toggle('active',b===f));render();if(currentFacility==='plaza')loadCommunityGatheringState({quiet:true});if(currentFacility==='bestiary'&&(bestiaryState.loadedForKey!==playerKeyValue()||!bestiaryState.areas.length))loadBestiaryCatalog({quiet:true});return;}
   const sectionButton=e.target.closest('[data-section]');if(sectionButton){closeWeaponModal();closeAccessoryUpgradeModal();currentSection=sectionButton.dataset.section;currentRank='all';render();return;}
   const r=e.target.closest('[data-rank-filter]');if(r){closeWeaponModal();currentRank=r.dataset.rankFilter||'all';render();return;}
 });
 document.addEventListener('fullscreenchange',syncBranchGraphFullscreen);
 $('weaponCategorySelect').addEventListener('change',e=>{closeWeaponModal();currentWeaponCategory=e.target.value||'';raStorage.set(WEAPON_CATEGORY_STORAGE_KEY,currentWeaponCategory);render();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('accessoryUpgradeDetailModal')?.hidden){closeAccessoryUpgradeModal();return;}if(!$('materialSourceModal')?.hidden){closeMaterialSourceModal();return;}closeWeaponModal();closeUnlockedAreaModal();}});
+$('cards').addEventListener('click',e=>{const b=e.target.closest('[data-bestiary-monster]');if(b){openBestiaryMonster(b.dataset.bestiaryMonster);return;}});
+$('bestiaryModal')?.addEventListener('click',e=>{if(e.target===$('bestiaryModal')||e.target.closest('[data-close-bestiary]')){closeBestiaryModal();return;}const tab=e.target.closest('[data-bestiary-tab]');if(tab){$('bestiaryModalBody').querySelectorAll('[data-bestiary-tab]').forEach(x=>x.classList.toggle('active',x===tab));$('bestiaryModalBody').querySelectorAll('[data-bestiary-pane]').forEach(x=>x.hidden=x.dataset.bestiaryPane!==tab.dataset.bestiaryTab);}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('bestiaryModal')?.hidden){closeBestiaryModal();return;}if(!$('accessoryUpgradeDetailModal')?.hidden){closeAccessoryUpgradeModal();return;}if(!$('materialSourceModal')?.hidden){closeMaterialSourceModal();return;}closeWeaponModal();closeUnlockedAreaModal();}});
 $('openUnlockedAreas').addEventListener('click',openUnlockedAreaModal);
 $('unlockedAreaModal').addEventListener('click',e=>{if(e.target===$('unlockedAreaModal')||e.target.closest('[data-close-unlocked-area-modal]'))closeUnlockedAreaModal();});
 window.addEventListener('resize',()=>{scheduleBranchConnections();scheduleAccessoryConnections();},{passive:true});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(scheduleBranchConnections);
@@ -2671,6 +2754,11 @@ const catalogCategoryModal=$('catalogCategoryModal'),catalogCategoryModalList=$(
 function renderCatalogCategoryModal(){const rows=((catalog[currentFacility]&&catalog[currentFacility][currentSection])||[]).filter(rankMatches).filter(catalogRowMatches),options=catalogCategoryOptions(rows);catalogCategoryModalList.innerHTML=[`<button type="button" class="ra-category-choice ${currentCatalogCategory==='all'?'active':''}" data-catalog-category="all">全て</button>`,...options.map(label=>`<button type="button" class="ra-category-choice ${currentCatalogCategory===label?'active':''}" data-catalog-category="${esc(label)}">${esc(label)}</button>`)].join('');}
 $('openCatalogCategoryPicker')?.addEventListener('click',()=>{renderCatalogCategoryModal();catalogCategoryModal.showModal();});
 catalogCategoryModal?.addEventListener('click',e=>{if(e.target===catalogCategoryModal||e.target.closest('[data-close-catalog-category-modal]')){catalogCategoryModal.close();return;}const b=e.target.closest('[data-catalog-category]');if(!b)return;currentCatalogCategory=b.dataset.catalogCategory||'all';catalogCategoryByView[catalogCategoryViewKey()]=currentCatalogCategory;catalogCategoryModal.close();render();});
+$('craftListAssignRuns')?.addEventListener('input',updateFacilityCraftAssignSummary);
+$('craftListAssignCharacter')?.addEventListener('change',updateFacilityCraftAssignSummary);
+$('craftListAssignConfirm')?.addEventListener('click',confirmFacilityCraftListAssign);
+$('craftListAssignCancel')?.addEventListener('click',()=>{$('craftListAssignModal')?.close();craftListAssignContext=null;});
+$('craftListAssignModal')?.addEventListener('click',e=>{if(e.target===$('craftListAssignModal')){$('craftListAssignModal').close();craftListAssignContext=null;}});
 const savedPlayerKey=raStorage.get(PLAYER_KEY_STORAGE_KEY)||'';$('playerKey').value=savedPlayerKey;if(new URLSearchParams(location.search).get('embedded')!=='1')loadCatalog(savedPlayerKey);
 </script>
 
@@ -2834,6 +2922,29 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 @media(max-width:720px){
   .weapon-modal-body>.ra-dagger-atlas-preview{width:min(210px,78vw);margin-bottom:14px}
 }
+
+/* v1.0.79: 魔物図鑑 */
+.bestiary-area-list{display:grid;gap:10px;width:100%}
+.bestiary-area{border:1px solid var(--line);border-radius:14px;background:#fffdf8;overflow:hidden}
+.bestiary-area>summary{cursor:pointer;font-weight:900;padding:12px 14px;background:#f6ead9}
+.bestiary-monster-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;padding:12px}
+.bestiary-monster{border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 12px;font-weight:900;text-align:left}
+button.bestiary-monster{cursor:pointer}.bestiary-monster.unknown{color:var(--muted);background:#f5f1ea;border-style:dashed;cursor:default}
+.bestiary-modal{position:fixed;inset:0;z-index:10080;display:grid;place-items:center;padding:16px;background:rgba(41,34,26,.38);backdrop-filter:blur(3px)}
+.bestiary-modal[hidden]{display:none}
+.bestiary-dialog{width:min(780px,100%);max-height:min(90vh,860px);display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:#fffdf8;box-shadow:0 20px 60px rgba(44,31,17,.28);overflow:hidden}
+.bestiary-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:#f5e9d8}.bestiary-head h3{margin:0}
+.bestiary-body{overflow:auto;padding:14px}
+.bestiary-visual{display:grid;place-items:center;min-height:230px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#f7f2e9,#eee5d7);overflow:hidden}
+.bestiary-visual img{display:block;max-width:100%;max-height:310px;object-fit:contain}.bestiary-image-placeholder{font-weight:900;color:var(--muted);letter-spacing:.08em}
+.bestiary-affinities{display:grid;grid-template-columns:repeat(8,minmax(54px,1fr));gap:6px;margin:10px 0 14px}
+.bestiary-affinity{border:1px solid var(--line);border-radius:9px;background:#fff;padding:7px 5px;text-align:center;font-weight:900}.bestiary-affinity small{display:block;color:var(--muted);font-weight:800}
+.bestiary-tabs{display:flex;gap:7px;border-bottom:1px solid var(--line);margin-bottom:12px}.bestiary-tab{border-radius:10px 10px 0 0;background:#f5eee3;color:var(--ink)}.bestiary-tab.active{background:#8b633f;color:#fff}
+.bestiary-pane[hidden]{display:none}.bestiary-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.bestiary-stat{border:1px solid var(--line);border-radius:10px;background:#fff;padding:9px 10px}.bestiary-stat span{display:block;font-size:.75rem;color:var(--muted);font-weight:800}.bestiary-stat b{font-size:1.05rem}
+.bestiary-passive{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px}.bestiary-passive h4{margin:0 0 5px}
+.bestiary-actions{display:grid;gap:8px}.bestiary-action{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}.bestiary-action>summary{cursor:pointer;font-weight:900;padding:10px 12px;background:#f9f2e8}.bestiary-action-body{padding:10px 12px;display:grid;gap:5px}.bestiary-action-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.bestiary-action-meta>div{border:1px solid #eadcc9;border-radius:8px;padding:7px}.bestiary-action-effect{margin-top:4px;padding-top:8px;border-top:1px dashed var(--line);white-space:pre-wrap}
+@media(max-width:680px){.bestiary-affinities{grid-template-columns:repeat(4,1fr)}.bestiary-stats,.bestiary-action-meta{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 
 <script id="raDaggerAtlasFacilityPrototype">
