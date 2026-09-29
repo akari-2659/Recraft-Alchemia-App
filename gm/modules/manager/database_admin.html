@@ -2508,7 +2508,7 @@ function applyInitialData(raw, sourceLabel='表示用マスター'){
   DEFAULTS = loaded;
   initialDataLoaded = true;
   initialDataSource = sourceLabel;
-  state = unifyEffectNotesForDisplayRows(structuredClone(DEFAULTS));
+  state = unifyEffectNotesForDisplayRows(raDeepClone(DEFAULTS));
   renderAll();
   updateInitialDataStatus();
   toast(`表示用マスターを読み込みました（${initialDataRowCount(DEFAULTS)}件）`);
@@ -2572,7 +2572,7 @@ async function fetchGithubCommonMaster({force=false}={}){
       if(manifest){
         try{
           const nested=manifest?.files?.master,info=nested&&typeof nested==='object'?nested:{};
-          const masterFile=String(manifest.master||info.path||(typeof nested==='string'?nested:'')||'').trim();
+          const masterFile=String(manifest.master||info.file||info.path||(typeof nested==='string'?nested:'')||'').trim();
           if(!masterFile||masterFile.includes('..')||masterFile.includes(String.fromCharCode(92)))throw new Error('manifestのmasterファイル名が不正です');
           const cacheKey=String(manifest.sha256||info.sha256||manifest.version||'master').trim();
           const masterUrl=new URL(masterFile,base);masterUrl.searchParams.set('_ra',cacheKey);
@@ -2663,7 +2663,10 @@ function clearWorkingData(){
   toast('画面上のデータを空にしました');
 }
 
-function structuredClone(obj){ return typeof globalThis.structuredClone==='function'?globalThis.structuredClone(obj):JSON.parse(JSON.stringify(obj)); }
+function raDeepClone(obj){
+  if(typeof globalThis.structuredClone==='function') return globalThis.structuredClone(obj);
+  return JSON.parse(JSON.stringify(obj));
+}
 function mergeTextUnique(...values){
   const seen = new Set();
   const parts = [];
@@ -7270,7 +7273,7 @@ function deleteRow(key, idx){
 function resetKey(key){
   if(!initialDataLoaded){ toast('先に初期データJSONを読み込んでください', 'error'); return; }
   if(!confirm('この表を初期データに戻す？ 画面上の編集内容は消えるよ。')) return;
-  state[key]=unifyEffectNotesForDisplayRows({[key]:structuredClone(DEFAULTS[key]||[])})[key]; markDirty(key); rerenderTableGroup(key); updateCounts(); updateJsonBox();
+  state[key]=unifyEffectNotesForDisplayRows({[key]:raDeepClone(DEFAULTS[key]||[])})[key]; markDirty(key); rerenderTableGroup(key); updateCounts(); updateJsonBox();
 }
 
 
@@ -10871,7 +10874,7 @@ function normalizeGithubPublicUnlockKey(value=''){
   return String(value||'').normalize('NFKC').toUpperCase().replace(/[‐‑‒–—―−－]/g,'-').replace(/[\s\u200B-\u200D\uFEFF]/g,'');
 }
 async function buildGithubPublicMaster(){
-  const source=normalizeStateData(structuredClone(state||{}));
+  const source=normalizeStateData(raDeepClone(state||{}));
   const data={};
   for(const key of DATA_KEYS){
     const rows=Array.isArray(source[key])?source[key]:[];
