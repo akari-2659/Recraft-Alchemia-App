@@ -730,7 +730,7 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .ra-picker-dialog .ra-picker-detail-grid dd{overflow-wrap:anywhere!important}
 @media(max-width:760px){.ra-picker-dialog{width:calc(100vw - 14px)!important}.ra-picker-dialog .ra-picker-shell{padding:10px!important}.ra-picker-dialog .ra-picker-tabs{max-height:150px!important}.ra-picker-dialog .ra-picker-body{grid-template-columns:1fr!important}.ra-picker-dialog .ra-picker-detail{max-height:38vh!important;border-left:0!important;border-top:1px solid var(--line)!important}.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:92px minmax(0,1fr)!important}}
 
-/* v1.0.92: データ整合性チェック / 復元履歴 */
+/* v1.0.93: データ整合性チェック / 復元履歴 */
 .data-maintenance-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
 .data-maintenance-card{border:1px solid var(--line);border-radius:14px;background:#fffdf8;padding:14px;min-width:0}
 .data-maintenance-card h3{margin:0 0 8px}
@@ -743,9 +743,11 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .history-list{display:grid;gap:8px;max-height:420px;overflow:auto}
 .history-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 12px}
 .history-row .history-meta{font-size:.78rem;color:var(--muted);margin-top:2px}
-@media(max-width:760px){.data-maintenance-grid{grid-template-columns:1fr}.history-row{grid-template-columns:1fr}.history-row button{width:100%}}
+.history-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.history-actions button{width:auto;white-space:nowrap;padding-left:10px;padding-right:10px}
+@media(max-width:760px){.data-maintenance-grid{grid-template-columns:1fr}.history-row{grid-template-columns:1fr}.history-actions{justify-content:flex-start}.history-actions button{width:auto}}
 
-/* v1.0.92: 作成リスト（作成目標 / お気に入り） */
+/* v1.0.93: 作成リスト（作成目標 / お気に入り） */
 .craft-list-switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.craft-list-switch button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .craft-list-grid{display:grid;gap:10px}.craft-list-card{border:1px solid var(--line);border-radius:14px;background:#fffdf8;padding:12px;display:grid;gap:9px}.craft-list-card-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}.craft-list-card h3{margin:0}.craft-material-list{display:grid;gap:5px}.craft-material-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border-radius:9px;padding:6px 8px;font-size:.88rem}.craft-material-row.met{background:rgba(90,140,70,.13);color:#355522}.craft-material-row.missing{background:rgba(176,70,55,.10);color:#7c3027}.craft-material-row .craft-material-count{font-weight:900;white-space:nowrap}.craft-list-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-actions input[type=number]{width:86px}.craft-favorite-name{appearance:none;border:0;background:transparent;padding:0;color:var(--accent2);font:inherit;font-weight:900;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.craft-create-dialog .dialog-inner{width:min(620px,calc(100vw - 28px))}.craft-dialog-materials{display:grid;gap:6px;margin:10px 0}.craft-result-summary{font-weight:900;margin:6px 0}.craft-list-empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
 </style>
@@ -1387,7 +1389,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
         </section>
         <section class="data-maintenance-card">
           <h3>復元履歴</h3>
-          <p class="hint">手動保存時と一定間隔の自動保存時に復元ポイントを残します。復元前には現在状態を自動バックアップします。</p>
+          <p class="hint">手動保存時と一定間隔の自動保存時に復元ポイントを残します。復元前には現在状態を自動バックアップします。「倉庫個数だけ復元」は、現在の倉庫に残っている同一アイテムの個数だけを選択した履歴の値へ戻し、装備・技能・所持金などは変更しません。</p>
           <div class="button-row"><button id="refreshHistoryBtn" type="button" class="secondary">履歴を更新</button><button id="createHistoryBtn" type="button" class="ghost">今の状態を復元ポイントに保存</button></div>
           <div id="historyStatus" class="status-box">履歴を読み込んでいません。</div>
           <div id="historyList" class="history-list"></div>
@@ -7981,7 +7983,7 @@ async function refreshCharacterHistory(){
     cloudCharacterFolderReady=!!res.folderReady;
     status.className='status-box ok';
     status.textContent=!res.folderReady?'次回保存時に既存キャラクターデータを新しいフォルダ構成へ移行します。復元履歴は移行後から利用できます。':(items.length?`${items.length}件の復元ポイントがあります。`:'復元ポイントはまだありません。');
-    list.innerHTML=items.map(row=>{const d=new Date(row.createdAt),label=Number.isNaN(d.getTime())?row.createdAt:d.toLocaleString('ja-JP');return `<div class="history-row"><div><b>${esc(label)}</b><div class="history-meta">${row.kind==='manual'?'手動保存':'自動復元ポイント'} / revision ${esc(row.revision||0)}</div></div><button type="button" class="secondary" data-history-restore="${esc(row.fileId)}">この時点へ復元</button></div>`;}).join('');
+    list.innerHTML=items.map(row=>{const d=new Date(row.createdAt),label=Number.isNaN(d.getTime())?row.createdAt:d.toLocaleString('ja-JP');return `<div class="history-row"><div><b>${esc(label)}</b><div class="history-meta">${row.kind==='manual'?'手動保存':'自動復元ポイント'} / revision ${esc(row.revision||0)}</div></div><div class="history-actions"><button type="button" class="ghost" data-history-count-restore="${esc(row.fileId)}">倉庫個数だけ復元</button><button type="button" class="secondary" data-history-restore="${esc(row.fileId)}">この時点へ復元</button></div></div>`;}).join('');
   }catch(e){status.className='status-box error';status.textContent=e.message||String(e);}
 }
 async function createCharacterHistoryNow(){
@@ -7998,6 +8000,21 @@ async function restoreCharacterHistory(fileId){
     cloudCharacterRevision=Number(res.revision||cloudCharacterRevision)||0;cloudCharacterRowHint=Number(res.storageRow||cloudCharacterRowHint)||0;cloudCharacterFolderReady=true;
     applyData(res.data||{});autoSaveDirty=false;autoSaveDirtySections.clear();autoSaveLastSavedHash=autoSaveContentHash(res.data||{});
     showToast('復元しました。','ok');await refreshCharacterHistory();renderIntegrityCheck();
+  }catch(e){if(status){status.className='status-box error';status.textContent=e.message||String(e);}showToast(e.message||String(e),'error');}
+}
+async function restoreCharacterInventoryCounts(fileId){
+  if(!fileId||!currentCharacter?.id)return;
+  if(!confirm('この履歴の倉庫個数だけを復元しますか？\n現在の倉庫に存在する同一アイテムの個数だけを履歴の値へ戻します。\nアイテムの追加・削除、装備、技能、所持金などは変更しません。\n現在状態は復元直前バックアップとして保存します。'))return;
+  const status=$('historyStatus');
+  try{
+    if(status){status.className='status-box';status.textContent='現在状態をバックアップして、倉庫個数だけ復元しています…';}
+    const auth=getCloudAuth(),res=await cloudRequest('historyRestoreInventoryCounts',{id:currentCharacter.id,historyFileId:fileId,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint});
+    cloudCharacterRevision=Number(res.revision||cloudCharacterRevision)||0;cloudCharacterRowHint=Number(res.storageRow||cloudCharacterRowHint)||0;cloudCharacterFolderReady=true;
+    applyData(res.data||{});autoSaveDirty=false;autoSaveDirtySections.clear();autoSaveLastSavedHash=autoSaveContentHash(res.data||{});
+    const changed=Number(res.changedCount||0)||0,matched=Number(res.matchedCount||0)||0;
+    if(changed){showToast(`倉庫個数を${changed}件復元しました。`,'ok');if(status){status.className='status-box ok';status.textContent=`倉庫個数を${changed}件復元しました（照合 ${matched}件）。`;}}
+    else{showToast('この履歴から変更できる倉庫個数はありませんでした。','ok');if(status){status.className='status-box ok';status.textContent=`変更対象はありませんでした（照合 ${matched}件）。`;}}
+    await refreshCharacterHistory();renderIntegrityCheck();
   }catch(e){if(status){status.className='status-box error';status.textContent=e.message||String(e);}showToast(e.message||String(e),'error');}
 }
 
@@ -8305,7 +8322,7 @@ async function cloudRequest(action, payload={}) {
     }
     throw lastError||new Error('DB読み込みに失敗しました。');
   }
-  if (action === 'save' || action === 'savePatch' || action === 'delete' || action === 'ensureStorageStructure' || action === 'historyCreate' || action === 'historyRestore') {
+  if (action === 'save' || action === 'savePatch' || action === 'delete' || action === 'ensureStorageStructure' || action === 'historyCreate' || action === 'historyRestore' || action === 'historyRestoreInventoryCounts') {
     // v90.8.594: 1回の応答付きPOSTで完了する。旧no-cors経路は互換フォールバックのみ。
     try{
       return await cloudPostMessageRequest(action,payload);
@@ -9988,7 +10005,7 @@ $('runIntegrityCheckBtn')?.addEventListener('click',renderIntegrityCheck);
 $('refreshHistoryBtn')?.addEventListener('click',refreshCharacterHistory);
 $('createHistoryBtn')?.addEventListener('click',createCharacterHistoryNow);
 $('integrityList')?.addEventListener('click',e=>{const b=e.target.closest('[data-integrity-toggle]');if(!b)return;const d=document.querySelector(`[data-integrity-detail="${b.dataset.integrityToggle}"]`);if(d)d.hidden=!d.hidden;});
-$('historyList')?.addEventListener('click',e=>{const b=e.target.closest('[data-history-restore]');if(b)restoreCharacterHistory(b.dataset.historyRestore);});
+$('historyList')?.addEventListener('click',e=>{const countBtn=e.target.closest('[data-history-count-restore]');if(countBtn){restoreCharacterInventoryCounts(countBtn.dataset.historyCountRestore);return;}const b=e.target.closest('[data-history-restore]');if(b)restoreCharacterHistory(b.dataset.historyRestore);});
   document.addEventListener('toggle', e => {
     const d=e.target;
     if(!(d instanceof HTMLDetailsElement)) return;
