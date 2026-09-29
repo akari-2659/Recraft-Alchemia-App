@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.818</title>
+<title>リクラフト・アルケミア キャラクター作成ツール v90.8.817</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -730,7 +730,7 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .ra-picker-dialog .ra-picker-detail-grid dd{overflow-wrap:anywhere!important}
 @media(max-width:760px){.ra-picker-dialog{width:calc(100vw - 14px)!important}.ra-picker-dialog .ra-picker-shell{padding:10px!important}.ra-picker-dialog .ra-picker-tabs{max-height:150px!important}.ra-picker-dialog .ra-picker-body{grid-template-columns:1fr!important}.ra-picker-dialog .ra-picker-detail{max-height:38vh!important;border-left:0!important;border-top:1px solid var(--line)!important}.ra-picker-dialog .ra-picker-detail-grid{grid-template-columns:92px minmax(0,1fr)!important}}
 
-/* v1.0.89: データ整合性チェック / 復元履歴 */
+/* v1.0.88: データ整合性チェック / 復元履歴 */
 .data-maintenance-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
 .data-maintenance-card{border:1px solid var(--line);border-radius:14px;background:#fffdf8;padding:14px;min-width:0}
 .data-maintenance-card h3{margin:0 0 8px}
@@ -745,7 +745,7 @@ details.spellbook-fields>.spellbook-fields-body{padding-top:8px}
 .history-row .history-meta{font-size:.78rem;color:var(--muted);margin-top:2px}
 @media(max-width:760px){.data-maintenance-grid{grid-template-columns:1fr}.history-row{grid-template-columns:1fr}.history-row button{width:100%}}
 
-/* v1.0.89: 作成リスト（作成目標 / お気に入り） */
+/* v1.0.88: 作成リスト（作成目標 / お気に入り） */
 .craft-list-switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.craft-list-switch button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .craft-list-grid{display:grid;gap:10px}.craft-list-card{border:1px solid var(--line);border-radius:14px;background:#fffdf8;padding:12px;display:grid;gap:9px}.craft-list-card-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}.craft-list-card h3{margin:0}.craft-material-list{display:grid;gap:5px}.craft-material-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border-radius:9px;padding:6px 8px;font-size:.88rem}.craft-material-row.met{background:rgba(90,140,70,.13);color:#355522}.craft-material-row.missing{background:rgba(176,70,55,.10);color:#7c3027}.craft-material-row .craft-material-count{font-weight:900;white-space:nowrap}.craft-list-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-actions input[type=number]{width:86px}.craft-favorite-name{appearance:none;border:0;background:transparent;padding:0;color:var(--accent2);font:inherit;font-weight:900;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.craft-create-dialog .dialog-inner{width:min(620px,calc(100vw - 28px))}.craft-dialog-materials{display:grid;gap:6px;margin:10px 0}.craft-result-summary{font-weight:900;margin:6px 0}.craft-list-empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
 </style>
@@ -1280,7 +1280,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.818 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.817 / 最終更新日：2026年9月25日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -8257,30 +8257,33 @@ function cloudPostMessageRequest(action, payload={}, timeoutMs=60000) {
   return new Promise((resolve,reject)=>{
     const url=gasUrl();
     if(!url){reject(new Error('GAS WebアプリURLが未設定です。'));return;}
-    const token='charpost_'+Date.now()+'_'+Math.random().toString(36).slice(2),attempts=[];
-    let settled=false,retryTimer=0,attemptNo=0;
-    function cleanup(){
-      if(retryTimer)clearInterval(retryTimer);window.removeEventListener('message',onMessage);
-      attempts.forEach(({form,frame})=>setTimeout(()=>{try{form.remove();frame.remove();}catch(_){}},0));
-    }
+    const token='charpost_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const frame=document.createElement('iframe');
+    const frameName='recraftCharPost_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
+    const form=document.createElement('form');
+    form.method='POST';const actionUrl=new URL(url);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
+    const payloadField=document.createElement('textarea');payloadField.name='payload';payloadField.value=JSON.stringify({...payload,token});payloadField.style.display='none';form.appendChild(payloadField);
+    let settled=false;
+    const timer=setTimeout(()=>finishReject(new Error('クラウド保存の応答がタイムアウトしました。')),timeoutMs);
+    function cleanup(){clearTimeout(timer);window.removeEventListener('message',onMessage);setTimeout(()=>{try{form.remove();frame.remove();}catch(_e){}},0);}
     function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}
     function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}
     function onMessage(event){
-      const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;
+      if(event.source!==frame.contentWindow)return;
+      const data=event.data||{};
+      if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;
       const result=data.result||{ok:false,error:'クラウド保存結果が空です。'};
-      if(result.ok===false){const error=new Error(result.error||'クラウド保存に失敗しました。');error.cloudAcknowledged=true;finishReject(error);return;}
+      if(result.ok===false){
+        const error=new Error(result.error||'クラウド保存に失敗しました。');
+        error.cloudAcknowledged=true;
+        finishReject(error);
+        return;
+      }
       finishResolve({...result,acknowledged:true});
     }
-    function submitAttempt(){
-      if(settled)return;attemptNo++;
-      const frame=document.createElement('iframe'),frameName='recraftCharPost_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');
-      frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
-      form.method='POST';const actionUrl=new URL(url);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
-      const field=document.createElement('textarea');field.name='payload';field.value=JSON.stringify({...payload,token});field.style.display='none';form.appendChild(field);
-      attempts.push({form,frame});document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(_){}
-    }
-    window.addEventListener('message',onMessage);submitAttempt();
-    retryTimer=setInterval(submitAttempt,Math.max(8000,Math.min(15000,Number(timeoutMs)||12000)));
+    window.addEventListener('message',onMessage);document.body.appendChild(frame);document.body.appendChild(form);
+    try{form.submit();}catch(e){finishReject(e);}
   });
 }
 async function cloudRequest(action, payload={}) {
@@ -8909,15 +8912,21 @@ function sleepMs(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function verifyCloudCharacterSave(data, playerKey) {
-  const expectedHash=autoSaveContentHash(data);
-  for(let attempt=0;;attempt++){
-    if(attempt>0)await sleepMs(Math.min(4000,650+attempt*250));
-    try{
-      const res=await cloudRequest('load',{id:data.id,playerKey});
-      const loaded=res&&res.data?res.data:null;
-      if(loaded&&autoSaveContentHash(loaded)===expectedHash)return res;
-    }catch(_){}
+  const expectedHash = autoSaveContentHash(data);
+  const delays = [250, 600, 1200];
+  let lastError = null;
+  for (let i = 0; i < delays.length; i++) {
+    if (i > 0) await sleepMs(delays[i]);
+    try {
+      const res = await cloudRequest('load', { id:data.id, playerKey });
+      const loaded = res && res.data ? res.data : null;
+      if (loaded && autoSaveContentHash(loaded) === expectedHash) return res;
+      lastError = new Error('クラウド上の保存内容が送信内容と一致しません。');
+    } catch (e) {
+      lastError = e;
+    }
   }
+  throw new Error('クラウド保存を確認できませんでした。保存先の容量・GASの更新・実行ログを確認してください。' + (lastError?.message ? '（' + lastError.message + '）' : ''));
 }
 async function saveItem(data) {
   const auth = getCloudAuth();
@@ -8946,15 +8955,19 @@ async function saveItem(data) {
   return { saved:true, cloudSaved:true, verified:true, acknowledged:!!(saveResult&&saveResult.acknowledged) };
 }
 async function verifyCloudCharacterPatch(id, patch, playerKey) {
-  for(let attempt=0;;attempt++){
-    if(attempt>0)await sleepMs(Math.min(4000,650+attempt*250));
+  const delays=[220,520,1000];
+  let lastError=null;
+  for(let i=0;i<delays.length;i++){
+    if(i>0)await sleepMs(delays[i]);
     try{
       const verify=await cloudRequest('load',{id,playerKey});
       const loaded=verify?.data||{};
       const mismatch=Object.entries(patch||{}).find(([key,value])=>key!=='updatedAt'&&JSON.stringify(loaded[key])!==JSON.stringify(value));
       if(!mismatch)return verify;
-    }catch(_){}
+      lastError=new Error(`差分保存を確認できませんでした：${mismatch[0]}`);
+    }catch(e){lastError=e;}
   }
+  throw lastError||new Error('差分保存を確認できませんでした。');
 }
 async function savePatchItem(id,patch={}){
   const auth=getCloudAuth();
