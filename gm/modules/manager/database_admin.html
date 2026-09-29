@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.819</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.817</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -1406,7 +1406,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.819 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.817 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="title-card">
@@ -1433,7 +1433,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
     </div>
     <p class="notice">
       この管理ツールは固定のWeb App URLへ接続します。通常は、各表の <span class="kbd">この表だけDB読込</span> / <span class="kbd">この表だけDB登録</span> / <span class="kbd">この表だけDB置換</span>、または各行の <span class="kbd">個別DB登録</span> / <span class="kbd">個別DB置換</span> を使ってください。
-      個別DB置換は対象1件だけを上書きし、同じ表の他データは保持します。DB送信は、小規模データをJSONP分割で確実に送信し、大規模データは無圧縮分割POSTを優先します。応答が遅い場合も保存処理を中断せず、同一トークンで再送・状態確認を続けます。全データ操作は変更のないDBを省略します。
+      個別DB置換は対象1件だけを上書きし、同じ表の他データは保持します。DB送信は、小規模データをJSONP分割で確実に送信し、大規模データは無圧縮分割POSTを優先します。POST経路がタイムアウトした場合は圧縮JSONPへ自動で切り替えます。全データ操作は変更のないDBを省略します。
     </p>
     <div class="toolbar initial-data-toolbar">
       <div class="field">
@@ -2157,8 +2157,8 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.819';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.819';
+const RECRAFT_DB_VERSION = 'v90.8.817';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.817';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];
@@ -2519,27 +2519,6 @@ function managerMasterDataRowCount(master){
   if(!data||typeof data!=='object')return 0;
   return DATA_KEYS.reduce((sum,key)=>sum+(Array.isArray(data[key])?data[key].length:0),0);
 }
-function validateManagerCommonMaster(master){
-  const data=master&&master.data&&typeof master.data==='object'?master.data:master;
-  if(!data||typeof data!=='object')throw new Error('共通DB本体が不正です。');
-  for(const key of DATA_KEYS){
-    if(data[key]!==undefined&&!Array.isArray(data[key]))throw new Error(`共通DB ${key} が配列ではありません。`);
-  }
-  const monsters=Array.isArray(data.monsters)?data.monsters:[],ids=new Set();
-  monsters.forEach((row,index)=>{
-    const id=String(row?.id||'').trim();if(!id)throw new Error(`共通DB 魔物 ${index+1}件目にIDがありません。`);
-    if(ids.has(id))throw new Error(`共通DB 魔物IDが重複しています：${id}`);ids.add(id);
-  });
-  const byId=new Map(monsters.map(row=>[String(row.id||''),row]));
-  const affinityFields=['physicalAffinity','fireAffinity','waterAffinity','windAffinity','thunderAffinity','lightAffinity','darkAffinity','neutralAffinity'];
-  monsters.filter(row=>/^mon_named_/.test(String(row.id||''))).forEach(row=>{
-    const base=byId.get(String(row.baseMonsterId||''));
-    if(!base)throw new Error(`二つ名個体 ${row.id} のbaseMonsterIdが不正です。`);
-    const mismatch=affinityFields.find(field=>String(row[field]||'')!==String(base[field]||''));
-    if(mismatch)throw new Error(`二つ名個体 ${row.id} の耐性が通常個体と一致していません：${mismatch}`);
-  });
-  return true;
-}
 async function managerFetchGithubJson(url,{timeoutMs=15000,cacheMode='force-cache'}={}){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),Math.max(1000,Number(timeoutMs)||15000));
@@ -2553,45 +2532,47 @@ async function managerFetchGithubJson(url,{timeoutMs=15000,cacheMode='force-cach
   }finally{clearTimeout(timer);}
 }
 async function fetchGithubCommonMaster({force=false}={}){
-  if(githubCommonMasterPromise&&!force)return githubCommonMasterPromise;
+  if(githubCommonMasterPromise && !force) return githubCommonMasterPromise;
   const task=(async()=>{
     const errors=[];
+    let usableMismatch=null;
     for(const base of githubCommonDbBaseCandidates()){
-      let manifest=null;
-      try{
-        const manifestUrl=new URL('manifest.json',base);
-        manifest=await managerFetchGithubJson(manifestUrl.toString(),{timeoutMs:6000,cacheMode:'no-cache'});
-      }catch(error){
-        // manifestは小さいので1回だけ再試行。巨大なmaster本体は再取得しない。
+      let lastError=null;
+      for(let attempt=0;attempt<2;attempt++){
         try{
-          await managerGithubDelay(250);
           const manifestUrl=new URL('manifest.json',base);
-          manifest=await managerFetchGithubJson(manifestUrl.toString(),{timeoutMs:6000,cacheMode:'reload'});
-        }catch(second){errors.push(`${base}: manifest ${second.message||second}`);}
-      }
-      if(manifest){
-        try{
-          const nested=manifest?.files?.master,info=nested&&typeof nested==='object'?nested:{};
-          const masterFile=String(manifest.master||info.path||(typeof nested==='string'?nested:'')||'').trim();
+          const manifest=await managerFetchGithubJson(manifestUrl.toString(),{timeoutMs:6000,cacheMode:'no-cache'});
+          const nestedMaster=manifest&&manifest.files&&manifest.files.master;
+          const nestedMasterObject=nestedMaster&&typeof nestedMaster==='object'?nestedMaster:{};
+          const masterFile=String(manifest.master||nestedMasterObject.path||(typeof nestedMaster==='string'?nestedMaster:'')||'').trim();
           if(!masterFile||masterFile.includes('..')||masterFile.includes(String.fromCharCode(92)))throw new Error('manifestのmasterファイル名が不正です');
-          const cacheKey=String(manifest.sha256||info.sha256||manifest.version||'master').trim();
-          const masterUrl=new URL(masterFile,base);masterUrl.searchParams.set('_ra',cacheKey);
-          const master=await managerFetchGithubJson(masterUrl.toString(),{timeoutMs:20000,cacheMode:force?'reload':'force-cache'});
-          validateManagerCommonMaster(master);
-          const rows=managerMasterDataRowCount(master);if(!rows)throw new Error('共通DBの更新データが空です');
-          const manifestVersion=String(manifest.version||'').trim(),masterVersion=String(master.version||'').trim();
-          return{manifest,master,version:masterVersion||manifestVersion,base,versionWarning:manifestVersion&&masterVersion&&manifestVersion.replace(/^v/i,'')!==masterVersion.replace(/^v/i,'')?`manifest ${manifestVersion} / master ${masterVersion}`:''};
-        }catch(error){errors.push(`${base}: master ${error.message||error}`);}
+          const manifestVersion=String(manifest.version||'').trim();
+          const cacheKey=String(manifest.sha256||nestedMasterObject.sha256||manifestVersion||'master').trim();
+          const masterUrl=new URL(masterFile,base);
+          masterUrl.searchParams.set('_ra',cacheKey);
+          const masterCacheMode=(force||attempt>0)?'reload':'force-cache';
+          const master=await managerFetchGithubJson(masterUrl.toString(),{timeoutMs:15000,cacheMode:masterCacheMode});
+          const rows=managerMasterDataRowCount(master);
+          if(!rows)throw new Error('共通DBの更新データが空です');
+          const masterVersion=String(master.version||'').trim();
+          const result={manifest,master,version:masterVersion||manifestVersion,base,versionWarning:''};
+          if(manifestVersion&&masterVersion&&String(manifestVersion).replace(/^v/i,'')!==String(masterVersion).replace(/^v/i,'')){
+            result.versionWarning=`manifest ${manifestVersion} / master ${masterVersion}`;
+            usableMismatch=result;
+            lastError=new Error(`共通DBの更新反映待ちです（${result.versionWarning}）`);
+          }else return result;
+        }catch(error){lastError=error;}
+        if(attempt<1)await managerGithubDelay(350);
       }
-      // manifest経路が使えない場合だけdirectを1回試す。masterを何度も落とさない。
       try{
         const directUrl=new URL('recraft_alchemia_master.json',base);
-        const master=await managerFetchGithubJson(directUrl.toString(),{timeoutMs:20000,cacheMode:force?'reload':'force-cache'});
-        validateManagerCommonMaster(master);
-        const rows=managerMasterDataRowCount(master);if(!rows)throw new Error('共通DBの更新データが空です');
+        const master=await managerFetchGithubJson(directUrl.toString(),{timeoutMs:15000,cacheMode:'no-cache'});
+        const rows=managerMasterDataRowCount(master);
+        if(!rows)throw new Error('共通DBの更新データが空です');
         return{manifest:{master:'recraft_alchemia_master.json'},master,version:String(master.version||''),base,versionWarning:''};
-      }catch(error){errors.push(`${base}: direct ${error.message||error}`);}
+      }catch(directError){errors.push(`${base}: ${[lastError&&lastError.message,directError&&directError.message].filter(Boolean).join(' / ')}`);}
     }
+    if(usableMismatch)return usableMismatch;
     throw new Error(errors.join(' / ')||'GitHub共通DBの取得先がありません');
   })();
   githubCommonMasterPromise=task;
@@ -2635,7 +2616,6 @@ async function loadManagerDisplayData({force=false}={}){
     }
     try{
       const bundled = await loadBundledInitialData();
-      validateManagerCommonMaster(bundled);
       applyInitialData(bundled, '管理用同梱DB（GitHub共通DBフォールバック）');
       if(status){
         status.className = 'status-box warn';
@@ -2663,7 +2643,7 @@ function clearWorkingData(){
   toast('画面上のデータを空にしました');
 }
 
-function structuredClone(obj){ return typeof globalThis.structuredClone==='function'?globalThis.structuredClone(obj):JSON.parse(JSON.stringify(obj)); }
+function structuredClone(obj){ return JSON.parse(JSON.stringify(obj)); }
 function mergeTextUnique(...values){
   const seen = new Set();
   const parts = [];
@@ -3919,7 +3899,7 @@ function guildSupportWeaponCategories(char={}){
   return [...new Set(values)];
 }
 const GUILD_SUPPORT_LEGACY_SKILL_KEYS = Object.freeze({
-  // v1.0.90移行用。supportSettings未保存の既存8人だけ旧設定を仮引継ぎする。
+  // v1.0.88移行用。supportSettings未保存の既存8人だけ旧設定を仮引継ぎする。
   ch_mrfspilf_0vcslwu:['prayer','appraise'],
   ch_mrhjv1ai_wspdju4:['melee','guard','leadership'],
   ch_mrskymwf_iavpdvu:['magic','melee','knowledge'],
@@ -9382,49 +9362,51 @@ function jsonpActionLabel(action){
   if (['beginUpload','putUploadChunk','putUploadTextChunk','putUploadGzipChunk','putUploadCell','commitUpload','abortUpload','upsert','replaceSheet','beginDirectChunkUpload','directChunkUploadStatus','antiqueRegistrationStatus','putDirectRowsChunk','finishDirectChunkUpload','beginRepairSheetChunked','repairSheetChunkStatus','repairSheetRowsChunk','finishRepairSheetChunked'].includes(a)) return 'DB送信/反映';
   return 'DB読み込み';
 }
-const PERSISTENT_JSONP_WRITE_ACTIONS=new Set([
-  'setup','cleanupUploadTemps','dedupe','dedupeAll','repairSheet','repairAll',
-  'beginUpload','putUploadChunk','putUploadTextChunk','putUploadGzipChunk','putUploadCell','commitUpload','abortUpload',
-  'upsert','replaceSheet',
-  'beginDirectChunkUpload','directChunkUploadStatus','putDirectRowsChunk','finishDirectChunkUpload',
-  'beginRepairSheetChunked','repairSheetChunkStatus','repairSheetRowsChunk','finishRepairSheetChunked',
-  'antiqueRegistrationStatus','dbHashes','validateItemRecipePrices',
-  'guildSupportSave','mealRecommendationSave','copyistDailySave','antiqueGearAreaSave','facilityGeneralAreaSave'
-]);
 function jsonpApi(data){
   return new Promise((resolve,reject)=>{
     const base=apiBaseUrl();
     if(!base){ reject(new Error('ローカルHTMLからDB読み込み/送信する場合はWeb App URLを入力してください。')); return; }
-    const action=String(data&&data.action||'').trim(),actionLabel=jsonpActionLabel(action),persistent=PERSISTENT_JSONP_WRITE_ACTIONS.has(action);
-    let settled=false,activeScript=null,activeCallback='',retryTimer=0;
-    function cleanupCurrent(){
-      if(retryTimer){clearTimeout(retryTimer);retryTimer=0;}
-      if(activeCallback){try{delete window[activeCallback];}catch(_){window[activeCallback]=undefined;}activeCallback='';}
-      if(activeScript&&activeScript.parentNode)activeScript.parentNode.removeChild(activeScript);
-      activeScript=null;
+    const action = data && data.action;
+    const actionLabel = jsonpActionLabel(action);
+    const callback='recraftDbCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let settled=false;
+    const timer=setTimeout(()=>{
+      finishReject(new Error(`${actionLabel}がタイムアウトしました。術式・魔物など長文データの登録中なら、少し待ってから同じ表だけ再実行してください。続く場合はCode.gsと管理HTMLを同じ版に揃えてください。`));
+    },jsonpTimeoutMs(action));
+    function cleanup(){
+      clearTimeout(timer);
+      try{ delete window[callback]; }catch(e){ window[callback]=undefined; }
+      if(script.parentNode) script.parentNode.removeChild(script);
     }
-    function finishResolve(res){if(settled)return;settled=true;cleanupCurrent();resolve(res);}
-    function finishReject(err){if(settled)return;settled=true;cleanupCurrent();reject(err);}
-    function scheduleRetry(){if(settled)return;cleanupCurrent();retryTimer=setTimeout(send,800);}
-    function send(){
-      if(settled)return;
-      cleanupCurrent();
-      const callback='recraftDbCb_'+Date.now()+'_'+Math.random().toString(36).slice(2),script=document.createElement('script');
-      activeCallback=callback;activeScript=script;
-      window[callback]=(res)=>finishResolve(res);
-      try{
-        const u=new URL(base);u.searchParams.set('api','1');u.searchParams.set('callback',callback);
-        Object.entries(data||{}).forEach(([k,v])=>{if(v===undefined||v===null)return;if(typeof v==='object')u.searchParams.set(k,JSON.stringify(v));else u.searchParams.set(k,String(v));});
-        script.onerror=()=>{if(persistent)scheduleRetry();else finishReject(new Error(`${actionLabel}に失敗しました。WebアプリURL・公開設定・デプロイ版を確認してください。`));};
-        script.src=u.toString();document.head.appendChild(script);
-        retryTimer=setTimeout(()=>{
-          if(settled)return;
-          if(persistent)scheduleRetry();
-          else finishReject(new Error(`${actionLabel}の応答を確認できませんでした。`));
-        },jsonpTimeoutMs(action));
-      }catch(e){if(persistent)scheduleRetry();else finishReject(e);}
+    function finishResolve(res){
+      if(settled) return;
+      settled=true;
+      cleanup();
+      resolve(res);
     }
-    send();
+    function finishReject(err){
+      if(settled) return;
+      settled=true;
+      cleanup();
+      reject(err);
+    }
+    window[callback]=(res)=>{ finishResolve(res); };
+    try{
+      const u=new URL(base);
+      u.searchParams.set('api','1');
+      u.searchParams.set('callback',callback);
+      Object.entries(data||{}).forEach(([k,v])=>{
+        if(v===undefined || v===null) return;
+        if(typeof v==='object') u.searchParams.set(k, JSON.stringify(v));
+        else u.searchParams.set(k, String(v));
+      });
+      script.onerror=()=>{
+        finishReject(new Error(`${actionLabel}に失敗しました。WebアプリURL・公開設定・デプロイ版を確認してください。`));
+      };
+      script.src=u.toString();
+      document.head.appendChild(script);
+    }catch(e){ finishReject(e); }
   });
 }
 function estimateJsonpUrlLength(data){
@@ -9552,6 +9534,16 @@ function uploadProgressSmoothHeartbeat(config={}){
 }
 function uploadProgressStopHeartbeat(timer){ if(timer) clearInterval(timer); }
 
+function withUploadTimeout(promise, timeoutMs, message){
+  if(!timeoutMs || timeoutMs <= 0) return promise;
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject)=>{
+      timer=setTimeout(()=>reject(new Error(message || '処理がタイムアウトしました')), timeoutMs);
+    })
+  ]).finally(()=>clearTimeout(timer));
+}
 function uploadProgressDone(result={}){
   const elapsed=__uploadProgress.startedAt ? performance.now()-__uploadProgress.startedAt : 0;
   const raw=Number(result.rawChars||0);
@@ -9623,40 +9615,67 @@ function directPostForm(action,payloadObject,timeoutMs=DIRECT_POST_TIMEOUT_MS,pr
   return new Promise((resolve,reject)=>{
     const base=apiBaseUrl();
     if(!base){reject(new Error('Web App URLが設定されていません。'));return;}
-    const token=String(payloadObject&&payloadObject.token||''),attempts=[];
-    let settled=false,probeTimer=0,probeStarter=0,retryTimer=0,probing=false,attemptNo=0;
+    const token=String(payloadObject&&payloadObject.token||'');
+    const frame=document.createElement('iframe');
+    const frameName='recraftDbPost_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    frame.name=frameName;
+    frame.style.display='none';
+    frame.setAttribute('aria-hidden','true');
+    const form=document.createElement('form');
+    form.method='POST';
+    const actionUrl=new URL(base);
+    actionUrl.searchParams.set('action',String(action||''));
+    actionUrl.searchParams.set('responseMode','postMessage');
+    actionUrl.searchParams.set('token',token);
+    form.action=actionUrl.toString();
+    form.target=frameName;
+    form.enctype='text/plain';
+    form.acceptCharset='UTF-8';
+    form.style.display='none';
+    const payloadField=document.createElement('textarea');
+    payloadField.name='payload';
+    payloadField.value=JSON.stringify(payloadObject||{});
+    payloadField.style.display='none';
+    form.appendChild(payloadField);
+    let settled=false,probeTimer=0,probeStarter=0,probing=false;
+    const timer=setTimeout(()=>finishReject(new Error('POST送信の応答がタイムアウトしました。')),timeoutMs);
     function cleanup(){
-      if(probeStarter)clearTimeout(probeStarter);if(probeTimer)clearInterval(probeTimer);if(retryTimer)clearInterval(retryTimer);
+      clearTimeout(timer);
+      if(probeStarter)clearTimeout(probeStarter);
+      if(probeTimer)clearInterval(probeTimer);
       window.removeEventListener('message',onMessage);
-      attempts.forEach(({form,frame})=>setTimeout(()=>{try{form.remove();frame.remove();}catch(_){}},0));
+      setTimeout(()=>{try{form.remove();frame.remove();}catch(_){}},0);
     }
     function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}
     function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}
     function onMessage(event){
-      const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;
-      const result=data.result||{ok:false,error:'DB送信結果が空です。'};
-      if(result.ok===false){finishReject(new Error(result.error||'DB更新に失敗しました'));return;}
-      finishResolve(result);
+      if(event.source!==frame.contentWindow) return;
+      const data=event.data||{};
+      if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token) return;
+      finishResolve(data.result||{ok:false,error:'DB送信結果が空です。'});
     }
     async function runProbe(){
       if(settled||probing||!probeOptions||typeof probeOptions.check!=='function')return;
-      probing=true;try{const value=await probeOptions.check();if(value)finishResolve(value);}catch(_){}finally{probing=false;}
-    }
-    function submitAttempt(){
-      if(settled)return;attemptNo++;
-      const frame=document.createElement('iframe'),frameName='recraftDbPost_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');
-      frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
-      form.method='POST';const actionUrl=new URL(base);actionUrl.searchParams.set('action',String(action||''));actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);
-      form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
-      const field=document.createElement('textarea');field.name='payload';field.value=JSON.stringify(payloadObject||{});field.style.display='none';form.appendChild(field);
-      attempts.push({form,frame});document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(_){}
+      probing=true;
+      try{
+        const value=await probeOptions.check();
+        if(value)finishResolve(value);
+      }catch(_){}
+      finally{probing=false;}
     }
     if(probeOptions&&typeof probeOptions.check==='function'){
-      const delay=Math.max(250,Number(probeOptions.delayMs||700)),interval=Math.max(300,Number(probeOptions.intervalMs||700));
-      probeStarter=setTimeout(()=>{if(settled)return;runProbe();probeTimer=setInterval(runProbe,interval);},delay);
+      const delay=Math.max(250,Number(probeOptions.delayMs||700));
+      const interval=Math.max(300,Number(probeOptions.intervalMs||700));
+      probeStarter=setTimeout(()=>{
+        if(settled)return;
+        runProbe();
+        probeTimer=setInterval(runProbe,interval);
+      },delay);
     }
-    window.addEventListener('message',onMessage);submitAttempt();
-    retryTimer=setInterval(()=>{runProbe();submitAttempt();},Math.max(10000,Math.min(20000,Number(timeoutMs)||15000)));
+    window.addEventListener('message',onMessage);
+    document.body.appendChild(frame);
+    document.body.appendChild(form);
+    try{form.submit();}catch(e){finishReject(e);}
   });
 }
 function directChunkStatusProbe(token,minimumNextChunk=0){
@@ -9707,6 +9726,7 @@ const UPLOAD_GZIP_B64_PART_STEP = 1150;
 const UPLOAD_GZIP_RAW_BYTES_PER_CHUNK = 32768;
 const UPLOAD_GZIP_MAX_ROWS_PER_CHUNK = 40;
 const UPLOAD_GZIP_COMPRESSION_SCHEMA = 'gzipUtf8Bytes32kRows40_v90_8_385';
+const UPLOAD_GZIP_CHUNK_TIMEOUT_MS = 15000;
 // v90.8.599: 大量DBは無圧縮・直接分割書込を標準にする。
 // v90.8.678: 実測タイムアウト対策として、実データPOSTだけを最大25行/約64KBへ縮小。
 // begin/status/finish/abortなどデータ本体を含まない制御命令はJSONP/google.script.runへ分離する。
@@ -9953,7 +9973,7 @@ async function uploadRowsByGzipChunks(key, rows, mode, dataKindScope='', options
       const text = JSON.stringify(chunks[c]); rawChars += text.length;
       uploadProgressUpdate({phase:`${labelKey(key)}を圧縮中`,percent:10+Math.min(20,(c/Math.max(1,chunks.length))*20),currentRows:sentRows,totalRows:list.length,chunks:`${c+1}/${chunks.length}`,parts:sentParts,detail:`チャンク${c+1}を圧縮しています。`});
       await yieldUploadUi();
-      const gzipBase64 = await gzipBase64FromText(text);
+      const gzipBase64 = await withUploadTimeout(gzipBase64FromText(text),UPLOAD_GZIP_CHUNK_TIMEOUT_MS,`チャンク${c+1}の圧縮がタイムアウトしました。`);
       await yieldUploadUi();
       gzipBase64Chars += gzipBase64.length;
       const parts = splitGzipBase64ForJsonpUpload(token,c,gzipBase64);
@@ -10062,7 +10082,11 @@ async function uploadRowsByGzipPostChunks(key, rows, mode, dataKindScope='', opt
         detail:`チャンク${c+1}を圧縮しています。`
       });
       await yieldUploadUi();
-      const gzipBase64=await gzipBase64FromText(text);
+      const gzipBase64=await withUploadTimeout(
+        gzipBase64FromText(text),
+        UPLOAD_GZIP_CHUNK_TIMEOUT_MS,
+        `チャンク${c+1}の圧縮がタイムアウトしました。`
+      );
       await yieldUploadUi();
       gzipBase64Chars+=gzipBase64.length;
       uploadProgressLog(`チャンク${c+1}/${chunks.length}：${chunks[c].length}行 / ${formatUploadBytes(gzipBase64.length*.75)}をPOST送信`);
@@ -10222,7 +10246,7 @@ async function uploadRowsByChunks(key, rows, mode, dataKindScope='', options={})
       const message=String(postError&&postError.message||postError||'');
       // POST経路そのものが応答不能なら、処理全体を止めずJSONP分割へ退避する。
       // upsertは同一キー更新、replaceは再初期化されるため、途中反映後でも再送可能。
-      if(/Failed to fetch|NetworkError|Load failed|接続できません/i.test(message)){
+      if(/POST送信の応答がタイムアウト|POST.*タイムアウト|Failed to fetch|NetworkError/i.test(message)){
         uploadProgressLog(`POST経路で失敗したためJSONP分割送信へ切り替えます：${message}`);
         const saved=uploadResumeLoad();
         if(saved&&saved.token){
