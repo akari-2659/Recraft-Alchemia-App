@@ -344,7 +344,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
     <h2>データ読込</h2>
     <div>
       <label>読み込み状態</label>
-      <div id="dbStatus" class="status warn">GitHub共通DBを自動読込しています。</div>
+      <div id="dbStatus" class="status warn">共通DBを読み込んでいます。</div>
     </div>
     <div class="buttons">
       <button id="loadDbBtn">共通DBを再読込</button>
@@ -1455,8 +1455,24 @@ function saveMasterCache(data,version=''){
 function loadMasterCache(){
   try{
     const raw=localStorage.getItem(MASTER_CACHE_KEY);if(!raw)return null;
-    const cache=JSON.parse(raw);return normalizeProgressMaster(cache.data||cache,{});
+    const cache=JSON.parse(raw);return normalizeProgressMaster(cache.data||cache,{version:String(cache.version||'')});
   }catch(_e){return null;}
+}
+async function loadBundledProgressMaster(){
+  // 起動時はネットワーク上の大容量masterを待たず、同梱DBで先に画面を使用可能にする。
+  const candidates=[
+    new URL('./data/recraft_alchemia_initial_data.json',window.location.href),
+    new URL('../../../data/recraft_alchemia_initial_data.json',window.location.href)
+  ];
+  const errors=[];
+  for(const bundledUrl of candidates){
+    try{
+      bundledUrl.searchParams.set('_ra',VERSION);
+      const raw=await progressFetchJson(bundledUrl.toString(),{timeoutMs:6000,cacheMode:'force-cache'});
+      return normalizeProgressMaster(raw,{version:String(raw?.version||'')});
+    }catch(error){errors.push(`${bundledUrl.pathname}: ${error.message||error}`);}
+  }
+  throw new Error(errors.join(' / ')||'同梱共通DBを取得できませんでした。');
 }
 async function acquireProgressMaster(){
   try{
@@ -1467,23 +1483,19 @@ async function acquireProgressMaster(){
     console.warn('GitHub共通DBを利用できません。',githubError);
     const cached=loadMasterCache();
     if(cached)return {...cached,source:'前回キャッシュ',warning:githubError.message||String(githubError)};
-    // 初回起動でも読み込み状態のまま止めない。アプリ同梱DBを先に使い、GASは最後の保険にする。
     try{
-      const bundledUrl=new URL('./data/recraft_alchemia_initial_data.json',window.location.href);
-      bundledUrl.searchParams.set('_ra',VERSION);
-      const bundledRaw=await progressFetchJson(bundledUrl.toString(),{timeoutMs:12000,cacheMode:'force-cache'});
-      const bundled=normalizeProgressMaster(bundledRaw,{});
+      const bundled=await loadBundledProgressMaster();
       saveMasterCache(bundled.data,bundled.version);
-      return {...bundled,source:'同梱DBフォールバック',warning:githubError.message||String(githubError)};
+      return {...bundled,source:'同梱共通DB',warning:githubError.message||String(githubError)};
     }catch(bundledError){
       console.warn('同梱DBも利用できないためGASへ切り替えます。',bundledError);
       try{
         const gas=await jsonp({action:'progressMaster'},20000);
-        const normalized=normalizeProgressMaster(gas,{});
-        saveMasterCache(normalized.data,gas.version||'');
-        return {...normalized,version:String(gas.version||''),source:'GASフォールバック',warning:[githubError.message,bundledError.message].filter(Boolean).join(' / ')};
+        const normalized=normalizeProgressMaster(gas,{version:String(gas?.version||'')});
+        saveMasterCache(normalized.data,normalized.version||'');
+        return {...normalized,source:'GASフォールバック',warning:[githubError.message,bundledError.message].filter(Boolean).join(' / ')};
       }catch(gasError){
-        throw new Error(`共通DBの自動読込に失敗しました：${[githubError.message,bundledError.message,gasError.message].filter(Boolean).join(' / ')}`);
+        throw new Error(`共通DBの読込に失敗しました：${[githubError.message,bundledError.message,gasError.message].filter(Boolean).join(' / ')}`);
       }
     }
   }
@@ -1508,18 +1520,58 @@ function applyProgressMaster(master){
   renderAll();
   return {quests,areas,events,monsters,items,treasures,appraisalRules};
 }
+let progressDbLoadSerial=0;
+function progressMasterStatusText(master,counts,suffix=''){
+  return `${master.source||'共通DB'}${master.version?' '+master.version:''}：クエスト${counts.quests.length}件 / エリア${counts.areas.length}件 / イベント${counts.events.length}件 / 宝箱${counts.treasures.length}件 / 鑑定${counts.appraisalRules.length}件 / 魔物${counts.monsters.length}件 / アイテム・素材${counts.items.length}件${suffix}`;
+}
 async function loadDb(options={}){
-  const auto=!!options.auto;
-  setStatus('warn',auto?'GitHub共通DBを自動読込しています。':'共通DBを再読込しています。');
-  $('loadDbBtn').disabled=true;
+  const auto=!!options.auto,serial=++progressDbLoadSerial,button=$('loadDbBtn');
+  setStatus('warn',auto?'共通DBを読み込んでいます。':'共通DBを再読込しています。');
+  if(button)button.disabled=true;
+  if(auto){
+    // 起動時はGitHubの応答を待たない。同梱DB（失敗時は前回キャッシュ）を先に適用する。
+    let startupMaster=null;
+    try{
+      try{startupMaster={...(await loadBundledProgressMaster()),source:'同梱共通DB'};}
+      catch(bundledError){
+        console.warn('同梱共通DBの起動読込に失敗しました。',bundledError);
+        const cached=loadMasterCache();
+        if(cached)startupMaster={...cached,source:'前回キャッシュ',warning:bundledError.message||String(bundledError)};
+      }
+      if(startupMaster){
+        if(serial!==progressDbLoadSerial)return;
+        const counts=applyProgressMaster(startupMaster);
+        saveMasterCache(startupMaster.data,startupMaster.version);
+        setStatus('good',progressMasterStatusText(startupMaster,counts,' / 読込完了・GitHub更新確認中'));
+        addLog(`${startupMaster.source}からDBを読み込みました。`);
+        if(button)button.disabled=false;
+        // GitHub正本はバックグラウンド確認。失敗しても読み込んだDBを捨てない。
+        fetchGithubProgressMaster().then(github=>{
+          if(serial!==progressDbLoadSerial)return;
+          saveMasterCache(github.data,github.version);
+          const sameVersion=String(github.version||'').replace(/^v/i,'')===String(startupMaster.version||'').replace(/^v/i,'');
+          const githubMaster={...github,source:'GitHub共通DB'};
+          const finalCounts=sameVersion?counts:applyProgressMaster(githubMaster);
+          setStatus(github.versionWarning?'warn':'good',progressMasterStatusText(githubMaster,finalCounts,github.versionWarning?` / ${github.versionWarning}`:''));
+          if(!sameVersion)addLog(`GitHub共通DB ${github.version||''} へ更新しました。`);
+        }).catch(error=>{
+          if(serial!==progressDbLoadSerial)return;
+          console.warn('GitHub共通DBのバックグラウンド確認に失敗しました。',error);
+          setStatus('good',progressMasterStatusText(startupMaster,counts,' / 読込完了（GitHub更新確認は失敗）'));
+        });
+        return;
+      }
+    }catch(startupError){console.warn('起動用共通DBの適用に失敗しました。',startupError);}
+  }
   try{
     const master=await acquireProgressMaster();
+    if(serial!==progressDbLoadSerial)return;
     const counts=applyProgressMaster(master);
-    const warning=master.warning?` / ${master.source}を使用`:'';
-    setStatus(master.source==='GitHub共通DB'&&!master.versionWarning?'good':'warn',`${master.source}${master.version?' '+master.version:''}：クエスト${counts.quests.length}件 / エリア${counts.areas.length}件 / イベント${counts.events.length}件 / 宝箱${counts.treasures.length}件 / 鑑定${counts.appraisalRules.length}件 / 魔物${counts.monsters.length}件 / アイテム・素材${counts.items.length}件${warning}`);
+    const warning=master.warning?` / ${master.source}を使用`:master.versionWarning?` / ${master.versionWarning}`:'';
+    setStatus(master.source==='GitHub共通DB'&&!master.versionWarning?'good':'warn',progressMasterStatusText(master,counts,warning));
     addLog(`${master.source}からDBを読み込みました。`);
-  }catch(e){setStatus('bad',e.message||String(e));}
-  finally{$('loadDbBtn').disabled=false;}
+  }catch(e){if(serial===progressDbLoadSerial)setStatus('bad',e.message||String(e));}
+  finally{if(serial===progressDbLoadSerial&&button)button.disabled=false;}
 }
 function findBySearchValue(value, rows){
   const q=String(value || '').trim();
@@ -5924,7 +5976,7 @@ $('rumorAreaSelect').addEventListener('change',()=>{fillInnRumorSelect(); render
   $('copyLogBtn').addEventListener('click',()=>copyText(state.log.slice().reverse().join('\n'))); $('clearLogBtn').addEventListener('click',()=>{state.log=[]; renderLog(); saveState(false);});
 }
 tokenLoadExportDirectoryHandle().then(()=>tokenRefreshExportDirectoryUi()).catch(()=>{});
-loadState(); bind(); renderLog(); setStatus('warn', 'GitHub共通DBを自動読込しています。'); loadDb({auto:true}); loadCommunityGatheringManager();
+loadState(); renderLog(); setStatus('warn','共通DBを読み込んでいます。'); loadDb({auto:true}); try{bind();}catch(error){console.error('進行管理UIの初期化でエラーが発生しました。',error);} loadCommunityGatheringManager();
 </script>
 
 <script id="raMaintenanceV287Script">
