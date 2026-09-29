@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.817</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.818</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -177,8 +177,8 @@ button.weapon-material-part:hover{background:#e2f2f5;transform:none}
  .branch-graph-node.has-named-processing .branch-graph-node-trigger{min-height:110px!important;padding:13px 14px 15px!important}
 }
 
-/* v1.0.85: キャラクター別 作成目標 / お気に入り登録 */
-.craft-list-register-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #dec8a9}.craft-list-register-actions button{flex:0 1 auto}.branch-graph-node-craft-actions{display:grid;grid-template-columns:1fr;gap:4px;width:100%;margin-top:2px}.branch-graph-node-craft-actions button{width:100%;min-height:0;padding:5px 6px!important;border-radius:7px!important;font-size:.68rem!important;line-height:1.2!important;box-shadow:none!important;white-space:normal!important}.branch-graph-node-craft-actions .ghost{background:#fffaf3!important;color:var(--accent)!important;border:1px solid #dec8a9!important}.craft-list-assign-dialog{width:min(560px,calc(100vw - 24px));border:0;border-radius:18px;padding:0;box-shadow:0 20px 55px rgba(45,28,12,.28)}.craft-list-assign-dialog::backdrop{background:rgba(35,24,14,.45)}.craft-list-assign-shell{padding:18px;display:grid;gap:12px}.craft-list-assign-shell h3{margin:0}.craft-list-assign-summary{font-weight:900}.craft-list-assign-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-assign-actions button{flex:1 1 150px}.craft-list-assign-dialog .field{display:grid;gap:5px}
+/* v1.0.89: キャラクター別 作成目標 / お気に入り登録 */
+.craft-list-register-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 2px 4px;padding:14px 2px 2px;border-top:1px solid #dec8a9}.craft-list-register-actions button{flex:0 0 auto;width:auto;min-height:34px;padding:7px 12px;line-height:1.2;border-radius:9px}.craft-list-assign-dialog{width:min(560px,calc(100vw - 24px));border:0;border-radius:18px;padding:0;box-shadow:0 20px 55px rgba(45,28,12,.28)}.craft-list-assign-dialog::backdrop{background:rgba(35,24,14,.45)}.craft-list-assign-shell{padding:18px;display:grid;gap:12px}.craft-list-assign-shell h3{margin:0}.craft-list-assign-summary{font-weight:900}.craft-list-assign-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-assign-actions button{flex:1 1 150px}.craft-list-assign-dialog .field{display:grid;gap:5px}
 </style>
 
 <style id="raMaintenanceV287">
@@ -655,7 +655,7 @@ html.ra-embedded-facility #sectionDescription{
 </style>
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.817 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.818 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -778,6 +778,7 @@ const raStorage={
   set(key,value){try{if(window.localStorage)window.localStorage.setItem(key,value);}catch(error){console.warn('保存情報を書き込めませんでした。',error);}},
   remove(key){try{if(window.localStorage)window.localStorage.removeItem(key);}catch(error){console.warn('保存情報を削除できませんでした。',error);}}
 };
+let facilityCommonMasterData=null;
 let currentFacility='smith',currentSection='sales',currentPlayerKey='',currentUnlockState={unlockedAreaIds:[],unlockedAreas:[]},currentWeaponCategory=raStorage.get('recraft_alchemia.player_facility.weapon_category')||'',branchSearch='',currentRank='all',catalogSearch='',currentCatalogCategory='all',branchLabelsCollapsed=raStorage.get(BRANCH_LABEL_COLLAPSE_STORAGE_KEY)==='1';
 let facilityUpgradeData={items:[],materialRanks:[]},facilityRemovalEntryIds=[];
 const catalogCategoryByView=Object.create(null);
@@ -1013,10 +1014,33 @@ async function matchAreaByUnlockKey(commonMaster={},unlockKey=''){
 }
 function jsonpActionOnce(action,params={},timeoutMs=35000){return new Promise((resolve,reject)=>{const cb='raFacilityCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);const sc=document.createElement('script');const timer=setTimeout(()=>{clean();const error=new Error('通信がタイムアウトしました。');error.code='RA_TIMEOUT';reject(error);},timeoutMs);function clean(){clearTimeout(timer);try{delete window[cb]}catch(e){}sc.remove();}window[cb]=j=>{clean();resolve(j)};const u=new URL(DEFAULT_GAS_WEB_APP_URL);u.searchParams.set('api','1');u.searchParams.set('action',action);Object.entries(params||{}).forEach(([key,value])=>{if(value!==undefined&&value!==null)u.searchParams.set(key,String(value));});u.searchParams.set('callback',cb);u.searchParams.set('_t',String(Date.now()));sc.onerror=()=>{clean();const error=new Error('施設データへ接続できませんでした。');error.code='RA_NETWORK';reject(error);};sc.src=u.toString();document.head.appendChild(sc);});}
 async function jsonpAction(action,params={},options={}){const attempts=Math.max(1,Number(options.attempts)||2),timeoutMs=Math.max(15000,Number(options.timeoutMs)||35000);let lastError=null;for(let attempt=1;attempt<=attempts;attempt++){try{return await jsonpActionOnce(action,params,timeoutMs);}catch(error){lastError=error;if(attempt>=attempts||!['RA_TIMEOUT','RA_NETWORK'].includes(error&&error.code))break;await new Promise(resolve=>setTimeout(resolve,500*attempt));}}throw lastError||new Error('施設データへ接続できませんでした。');}
-function facilityPostAction(action,params={},timeoutMs=30000){return new Promise((resolve,reject)=>{const token='raFacilityPost_'+Date.now()+'_'+Math.random().toString(36).slice(2),frame=document.createElement('iframe'),frameName='raFacilityFrame_'+Date.now()+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');form.method='POST';const actionUrl=new URL(DEFAULT_GAS_WEB_APP_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';const payloadField=document.createElement('textarea');payloadField.name='payload';payloadField.value=JSON.stringify({...params,token});payloadField.style.display='none';form.appendChild(payloadField);let settled=false;const timer=setTimeout(()=>finishReject(new Error('施設データの保存応答がタイムアウトしました。')),timeoutMs);function cleanup(){clearTimeout(timer);window.removeEventListener('message',onMessage);setTimeout(()=>{try{form.remove();frame.remove();}catch(_e){}},0);}function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}function onMessage(event){if(event.source!==frame.contentWindow)return;const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'施設保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'施設データの保存に失敗しました。'));return;}finishResolve(result);}window.addEventListener('message',onMessage);document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(e){finishReject(e);}});}
+function facilityNoCorsPostAction(action,params={}){
+  const body=new URLSearchParams();body.set('action',action);body.set('payload',JSON.stringify(params||{}));
+  return fetch(DEFAULT_GAS_WEB_APP_URL,{method:'POST',mode:'no-cors',body}).then(()=>({ok:true,sentNoCors:true}));
+}
+function facilityPostAction(action,params={},timeoutMs=30000){
+  return new Promise((resolve,reject)=>{
+    const token='raFacilityPost_'+Date.now()+'_'+Math.random().toString(36).slice(2),attempts=[];
+    let settled=false,retryTimer=0,attemptNo=0;
+    function cleanup(){if(retryTimer)clearInterval(retryTimer);window.removeEventListener('message',onMessage);attempts.forEach(({form,frame})=>setTimeout(()=>{try{form.remove();frame.remove();}catch(_){}},0));}
+    function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}
+    function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}
+    function onMessage(event){const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'施設保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'施設データの保存に失敗しました。'));return;}finishResolve(result);}
+    function submitAttempt(){
+      if(settled)return;attemptNo++;
+      const frame=document.createElement('iframe'),frameName='raFacilityFrame_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');
+      frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
+      form.method='POST';const actionUrl=new URL(DEFAULT_GAS_WEB_APP_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
+      const field=document.createElement('textarea');field.name='payload';field.value=JSON.stringify({...params,token});field.style.display='none';form.appendChild(field);
+      attempts.push({form,frame});document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(_){}
+    }
+    window.addEventListener('message',onMessage);submitAttempt();
+    retryTimer=setInterval(submitAttempt,Math.max(8000,Math.min(15000,Number(timeoutMs)||12000)));
+  });
+}
 
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
-const FACILITY_EXPECTED_DB_VERSION='v90.8.817';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.818';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}
@@ -1736,13 +1760,22 @@ let craftListRecipeIndex=Object.create(null),craftListAssignContext=null;
 function facilityCraftListKey(r={}){return String(r.id||r.publicId||`${r.craftType||''}::${r.resultItem||r.name||''}`).trim();}
 function facilityCraftListEligible(r={}){return !r.locked&&!!String(r.requiredMaterials||'').trim()&&!!String(r.resultItem||r.name||'').trim();}
 function facilityCraftListActionHtml(r={}){if(!facilityCraftListEligible(r))return '';const key=facilityCraftListKey(r);craftListRecipeIndex[key]=r;return `<div class="craft-list-register-actions"><button type="button" class="secondary" data-craft-list-add="goal" data-craft-list-key="${esc(key)}">作成目標に追加</button><button type="button" class="ghost" data-craft-list-add="favorite" data-craft-list-key="${esc(key)}">お気に入りに追加</button></div>`;}
-function facilityCraftListCompactActionHtml(r={}){if(!facilityCraftListEligible(r))return '';const key=facilityCraftListKey(r);craftListRecipeIndex[key]=r;return `<div class="branch-graph-node-craft-actions"><button type="button" class="secondary" data-craft-list-add="goal" data-craft-list-key="${esc(key)}">作成目標</button><button type="button" class="ghost" data-craft-list-add="favorite" data-craft-list-key="${esc(key)}">お気に入り</button></div>`;}
 function facilityNormalizeCraftLists(raw={}){const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};return{goals:Array.isArray(src.goals)?src.goals.filter(Boolean).map(x=>({...x})):[],favorites:Array.isArray(src.favorites)?src.favorites.filter(Boolean).map(x=>({...x})):[]};}
 function facilityCraftRef(r={}){return{recipeId:String(r.id||'').trim(),publicId:String(r.publicId||'').trim(),resultName:String(r.resultItem||r.name||'').trim(),craftType:String(r.craftType||'').trim(),resultKind:String(r.resultKind||r.itemType||'').trim(),resultCount:Math.max(1,Math.floor(Number(r.resultCount)||1)),requiredMaterials:String(r.requiredMaterials||'').trim(),addedAt:new Date().toISOString()};}
 async function facilityCraftCharacterList(){const playerKey=playerKeyValue();if(!playerKey)throw new Error('先にプレイヤーキーを入力してください。');const res=await jsonpAction('list',{playerKey},{attempts:2,timeoutMs:20000});if(res?.ok===false)throw new Error(res.error||'キャラクター一覧を取得できませんでした。');return Array.isArray(res?.items)?res.items:[];}
 async function openFacilityCraftListAssign(row,type){if(!facilityCraftListEligible(row))return;const status=$('craftListAssignStatus');try{if(status){status.className='status';status.textContent='登録先キャラクターを確認しています…';}const chars=await facilityCraftCharacterList();if(!chars.length)throw new Error('このプレイヤーキーに保存されたキャラクターがありません。');craftListAssignContext={row,type:type==='favorite'?'favorite':'goal',chars};const select=$('craftListAssignCharacter');select.innerHTML=chars.map(c=>`<option value="${esc(c.id)}">${esc(c.name||'名称未設定')}</option>`).join('');$('craftListAssignCharacterWrap').hidden=chars.length===1;$('craftListAssignRunsWrap').hidden=craftListAssignContext.type==='favorite';$('craftListAssignRuns').value='1';$('craftListAssignTitle').textContent=craftListAssignContext.type==='favorite'?'お気に入りに追加':'作成目標に追加';updateFacilityCraftAssignSummary();if(status){status.className='status';status.textContent=chars.length===1?`「${chars[0].name||'名称未設定'}」へ登録します。`:'登録先キャラクターを選択してください。';}$('craftListAssignModal').showModal();}catch(e){setStatus(`作成リスト登録に失敗しました：${e.message||e}`,'bad');}}
 function updateFacilityCraftAssignSummary(){if(!craftListAssignContext)return;const r=craftListAssignContext.row,runs=Math.max(1,Math.floor(Number($('craftListAssignRuns')?.value)||1)),count=Math.max(1,Math.floor(Number(r.resultCount)||1));$('craftListAssignSummary').textContent=craftListAssignContext.type==='favorite'?`${r.resultItem||r.name} をお気に入りへ登録`:`${r.resultItem||r.name}：${runs}回 / ${count*runs}個を作成目標へ登録`;}
-async function confirmFacilityCraftListAssign(){if(!craftListAssignContext)return;const playerKey=playerKeyValue(),charId=String($('craftListAssignCharacter')?.value||craftListAssignContext.chars[0]?.id||''),meta=craftListAssignContext.chars.find(c=>String(c.id)===charId)||craftListAssignContext.chars[0],status=$('craftListAssignStatus');if(!charId)return;try{$('craftListAssignConfirm').disabled=true;if(status){status.className='status';status.textContent='キャラクターデータへ登録しています…';}const loaded=await jsonpAction('load',{id:charId,playerKey,rowHint:meta?.storageRow||''},{attempts:2,timeoutMs:25000});if(loaded?.ok===false)throw new Error(loaded.error||'キャラクターを読み込めませんでした。');const data=loaded.data||{},lists=facilityNormalizeCraftLists(data.craftLists||{}),ref=facilityCraftRef(craftListAssignContext.row),key=ref.recipeId||ref.publicId||`${ref.craftType}::${ref.resultName}`;if(craftListAssignContext.type==='favorite'){const exists=lists.favorites.some(x=>(x.recipeId||x.publicId||`${x.craftType||''}::${x.resultName||''}`)===key);if(!exists)lists.favorites.push(ref);}else{const runs=Math.max(1,Math.floor(Number($('craftListAssignRuns')?.value)||1)),existing=lists.goals.find(x=>(x.recipeId||x.publicId||`${x.craftType||''}::${x.resultName||''}`)===key);if(existing)existing.targetRuns=Math.max(1,Math.floor(Number(existing.targetRuns)||1))+runs;else lists.goals.push({...ref,targetRuns:runs});}await facilityPostAction('savePatch',{id:charId,playerKey,baseRevision:loaded.revision,patch:{craftLists:lists,updatedAt:new Date().toISOString()},snapshot:data,rowHint:loaded.storageRow||meta?.storageRow||''},30000);$('craftListAssignModal').close();setStatus(`${ref.resultName}を「${meta?.name||data.name||'キャラクター'}」の${craftListAssignContext.type==='favorite'?'お気に入り':'作成目標'}へ登録しました。`,'ok');craftListAssignContext=null;}catch(e){if(status){status.className='status bad';status.textContent=`登録に失敗しました：${e.message||e}`;}}finally{if($('craftListAssignConfirm'))$('craftListAssignConfirm').disabled=false;}}
+async function facilityVerifyCraftListsSave(charId,playerKey,expectedLists,rowHint=''){
+  for(let attempt=0;;attempt++){
+    if(attempt>0)await new Promise(resolve=>setTimeout(resolve,Math.min(4000,700+attempt*250)));
+    try{
+      const loaded=await jsonpAction('load',{id:charId,playerKey,rowHint},{attempts:1,timeoutMs:25000});
+      const actual=facilityNormalizeCraftLists(loaded?.data?.craftLists||{});
+      if(JSON.stringify(actual)===JSON.stringify(facilityNormalizeCraftLists(expectedLists)))return loaded;
+    }catch(_){}
+  }
+}
+async function confirmFacilityCraftListAssign(){if(!craftListAssignContext)return;const playerKey=playerKeyValue(),charId=String($('craftListAssignCharacter')?.value||craftListAssignContext.chars[0]?.id||''),meta=craftListAssignContext.chars.find(c=>String(c.id)===charId)||craftListAssignContext.chars[0],status=$('craftListAssignStatus');if(!charId)return;try{$('craftListAssignConfirm').disabled=true;if(status){status.className='status';status.textContent='キャラクターデータへ登録しています…';}const loaded=await jsonpAction('load',{id:charId,playerKey,rowHint:meta?.storageRow||''},{attempts:2,timeoutMs:25000});if(loaded?.ok===false)throw new Error(loaded.error||'キャラクターを読み込めませんでした。');const data=loaded.data||{},lists=facilityNormalizeCraftLists(data.craftLists||{}),ref=facilityCraftRef(craftListAssignContext.row),key=ref.recipeId||ref.publicId||`${ref.craftType}::${ref.resultName}`;if(craftListAssignContext.type==='favorite'){const exists=lists.favorites.some(x=>(x.recipeId||x.publicId||`${x.craftType||''}::${x.resultName||''}`)===key);if(!exists)lists.favorites.push(ref);}else{const runs=Math.max(1,Math.floor(Number($('craftListAssignRuns')?.value)||1)),existing=lists.goals.find(x=>(x.recipeId||x.publicId||`${x.craftType||''}::${x.resultName||''}`)===key);if(existing)existing.targetRuns=Math.max(1,Math.floor(Number(existing.targetRuns)||1))+runs;else lists.goals.push({...ref,targetRuns:runs});}const saveResult=await facilityPostAction('savePatch',{id:charId,playerKey,baseRevision:loaded.revision,patch:{craftLists:lists,updatedAt:new Date().toISOString()},snapshot:data,rowHint:loaded.storageRow||meta?.storageRow||''},30000);if(saveResult?.sentNoCors)await facilityVerifyCraftListsSave(charId,playerKey,lists,loaded.storageRow||meta?.storageRow||'');$('craftListAssignModal').close();setStatus(`${ref.resultName}を「${meta?.name||data.name||'キャラクター'}」の${craftListAssignContext.type==='favorite'?'お気に入り':'作成目標'}へ登録しました。`,'ok');craftListAssignContext=null;}catch(e){if(status){status.className='status bad';status.textContent=`登録に失敗しました：${e.message||e}`;}}finally{if($('craftListAssignConfirm'))$('craftListAssignConfirm').disabled=false;}}
 
 let itemDetailIndex=Object.create(null);
 function itemDetailKey(r={}){return [r.resultItem||r.name||'item',r.craftType||r.itemType||r.dataKind||''].join('::');}
@@ -2069,8 +2102,7 @@ function graphNodeHtml(entry,row,col,{base=false}={}){
   const label=locked
     ?`<div class="branch-graph-node-locked-label"><span class="branch-graph-node-name-inline">${esc(title)}</span></div>`
     :`<button type="button" class="branch-graph-node-trigger" data-open-weapon-modal="${esc(name)}" title="${esc(`${rank} ${title}${hasNamedProcessing?'（異名加工対象）':''}`)}" aria-label="${esc(`${rank} ${title}の詳細を開く${hasNamedProcessing?'。異名加工対象。':''}`)}">${namedContent}</button>`;
-  const craftActions=!base&&!locked?facilityCraftListCompactActionHtml(entry):'';
-  return `<article class="branch-graph-node ${locked?'locked':''} ${entry.isBossBranch?'boss-branch':''} ${hasNamedProcessing?'has-named-processing':''}" style="grid-row:${row};grid-column:${col}" data-weapon-node="${esc(name)}" ${!locked?`data-open-weapon-card="${esc(name)}"`:''} ${parent?`data-parent-weapon="${esc(parent)}"`:''}>${label}${craftActions}</article>`;
+  return `<article class="branch-graph-node ${locked?'locked':''} ${entry.isBossBranch?'boss-branch':''} ${hasNamedProcessing?'has-named-processing':''}" style="grid-row:${row};grid-column:${col}" data-weapon-node="${esc(name)}" ${!locked?`data-open-weapon-card="${esc(name)}"`:''} ${parent?`data-parent-weapon="${esc(parent)}"`:''}>${label}</article>`;
 }
 function branchGraphCatalog(current){
   const branches=current.matched||[];
@@ -2389,6 +2421,47 @@ function syncBranchLabelToggle(){
 
 let bestiaryState={areas:[],error:'',loadedForKey:''},bestiarySearch='';
 const BESTIARY_AFFINITY_LABELS={physical:'物',fire:'火',water:'水',wind:'風',thunder:'雷',light:'光',dark:'闇',neutral:'無'};
+const BESTIARY_MONSTER_IMAGE_BASE=new URL('../../../assets/monsters/',window.location.href).toString();
+const BESTIARY_MONSTER_IMAGE_SUBDIR=Object.freeze({
+mon_petit_slime:'outskirts_grass',mon_raffin_rat:'outskirts_grass',mon_rapithorn:'outskirts_grass',mon_vespat:'outskirts_grass',mon_carapace_beetle:'outskirts_grass',mon_grauworm:'outskirts_grass',mon_grass_horn_king_ragvel:'outskirts_grass',
+  mon_rascreil:'nearby_forest',mon_myconid:'nearby_forest',mon_roothound:'nearby_forest',mon_branchling:'nearby_forest',mon_mossback:'nearby_forest',mon_whisperowl:'nearby_forest',mon_forest_branch_lord_vildran:'nearby_forest',
+  mon_mudhopper:'waterside_wetland',mon_bubble_slime:'waterside_wetland',mon_dromarl:'waterside_wetland',mon_miasma_leech:'waterside_wetland',mon_mist_mosquito:'waterside_wetland',mon_reed_lizard:'waterside_wetland',mon_swamp_lord_glaboros:'waterside_wetland',
+  mon_mirror_slime:'reflection_water_garden',mon_phase_moth:'reflection_water_garden',mon_glass_ray:'reflection_water_garden',mon_echo_reed:'reflection_water_garden',mon_rift_crab:'reflection_water_garden',mon_void_hound:'reflection_water_garden',mon_nereive:'reflection_water_garden',
+  mon_resona_bat:'foothill_old_mine',mon_pick_mole:'foothill_old_mine',mon_ore_scale:'foothill_old_mine',mon_lumina_wisp:'foothill_old_mine',mon_mine_golem:'foothill_old_mine',mon_rust_mite:'foothill_old_mine',boss_dolgan:'foothill_old_mine',
+  mon_breeze_hop:'wind_swept_highland',mon_crag_ram:'wind_swept_highland',mon_kite_beak:'wind_swept_highland',mon_sonora_bloom:'wind_swept_highland',mon_glide_scale:'wind_swept_highland',mon_bolt_bison:'wind_swept_highland',mon_velgrat:'wind_swept_highland'
+});
+function bestiaryMonsterMasterRow(monster={}){
+  const rows=Array.isArray(facilityCommonMasterData?.monsters)?facilityCommonMasterData.monsters:[];
+  const id=String(monster.id||'').trim();
+  return rows.find(row=>String(row.id||'').trim()===id)||null;
+}
+function bestiaryMonsterImageCandidates(monster={}){
+  const masterRow=bestiaryMonsterMasterRow(monster)||{};
+  const imageId=String(masterRow.baseMonsterId||masterRow.id||monster.imageId||monster.id||'').trim();
+  const custom=[monster.imageUrl,masterRow.imageUrl,masterRow.iconUrl].map(v=>String(v||'').trim()).filter(Boolean);
+  const urls=[...custom];
+  if(imageId){
+    const subdir=String(BESTIARY_MONSTER_IMAGE_SUBDIR[imageId]||'').trim();
+    if(subdir)urls.push(`${BESTIARY_MONSTER_IMAGE_BASE}${subdir}/${imageId}.png`);
+    urls.push(`${BESTIARY_MONSTER_IMAGE_BASE}${imageId}.png`);
+  }
+  return [...new Set(urls)];
+}
+function bestiaryVisualHtml(monster={}){
+  const urls=bestiaryMonsterImageCandidates(monster);
+  if(!urls.length)return '<div class="bestiary-visual"><div class="bestiary-image-placeholder">IMAGE NOT REGISTERED</div></div>';
+  return `<div class="bestiary-visual"><img data-bestiary-image src="${esc(urls[0])}" alt="${esc(monster.name||'魔物画像')}"></div>`;
+}
+function bindBestiaryImageFallback(monster={}){
+  const body=$('bestiaryModalBody'),img=body?.querySelector('[data-bestiary-image]');if(!img)return;
+  const urls=bestiaryMonsterImageCandidates(monster);let index=0;
+  img.addEventListener('error',()=>{
+    index+=1;
+    if(index<urls.length){img.src=urls[index];return;}
+    const wrap=img.closest('.bestiary-visual');
+    if(wrap)wrap.innerHTML='<div class="bestiary-image-placeholder">IMAGE NOT REGISTERED</div>';
+  });
+}
 async function loadBestiaryCatalog({quiet=false}={}){
   const key=playerKeyValue();
   if(!key){bestiaryState={areas:[],error:'先にプレイヤーキーを入力してください。',loadedForKey:''};if(currentFacility==='bestiary')render();return bestiaryState;}
@@ -2441,8 +2514,9 @@ function bestiaryActionsHtml(m){
 function openBestiaryMonster(id){
   const m=bestiaryMonsterById(id);if(!m||!m.known)return;
   $('bestiaryModalTitle').textContent=m.name||'魔物図鑑';
-  const visual=m.imageUrl?`<div class="bestiary-visual"><img src="${esc(m.imageUrl)}" alt="${esc(m.name)}"></div>`:`<div class="bestiary-visual"><div class="bestiary-image-placeholder">IMAGE NOT REGISTERED</div></div>`;
+  const visual=bestiaryVisualHtml(m);
   $('bestiaryModalBody').innerHTML=`${visual}${bestiaryAffinityHtml(m)}<div class="bestiary-tabs"><button type="button" class="bestiary-tab active" data-bestiary-tab="stats">能力値</button><button type="button" class="bestiary-tab" data-bestiary-tab="actions">行動</button></div><section class="bestiary-pane" data-bestiary-pane="stats">${bestiaryStatsHtml(m)}</section><section class="bestiary-pane" data-bestiary-pane="actions" hidden>${bestiaryActionsHtml(m)}</section>`;
+  bindBestiaryImageFallback(m);
   $('bestiaryModal').hidden=false;$('bestiaryModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 }
 function closeBestiaryModal(){const modal=$('bestiaryModal');if(!modal)return;modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
@@ -2508,6 +2582,7 @@ async function loadCatalog(playerKey,{unlockKey='',force=false,reset=false}={}){
   ['applyKey','loadState','resetKey','reloadDb'].forEach(id=>{if($(id))$(id).disabled=true;});
   try{
     const commonMaster=await fetchGithubCommonMaster({force});
+    facilityCommonMasterData=commonMaster&&commonMaster.data&&typeof commonMaster.data==='object'?commonMaster.data:null;
     let mergedIds=cleanPlayerKey?readLocalUnlockedAreaIds(cleanPlayerKey):[];
     let addedAreaName='';
     if(reset){
@@ -2954,7 +3029,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   .weapon-modal-body>.ra-dagger-atlas-preview{width:min(210px,78vw);margin-bottom:14px}
 }
 
-/* v1.0.85: 魔物図鑑 */
+/* v1.0.89: 魔物図鑑 */
 .bestiary-area-list{display:grid;gap:10px;width:100%}
 .bestiary-area{border:1px solid var(--line);border-radius:14px;background:#fffdf8;overflow:hidden}
 .bestiary-area>summary{cursor:pointer;font-weight:900;padding:12px 14px;background:#f6ead9}
