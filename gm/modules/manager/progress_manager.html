@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.817</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.818</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -328,7 +328,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.817 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.818 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="header-inner">
@@ -636,7 +636,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 <script src="../../../js/ra_monster_rules.js?v=90.8.801"></script>
 <script>
 'use strict';
-const VERSION='v90.8.817';
+const VERSION='v90.8.818';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -1328,95 +1328,43 @@ function jsonp(params, timeoutMs=45000){
     script.src=GAS_URL+'?'+q.toString(); document.body.appendChild(script);
   });
 }
+function progressNoCorsPostAction(action,params={}){
+  const body=new URLSearchParams();body.set('action',action);body.set('payload',JSON.stringify(params||{}));
+  return fetch(GAS_URL,{method:'POST',mode:'no-cors',body}).then(()=>({ok:true,sentNoCors:true}));
+}
 function progressPostAction(action,params={},timeoutMs=30000){
   return new Promise((resolve,reject)=>{
-    const token='rca_post_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    const frame=document.createElement('iframe'),frameName='rcaPostFrame_'+Date.now()+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');
-    frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
-    form.method='POST';const actionUrl=new URL(GAS_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
-    const payloadField=document.createElement('textarea');payloadField.name='payload';payloadField.value=JSON.stringify({...params,token});payloadField.style.display='none';form.appendChild(payloadField);
-    let settled=false;const timer=setTimeout(()=>finishReject(new Error('DB保存応答がタイムアウトしました')),timeoutMs);
-    function cleanup(){clearTimeout(timer);window.removeEventListener('message',onMessage);setTimeout(()=>{try{form.remove();frame.remove();}catch(_e){}},0);}
+    const token='rca_post_'+Date.now()+'_'+Math.random().toString(36).slice(2),attempts=[];
+    let settled=false,retryTimer=0,attemptNo=0;
+    function cleanup(){if(retryTimer)clearInterval(retryTimer);window.removeEventListener('message',onMessage);attempts.forEach(({form,frame})=>setTimeout(()=>{try{form.remove();frame.remove();}catch(_){}},0));}
     function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}
     function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}
-    function onMessage(event){if(event.source!==frame.contentWindow)return;const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'DB保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'DB保存に失敗しました'));return;}finishResolve(result);}
-    window.addEventListener('message',onMessage);document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(e){finishReject(e);}
+    function onMessage(event){const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'DB保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'DB保存に失敗しました'));return;}finishResolve(result);}
+    function submitAttempt(){
+      if(settled)return;attemptNo++;
+      const frame=document.createElement('iframe'),frameName='rcaPostFrame_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');
+      frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
+      form.method='POST';const actionUrl=new URL(GAS_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
+      const field=document.createElement('textarea');field.name='payload';field.value=JSON.stringify({...params,token});field.style.display='none';form.appendChild(field);
+      attempts.push({form,frame});document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(_){}
+    }
+    window.addEventListener('message',onMessage);submitAttempt();
+    retryTimer=setInterval(submitAttempt,Math.max(8000,Math.min(15000,Number(timeoutMs)||12000)));
   });
 }
-function progressGithubDelay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
-async function progressFetchJson(url,timeoutMs=12000,cacheMode='force-cache'){
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),Math.max(1000,Number(timeoutMs)||12000));
-  try{
-    const response=await fetch(url,{cache:cacheMode,signal:controller.signal});
-    if(!response.ok)throw new Error(`HTTP ${response.status}`);
-    return await response.json();
-  }catch(error){
-    if(error&&error.name==='AbortError')throw new Error(`GitHub共通DBの取得がタイムアウトしました（${Math.round((Number(timeoutMs)||12000)/1000)}秒）`);
-    throw error;
-  }finally{clearTimeout(timer);}
-}
-function normalizeProgressMaster(document,manifest={}){
-  const data=document&&document.data&&typeof document.data==='object'?document.data:document;
-  const required=['quests','exploration_areas','event_tables','monsters','items','treasure_tables','appraisal_rules','spells','recipes'];
-  const missing=required.filter(key=>!Array.isArray(data&&data[key]));
-  if(missing.length)throw new Error(`共通DBに必要な表がありません：${missing.join(', ')}`);
-  const manifestVersion=String(manifest.version||'').trim();
-  const masterVersion=String(document&&document.version||'').trim();
-  const normalizeVersion=value=>String(value||'').trim().replace(/^v/i,'');
-  return {data,version:masterVersion||manifestVersion,versionWarning:manifestVersion&&masterVersion&&normalizeVersion(manifestVersion)!==normalizeVersion(masterVersion)?`manifest ${manifestVersion} / master ${masterVersion}`:''};
-}
-async function fetchGithubProgressMaster(){
-  const errors=[];
-  let usableMismatch=null;
-  for(const base of progressGithubBaseCandidates()){
-    let lastError=null;
-    for(let attempt=0;attempt<2;attempt++){
-      try{
-        // manifestは小さいため毎回再検証し、masterだけを内容SHA単位でキャッシュする。
-        const manifestUrl=new URL('manifest.json',base);
-        const manifest=await progressFetchJson(manifestUrl.toString(),6000,'no-cache');
-        const info=progressManifestMasterInfo(manifest);
-        if(!info.file||info.file.includes('..')||info.file.includes('\\'))throw new Error('共通DBのmasterファイル名が不正です。');
-        const masterUrl=new URL(info.file,base);
-        masterUrl.searchParams.set('_ra',info.sha256||String(manifest.version||'master'));
-        // 1回目は同一SHAのブラウザキャッシュを再利用。版不整合時だけ2回目をreloadしてCDN反映待ちを回避する。
-        const masterCacheMode=attempt===0?'force-cache':'reload';
-        const result=normalizeProgressMaster(await progressFetchJson(masterUrl.toString(),15000,masterCacheMode),manifest);
-        if(!result.versionWarning)return result;
-        usableMismatch=result;
-        lastError=new Error(`共通DBの更新反映待ちです（${result.versionWarning}）`);
-      }catch(error){lastError=error;}
-      if(attempt<1)await progressGithubDelay(350);
-    }
+async function verifyCommunityGatheringSave(facilityId,values){
+  for(let attempt=0;;attempt++){
+    if(attempt>0)await new Promise(resolve=>setTimeout(resolve,Math.min(4000,700+attempt*250)));
     try{
-      // manifest経路だけが壊れた場合の最終フォールバック。固定キャッシュにはせず必ず再検証する。
-      const directUrl=new URL('recraft_alchemia_master.json',base);
-      return normalizeProgressMaster(await progressFetchJson(directUrl.toString(),15000,'no-cache'),{master:'recraft_alchemia_master.json'});
-    }catch(directError){errors.push(`${base}: ${[lastError&&lastError.message,directError&&directError.message].filter(Boolean).join(' / ')}`);}
+      const result=await jsonp({action:'communityGatheringState'},20000);
+      const row=(result.facilities||[]).find(x=>String(x.id||'')===String(facilityId||''));
+      if(row){
+        const actual=Object.fromEntries((row.requirements||[]).map(req=>[String(req.name||''),Math.max(0,Math.floor(Number(req.current)||0))]));
+        const expected=Object.fromEntries(Object.entries(values||{}).map(([k,v])=>[String(k),Math.max(0,Math.floor(Number(v)||0))]));
+        if(Object.entries(expected).every(([k,v])=>actual[k]===v))return result;
+      }
+    }catch(_){}
   }
-  if(usableMismatch)return usableMismatch;
-  throw new Error(errors.join(' / ')||'GitHub共通DBを取得できませんでした。');
-}
-
-
-let communityGatheringManagerState={facilities:[]};
-async function loadCommunityGatheringManager(){
-  const status=$('communityStatus');if(status){status.className='status warn';status.textContent='共有進捗を読み込んでいます。';}
-  try{
-    const result=await jsonp({action:'communityGatheringState'},20000);
-    communityGatheringManagerState={facilities:Array.isArray(result.facilities)?result.facilities:[]};
-    renderCommunityGatheringManager();
-    if(status){status.className='status ok';status.textContent='共有進捗を読み込みました。';}
-  }catch(error){if(status){status.className='status bad';status.textContent=`共有進捗の読込に失敗しました：${error.message||error}`;}}
-}
-function renderCommunityGatheringManager(){
-  const host=$('communityManagerCards');if(!host)return;
-  const rows=communityGatheringManagerState.facilities||[];
-  host.innerHTML=rows.length?rows.map(row=>{
-    const reqs=(row.requirements||[]).map(req=>`<label class="community-manager-row"><span>${esc(req.name)} <small class="muted">/ ${Number(req.required)||0}</small></span><input type="number" min="0" max="${Number(req.required)||0}" step="1" value="${Number(req.current)||0}" data-community-facility="${esc(row.id)}" data-community-material="${esc(req.name)}"><span>${Number(req.current)||0}/${Number(req.required)||0}</span></label>`).join('');
-    return `<article class="community-manager-card"><h3>${esc(row.name)}</h3><div class="community-manager-meta">${esc(row.areaName||'')} / ${row.complete?'<span class="community-complete">解放済み</span>':`整備中 ${Number(row.percent)||0}%`}</div><div class="community-manager-progress"><span style="width:${Math.max(0,Math.min(100,Number(row.percent)||0))}%"></span></div>${reqs}<div class="buttons"><button type="button" data-community-send="${esc(row.id)}">送信</button></div></article>`;
-  }).join(''):'<div class="card muted">共同採取設備が登録されていません。</div>';
 }
 async function saveCommunityGatheringFacility(facilityId){
   const status=$('communityStatus');
@@ -1425,7 +1373,8 @@ async function saveCommunityGatheringFacility(facilityId){
   document.querySelectorAll(`[data-community-facility="${CSS.escape(String(facilityId))}"]`).forEach(input=>{values[input.dataset.communityMaterial]=Math.max(0,Math.floor(Number(input.value)||0));});
   if(status){status.className='status warn';status.textContent=`${row.name}の現在値を送信しています。`;}
   try{
-    const result=await progressPostAction('communityGatheringUpdate',{facilityId,values},20000);
+    let result=await progressPostAction('communityGatheringUpdate',{facilityId,values},20000);
+    if(result?.sentNoCors)result=await verifyCommunityGatheringSave(facilityId,values);
     communityGatheringManagerState={facilities:Array.isArray(result.facilities)?result.facilities:[]};renderCommunityGatheringManager();
     if(status){status.className='status ok';status.textContent=`${row.name}の共有進捗を保存しました。`;}
   }catch(error){if(status){status.className='status bad';status.textContent=`保存に失敗しました：${error.message||error}`;}}

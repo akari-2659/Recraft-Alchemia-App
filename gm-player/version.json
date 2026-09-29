@@ -1,9 +1,9 @@
 {
-  "app": "v1.0.85",
-  "version": "1.0.85",
-  "raVersion": "v90.8.817",
+  "app": "v1.0.89",
+  "version": "1.0.89",
+  "raVersion": "v90.8.818",
   "updateUnit": "app",
-  "publishedAt": "2026-09-29T17:12:00+09:00",
-  "releasedAt": "2026-09-29T17:12:00+09:00",
+  "publishedAt": "2026-09-29T18:45:00+09:00",
+  "releasedAt": "2026-09-29T18:45:00+09:00",
   "updatedAt": "2026-09-29"
 }
