@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.816</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.817</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -177,8 +177,8 @@ button.weapon-material-part:hover{background:#e2f2f5;transform:none}
  .branch-graph-node.has-named-processing .branch-graph-node-trigger{min-height:110px!important;padding:13px 14px 15px!important}
 }
 
-/* v1.0.79: キャラクター別 作成目標 / お気に入り登録 */
-.craft-list-register-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #dec8a9}.craft-list-register-actions button{flex:0 1 auto}.craft-list-assign-dialog{width:min(560px,calc(100vw - 24px));border:0;border-radius:18px;padding:0;box-shadow:0 20px 55px rgba(45,28,12,.28)}.craft-list-assign-dialog::backdrop{background:rgba(35,24,14,.45)}.craft-list-assign-shell{padding:18px;display:grid;gap:12px}.craft-list-assign-shell h3{margin:0}.craft-list-assign-summary{font-weight:900}.craft-list-assign-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-assign-actions button{flex:1 1 150px}.craft-list-assign-dialog .field{display:grid;gap:5px}
+/* v1.0.82: キャラクター別 作成目標 / お気に入り登録 */
+.craft-list-register-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #dec8a9}.craft-list-register-actions button{flex:0 1 auto}.branch-graph-node-craft-actions{display:grid;grid-template-columns:1fr;gap:4px;width:100%;margin-top:2px}.branch-graph-node-craft-actions button{width:100%;min-height:0;padding:5px 6px!important;border-radius:7px!important;font-size:.68rem!important;line-height:1.2!important;box-shadow:none!important;white-space:normal!important}.branch-graph-node-craft-actions .ghost{background:#fffaf3!important;color:var(--accent)!important;border:1px solid #dec8a9!important}.craft-list-assign-dialog{width:min(560px,calc(100vw - 24px));border:0;border-radius:18px;padding:0;box-shadow:0 20px 55px rgba(45,28,12,.28)}.craft-list-assign-dialog::backdrop{background:rgba(35,24,14,.45)}.craft-list-assign-shell{padding:18px;display:grid;gap:12px}.craft-list-assign-shell h3{margin:0}.craft-list-assign-summary{font-weight:900}.craft-list-assign-actions{display:flex;gap:8px;flex-wrap:wrap}.craft-list-assign-actions button{flex:1 1 150px}.craft-list-assign-dialog .field{display:grid;gap:5px}
 </style>
 
 <style id="raMaintenanceV287">
@@ -655,7 +655,7 @@ html.ra-embedded-facility #sectionDescription{
 </style>
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.816 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.817 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -693,6 +693,11 @@ html.ra-embedded-facility #sectionDescription{
     <label for="catalogSearch">現在のタブを検索</label>
     <input id="catalogSearch" type="search" autocomplete="off" placeholder="名称・カテゴリ・素材・効果で検索" />
     <span id="catalogSearchCount" class="muted"></span>
+  </div>
+  <div id="bestiarySearchControls" class="catalog-search-controls" hidden>
+    <label for="bestiarySearch">魔物図鑑を検索</label>
+    <input id="bestiarySearch" type="search" autocomplete="off" placeholder="魔物名・出現エリア名で検索" />
+    <span id="bestiarySearchCount" class="muted"></span>
   </div>
   <div id="catalogRankControls" class="catalog-rank-controls" hidden>
     <span class="catalog-filter-label">★ランク</span>
@@ -1011,7 +1016,7 @@ async function jsonpAction(action,params={},options={}){const attempts=Math.max(
 function facilityPostAction(action,params={},timeoutMs=30000){return new Promise((resolve,reject)=>{const token='raFacilityPost_'+Date.now()+'_'+Math.random().toString(36).slice(2),frame=document.createElement('iframe'),frameName='raFacilityFrame_'+Date.now()+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');form.method='POST';const actionUrl=new URL(DEFAULT_GAS_WEB_APP_URL);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';const payloadField=document.createElement('textarea');payloadField.name='payload';payloadField.value=JSON.stringify({...params,token});payloadField.style.display='none';form.appendChild(payloadField);let settled=false;const timer=setTimeout(()=>finishReject(new Error('施設データの保存応答がタイムアウトしました。')),timeoutMs);function cleanup(){clearTimeout(timer);window.removeEventListener('message',onMessage);setTimeout(()=>{try{form.remove();frame.remove();}catch(_e){}},0);}function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}function onMessage(event){if(event.source!==frame.contentWindow)return;const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;const result=data.result||{ok:false,error:'施設保存結果が空です。'};if(result.ok===false){finishReject(new Error(result.error||'施設データの保存に失敗しました。'));return;}finishResolve(result);}window.addEventListener('message',onMessage);document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(e){finishReject(e);}});}
 
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
-const FACILITY_EXPECTED_DB_VERSION='v90.8.816';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.817';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}
@@ -1528,10 +1533,14 @@ function buildFacilityCatalogFromGithub(commonMaster,unlockState={}){
             const resultName=String(r.resultItem||r.name||'').trim();
             const resultItem=itemByName[resultName]||null;
             return{
+              id:String(r.id||'').trim(),
+              publicId:String(r.publicId||'').trim(),
               locked,depth:branchDepth(r),
               actualResultItem:resultName,
               baseItem:String(r.baseItem||'').trim(),
               resultItem:locked?'？？？':resultName,
+              resultCount:Math.max(1,Math.floor(Number(r.resultCount)||1)),
+              resultKind:String(r.resultKind||resultItem?.itemType||'武器').trim(),
               rank:Number(r.rank)||1,
               requiredMaterials:facilityMaterialParts(r.requiredMaterials,itemByName,unlocked,!locked),
               price:r.price||'',
@@ -1727,6 +1736,7 @@ let craftListRecipeIndex=Object.create(null),craftListAssignContext=null;
 function facilityCraftListKey(r={}){return String(r.id||r.publicId||`${r.craftType||''}::${r.resultItem||r.name||''}`).trim();}
 function facilityCraftListEligible(r={}){return !r.locked&&!!String(r.requiredMaterials||'').trim()&&!!String(r.resultItem||r.name||'').trim();}
 function facilityCraftListActionHtml(r={}){if(!facilityCraftListEligible(r))return '';const key=facilityCraftListKey(r);craftListRecipeIndex[key]=r;return `<div class="craft-list-register-actions"><button type="button" class="secondary" data-craft-list-add="goal" data-craft-list-key="${esc(key)}">作成目標に追加</button><button type="button" class="ghost" data-craft-list-add="favorite" data-craft-list-key="${esc(key)}">お気に入りに追加</button></div>`;}
+function facilityCraftListCompactActionHtml(r={}){if(!facilityCraftListEligible(r))return '';const key=facilityCraftListKey(r);craftListRecipeIndex[key]=r;return `<div class="branch-graph-node-craft-actions"><button type="button" class="secondary" data-craft-list-add="goal" data-craft-list-key="${esc(key)}">作成目標</button><button type="button" class="ghost" data-craft-list-add="favorite" data-craft-list-key="${esc(key)}">お気に入り</button></div>`;}
 function facilityNormalizeCraftLists(raw={}){const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};return{goals:Array.isArray(src.goals)?src.goals.filter(Boolean).map(x=>({...x})):[],favorites:Array.isArray(src.favorites)?src.favorites.filter(Boolean).map(x=>({...x})):[]};}
 function facilityCraftRef(r={}){return{recipeId:String(r.id||'').trim(),publicId:String(r.publicId||'').trim(),resultName:String(r.resultItem||r.name||'').trim(),craftType:String(r.craftType||'').trim(),resultKind:String(r.resultKind||r.itemType||'').trim(),resultCount:Math.max(1,Math.floor(Number(r.resultCount)||1)),requiredMaterials:String(r.requiredMaterials||'').trim(),addedAt:new Date().toISOString()};}
 async function facilityCraftCharacterList(){const playerKey=playerKeyValue();if(!playerKey)throw new Error('先にプレイヤーキーを入力してください。');const res=await jsonpAction('list',{playerKey},{attempts:2,timeoutMs:20000});if(res?.ok===false)throw new Error(res.error||'キャラクター一覧を取得できませんでした。');return Array.isArray(res?.items)?res.items:[];}
@@ -2059,7 +2069,8 @@ function graphNodeHtml(entry,row,col,{base=false}={}){
   const label=locked
     ?`<div class="branch-graph-node-locked-label"><span class="branch-graph-node-name-inline">${esc(title)}</span></div>`
     :`<button type="button" class="branch-graph-node-trigger" data-open-weapon-modal="${esc(name)}" title="${esc(`${rank} ${title}${hasNamedProcessing?'（異名加工対象）':''}`)}" aria-label="${esc(`${rank} ${title}の詳細を開く${hasNamedProcessing?'。異名加工対象。':''}`)}">${namedContent}</button>`;
-  return `<article class="branch-graph-node ${locked?'locked':''} ${entry.isBossBranch?'boss-branch':''} ${hasNamedProcessing?'has-named-processing':''}" style="grid-row:${row};grid-column:${col}" data-weapon-node="${esc(name)}" ${!locked?`data-open-weapon-card="${esc(name)}"`:''} ${parent?`data-parent-weapon="${esc(parent)}"`:''}>${label}</article>`;
+  const craftActions=!base&&!locked?facilityCraftListCompactActionHtml(entry):'';
+  return `<article class="branch-graph-node ${locked?'locked':''} ${entry.isBossBranch?'boss-branch':''} ${hasNamedProcessing?'has-named-processing':''}" style="grid-row:${row};grid-column:${col}" data-weapon-node="${esc(name)}" ${!locked?`data-open-weapon-card="${esc(name)}"`:''} ${parent?`data-parent-weapon="${esc(parent)}"`:''}>${label}${craftActions}</article>`;
 }
 function branchGraphCatalog(current){
   const branches=current.matched||[];
@@ -2376,7 +2387,7 @@ function syncBranchLabelToggle(){
 }
 
 
-let bestiaryState={areas:[],error:'',loadedForKey:''};
+let bestiaryState={areas:[],error:'',loadedForKey:''},bestiarySearch='';
 const BESTIARY_AFFINITY_LABELS={physical:'物',fire:'火',water:'水',wind:'風',thunder:'雷',light:'光',dark:'闇',neutral:'無'};
 async function loadBestiaryCatalog({quiet=false}={}){
   const key=playerKeyValue();
@@ -2389,10 +2400,28 @@ async function loadBestiaryCatalog({quiet=false}={}){
   if(currentFacility==='bestiary')render();
   return bestiaryState;
 }
+function bestiaryFilteredAreas(){
+  const q=searchNorm(bestiarySearch);
+  const source=Array.isArray(bestiaryState.areas)?bestiaryState.areas:[];
+  if(!q)return source.map(area=>({...area,monsters:Array.isArray(area.monsters)?area.monsters:[]}));
+  return source.map(area=>{
+    const areaMatch=searchNorm(area.name||'').includes(q),monsters=Array.isArray(area.monsters)?area.monsters:[];
+    const filtered=areaMatch?monsters:monsters.filter(m=>m?.known&&searchNorm(m.name||'').includes(q));
+    return {...area,monsters:filtered,_searchAreaMatch:areaMatch};
+  }).filter(area=>area._searchAreaMatch||area.monsters.length);
+}
 function bestiaryCatalogHtml(){
   if(bestiaryState.error&&!bestiaryState.areas.length)return `<div class="empty">${esc(bestiaryState.error)}</div>`;
   if(!bestiaryState.areas.length)return '<div class="empty">解放済みエリアの図鑑情報はまだありません。</div>';
-  return `<div class="bestiary-area-list">${bestiaryState.areas.map((area,index)=>`<details class="bestiary-area" ${index===0?'open':''}><summary>${esc(area.name||'エリア')}</summary><div class="bestiary-monster-list">${(area.monsters||[]).map(m=>m.known?`<button type="button" class="bestiary-monster" data-bestiary-monster="${esc(m.id)}">${esc(m.name)}</button>`:`<div class="bestiary-monster unknown" aria-disabled="true">？？？</div>`).join('')}</div></details>`).join('')}</div>`;
+  const areas=bestiaryFilteredAreas(),q=searchNorm(bestiarySearch);
+  if(q&&!areas.length)return '<div class="empty">検索条件に一致する魔物・エリアはありません。</div>';
+  return `<div class="bestiary-area-list">${areas.map((area,index)=>`<details class="bestiary-area" ${(q||index===0)?'open':''}><summary>${esc(area.name||'エリア')}</summary><div class="bestiary-monster-list">${(area.monsters||[]).map(m=>m.known?`<button type="button" class="bestiary-monster" data-bestiary-monster="${esc(m.id)}"><span>${esc(m.name)}</span>${m.isNamed?'<span class="bestiary-named-badge">二つ名</span>':''}</button>`:`<div class="bestiary-monster unknown" aria-disabled="true">？？？</div>`).join('')}</div></details>`).join('')}</div>`;
+}
+function bestiarySearchSummary(){
+  const q=searchNorm(bestiarySearch),areas=bestiaryFilteredAreas();
+  if(!q)return `${(bestiaryState.areas||[]).length}エリア`;
+  const known=areas.reduce((sum,area)=>sum+(area.monsters||[]).filter(m=>m?.known).length,0);
+  return `${areas.length}エリア / 既知${known}体`;
 }
 function bestiaryMonsterById(id){
   for(const area of bestiaryState.areas||[]){const found=(area.monsters||[]).find(m=>String(m.id)===String(id));if(found)return found;}return null;
@@ -2445,10 +2474,12 @@ function communityGatheringCatalog(){
 }
 function renderSpecialFacility(){
   if(currentFacility==='bestiary'){
-    $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
-    if($('catalogSearchCount'))$('catalogSearchCount').textContent='';
+    $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('bestiarySearchControls').hidden=false;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
+    if($('catalogSearchCount'))$('catalogSearchCount').textContent='';if($('bestiarySearchCount'))$('bestiarySearchCount').textContent=bestiarySearchSummary();
+    if($('bestiarySearch')&&$('bestiarySearch').value!==bestiarySearch)$('bestiarySearch').value=bestiarySearch;
     $('cards').className='catalog-wide';$('cards').innerHTML=bestiaryCatalogHtml();return true;
   }
+  if($('bestiarySearchControls'))$('bestiarySearchControls').hidden=true;
   if(currentFacility==='smith'&&currentSection==='upgrade'){
     $('branchControls').hidden=true;$('catalogSearchControls').hidden=true;$('catalogRankControls').hidden=true;if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=true;
     if($('catalogSearchCount'))$('catalogSearchCount').textContent='';
@@ -2462,7 +2493,7 @@ function renderSpecialFacility(){
   return true;
 }
 function renderTabs(){document.body.dataset.facility=currentFacility;syncBranchLabelToggle();const defs=SECTION_DEFS[currentFacility];if(!defs.some(d=>d[0]===currentSection))currentSection=defs[0][0];$('sectionTabs').innerHTML=defs.map(([id,label])=>`<button type="button" data-section="${esc(id)}" class="${id===currentSection?'active':''}">${esc(label)}</button>`).join('');const cur=defs.find(d=>d[0]===currentSection);$('sectionTitle').textContent=cur[1];$('sectionDescription').textContent=cur[2];}
-function catalogRowMatches(row){const q=searchNorm(catalogSearch);if(!q)return true;return searchNorm(Object.values(row||{}).filter(v=>typeof v!=='object').join(' ')).includes(q);}function render(){renderTabs();if(renderSpecialFacility())return;const rows=(catalog[currentFacility]&&catalog[currentFacility][currentSection])||[];const branches=currentSection==='branches',scrolls=currentSection==='scrolls',crystal=currentSection==='crystal',accessory=currentSection==='accessory';$('branchControls').hidden=!branches;$('catalogSearchControls').hidden=branches;renderRankControls(rows,branches);const categoryBase=branches?[]:rows.filter(rankMatches).filter(catalogRowMatches);const categoryOptions=branches?[]:syncCatalogCategoryState(categoryBase);if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=branches||accessory||categoryOptions.length<2;if($('catalogCategoryPickerLabel'))$('catalogCategoryPickerLabel').textContent=currentCatalogCategory==='all'?'全て':currentCatalogCategory;const filtered=branches?rows:(accessory?categoryBase:categoryBase.filter(catalogCategoryMatches));if($('catalogSearchCount'))$('catalogSearchCount').textContent=branches?'':`${filtered.length}件表示`;$('cards').className=(branches||accessory)?'catalog-wide':'cards';$('cards').innerHTML=branches?branchCatalog(rows):(filtered.length?(scrolls?filtered.map(scrollPriceCard).join(''):currentSection==='sales'?salesCatalog(filtered):crystal?filtered.map(crystalCard).join(''):accessory?accessoryUpgradeCatalog(filtered):recipeCatalog(filtered)):'<div class="empty">現在の検索・★ランク・カテゴリ条件に一致する内容はありません。</div>');if(branches)focusPendingBranchNode();if(accessory)scheduleAccessoryConnections();}
+function catalogRowMatches(row){const q=searchNorm(catalogSearch);if(!q)return true;return searchNorm(Object.values(row||{}).filter(v=>typeof v!=='object').join(' ')).includes(q);}function render(){renderTabs();if(renderSpecialFacility())return;if($('bestiarySearchControls'))$('bestiarySearchControls').hidden=true;const rows=(catalog[currentFacility]&&catalog[currentFacility][currentSection])||[];const branches=currentSection==='branches',scrolls=currentSection==='scrolls',crystal=currentSection==='crystal',accessory=currentSection==='accessory';$('branchControls').hidden=!branches;$('catalogSearchControls').hidden=branches;renderRankControls(rows,branches);const categoryBase=branches?[]:rows.filter(rankMatches).filter(catalogRowMatches);const categoryOptions=branches?[]:syncCatalogCategoryState(categoryBase);if($('catalogCategoryControls'))$('catalogCategoryControls').hidden=branches||accessory||categoryOptions.length<2;if($('catalogCategoryPickerLabel'))$('catalogCategoryPickerLabel').textContent=currentCatalogCategory==='all'?'全て':currentCatalogCategory;const filtered=branches?rows:(accessory?categoryBase:categoryBase.filter(catalogCategoryMatches));if($('catalogSearchCount'))$('catalogSearchCount').textContent=branches?'':`${filtered.length}件表示`;$('cards').className=(branches||accessory)?'catalog-wide':'cards';$('cards').innerHTML=branches?branchCatalog(rows):(filtered.length?(scrolls?filtered.map(scrollPriceCard).join(''):currentSection==='sales'?salesCatalog(filtered):crystal?filtered.map(crystalCard).join(''):accessory?accessoryUpgradeCatalog(filtered):recipeCatalog(filtered)):'<div class="empty">現在の検索・★ランク・カテゴリ条件に一致する内容はありません。</div>');if(branches)focusPendingBranchNode();if(accessory)scheduleAccessoryConnections();}
 let facilityCloudSyncGeneration=0;
 function facilityUnlockIdsEqual(a=[],b=[]){
   const aa=normalizeStoredUnlockIds(a).slice().sort(),bb=normalizeStoredUnlockIds(b).slice().sort();
@@ -2749,7 +2780,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('bestiaryModa
 $('openUnlockedAreas').addEventListener('click',openUnlockedAreaModal);
 $('unlockedAreaModal').addEventListener('click',e=>{if(e.target===$('unlockedAreaModal')||e.target.closest('[data-close-unlocked-area-modal]'))closeUnlockedAreaModal();});
 window.addEventListener('resize',()=>{scheduleBranchConnections();scheduleAccessoryConnections();},{passive:true});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(scheduleBranchConnections);
-$('branchSearch').addEventListener('input',e=>{closeWeaponModal();branchSearch=e.target.value||'';render();});$('catalogSearch').addEventListener('input',e=>{catalogSearch=e.target.value||'';render();});
+$('branchSearch').addEventListener('input',e=>{closeWeaponModal();branchSearch=e.target.value||'';render();});$('catalogSearch').addEventListener('input',e=>{catalogSearch=e.target.value||'';render();});$('bestiarySearch')?.addEventListener('input',e=>{bestiarySearch=e.target.value||'';render();});
 const catalogCategoryModal=$('catalogCategoryModal'),catalogCategoryModalList=$('catalogCategoryModalList');
 function renderCatalogCategoryModal(){const rows=((catalog[currentFacility]&&catalog[currentFacility][currentSection])||[]).filter(rankMatches).filter(catalogRowMatches),options=catalogCategoryOptions(rows);catalogCategoryModalList.innerHTML=[`<button type="button" class="ra-category-choice ${currentCatalogCategory==='all'?'active':''}" data-catalog-category="all">全て</button>`,...options.map(label=>`<button type="button" class="ra-category-choice ${currentCatalogCategory===label?'active':''}" data-catalog-category="${esc(label)}">${esc(label)}</button>`)].join('');}
 $('openCatalogCategoryPicker')?.addEventListener('click',()=>{renderCatalogCategoryModal();catalogCategoryModal.showModal();});
@@ -2923,13 +2954,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   .weapon-modal-body>.ra-dagger-atlas-preview{width:min(210px,78vw);margin-bottom:14px}
 }
 
-/* v1.0.79: 魔物図鑑 */
+/* v1.0.82: 魔物図鑑 */
 .bestiary-area-list{display:grid;gap:10px;width:100%}
 .bestiary-area{border:1px solid var(--line);border-radius:14px;background:#fffdf8;overflow:hidden}
 .bestiary-area>summary{cursor:pointer;font-weight:900;padding:12px 14px;background:#f6ead9}
 .bestiary-monster-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;padding:12px}
 .bestiary-monster{border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 12px;font-weight:900;text-align:left}
-button.bestiary-monster{cursor:pointer}.bestiary-monster.unknown{color:var(--muted);background:#f5f1ea;border-style:dashed;cursor:default}
+button.bestiary-monster{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}.bestiary-named-badge{display:inline-flex;flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:2px 7px;font-size:.68rem;font-weight:900;background:#f2e4cf;color:var(--ink)}.bestiary-monster.unknown{color:var(--muted);background:#f5f1ea;border-style:dashed;cursor:default}
 .bestiary-modal{position:fixed;inset:0;z-index:10080;display:grid;place-items:center;padding:16px;background:rgba(41,34,26,.38);backdrop-filter:blur(3px)}
 .bestiary-modal[hidden]{display:none}
 .bestiary-dialog{width:min(780px,100%);max-height:min(90vh,860px);display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:#fffdf8;box-shadow:0 20px 60px rgba(44,31,17,.28);overflow:hidden}
