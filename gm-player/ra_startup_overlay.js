@@ -29,9 +29,9 @@
 .ra-su-overlay{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(92,70,56,.20),transparent 31rem),#09090c;overflow:hidden;opacity:1;visibility:visible}
 .ra-su-overlay.done{animation:ra-su-overlay-out .42s ease forwards}
 @keyframes ra-su-overlay-out{to{opacity:0;visibility:hidden}}
-.ra-su-stage{width:min(95vw,920px);min-height:450px;padding:34px 16px;display:grid;place-items:center}
-.ra-su-core{width:100%;text-align:center;position:relative}
-.ra-su-content-stack{position:relative;min-height:220px}
+.ra-su-stage{width:min(calc(100vw - 16px),920px);height:100vh;height:100dvh;min-height:0;max-height:100vh;max-height:100dvh;padding:clamp(10px,4dvh,34px) clamp(8px,3vw,16px);display:grid;place-items:center;overflow:hidden}
+.ra-su-core{width:100%;text-align:center;position:relative;transform:scale(var(--ra-su-fit-scale,1));transform-origin:center center;will-change:transform}
+.ra-su-content-stack{position:relative;height:340px;min-height:340px}
 .ra-su-decode-area,.ra-su-translation-area{position:absolute;inset:0;display:grid;align-content:center;gap:26px}
 .ra-su-decode-line{min-height:65px;display:flex;justify-content:center;align-items:center;gap:clamp(3px,.65vw,7px)}
 .ra-su-decode-line.brand-line{gap:clamp(2px,.45vw,5px)}
@@ -63,7 +63,9 @@
 .ra-su-ready-morph.visible{opacity:1}
 .ra-su-ready-morph .ra-su-char-slot{width:22px;height:30px}
 body.ra-su-armed #playerApp{visibility:hidden!important}
-@media(max-width:520px){.ra-su-stage{min-height:390px;padding-inline:6px}.ra-su-decode-area,.ra-su-translation-area{gap:18px}.ra-su-char-slot{height:52px}.ra-su-jp-slot,.ra-su-en-slot{height:38px}.ra-su-status-row{gap:10px}}
+@media(max-width:520px){.ra-su-stage{padding-inline:8px}.ra-su-decode-area,.ra-su-translation-area{gap:18px}.ra-su-char-slot{height:52px}.ra-su-jp-slot,.ra-su-en-slot{height:38px}.ra-su-status-row{gap:10px;width:min(94vw,560px)}}
+@media(max-height:520px){.ra-su-decode-area,.ra-su-translation-area{gap:14px}.ra-su-status-row{min-height:40px}.ra-su-ready-morph{margin-top:8px}}
+@media(max-width:360px){.ra-su-decode-line.brand-line .ra-su-char-slot{width:clamp(18px,4.35vw,34px)}.ra-su-char-slot.space{width:10px}.ra-su-status-row{gap:7px}.ra-su-jp-slot,.ra-su-en-slot{width:clamp(20px,4.5vw,32px)}}
 `;
     document.head.appendChild(style);
   }
@@ -94,6 +96,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     decodeArea = root.querySelector('#raSuDecodeArea');
     translationArea = root.querySelector('#raSuTranslationArea');
     startup.onpointerdown = skip;
+    requestAnimationFrame(fitStartupToViewport);
     return root;
   }
 
@@ -221,7 +224,40 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     translationArea.appendChild(ready);
   }
 
-  function build() { buildDecodeArea(); buildTranslationArea(); }
+  function fitStartupToViewport() {
+    if (!startup) return;
+    const core = startup.querySelector('.ra-su-core');
+    if (!core) return;
+    core.style.setProperty('--ra-su-fit-scale','1');
+    const viewport = window.visualViewport;
+    const vw = Math.max(240, viewport ? viewport.width : window.innerWidth);
+    const vh = Math.max(260, viewport ? viewport.height : window.innerHeight);
+    const stage = startup.querySelector('.ra-su-stage');
+    const stack = startup.querySelector('.ra-su-content-stack');
+    const naturalWidth = Math.max(
+      320,
+      decodeArea ? decodeArea.scrollWidth : 0,
+      translationArea ? translationArea.scrollWidth : 0,
+      stack ? stack.scrollWidth : 0
+    );
+    const naturalHeight = Math.max(
+      340,
+      decodeArea ? decodeArea.scrollHeight : 0,
+      translationArea ? translationArea.scrollHeight : 0,
+      stack ? stack.scrollHeight : 0
+    );
+    const horizontalPadding = vw <= 520 ? 20 : 36;
+    const verticalPadding = vh <= 520 ? 18 : 40;
+    const scale = Math.min(1, Math.max(.46, Math.min((vw-horizontalPadding)/naturalWidth,(vh-verticalPadding)/naturalHeight)));
+    core.style.setProperty('--ra-su-fit-scale',String(scale));
+    if (stage) stage.style.setProperty('--ra-su-viewport-height',vh+'px');
+  }
+
+  function build() {
+    buildDecodeArea();
+    buildTranslationArea();
+    requestAnimationFrame(fitStartupToViewport);
+  }
 
   function deterministicPick(pool, seed, step) {
     return pool[(seed*7 + step*11 + step*step*3) % pool.length];
@@ -340,7 +376,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
   }
 
 
-  const STARTUP_APP_VERSION = '1.0.88';
+  const STARTUP_APP_VERSION = '1.0.92';
   const STARTUP_SESSION_KEY = `ra-startup-shown:${location.pathname}`;
   const LAST_RUN_VERSION_KEY = location.pathname.includes('/gm-player/')
     ? 'ra-gm-player-app-last-run-version'
@@ -421,5 +457,11 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
     armAutoStart();
   }
 
-  window.RAStartupOverlay = { ensureRoot, play, skip, cleanup };
+    window.addEventListener('resize', fitStartupToViewport, {passive:true});
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitStartupToViewport, {passive:true});
+    window.visualViewport.addEventListener('scroll', fitStartupToViewport, {passive:true});
+  }
+
+window.RAStartupOverlay = { ensureRoot, play, skip, cleanup };
 })();
