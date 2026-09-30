@@ -2125,8 +2125,8 @@ function autoSaveDraftSoon(section='all'){
   const sections=(Array.isArray(section)?section:[section]).filter(Boolean).map(value=>String(value));
   sections.forEach(value=>autoSaveDirtySections.add(value));
   if(autoSaveDirtySections.has('all')) autoSaveDirtySections=new Set(['all']);
-  // 自動保存OFFでも変更区分だけは記録する。手動「保存」でも既存キャラなら
-  // フルJSONではなく差分だけを送れるようにする。
+  // 自動保存OFFでも変更区分は記録する。手動保存中に追加編集された場合も、
+  // 保存完了前の追送対象として取りこぼさないために使う。
   if(autoSaveDirtySections.size===0)return;
   autoSaveDirty=true;
   clearAutoSaveTimer();
@@ -2211,14 +2211,67 @@ async function characterCreateHistoryBeforeSave({automatic=false,force=false}={}
   }
 }
 
+async function drainQueuedCharacterChanges({automatic=false}={}){
+  let passes=0;
+  while(autoSaveDirtySections.size>0){
+    // 保存中に連続入力されている変更を少しだけまとめてから最新状態を送る。
+    await new Promise(resolve=>setTimeout(resolve,180));
+    if(!autoSaveDirtySections.size)break;
+    const sections=new Set(autoSaveDirtySections);
+    if(sections.has('all'))autoSaveDirtySections.clear();
+    else sections.forEach(key=>autoSaveDirtySections.delete(key));
+    autoSaveDirty=autoSaveDirtySections.size>0;
+    const useFull=sections.has('all')||currentMode==='new'||cloudCharacterRowHint<2;
+    const patch=useFull?null:buildAutoSavePatch(sections);
+    const data=useFull?collectData(true):null;
+    const name=useFull?data?.name:(Object.prototype.hasOwnProperty.call(patch||{},'name')?patch.name:currentCharacter?.name);
+    if(!name){
+      sections.forEach(key=>autoSaveDirtySections.add(key));
+      autoSaveDirty=true;
+      throw new Error('キャラクター名を入力してください。');
+    }
+    if(useFull||sections.has('skills')||sections.has('manualCategoryBonuses')){
+      const skillData=useFull?data:{skills:patch.skills||currentCharacter?.skills,manualCategoryBonuses:patch.manualCategoryBonuses||currentCharacter?.manualCategoryBonuses};
+      const check=validateSkills(skillData.skills,skillData.manualCategoryBonuses||emptyCategoryBonus());
+      if(check.errors.length){
+        sections.forEach(key=>autoSaveDirtySections.add(key));
+        autoSaveDirty=true;
+        throw new Error('技能ポイントに問題があるため保存できません。\n'+check.errors.join('\n'));
+      }
+    }
+    setCharacterSpecialSaveStatus(automatic?'保存中の追加変更を自動保存しています…':'保存中の変更を検出しました。最新状態を再送信しています…',{automatic});
+    try{
+      if(useFull){
+        await saveItem(data);
+        currentCharacter=data;
+        autoSaveLastSavedHash=autoSaveContentHash(data);
+      }else{
+        await savePatchItem(currentCharacter.id,patch);
+        currentCharacter={...(currentCharacter||{}),...patch};
+      }
+    }catch(error){
+      // この追送分を必ず未保存へ戻す。フル保存失敗なら全体未保存として扱う。
+      if(useFull)autoSaveDirtySections.add('all');
+      else sections.forEach(key=>autoSaveDirtySections.add(key));
+      autoSaveDirty=true;
+      throw error;
+    }
+    passes++;
+    // 通常は1～2回で収束する。編集が続いている限りは保存完了扱いにせず追送する。
+    if(passes>100)throw new Error('保存中の編集が長時間続いているため、最新状態の確定保存を完了できませんでした。編集を止めてもう一度保存してください。');
+  }
+  autoSaveDirty=false;
+  autoSaveLastSavedHash=currentAutoSaveHash();
+}
+
 async function saveCharacterNow({automatic=false,force=false}={}){
   if(autoSaveBusy){
     // 保存中に同じ保存要求が重なっても、未送信のDirtyが無ければ再保存は不要。
     if(autoSaveDirtySections.size>0)autoSavePending=true;
     return {saved:false,pending:true};
   }
-  // v1.0.52: 既存キャラは自動/手動を問わず、変更区分が分かる限り差分保存を使う。
-  // 新規作成と明示forceだけがDrive全体保存になる。
+  // 自動保存は既存キャラなら差分保存を使う。手動保存はforce=trueで全体保存し、
+  // 保存中に加わった編集だけを後続の追送で反映する。
   const usePatch=!force&&currentMode!=='new'&&cloudCharacterRowHint>=2&&autoSaveDirtySections.size>0;
   try{
     await characterCreateHistoryBeforeSave({automatic,force});
@@ -2265,8 +2318,11 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     cloudCharacterFolderReady=true;
     if(usePatch){currentCharacter={...(currentCharacter||{}),...patch};}
     else{currentCharacter=data;autoSaveLastSavedHash=autoSaveContentHash(data);}
-    const listMayHaveChanged=wasNewCharacter||previousCharacterName!==String(currentCharacter?.name||'');
     currentMode='edit';
+    // await中に編集された内容も、この保存操作の一部として最新状態まで追送する。
+    // 自動保存OFFでも手動保存中の変更は取りこぼさない。
+    await drainQueuedCharacterChanges({automatic});
+    const listMayHaveChanged=wasNewCharacter||previousCharacterName!==String(currentCharacter?.name||'');
     try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_SAVED',id:String(currentCharacter?.id||''),name:String(currentCharacter?.name||''),updatedAt:String(currentCharacter?.updatedAt||patch?.updatedAt||''),revision:Number(cloudCharacterRevision||0)||0,storageRow:Number(cloudCharacterRowHint||0)||0},location.origin)}catch(_){}
     if(listMayHaveChanged){try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_LIST_CHANGED'},location.origin)}catch(_){}}
     autoSaveDirty=autoSaveDirtySections.size>0;
@@ -5680,13 +5736,70 @@ function characterNamedProcessingHtml(options=[],appliedId='',index=-1){
   const rows=Array.isArray(options)?options:[];if(!rows.length)return'';
   return `<div class="named-process-list">${rows.map(opt=>{const applied=String(appliedId||'')===String(opt.id||'');const diff=characterNamedProcessDiffPair(opt.fullBefore||opt.before||'変更前',opt.fullAfter||opt.after||'変更後');const actions=(currentMode!=='view'&&index>=0)?`<div class="named-process-actions">${applied?`<button type="button" class="ghost" data-clear-named-processing="${esc(opt.id||'')}">異名加工登録を解除</button>`:`<button type="button" data-apply-named-processing="${esc(opt.id||'')}">異名加工を適用</button>`}</div>`:'';return `<div class="named-process-card"><div><span class="named-process-chip ${applied?'applied':''}">${applied?'異名加工済':'異名加工可'}</span> <b>${esc(opt.namedMonster||opt.material||'異名加工')}</b></div><div class="named-process-full"><div class="named-process-text"><b>加工前</b>${diff.before}</div><div class="named-process-text after"><b>加工後</b>${diff.after}</div></div><div class="small">二つ名素材：${esc(opt.material||'')}</div><div class="small">必要素材：${esc(opt.requiredMaterials||'')}</div><div class="small">施設依頼：${esc(String(opt.facilityFeeG||0))}G${opt.difficulty?` / 基礎作成難易度 ${esc(opt.difficulty)}`:''}</div>${actions}</div>`}).join('')}</div>`;
 }
+function characterSpellMasterForScroll(item={}){
+  const row=normalizeInventoryItem(item||{});
+  const itemType=String(row.itemType||row.category||'').trim();
+  const name=String(row.name||'').trim();
+  if(!/スクロール/.test(itemType+' '+name)||/未鑑定/.test(itemType+' '+name))return null;
+  const rawId=String(row.masterId||row.id||'').trim();
+  const spellId=rawId.startsWith('scroll_spell_')?rawId.slice('scroll_spell_'.length):'';
+  let spell=(DB_SPELL_MASTER||[]).find(r=>spellId&&String(r.id||'').trim()===spellId)||null;
+  if(!spell){
+    const spellName=name.replace(/のスクロール$/,'').trim();
+    if(spellName&&spellName!==name)spell=(DB_SPELL_MASTER||[]).find(r=>String(r.name||'').trim()===spellName)||null;
+  }
+  return spell;
+}
+function characterHasLearnedSpellMaster(spell={}){
+  const sid=String(spell.id||'').trim(),pid=String(spell.publicId||'').trim().toUpperCase(),name=String(spell.name||'').trim();
+  return learnedSpellRowsForInventory().some(row=>
+    (sid&&String(row.masterId||row.id||'').trim()===sid)||
+    (pid&&String(row.publicId||'').trim().toUpperCase()===pid)||
+    (name&&String(row.name||'').trim()===name)
+  );
+}
+function characterItemDetailLearnActionHtml(row={},index=-1){
+  if(currentMode==='view'||index<0)return'';
+  if(row.kind==='レシピ'){
+    const learned=isRecipeLearned(row);
+    return `<div class="button-row item-detail-learn-actions">${learned?'<button type="button" disabled>習得済み</button>':`<button type="button" data-detail-learn-recipe="${index}">このレシピを習得</button>`}</div>`;
+  }
+  const spell=characterSpellMasterForScroll(row);
+  if(spell){
+    const learned=characterHasLearnedSpellMaster(spell);
+    return `<div class="button-row item-detail-learn-actions">${learned?'<button type="button" disabled>術式習得済み</button>':`<button type="button" data-detail-learn-scroll="${index}">術式化して習得</button>`}</div>`;
+  }
+  return'';
+}
+function learnSpellFromScrollInventory(index){
+  if(currentMode==='view')return false;
+  const row=inventoryItemsState[index]?normalizeInventoryItem(inventoryItemsState[index]):null;
+  if(!row)return false;
+  const spell=characterSpellMasterForScroll(row);
+  if(!spell){showToast('このスクロールから習得できる術式を特定できません。','error');return false;}
+  if(characterHasLearnedSpellMaster(spell)){showToast(`「${spell.name}」はすでに習得済みです。`,'warn');return false;}
+  if(!window.confirm(`術式化の判定・必要素材の処理を解決済みとして「${spell.name}」を習得します。\nスクロールを1個消費します。続行しますか？`))return false;
+  const count=Math.max(1,Number(row.count)||1);
+  if(count>1)inventoryItemsState[index]=normalizeInventoryItem({...row,count:count-1});
+  else inventoryItemsState.splice(index,1);
+  const spellItem=dbSpellToInventoryItem(spell);
+  inventoryItemsState.push(spellItem);
+  invalidateInventoryDerivedCache();
+  inventoryDisplayMode='learned';learnedContentType='spell';
+  renderInventory({refreshLinked:false});inventoryLinkedRefreshForItems(row,spellItem);updateSummary();
+  $('itemDetailViewDialog')?.close();
+  if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon(['inventory','equipment']);
+  showToast(`術式を習得しました：${spell.name}`,'ok');
+  return true;
+}
+
 function openCharacterItemDetail(item={},count='',index=null){
   const row=normalizeInventoryItem(item||{});if(!row?.name)return;
   const resolvedIndex=Number.isInteger(index)?index:inventoryIndexByLookup(row.id||row.masterId||row.publicId,row.name);
   itemDetailViewContext={index:resolvedIndex};
   const dlg=$('itemDetailViewDialog');if(!dlg)return;
   $('itemDetailViewTitle').textContent=`${row.name}${row.rank?`　${inventoryRankLabel(row)}`:''}`;
-  $('itemDetailViewBody').innerHTML=ownedItemDetailHtml(row,count)+characterNamedProcessingHtml(row.namedProcessingOptions,row.appliedNamedProcessingId,resolvedIndex);
+  $('itemDetailViewBody').innerHTML=ownedItemDetailHtml(row,count)+characterNamedProcessingHtml(row.namedProcessingOptions,row.appliedNamedProcessingId,resolvedIndex)+characterItemDetailLearnActionHtml(row,resolvedIndex);
   dlg.showModal();
 }
 function ownedItemDetailHtml(item={}, count='') {
@@ -10061,7 +10174,7 @@ $('historyList')?.addEventListener('click',e=>{const countBtn=e.target.closest('
   if ($('cancelInventoryDialogBtn')) $('cancelInventoryDialogBtn').addEventListener('click', () => $('inventoryDialog')?.close());
   if ($('closeItemDetailViewBtn')) $('closeItemDetailViewBtn').addEventListener('click', () => $('itemDetailViewDialog')?.close());
   if ($('itemDetailViewDialog')) $('itemDetailViewDialog').addEventListener('click', e => { if(e.target===$('itemDetailViewDialog'))$('itemDetailViewDialog').close(); });
-  if ($('itemDetailViewDialog')) $('itemDetailViewDialog').addEventListener('click', e => { const apply=e.target.closest('[data-apply-named-processing]');if(apply){applyNamedProcessingAtIndex(Number(itemDetailViewContext.index),apply.dataset.applyNamedProcessing||'');return;}const clear=e.target.closest('[data-clear-named-processing]');if(clear){clearNamedProcessingAtIndex(Number(itemDetailViewContext.index),clear.dataset.clearNamedProcessing||'');return;} });
+  if ($('itemDetailViewDialog')) $('itemDetailViewDialog').addEventListener('click', e => { const learnRecipe=e.target.closest('[data-detail-learn-recipe]');if(learnRecipe){const index=Number(learnRecipe.dataset.detailLearnRecipe);learnRecipeFromInventory(index);inventoryDisplayMode='learned';learnedContentType='recipe';renderInventory({refreshLinked:false});$('itemDetailViewDialog')?.close();return;}const learnScroll=e.target.closest('[data-detail-learn-scroll]');if(learnScroll){learnSpellFromScrollInventory(Number(learnScroll.dataset.detailLearnScroll));return;}const apply=e.target.closest('[data-apply-named-processing]');if(apply){applyNamedProcessingAtIndex(Number(itemDetailViewContext.index),apply.dataset.applyNamedProcessing||'');return;}const clear=e.target.closest('[data-clear-named-processing]');if(clear){clearNamedProcessingAtIndex(Number(itemDetailViewContext.index),clear.dataset.clearNamedProcessing||'');return;} });
   document.addEventListener('click', e => { const b=e.target.closest('[data-carry-item-detail]');if(!b)return;const slotKey=b.dataset.carryItemDetail||'';const select=$(`equip_${slotKey}_itemSelect`);const cache=inventoryDerived();const row=cache.rowByLookup.get(String(select?.value||''))||cache.equipmentByKey.get(String(select?.value||''))||null;if(row){const idx=inventoryIndexByLookup(row.id||row.masterId||row.publicId,row.name);openCharacterItemDetail(row,row.count||1,idx);}else showToast('アイテムを選択してください。','warn'); });
   document.addEventListener('click', e => { const b=e.target.closest('[data-quiver-item-detail]');if(!b)return;const key=String(b.dataset.quiverItemDetail||'');const cache=inventoryDerived();const row=cache.rowByLookup.get(key)||cache.equipmentByKey.get(key)||null;if(row){const idx=inventoryIndexByLookup(row.id||row.masterId||row.publicId,row.name);openCharacterItemDetail(row,row.count||1,idx);}else showToast('矢弾の詳細を取得できませんでした。','warn'); });
   if ($('inventoryArea')) $('inventoryArea').addEventListener('click', e => {
