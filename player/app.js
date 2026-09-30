@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.108';
+  const APP_VERSION='1.0.109';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const app=document.querySelector('#playerApp'),authError=document.querySelector('#authError');
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
@@ -127,10 +127,10 @@
         @media(max-width:720px){body.ra-app .branch-graph-node-name-inline{font-size:14px!important;line-height:1.2!important}body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.36!important}}
       `;
 
-      let visibilityStyle=doc.getElementById('raAppThemeVisibilityV104');
-      if(!visibilityStyle){visibilityStyle=doc.createElement('style');visibilityStyle.id='raAppThemeVisibilityV104';doc.head?.appendChild(visibilityStyle)}
+      let visibilityStyle=doc.getElementById('raAppThemeVisibilityV109');
+      if(!visibilityStyle){visibilityStyle=doc.createElement('style');visibilityStyle.id='raAppThemeVisibilityV109';doc.head?.appendChild(visibilityStyle)}
       visibilityStyle.textContent=`
-        /* v1.0.108: theme-aware visibility normalization. Keep all themes readable without DOM scanning. */
+        /* v1.0.109: theme-aware visibility normalization. Keep all themes readable without DOM scanning. */
         body.ra-app :is(
           .title-card,.table-wrap,.facility-summary-card,.facility-card,.facility-product,.facility-upgrade-box,
           .facility-upgrade-result,.facility-fortune-result,.help-card,.monster-card,.monster-card-body,
@@ -161,9 +161,55 @@
         body.ra-app :is(.status.warn,.day-warning,.event-card.next,.event-card.fixed,.badge.fixed,.skill-admin-status.warn,.skill-result-card.dup){background:color-mix(in srgb,var(--paper) 84%,#d9ad4f 16%)!important;color:color-mix(in srgb,var(--ink) 72%,#6f5111 28%)!important;border-color:color-mix(in srgb,var(--line) 55%,#d9ad4f 45%)!important}
         body.ra-app :is(.status.bad,.day-blocked,.skill-admin-status.bad,.guild-support-status.is-error){background:color-mix(in srgb,var(--paper) 84%,#c96e66 16%)!important;color:color-mix(in srgb,var(--ink) 72%,#7b302b 28%)!important;border-color:color-mix(in srgb,var(--line) 55%,#c96e66 45%)!important}
         body.ra-app :is(.badge.random){background:color-mix(in srgb,var(--paper) 86%,#64a578 14%)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--line) 58%,#64a578 42%)!important}
-        body.ra-app :is(button,.btn,[role="button"]):disabled{opacity:.58!important;filter:saturate(.65)!important;cursor:not-allowed!important}
+        body.ra-app :is(button,.btn,[role="button"]):disabled{opacity:.76!important;filter:saturate(.72)!important;cursor:not-allowed!important}
         body.ra-app :is(.modal-backdrop,.area-select-modal-backdrop,.progress-modal-backdrop,.bestiary-modal){background:color-mix(in srgb,var(--app-deep) 52%,transparent)!important}
         body.ra-app :is(.ra-build-info){background:color-mix(in srgb,var(--paper) 94%,transparent)!important;color:var(--muted)!important;border-color:var(--line)!important}
+
+        /* v1.0.109: active/inactive state must be visually distinct on every color theme. */
+        body.ra-app :is(
+          .tabs,.subtabs,.section-tabs,.section-subtabs,.major-tabs,.inventory-mode-tabs,.progress-modal-subtabs,
+          .bestiary-tabs,.editor-tabs,.facility-inner-tabs,.facility-weapon-category-tabs,.quest-category-bar,
+          .rank-filter-buttons,.weapon-category-tabs,.branch-view-switch,.branch-pager,.craft-list-switch,.inventory-chip-row,.skill-chip-row,.learned-kind-dialog-list,.facility-switch,.ra-area-filter-tabs,
+          .ra-facility-picker-tabs,.ra-picker-tabs,.ra-manager-picker-tabs,.record-static-subtabs
+        ) button:not(.active),
+        body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab):not(.active){
+          background:var(--paper2)!important;color:var(--ink)!important;border:1px solid color-mix(in srgb,var(--line) 76%,var(--ink) 24%)!important;
+          box-shadow:none!important;text-shadow:none!important;filter:none!important
+        }
+        body.ra-app :is(
+          .tabs,.subtabs,.section-tabs,.section-subtabs,.major-tabs,.inventory-mode-tabs,.progress-modal-subtabs,
+          .bestiary-tabs,.editor-tabs,.facility-inner-tabs,.facility-weapon-category-tabs,.quest-category-bar,
+          .rank-filter-buttons,.weapon-category-tabs,.branch-view-switch,.branch-pager,.craft-list-switch,.inventory-chip-row,.skill-chip-row,.learned-kind-dialog-list,.facility-switch,.ra-area-filter-tabs,
+          .ra-facility-picker-tabs,.ra-picker-tabs,.ra-manager-picker-tabs,.record-static-subtabs
+        ) button.active,
+        body.ra-app :is(.tab,.subtab,.tab-btn,.editor-tab-btn,.quest-category-btn,.facility-inner-tab,.facility-weapon-category-tab).active{
+          background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 80%,var(--app-deep) 20%))!important;
+          color:var(--theme-on-accent,#fff)!important;border-color:color-mix(in srgb,var(--accent) 70%,var(--app-deep) 30%)!important;
+          box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--theme-highlight) 82%,#fff 18%),0 3px 9px color-mix(in srgb,var(--accent) 22%,transparent)!important;
+          text-shadow:0 1px 0 rgba(0,0,0,.18)!important;font-weight:900!important;filter:none!important
+        }
+
+        body.ra-app :is(button,[role="tab"])[aria-selected="false"]{background:var(--paper2)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--line) 76%,var(--ink) 24%)!important;box-shadow:none!important;text-shadow:none!important}
+        body.ra-app :is(button,[role="tab"])[aria-selected="true"]{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 80%,var(--app-deep) 20%))!important;color:var(--theme-on-accent,#fff)!important;border-color:var(--accent)!important;box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--theme-highlight) 82%,#fff 18%)!important;font-weight:900!important}
+        body.ra-app :is(.facility-summary-card.active,.ra-category-choice.active,.ra-category-choice.selected,.ra-manager-picker-category-choice.selected,.ra-meal-area-choice.active,.monster-option.active,.choice-card.selected,.skill-category-card.active){
+          background:color-mix(in srgb,var(--paper) 80%,var(--theme-soft) 20%)!important;color:var(--ink)!important;
+          border-color:var(--accent)!important;box-shadow:inset 4px 0 0 var(--accent),0 0 0 1px color-mix(in srgb,var(--accent) 28%,transparent)!important
+        }
+        body.ra-app :is(.chip,.facility-chip,.skill-chip,.admin-search-chip,.view-mode-chip,.spell-detail-pill,.skill-badge,.equipment-upgrade-slot-badge){
+          color:var(--ink)!important;border-color:color-mix(in srgb,var(--line) 78%,var(--ink) 22%)!important;
+          background:color-mix(in srgb,var(--paper2) 88%,var(--theme-highlight) 12%)!important;text-shadow:none!important
+        }
+        body.ra-app :is(.inventory-card-meta,.facility-removal-row-meta,.guild-support-card-meta,.table-toolbar-note,.catalog-filter-label,.inventory-filter-label,.ra-area-filter-label,.record-meta,.item-meta){
+          color:color-mix(in srgb,var(--muted) 86%,var(--ink) 14%)!important
+        }
+        body.ra-app :is(button,.btn,[role="button"]):disabled{opacity:.76!important;filter:saturate(.72)!important;color:inherit}
+        body.ra-app :is(input,select,textarea):disabled{opacity:.78!important;color:color-mix(in srgb,var(--ink) 76%,var(--muted) 24%)!important;background:var(--paper2)!important}
+        body.ra-app :is(.empty,.empty-row,.inventory-filter-status,.filter-status,.autosave-status,.github-public-db-status,.master-source-status,.token-export-status){
+          color:var(--muted)!important;background:color-mix(in srgb,var(--paper) 92%,var(--paper2) 8%)!important;border-color:var(--line)!important
+        }
+        body.ra-app :is(a,.text-link){text-decoration-thickness:1.5px!important;text-underline-offset:2px!important}
+        body.ra-app :focus-visible{outline-color:color-mix(in srgb,var(--accent) 74%,var(--ink) 26%)!important;outline-offset:2px!important}
+
         @media(prefers-contrast:more){
           body.ra-app :is(.panel,.card,.status,.result,.facility-card,.facility-product,.help-card,.monster-card,.bestiary-action){border-width:2px!important}
           body.ra-app :is(.note,.muted,.hint,.subtle){color:color-mix(in srgb,var(--ink) 72%,var(--muted) 28%)!important}
@@ -251,10 +297,11 @@
   function routeFromHash(){const raw=(location.hash||'#home').slice(1);if(raw==='character/new')return openNewCharacter({writeHash:false});if(raw.startsWith('character/')){const id=decodeURIComponent(raw.slice('character/'.length));if(characters.length&&characters.some(c=>String(c.id)===id))return selectCharacterById(id,{writeHash:false});return;}show(raw,{writeHash:false});}
   addEventListener('popstate',routeFromHash);
   const notice=document.querySelector('#updateNotice'),noticeText=notice?.querySelector('span'),applyUpdateBtn=document.querySelector('#applyUpdate'),dismissUpdateBtn=document.querySelector('#dismissUpdate');
-  const versionState=document.querySelector('#playerVersionState'),currentVersionLabel=document.querySelector('#playerCurrentVersion'),LAST_RUN_VERSION_KEY='ra-player-app-last-run-version',UPDATE_DEFER_KEY='ra-player-update-deferred-version';
+  const versionState=document.querySelector('#playerVersionState'),currentVersionLabel=document.querySelector('#playerCurrentVersion'),manualUpdateBtn=document.querySelector('#manualUpdateCheck'),manualUpdateStatus=document.querySelector('#manualUpdateStatus'),LAST_RUN_VERSION_KEY='ra-player-app-last-run-version',UPDATE_DEFER_KEY='ra-player-update-deferred-version';
   let publishedUpdateVersion='',explicitUpdateRequested=false;
   if(currentVersionLabel)currentVersionLabel.textContent=APP_VERSION;
-  function setVersionState(text,kind=''){if(!versionState)return;versionState.textContent=text;versionState.dataset.state=kind;}
+  function syncManualUpdateUi(kind='',text=''){if(manualUpdateStatus)manualUpdateStatus.textContent=kind==='deferred'?`${text}。いつでもここから更新できます。`:kind==='update'?`${text}。更新するか後回しを選べます。`:kind==='checking'?'最新版を確認しています。':kind==='error'?'更新確認に失敗しました。再確認できます。':kind==='current'?`App v${APP_VERSION} は最新版です。`:'更新状態を確認できます。';if(manualUpdateBtn){manualUpdateBtn.disabled=kind==='checking';manualUpdateBtn.textContent=kind==='deferred'?'保留中の更新を開く':kind==='update'?'更新内容を開く':kind==='error'?'更新を再確認':'更新を確認';}}
+  function setVersionState(text,kind=''){if(versionState){versionState.textContent=text;versionState.dataset.state=kind;}syncManualUpdateUi(kind,text);}
   function deferredUpdateVersion(){try{return sessionStorage.getItem(UPDATE_DEFER_KEY)||''}catch(_){return ''}}
   function deferUpdateVersion(version){try{if(version)sessionStorage.setItem(UPDATE_DEFER_KEY,String(version));}catch(_){}}
   function clearDeferredUpdate(){try{sessionStorage.removeItem(UPDATE_DEFER_KEY);}catch(_){}}
@@ -263,7 +310,8 @@
   async function checkPublishedVersion(){setVersionState('確認中','checking');try{const res=await fetch('./version.json?t='+Date.now(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});if(!res.ok){setVersionState('確認失敗','error');return;}const data=await res.json(),published=String(data.version||'').trim();if(published&&published!==APP_VERSION){publishedUpdateVersion=published;if(deferredUpdateVersion()===published){if(notice)notice.hidden=true;setVersionState(`v${published}保留`,'deferred');}else showAvailableUpdate(published);await swRegistration?.update().catch(()=>{});return;}publishedUpdateVersion='';clearDeferredUpdate();setVersionState('最新版','current');}catch(_){setVersionState('確認失敗','error');}}
   async function applyUpdate(){explicitUpdateRequested=true;clearDeferredUpdate();try{sessionStorage.setItem(`ra-startup-shown:${location.pathname}`,'1')}catch(_){}if(applyUpdateBtn){applyUpdateBtn.disabled=true;applyUpdateBtn.textContent='アプリ更新中…';}try{if(swRegistration){await swRegistration.update();if(swRegistration.waiting){swRegistration.waiting.postMessage({type:'SKIP_WAITING'});return;}const worker=swRegistration.installing;if(worker){worker.addEventListener('statechange',()=>{if(worker.state==='installed')(swRegistration.waiting||worker).postMessage({type:'SKIP_WAITING'});},{once:false});return;}}}catch(_){}location.reload();}
   function deferUpdate(){const v=publishedUpdateVersion||String(notice?.dataset.version||'').trim();if(v&&v!=='更新準備済み')deferUpdateVersion(v);if(notice)notice.hidden=true;setVersionState(v&&v!=='更新準備済み'?`v${v}保留`:'更新保留','deferred');}
-  if(applyUpdateBtn)applyUpdateBtn.onclick=applyUpdate;if(dismissUpdateBtn)dismissUpdateBtn.onclick=deferUpdate;
+  async function reopenUpdate(){const held=publishedUpdateVersion||deferredUpdateVersion();if(held){publishedUpdateVersion=held;showAvailableUpdate(held,{ignoreDeferred:true});return;}await checkPublishedVersion();const found=publishedUpdateVersion||deferredUpdateVersion();if(found)showAvailableUpdate(found,{ignoreDeferred:true});}
+  if(applyUpdateBtn)applyUpdateBtn.onclick=applyUpdate;if(dismissUpdateBtn)dismissUpdateBtn.onclick=deferUpdate;if(manualUpdateBtn)manualUpdateBtn.onclick=reopenUpdate;if(versionState){versionState.addEventListener('click',reopenUpdate);versionState.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();reopenUpdate();}});}
   const previousRunVersion=localStorage.getItem(LAST_RUN_VERSION_KEY)||'';if(previousRunVersion&&previousRunVersion!==APP_VERSION)showAppliedUpdate(previousRunVersion);localStorage.setItem(LAST_RUN_VERSION_KEY,APP_VERSION);
   if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(reg=>{swRegistration=reg;reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){setVersionState('更新準備済み','update');if(publishedUpdateVersion&&deferredUpdateVersion()!==publishedUpdateVersion)showAvailableUpdate(publishedUpdateVersion);}});});reg.update().catch(()=>{});}).catch(()=>setVersionState('SW未登録','error'));navigator.serviceWorker.addEventListener('controllerchange',()=>{if(explicitUpdateRequested){location.reload();return;}setVersionState('更新準備済み','deferred');});}
   addEventListener('focus',checkPublishedVersion);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkPublishedVersion()});setInterval(checkPublishedVersion,2*60*1000);

@@ -6,7 +6,7 @@
   <link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
   <meta name="theme-color" content="#30231c"><meta name="application-name" content="Recraft Alchemia Player">
   <title>Recraft Alchemia - Player</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.0.108"><link rel="icon" href="../icons/player-app-v4.ico?rev=4" sizes="any"><link rel="icon" href="../icons/player-app-v4-192.png?rev=4" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v4-180.png?rev=4"><meta name="msapplication-TileImage" content="../icons/player-app-v4-512.png?rev=4">
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.109"><link rel="icon" href="../icons/player-app-v4.ico?rev=4" sizes="any"><link rel="icon" href="../icons/player-app-v4-192.png?rev=4" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="../icons/player-app-v4-180.png?rev=4"><meta name="msapplication-TileImage" content="../icons/player-app-v4-512.png?rev=4">
   <link rel="stylesheet" href="app.css">
 
 <style id="ra-interaction-feedback-v102">
@@ -16,16 +16,37 @@
 .nav-btn.active,.character-nav-btn.active{box-shadow:inset 4px 0 0 var(--accent2,#d9aa6a)!important;background:color-mix(in srgb,var(--app-active,#5a3b29) 84%,var(--accent2,#d9aa6a) 16%)!important;filter:none!important;font-weight:900!important}
 .nav-btn.active .nav-icon{color:var(--accent2,#f0c784)!important}
 .character-nav-btn::before{content:none!important;display:none!important}
-#playerVersionState[data-state="deferred"],#gmVersionState[data-state="deferred"]{font-weight:900;color:#ffd98a}
+#playerVersionState[data-state="deferred"],#gmVersionState[data-state="deferred"]{font-weight:900}
 </style>
 
 <style id="ra-collapse-stability-v103">
-/* v1.0.108: アプリ設定の折り畳みも固定位置で表示 */
+/* v1.0.109: アプリ設定の折り畳みも固定位置で表示 */
 .app-advanced > summary { position:relative!important; box-sizing:border-box!important; list-style:none!important; padding-left:36px!important; min-width:0!important; max-width:100%!important; width:100%!important; }
 .app-advanced > summary::-webkit-details-marker { display:none!important; }
 .app-advanced > summary::marker { content:""!important; }
 .app-advanced > summary::before { content:"▶"!important; position:absolute!important; left:12px!important; top:50%!important; width:16px!important; height:16px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; color:var(--accent)!important; font-size:.72rem!important; line-height:1!important; transform:translateY(-50%) rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; }
 .app-advanced[open] > summary::before { transform:translateY(-50%) rotate(90deg)!important; }
+</style>
+
+
+<style id="ra-theme-visibility-v109">
+/* v1.0.109: theme-safe contrast + unambiguous selection states. CSS only; no DOM-wide runtime scan. */
+:root{--ra-ui-focus:color-mix(in srgb,var(--accent,#8b4a41) 52%,transparent)}
+:where(button,.btn,[role="button"],a.btn):disabled{opacity:.76!important;filter:saturate(.72)!important;cursor:not-allowed!important}
+:where(.nav-btn,.character-nav-btn,.nav-category-toggle):focus-visible{outline:3px solid color-mix(in srgb,var(--accent2,#d9aa6a) 72%,#fff 28%)!important;outline-offset:2px!important}
+.nav-btn.active,.character-nav-btn.active{color:var(--theme-on-deep,#fff)!important;text-shadow:none!important}
+.player-app-version,.gm-app-version{display:inline-flex;align-items:center;gap:2px;flex-wrap:wrap}
+#playerVersionState,#gmVersionState{border-radius:999px;padding:1px 5px;line-height:1.45;transition:background-color .12s ease,color .12s ease}
+#playerVersionState[data-state="deferred"],#gmVersionState[data-state="deferred"]{color:#fff7d1!important;background:rgba(255,217,138,.16)!important;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+#playerVersionState[data-state="update"],#gmVersionState[data-state="update"]{color:#fff7d1!important;background:rgba(255,217,138,.18)!important;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+#playerVersionState[data-state="error"],#gmVersionState[data-state="error"]{color:#ffd8d2!important;background:rgba(255,120,110,.13)!important;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+#playerVersionState[data-state="current"],#gmVersionState[data-state="current"]{color:var(--theme-deep-muted,#eee)!important;background:transparent!important}
+#playerVersionState[data-state="checking"],#gmVersionState[data-state="checking"]{color:var(--theme-deep-muted,#eee)!important;background:transparent!important}
+.app-update-control{margin-top:12px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--paper2) 88%,var(--theme-highlight) 12%);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--ink)}
+.app-update-control-text{display:grid;gap:2px;min-width:0}.app-update-control-text strong{color:var(--ink)}.app-update-control-text span{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}
+.app-update-control button{min-height:36px;padding:7px 12px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:var(--theme-on-accent,#fff);font:inherit;font-weight:900;white-space:nowrap}
+.app-update-control button.secondary{background:var(--paper);color:var(--accent);border-color:var(--accent);box-shadow:none}
+@media(max-width:560px){.app-update-control{align-items:stretch}.app-update-control button{width:100%}}
 </style>
 
 </head>
@@ -56,7 +77,7 @@
       <label for="themeColorSelect">カラーテーマ</label>
       <select id="themeColorSelect" aria-label="カラーテーマ"><option value="red">レッド</option><option value="blue">ブルー</option><option value="green">グリーン</option><option value="purple">パープル</option><option value="orange">オレンジ</option><option value="yellow">イエロー</option><option value="pink">ピンク</option><option value="cyan">シアン</option><option value="navy">ネイビー</option><option value="brown">ブラウン</option></select><button class="account-key-button" type="button" data-open-account-key>プレイヤーキー変更</button>
     </div>
-    <div class="side-footer">Based on RA v90.8.824<br><span class="player-app-version">App v<span id="playerCurrentVersion">1.0.108</span>・<span id="playerVersionState">更新確認中</span></span></div>
+    <div class="side-footer">Based on RA v90.8.824<br><span class="player-app-version">App v<span id="playerCurrentVersion">1.0.109</span>・<span id="playerVersionState" role="button" tabindex="0" aria-label="アプリ更新状態。クリックで更新を確認">更新確認中</span></span></div>
   </aside>
 
   <div id="backdrop" class="drawer-backdrop"></div>
@@ -86,7 +107,7 @@
 
         <div class="grid">
           <article class="card panel span-12"><div class="card-heading"><div><div class="eyebrow">PLAYER FUNCTIONS</div><h2>利用機能</h2></div><span id="playerCharacterCount" class="badge">読み込み中</span></div><div class="quick-actions"><div class="quick"><h3>キャラクターシート</h3><div class="note">保存済みキャラクターはサイドバーの「キャラクターシート」から直接開きます。新規作成も同じ場所から行えます。</div></div><div class="quick"><h3>施設</h3><div class="note">施設はサイドバーから開きます。ログイン時に紐づけた施設用キーを自動で使用するため、プレイヤーキーの再入力は不要です。</div></div></div></article>
-          <article class="card panel span-12"><h2>アプリ設定</h2><p class="note">カラーテーマは左下から変更できます。キャラクターシートと施設は一度読み込むと、画面を行き来しても状態を保持します。</p><details class="app-advanced"><summary>トラブルシューティング</summary><div class="app-advanced-body"><p class="note">通常は操作不要です。共通DBの取得に失敗した場合や、初期倉庫データを修復したい場合だけ使用してください。</p><div class="app-advanced-actions"><button type="button" class="btn ghost" data-player-maintenance="character-db">キャラシ共通DBを再読込</button><button type="button" class="btn ghost" data-player-maintenance="initial-stock">初期倉庫をDB同期</button><button type="button" class="btn ghost" data-player-maintenance="facility-db">施設共通DBを再読込</button></div></div></details></article>
+          <article class="card panel span-12"><h2>アプリ設定</h2><p class="note">カラーテーマは左下から変更できます。キャラクターシートと施設は一度読み込むと、画面を行き来しても状態を保持します。</p><div class="app-update-control"><div class="app-update-control-text"><strong>アプリ更新</strong><span id="manualUpdateStatus">更新状態を確認しています。</span></div><button id="manualUpdateCheck" type="button" class="secondary">更新を確認</button></div><details class="app-advanced"><summary>トラブルシューティング</summary><div class="app-advanced-body"><p class="note">通常は操作不要です。共通DBの取得に失敗した場合や、初期倉庫データを修復したい場合だけ使用してください。</p><div class="app-advanced-actions"><button type="button" class="btn ghost" data-player-maintenance="character-db">キャラシ共通DBを再読込</button><button type="button" class="btn ghost" data-player-maintenance="initial-stock">初期倉庫をDB同期</button><button type="button" class="btn ghost" data-player-maintenance="facility-db">施設共通DBを再読込</button></div></div></details></article>
         </div>
       </section>
 
@@ -100,7 +121,7 @@
         </div>
         <div class="module-frame-wrap" data-loading-for="character">
           <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="character">再読み込み</button></div></div>
-          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=1.0.108"></iframe>
+          <iframe id="characterFrame" class="module-frame" title="キャラクターシート" data-src="modules/character/character.html?embedded=1&appv=1.0.109"></iframe>
         </div>
       </section>
 
@@ -114,13 +135,13 @@
         </div>
         <div class="module-frame-wrap" data-loading-for="facility">
           <div class="frame-loading"><div class="loading-indicator"><span class="loading-spinner" aria-hidden="true"></span><span class="frame-loading-text">読み込み中</span><button class="frame-retry" type="button" data-retry-frame="facility">再読み込み</button></div></div>
-          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1&appv=1.0.108"></iframe>
+          <iframe id="facilityFrame" class="module-frame" title="施設" data-src="modules/facility/facility.html?embedded=1&appv=1.0.109"></iframe>
         </div>
       </section>
     </main>
   </div>
 </div>
-<script src="../assets/account.js?v=1.0.108"></script><script src="../assets/ra_magic_loader.js?v=1.0.108"></script><script src="ra_startup_overlay.js?v=1.0.108"></script><script src="app.js?v=1.0.108"></script>
+<script src="../assets/account.js?v=1.0.109"></script><script src="../assets/ra_magic_loader.js?v=1.0.109"></script><script src="ra_startup_overlay.js?v=1.0.109"></script><script src="app.js?v=1.0.109"></script>
 <dialog id="accountKeyDialog" class="account-key-dialog"><form method="dialog" class="account-key-card"><div class="account-key-head"><div><div class="eyebrow">ACCOUNT</div><h2>プレイヤーキー変更</h2></div><button type="button" class="btn ghost" data-close-account-key>閉じる</button></div><p class="note">未使用のキーなら現在の紐づけを新しいキーへ移行します。すでに登録済みのキーなら、そのアカウントへログインし直します。</p><div class="field"><label>現在のプレイヤーキー</label><div id="currentLoginPlayerKey" class="account-key-current">-</div></div><div class="field"><label for="newLoginPlayerKey">新しいプレイヤーキー</label><input id="newLoginPlayerKey" class="input" autocomplete="off" placeholder="新しいプレイヤーキー"></div><div id="accountKeyStatus" class="account-key-status" aria-live="polite"></div><div class="account-key-actions"><button type="button" class="btn primary" id="changeLoginPlayerKeyBtn">変更する</button></div></form></dialog>
 <script id="ra-interaction-feedback-script-v102">
 (()=>{document.addEventListener('click',e=>{const el=e.target.closest?.('button,.btn,[role="button"],a.btn');if(!el||el.disabled||el.getAttribute('aria-disabled')==='true')return;el.classList.remove('ra-feedback-hit');void el.offsetWidth;el.classList.add('ra-feedback-hit');setTimeout(()=>el.classList.remove('ra-feedback-hit'),180);},true);})();
