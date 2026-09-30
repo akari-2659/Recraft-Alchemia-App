@@ -1290,6 +1290,22 @@ button,.tab,.subtab,.tab-btn,.editor-tab-btn{transition:transform .1s ease,opaci
 button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{transform:translateY(1px)}
 @media(prefers-reduced-motion:reduce){.view.active{animation:none}button,.tab,.subtab,.tab-btn,.editor-tab-btn{transition:none}}
 </style>
+
+<style id="ra-module-interaction-feedback-v102">
+:where(button,.btn,[role="button"],a.btn){transition:transform .09s ease,filter .11s ease,box-shadow .12s ease,background-color .12s ease,border-color .12s ease}
+:where(button,.btn,[role="button"],a.btn):focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#8b4a41) 45%,transparent);outline-offset:2px}
+:where(button,.btn,[role="button"],a.btn):active,.ra-feedback-hit{transform:translateY(1px) scale(.982)!important;filter:brightness(.84) saturate(1.08)!important}
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target]).active,
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target])[aria-selected="true"]{
+  background:color-mix(in srgb,var(--paper,#fffaf0) 68%,var(--accent,#8b4a41) 32%)!important;
+  border-color:var(--accent,#8b4a41)!important;
+  color:var(--ink,#2f241d)!important;
+  box-shadow:inset 0 -4px 0 var(--accent,#8b4a41),0 0 0 2px color-mix(in srgb,var(--accent,#8b4a41) 24%,transparent)!important;
+  font-weight:900!important;filter:saturate(1.08) brightness(1.02);
+}
+#saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
+@media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
+</style>
 </head>
 <body class="ra-app ra-player ra-character">
 <div class="ra-build-info">Version：v90.8.820 / 最終更新日：2026年9月25日</div>
@@ -2112,7 +2128,25 @@ let cloudCharacterRevision = 0;
 let cloudCharacterRowHint = 0;
 let cloudCharacterFolderReady = false;
 let characterLastHistoryAt = 0;
+const CHARACTER_SAVE_API_VERSION = 1;
+function assertCharacterSaveApiCompatibility(result){
+  if(!result||typeof result!=='object')return;
+  const min=Number(result.saveApiMinSupported||0)||0,max=Number(result.saveApiMaxSupported||result.saveApiVersion||0)||0;
+  if((min&&CHARACTER_SAVE_API_VERSION<min)||(max&&CHARACTER_SAVE_API_VERSION>max)){
+    throw new Error(`保存API互換性エラー：このキャラシの保存形式(v${CHARACTER_SAVE_API_VERSION})は現在のGAS（対応 v${min||'?'}～${max||'?'}）と互換性がありません。アプリを更新してください。`);
+  }
+}
 
+function setManualSaveBusy(busy){
+  const btn=$('saveBtn');
+  if(!btn)return;
+  if(busy){
+    if(!btn.dataset.idleLabel)btn.dataset.idleLabel=btn.textContent||'保存';
+    btn.disabled=true;btn.classList.add('is-saving');btn.setAttribute('aria-busy','true');btn.textContent='保存中…';
+  }else{
+    btn.classList.remove('is-saving');btn.removeAttribute('aria-busy');btn.textContent=btn.dataset.idleLabel||'保存';btn.disabled=currentMode==='view';
+  }
+}
 function setAutoSaveStatus(message='', state=''){
   const el=$('autoSaveStatus');
   if(!el)return;
@@ -2337,11 +2371,17 @@ async function characterCreateHistoryBeforeSave({automatic=false,force=false}={}
 
 async function drainQueuedCharacterChanges({automatic=false}={}){
   let passes=0;
-  while(autoSaveDirtySections.size>0){
-    // 保存中に連続入力されている変更を少しだけまとめてから最新状態を送る。
+  while(true){
+    // 保存通信中の連続入力を少しまとめる。Dirty通知だけでなく画面全体ハッシュも比較し、
+    // 何らかの編集通知漏れがあっても「保存済み」と誤認しない。
     await new Promise(resolve=>setTimeout(resolve,180));
-    if(!autoSaveDirtySections.size)break;
-    const sections=new Set(autoSaveDirtySections);
+    let sections=new Set(autoSaveDirtySections);
+    if(!sections.size){
+      let liveHash='',savedHash='';
+      try{liveHash=currentAutoSaveHash();savedHash=currentCharacter?autoSaveContentHash(stripRuntimeOnlyData(currentCharacter)):'';}catch(_){}
+      if(liveHash===savedHash)break;
+      sections=new Set(['all']);
+    }
     if(sections.has('all'))autoSaveDirtySections.clear();
     else sections.forEach(key=>autoSaveDirtySections.delete(key));
     autoSaveDirty=autoSaveDirtySections.size>0;
@@ -2372,20 +2412,19 @@ async function drainQueuedCharacterChanges({automatic=false}={}){
       }else{
         await savePatchItem(currentCharacter.id,patch);
         currentCharacter={...(currentCharacter||{}),...patch};
+        autoSaveLastSavedHash=autoSaveContentHash(stripRuntimeOnlyData(currentCharacter));
       }
     }catch(error){
-      // この追送分を必ず未保存へ戻す。フル保存失敗なら全体未保存として扱う。
       if(useFull)autoSaveDirtySections.add('all');
       else sections.forEach(key=>autoSaveDirtySections.add(key));
       autoSaveDirty=true;
       throw error;
     }
     passes++;
-    // 通常は1～2回で収束する。編集が続いている限りは保存完了扱いにせず追送する。
     if(passes>100)throw new Error('保存中の編集が長時間続いているため、最新状態の確定保存を完了できませんでした。編集を止めてもう一度保存してください。');
   }
   autoSaveDirty=false;
-  autoSaveLastSavedHash=currentAutoSaveHash();
+  autoSaveLastSavedHash=currentCharacter?autoSaveContentHash(stripRuntimeOnlyData(currentCharacter)):'';
 }
 
 async function saveCharacterNow({automatic=false,force=false}={}){
@@ -9241,7 +9280,8 @@ async function saveItem(data) {
   if (!auth.playerKey && !auth.newPlayerKey) throw new Error('クラウド保存にはプレイヤーキーが必要です。');
   const cleanData = stripRuntimeOnlyData(data);
   const effectivePlayerKey = auth.newPlayerKey || auth.playerKey;
-  const saveResult=await cloudRequest('save', { data: cleanData, playerKey: auth.playerKey, newPlayerKey: auth.newPlayerKey, baseRevision:cloudCharacterRevision, rowHint:cloudCharacterRowHint });
+  const saveResult=await cloudRequest('save', { data: cleanData, playerKey: auth.playerKey, newPlayerKey: auth.newPlayerKey, baseRevision:cloudCharacterRevision, rowHint:cloudCharacterRowHint, saveApiVersion:CHARACTER_SAVE_API_VERSION });
+  assertCharacterSaveApiCompatibility(saveResult);
   // 応答付きPOSTならGASの保存完了応答をそのまま採用し、再読込確認を省略する。
   // no-cors互換フォールバック時だけ従来の読込確認を行う。
   if(saveResult&&saveResult.sentNoCors){
@@ -9282,7 +9322,8 @@ async function savePatchItem(id,patch={}){
   // v1.0.52: 差分保存なのに毎回送っていたキャラ全体snapshotを廃止。
   // GAS側はCharactersシートへ累積差分を永続化するため、通常編集ではpatchだけで足りる。
   const localSnapshot=stripRuntimeOnlyData({...(currentCharacter||{}),...cleanPatch,id});
-  const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint});
+  const saveResult=await cloudRequest('savePatch',{id,patch:cleanPatch,playerKey:auth.playerKey,newPlayerKey:auth.newPlayerKey,baseRevision:cloudCharacterRevision,rowHint:cloudCharacterRowHint,saveApiVersion:CHARACTER_SAVE_API_VERSION});
+  assertCharacterSaveApiCompatibility(saveResult);
   if(saveResult&&saveResult.sentNoCors){
     const verify=await verifyCloudCharacterPatch(id,cleanPatch,effectivePlayerKey);
     cloudCharacterRevision=Number(verify?.revision||cloudCharacterRevision)||0;
@@ -10227,9 +10268,17 @@ async function copyShareUrlForListItem(id) {
 
 async function onSave() {
   clearAutoSaveTimer();
-  // v1.0.99: 手動保存はDirty判定に依存せず、その瞬間のキャラシ全体を必ずフル保存する。
-  // 自動保存だけが軽量な差分保存を使用する。
-  await saveCharacterNow({automatic:false,force:true});
+  setManualSaveBusy(true);
+  setCharacterSpecialSaveStatus('保存中…',{automatic:false});
+  try{
+    // 自動保存が先に走っている場合は、その通信が終わってから最新画面をフル保存する。
+    // 待機中・送信中に入った編集もcollectData()時点と追送キューで取り込む。
+    await waitForAutoSaveIdle();
+    clearAutoSaveTimer();
+    await saveCharacterNow({automatic:false,force:true});
+  }finally{
+    setManualSaveBusy(false);
+  }
 }
 
 function bindEvents() {
@@ -10914,5 +10963,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
+<script id="ra-module-interaction-feedback-script-v102">
+(()=>{document.addEventListener('click',e=>{const el=e.target.closest?.('button,.btn,[role="button"],a.btn');if(!el||el.disabled||el.getAttribute('aria-disabled')==='true')return;el.classList.remove('ra-feedback-hit');void el.offsetWidth;el.classList.add('ra-feedback-hit');setTimeout(()=>el.classList.remove('ra-feedback-hit'),180);},true);})();
+</script>
 </body>
 </html>

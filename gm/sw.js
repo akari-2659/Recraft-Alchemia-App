@@ -1,4 +1,4 @@
-const APP_VERSION='1.0.101';
+const APP_VERSION='1.0.102';
 const CACHE=`ra-gm-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-app-v';
 const APP_FILES=["../js/ra_monster_rules.js", "./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "../assets/common.css", "../assets/account.js", "../assets/ra_magic_loader.js", "../icons/gm-app-v4-180.png", "../icons/gm-app-v4-192.png", "../icons/gm-app-v4-512.png", "../icons/gm-app-v4.ico", "./modules/manager/database_admin.html", "./modules/manager/progress_manager.html", "./modules/manager/bestiary_manager.html", "./modules/manager/help.html", "./modules/manager/data/recraft_alchemia_initial_data.json", "./modules/manager/data/public/manifest.json", "./modules/manager/data/public/recraft_alchemia_master.json", "./modules/manager/data/public/recraft_alchemia_character_master.json", "./modules/manager/data/public/recraft_alchemia_facility_master.json", "./modules/manager/assets/vendor/jszip.min.js", "./modules/manager/assets/vendor/JSZip_LICENSE.md"];
@@ -14,8 +14,7 @@ self.addEventListener('install',event=>{
         if(response.ok)await cache.put(request,response.clone());
       }catch(_error){}
     }));
-    // 新版をwaitingに残さず即時切替。旧SWに古いprogress_managerを握らせ続けない。
-    await self.skipWaiting();
+    // v1.0.102: 新版はwaitingに保持し、「アプリを更新」を押した時だけSKIP_WAITINGする。
   })());
 });
 self.addEventListener('activate',event=>{
@@ -32,20 +31,18 @@ self.addEventListener('fetch',event=>{
   if(url.origin!==location.origin)return;
   if(url.pathname.endsWith('/gm/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
 
-  const isFreshCode=event.request.mode==='navigate'||/\.(?:html|js|css)$/.test(url.pathname);
-  const isFreshData=/\/modules\/manager\/data\/(?:public\/)?[^/]+\.json$/.test(url.pathname);
-  if(isFreshCode||isFreshData){
+  const isAppCode=event.request.mode==='navigate'||/\.(?:html|js|css)$/.test(url.pathname);
+  const isPackagedData=/\/modules\/manager\/data\/(?:public\/)?[^/]+\.json$/.test(url.pathname);
+  if(isAppCode||isPackagedData){
+    // v1.0.102: 「あとで」選択中に旧UIと新版モジュール/同梱DBが混ざらないよう、
+    // 有効中のApp版CACHEを優先。新版CACHEへの切替はSKIP_WAITING後だけ行う。
     event.respondWith((async()=>{
       const cache=await caches.open(CACHE);
-      try{
-        const response=await fetch(event.request,{cache:'no-cache'});
-        if(response.ok)await cache.put(event.request,response.clone());
-        return response;
-      }catch(error){
-        const cached=await cache.match(event.request,{ignoreSearch:true})||await caches.match(event.request,{ignoreSearch:true});
-        if(cached)return cached;
-        throw error;
-      }
+      const cached=await cache.match(event.request,{ignoreSearch:true});
+      if(cached)return cached;
+      const response=await fetch(event.request,{cache:'no-cache'});
+      if(response.ok)await cache.put(event.request,response.clone());
+      return response;
     })());
     return;
   }
