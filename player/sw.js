@@ -1,4 +1,4 @@
-const APP_VERSION='1.0.101';
+const APP_VERSION='1.0.102';
 const CACHE=`ra-player-app-v${APP_VERSION}`;
 const PREFIX='ra-player-app-v';
 const APP_FILES=[
@@ -12,7 +12,6 @@ self.addEventListener('install',event=>{
     await Promise.allSettled(APP_FILES.map(async path=>{
       try{const req=new Request(path,{cache:'reload'});const res=await fetch(req);if(res.ok)await cache.put(req,res.clone());}catch(_error){}
     }));
-    await self.skipWaiting();
   })());
 });
 self.addEventListener('activate',event=>{
@@ -28,12 +27,17 @@ self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   if(url.origin!==location.origin)return;
   if(url.pathname.endsWith('/player/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
-  const isFreshCode=event.request.mode==='navigate'||/\.(?:html|js|css)$/.test(url.pathname);
-  if(isFreshCode){
+  const isAppCode=event.request.mode==='navigate'||/\.(?:html|js|css)$/.test(url.pathname);
+  if(isAppCode){
+    // v1.0.102: 現在使用中のApp版をセッション中に混在させない。
+    // 新版は別CACHEへ事前取得し、ユーザーが「アプリを更新」を選ぶまで現行CACHEを優先する。
     event.respondWith((async()=>{
       const cache=await caches.open(CACHE);
-      try{const response=await fetch(event.request,{cache:'no-cache'});if(response.ok)await cache.put(event.request,response.clone());return response;}
-      catch(error){const cached=await cache.match(event.request,{ignoreSearch:true})||await caches.match(event.request,{ignoreSearch:true});if(cached)return cached;throw error;}
+      const cached=await cache.match(event.request,{ignoreSearch:true});
+      if(cached)return cached;
+      const response=await fetch(event.request,{cache:'no-cache'});
+      if(response.ok)await cache.put(event.request,response.clone());
+      return response;
     })());
     return;
   }

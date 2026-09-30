@@ -650,6 +650,22 @@ html.ra-embedded-facility #sectionDescription{
   html.ra-embedded-facility #sectionDescription{min-height:4.95em!important}
 }
 </style>
+
+<style id="ra-module-interaction-feedback-v102">
+:where(button,.btn,[role="button"],a.btn){transition:transform .09s ease,filter .11s ease,box-shadow .12s ease,background-color .12s ease,border-color .12s ease}
+:where(button,.btn,[role="button"],a.btn):focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#8b4a41) 45%,transparent);outline-offset:2px}
+:where(button,.btn,[role="button"],a.btn):active,.ra-feedback-hit{transform:translateY(1px) scale(.982)!important;filter:brightness(.84) saturate(1.08)!important}
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target]).active,
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target])[aria-selected="true"]{
+  background:color-mix(in srgb,var(--paper,#fffaf0) 68%,var(--accent,#8b4a41) 32%)!important;
+  border-color:var(--accent,#8b4a41)!important;
+  color:var(--ink,#2f241d)!important;
+  box-shadow:inset 0 -4px 0 var(--accent,#8b4a41),0 0 0 2px color-mix(in srgb,var(--accent,#8b4a41) 24%,transparent)!important;
+  font-weight:900!important;filter:saturate(1.08) brightness(1.02);
+}
+#saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
+@media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
+</style>
 </head>
 <body class="ra-app ra-player ra-facility">
 <header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.820 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
@@ -3243,4 +3259,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+<script id="ra-module-interaction-feedback-script-v102">
+(()=>{document.addEventListener('click',e=>{const el=e.target.closest?.('button,.btn,[role="button"],a.btn');if(!el||el.disabled||el.getAttribute('aria-disabled')==='true')return;el.classList.remove('ra-feedback-hit');void el.offsetWidth;el.classList.add('ra-feedback-hit');setTimeout(()=>el.classList.remove('ra-feedback-hit'),180);},true);})();
+</script>
 </body></html>
