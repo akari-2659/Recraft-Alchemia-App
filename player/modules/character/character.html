@@ -270,7 +270,6 @@
   .inventory-card:not([open]) .inventory-card-head::before { transform: rotate(-90deg); }
   .inventory-card:not([open]) .inventory-card-head { margin-bottom: 0; }
   .inventory-title { font-weight: 900; color: var(--accent2); }
-  .inventory-card:not([open]) .inventory-title::after { content: " / 折り畳み中"; color: var(--muted); font-size: .78rem; font-weight: 800; }
   #inventorySearchInput { width: 100%; }
   .inventory-card-meta { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px; }
   .inventory-card-meta .meta-item { border: 1px solid rgba(221, 203, 176, .75); border-radius: 10px; padding: 8px; background: rgba(255,255,255,.45); }
@@ -5743,10 +5742,10 @@ function characterSpellMasterForScroll(item={}){
   if(!/スクロール/.test(itemType+' '+name)||/未鑑定/.test(itemType+' '+name))return null;
   const rawId=String(row.masterId||row.id||'').trim();
   const spellId=rawId.startsWith('scroll_spell_')?rawId.slice('scroll_spell_'.length):'';
-  let spell=(DB_SPELL_MASTER||[]).find(r=>spellId&&String(r.id||'').trim()===spellId)||null;
+  let spell=(DB_INITIAL_SPELL_MASTER||[]).find(r=>spellId&&String(r.id||'').trim()===spellId)||null;
   if(!spell){
     const spellName=name.replace(/のスクロール$/,'').trim();
-    if(spellName&&spellName!==name)spell=(DB_SPELL_MASTER||[]).find(r=>String(r.name||'').trim()===spellName)||null;
+    if(spellName&&spellName!==name)spell=(DB_INITIAL_SPELL_MASTER||[]).find(r=>String(r.name||'').trim()===spellName)||null;
   }
   return spell;
 }
@@ -6652,21 +6651,8 @@ function inventoryWarehouseQuickText(item={}){
   return [
     `個数 ${item.count??0}`,
     inventoryRankLabel(item)||'',
-    (isAntiqueIndividualItem(item)||sameNameEquipmentCount(item)>1)?inventoryIndividualShortId(item):'',
-    (isAntiqueIndividualItem(item)||sameNameEquipmentCount(item)>1)&&item.power?`威力 ${item.power}`:'',
-    (isAntiqueIndividualItem(item)||sameNameEquipmentCount(item)>1)&&item.element?`属性 ${item.element}`:'',
-    (isAntiqueIndividualItem(item)||sameNameEquipmentCount(item)>1)?`${isAntiqueIndividualItem(item)?'固定強化':'強化'} ${equipmentUpgradeUsedSlots(parseUpgradeLines(item.upgradeEntries||item.upgradeLines||''))}/${resolvedEquipmentUpgradeLimit(item)||0}`:'',
     inventorySellPriceText(item.price)?`売値 ${inventorySellPriceText(item.price)}`:''
   ].filter(Boolean).join(' / ');
-}
-function inventoryWarehouseInlineMetaHtml(item={}){
-  if(!inventoryKindSupportsUpgradeLimit(item.kind))return '';
-  const entries=parseUpgradeLines(item.upgradeEntries||item.upgradeLines||'');
-  const used=equipmentUpgradeUsedSlots(entries),limit=resolvedEquipmentUpgradeLimit(item)||0;
-  const serialized=serializeUpgradeEntries(entries);
-  const rows=[`<div class="inventory-card-inline-meta-row"><b>強化枠</b><span>${esc(`${used} / ${limit}`)}</span></div>`];
-  if(serialized)rows.push(`<div class="inventory-card-inline-meta-row"><b>強化内容</b><span class="inventory-card-inline-upgrades">${esc(serialized)}</span></div>`);
-  return `<div class="inventory-card-inline-meta">${rows.join('')}</div>`;
 }
 function inventoryWarehouseCardHtml(item,index){
   if(isLearnedSpellInventoryRow(item))return '';
@@ -6678,7 +6664,7 @@ function inventoryWarehouseCardHtml(item,index){
   const namedOptions=parseNamedProcessingOptions(item.namedProcessingOptions);const namedApplied=!!String(item.appliedNamedProcessingId||'').trim();const namedClass=namedApplied?' named-process-applied':(namedOptions.length?' named-process-available':'');const namedBadge=namedApplied?'<span class="named-process-inline-badge applied">異名加工済</span>':(namedOptions.length?'<span class="named-process-inline-badge">異名加工可</span>':'');
   return `<article class="inventory-card inventory-card-static${namedClass}" data-inventory-row="${index}" data-inventory-stable-key="${esc(stable)}" data-inventory-id="${esc(item.id||'')}" data-inventory-location="倉庫" data-inventory-kind="${esc(item.kind||'アイテム')}" data-inventory-item-type="${esc(displayType)}" data-inventory-category="${esc(displayCategory)}" data-inventory-search="${esc(inventoryWarehouseCardSearchText(item))}">
     <div class="inventory-card-head">
-      <div><div class="inventory-title">${esc(title)}</div>${namedBadge?`<div class="named-process-badge-row">${namedBadge}</div>`:''}<div class="small">倉庫 / ${esc(displayType)} / ${esc(displayCategory)}<span data-inventory-quick-index="${index}">${quick?` / ${esc(quick)}`:''}</span></div>${inventoryWarehouseInlineMetaHtml(item)}</div>
+      <div><div class="inventory-title">${esc(title)}</div>${namedBadge?`<div class="named-process-badge-row">${namedBadge}</div>`:''}<div class="small">倉庫 / ${esc(displayType)} / ${esc(displayCategory)}<span data-inventory-quick-index="${index}">${quick?` / ${esc(quick)}`:''}</span></div></div>
       <div class="button-row" style="margin:0;">
         ${item.kind==='レシピ'?`<button type="button" class="secondary" data-inventory-action="learn-recipe" data-index="${index}" ${isRecipeLearned(item)?'disabled':''}>${isRecipeLearned(item)?'習得済み':'覚える'}</button>`:''}
         <button type="button" class="ghost inventory-detail-btn public-view-allowed" data-inventory-action="detail" data-index="${index}">詳細</button>
