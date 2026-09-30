@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リクラフト・アルケミア 統合DB管理ツール v90.8.820</title>
+<title>リクラフト・アルケミア 統合DB管理ツール v90.8.824</title>
 <style>
   :root{
     --bg:#f7f2ea;
@@ -325,7 +325,7 @@
   .facility-product summary{cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 12px;font-weight:800;color:var(--ink)}
   .facility-product summary::-webkit-details-marker{display:none}
   .facility-product summary::before{content:'▶';font-size:11px;color:var(--muted);margin-right:6px}
-  .facility-product[open] summary::before{content:'▼'}
+  .facility-product[open] summary::before{content:'▶';transform:rotate(90deg)}
   .facility-product-title{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
   .facility-product-price{font-size:13px;color:#6a4b2e;background:#f3e5d3;border-radius:999px;padding:3px 8px;white-space:nowrap}
   .facility-product-body{border-top:1px solid #ead9c2;padding:10px 12px;display:grid;gap:8px;color:var(--ink);font-size:13px;line-height:1.7}
@@ -1417,9 +1417,31 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
 #saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
 @media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
 </style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.108: DB管理の折り畳み記号・見出し幅を安定化 */
+:where(.facility-product,.ra-admin-fold,.advanced-filters,.help-card,.quest-event-row,.monster-card,.skill-result-card,.facility-removal-formula) { min-width:0!important; max-width:100%!important; }
+:where(.facility-product,.ra-admin-fold,.advanced-filters,.help-card,.quest-event-row,.monster-card,.skill-result-card,.facility-removal-formula) > summary { box-sizing:border-box!important; min-width:0!important; max-width:100%!important; width:100%!important; }
+:where(.facility-product,.ra-admin-fold,.monster-card,.skill-result-card,.facility-removal-formula) > summary::-webkit-details-marker { display:none!important; }
+:where(.facility-product,.ra-admin-fold,.monster-card,.skill-result-card,.facility-removal-formula) > summary::marker { content:""!important; }
+/* 商品カードは擬似要素もgrid itemになるため、矢印専用列を明示 */
+.facility-product > summary { display:grid!important; grid-template-columns:16px minmax(0,1fr) auto!important; align-items:center!important; gap:8px!important; }
+.facility-product > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; width:16px!important; min-width:16px!important; height:16px!important; margin:0!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; line-height:1!important; }
+.facility-product[open] > summary::before { content:"▶"!important; transform:rotate(90deg)!important; }
+.ra-admin-fold > summary { display:flex!important; align-items:center!important; overflow:hidden!important; }
+.ra-admin-fold > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; flex:0 0 16px!important; width:16px!important; min-width:16px!important; height:16px!important; margin:0 7px 0 0!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; line-height:1!important; position:static!important; float:none!important; }
+.ra-admin-fold[open] > summary::before { transform:rotate(90deg)!important; }
+/* native marker依存だったカードも絶対位置の矢印に統一。既存の未保存/開閉バッジは右側に残す */
+:where(.monster-card,.skill-result-card,.facility-removal-formula) > summary { position:relative!important; padding-left:36px!important; overflow:hidden!important; }
+:where(.monster-card,.skill-result-card,.facility-removal-formula) > summary::before { content:"▶"!important; position:absolute!important; left:12px!important; top:50%!important; width:16px!important; height:16px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; transform:translateY(-50%) rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; line-height:1!important; color:var(--accent)!important; }
+:where(.monster-card,.skill-result-card,.facility-removal-formula)[open] > summary::before { transform:translateY(-50%) rotate(90deg)!important; }
+:where(.facility-product,.ra-admin-fold,.advanced-filters,.help-card,.quest-event-row,.monster-card,.skill-result-card,.facility-removal-formula) > summary > * { min-width:0; max-width:100%; }
+@media(max-width:760px){ .facility-product > summary { grid-template-columns:16px minmax(0,1fr)!important; } .facility-product-price { grid-column:2!important; justify-self:start!important; } }
+</style>
+
 </head>
 <body class="ra-app ra-manager ra-database">
-<div class="ra-build-info">Version：v90.8.820 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.824 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="title-card">
@@ -2067,7 +2089,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
             <div id="facilitySkillGachaStatus" class="skill-admin-status ok">抽選結果だけを表示します。キャラクターの読込・保存は行いません。</div>
             <div id="facilitySkillGachaCost" class="skill-fragment-line">必要★合計：10</div>
             <div id="facilitySkillGachaResults" class="skill-result-grid"></div>
-            <details><summary id="facilitySkillGachaRateSummary">★1排出率</summary><div class="skill-prob-wrap"><table class="skill-prob-table"><thead><tr><th>スキル</th><th>分類</th><th>ウェイト</th><th>排出率</th></tr></thead><tbody id="facilitySkillGachaProbBody"></tbody></table></div></details>
+            <details class="ra-admin-fold"><summary id="facilitySkillGachaRateSummary">★1排出率</summary><div class="skill-prob-wrap"><table class="skill-prob-table"><thead><tr><th>スキル</th><th>分類</th><th>ウェイト</th><th>排出率</th></tr></thead><tbody id="facilitySkillGachaProbBody"></tbody></table></div></details>
           </div>
         </div>
         <div id="facilityNoWork" class="facility-upgrade-result muted hidden">この施設には強化・調合の難易度確認項目はありません。</div>
@@ -2099,7 +2121,7 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
   </section>
 
   <section class="panel">
-    <details>
+    <details class="ra-admin-fold">
       <summary>シート構成メモ</summary>
       <p class="notice">
         作成されるシートは <span class="kbd">アイテム種別</span>、<span class="kbd">アイテムカテゴリ</span>、<span class="kbd">素材種別</span>、<span class="kbd">素材カテゴリ</span>、<span class="kbd">素材ランク</span>、<span class="kbd">装備カテゴリ</span>、<span class="kbd">アイテム</span>、<span class="kbd">レシピ</span>、<span class="kbd">術式</span>、<span class="kbd">依頼報酬</span>、<span class="kbd">クエスト</span>、<span class="kbd">探索エリア</span>、<span class="kbd">イベント表</span>、<span class="kbd">魔物</span>。<br>
@@ -2166,12 +2188,12 @@ html.ra-web-embedded .monster-card-actions{padding-left:10px!important;padding-r
     <div class="modal-foot"><button type="button" class="ghost" data-facility-general-area-cancel>キャンセル</button><button type="button" data-facility-general-area-apply>選択を適用</button></div>
   </div>
 </div>
-<script src="../../../js/ra_monster_rules.js?v=90.8.820"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.824"></script>
 <script>
 // ローカル管理ツールから毎回URLを入力しない運用にする場合は、ここにApps Scriptの /exec URLを入れてください。
 const DEFAULT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
-const RECRAFT_DB_VERSION = 'v90.8.820';
-const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.820';
+const RECRAFT_DB_VERSION = 'v90.8.824';
+const RECRAFT_DB_REQUIRED_SERVER_VERSION = 'v90.8.824';
 const DB_ID = '1c9nmVu-O6o3AcnLHJ5SwmT0oRy5lDEhRw4YuM6BMPZ8';
 const DATA_KEYS = ['item_types','item_categories','material_types','material_categories','material_ranks','equipment_categories','items','recipes','spells','skills','quest_rewards','quests','exploration_areas','event_tables','treasure_tables','appraisal_rules','monsters'];
 const FULL_DB_KEYS = [...DATA_KEYS];

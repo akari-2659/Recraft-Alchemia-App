@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 魔物図鑑管理 v90.8.820</title>
+<title>リクラフト・アルケミア 魔物図鑑管理 v90.8.824</title>
 <style>
 :root{--bg:#f7f2e8;--paper:#fffaf3;--paper2:#f2e5d1;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;--accent:#8b5e34;--accent2:#bd8242;--good:#23724b;--bad:#a43d35;--shadow:0 14px 34px rgba(82,52,24,.13)}
 *{box-sizing:border-box}html,body{max-width:100%;overflow-x:hidden}body{margin:0;font-family:"Yu Gothic","Hiragino Sans",system-ui,sans-serif;background:linear-gradient(180deg,#fff8ea 0%,var(--bg) 44%,#eee0cb 100%);color:var(--ink);min-height:100svh}
@@ -28,8 +28,24 @@ main{width:min(1180px,100%);margin:auto;padding:18px;display:grid;gap:14px}.pane
 #saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
 @media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
 </style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.108: 図鑑管理の折り畳み記号を固定 */
+:where(.area-group,.monster-card,.action-card) { min-width:0!important; max-width:100%!important; }
+:where(.area-group,.monster-card,.action-card) > summary { box-sizing:border-box!important; list-style:none!important; position:relative!important; min-width:0!important; max-width:100%!important; width:100%!important; padding-left:38px!important; overflow:hidden!important; }
+:where(.area-group,.monster-card,.action-card) > summary::-webkit-details-marker { display:none!important; }
+:where(.area-group,.monster-card,.action-card) > summary::marker { content:""!important; }
+:where(.area-group,.monster-card,.action-card) > summary::before {
+  content:"▶"!important; position:absolute!important; left:14px!important; top:50%!important; width:16px!important; height:16px!important;
+  display:inline-flex!important; align-items:center!important; justify-content:center!important; color:var(--accent)!important; font-size:.72rem!important; line-height:1!important;
+  transform:translateY(-50%) rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important;
+}
+:where(.area-group,.monster-card,.action-card)[open] > summary::before { transform:translateY(-50%) rotate(90deg)!important; }
+:where(.area-group,.monster-card,.action-card) > summary > * { min-width:0; max-width:100%; }
+</style>
+
 </head>
-<body class="ra-app"><header><div class="header-inner"><div><div class="eyebrow">BESTIARY MANAGEMENT</div><h1>魔物図鑑管理</h1></div><div class="version">RA v90.8.820</div></div></header>
+<body class="ra-app"><header><div class="header-inner"><div><div class="eyebrow">BESTIARY MANAGEMENT</div><h1>魔物図鑑管理</h1></div><div class="version">RA v90.8.824</div></div></header>
 <main>
 <section class="panel"><div class="summary-row"><p class="notice">プレイヤー側の魔物図鑑へ公開する情報を管理します。通常個体・二つ名個体の両方が対象です。効果を公開すると、その行動情報も自動で公開されます。</p><button id="reloadBtn" type="button" class="secondary">再読込</button></div></section>
 <section class="panel"><div class="toolbar"><div class="field"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="魔物名・エリア名で検索"></div><div class="field"><label for="areaFilter">エリア</label><select id="areaFilter"><option value="">全エリア</option></select></div><div class="field"><label>&nbsp;</label><button id="clearFilterBtn" type="button" class="secondary">絞り込み解除</button></div></div></section>
@@ -174,7 +190,7 @@ async function saveDirty(){
   $('status').className=failed?'status error':'status ok';
   $('status').textContent=failed?`100%（${saved}体保存 / ${failed}体失敗）`:`100%（${saved}体保存完了）`;
 }
-async function load(){if(busy)return;busy=true;$('reloadBtn').disabled=true;$('status').className='status';$('status').textContent='図鑑データと公開状態を読み込んでいます…';try{const [raw,disc]=await Promise.all([fetch(MASTER_URL+'?v=1.0.102',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('魔物マスターを読み込めませんでした。');return r.json()}),jsonp({action:'bestiaryDisclosureList'})]),src=raw?.data&&typeof raw.data==='object'?raw.data:raw;master={exploration_areas:Array.isArray(src?.exploration_areas)?src.exploration_areas:[],monsters:Array.isArray(src?.monsters)?src.monsters:[]};if(!disc||disc.ok===false)throw new Error(disc?.error||'図鑑公開状態を読み込めませんでした。');disclosures=disc.disclosures||{};draftDisclosures={};dirtyMonsterIds.clear();setBulkSaveProgress(0,0,{visible:false});fillAreas();render()}catch(e){$('status').className='status error';$('status').textContent=String(e?.message||e)+'　※ code.txt を更新した場合はGASの再デプロイも必要です。';$('areaList').innerHTML=''}finally{busy=false;$('reloadBtn').disabled=false}}
+async function load(){if(busy)return;busy=true;$('reloadBtn').disabled=true;$('status').className='status';$('status').textContent='図鑑データと公開状態を読み込んでいます…';try{const [raw,disc]=await Promise.all([fetch(MASTER_URL+'?v=1.0.108',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('魔物マスターを読み込めませんでした。');return r.json()}),jsonp({action:'bestiaryDisclosureList'})]),src=raw?.data&&typeof raw.data==='object'?raw.data:raw;master={exploration_areas:Array.isArray(src?.exploration_areas)?src.exploration_areas:[],monsters:Array.isArray(src?.monsters)?src.monsters:[]};if(!disc||disc.ok===false)throw new Error(disc?.error||'図鑑公開状態を読み込めませんでした。');disclosures=disc.disclosures||{};draftDisclosures={};dirtyMonsterIds.clear();setBulkSaveProgress(0,0,{visible:false});fillAreas();render()}catch(e){$('status').className='status error';$('status').textContent=String(e?.message||e)+'　※ code.txt を更新した場合はGASの再デプロイも必要です。';$('areaList').innerHTML=''}finally{busy=false;$('reloadBtn').disabled=false}}
 $('reloadBtn').addEventListener('click',load);
 $('searchInput').addEventListener('input',render);
 $('areaFilter').addEventListener('change',render);

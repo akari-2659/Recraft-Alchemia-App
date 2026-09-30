@@ -1,4 +1,4 @@
-const APP_VERSION='1.0.102';
+const APP_VERSION='1.0.108';
 const CACHE=`ra-gm-player-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-player-app-v';
 const APP_FILES=[
@@ -29,7 +29,7 @@ self.addEventListener('fetch',event=>{
   if(url.pathname.endsWith('/gm-player/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
   const isAppCode=event.request.mode==='navigate'||/\.(?:html|js|css)$/.test(url.pathname);
   if(isAppCode){
-    // v1.0.102: 現在使用中のApp版をセッション中に混在させない。
+    // v1.0.108: 現在使用中のApp版をセッション中に混在させない。
     // 新版は別CACHEへ事前取得し、ユーザーが「アプリを更新」を選ぶまで現行CACHEを優先する。
     event.respondWith((async()=>{
       const cache=await caches.open(CACHE);

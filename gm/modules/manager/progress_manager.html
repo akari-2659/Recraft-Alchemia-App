@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.820</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.824</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -339,9 +339,22 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 #saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
 @media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
 </style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.108: 進行管理の折り畳み記号を固定 */
+:where(.ra-progress-load-fold,.progress-fold) { min-width:0!important; max-width:100%!important; }
+:where(.ra-progress-load-fold,.progress-fold) > summary { box-sizing:border-box!important; list-style:none!important; display:flex!important; align-items:center!important; min-width:0!important; max-width:100%!important; width:100%!important; overflow:hidden!important; }
+:where(.ra-progress-load-fold,.progress-fold) > summary::-webkit-details-marker { display:none!important; }
+:where(.ra-progress-load-fold,.progress-fold) > summary::marker { content:""!important; }
+.ra-progress-load-fold > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; flex:0 0 17px!important; width:17px!important; min-width:17px!important; height:17px!important; margin:0 7px 0 0!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; position:static!important; float:none!important; line-height:1!important; }
+.ra-progress-load-fold[open] > summary::before { transform:rotate(90deg)!important; }
+.progress-fold > summary::after { flex:0 0 18px!important; width:18px!important; min-width:18px!important; margin-left:auto!important; text-align:center!important; float:none!important; line-height:1!important; }
+:where(.ra-progress-load-fold,.progress-fold) > summary > * { min-width:0; max-width:100%; }
+</style>
+
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.820 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.824 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="header-inner">
@@ -646,10 +659,10 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </div>
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=90.8.820"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.824"></script>
 <script>
 'use strict';
-const VERSION='v90.8.820';
+const VERSION='v90.8.824';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
