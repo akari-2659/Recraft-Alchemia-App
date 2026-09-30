@@ -30,36 +30,24 @@ let master={exploration_areas:[],monsters:[]},disclosures={},draftDisclosures={}
 function jsonp(data,timeout=30000){return new Promise((resolve,reject)=>{const cb='raBestiaryCb_'+Date.now()+'_'+Math.random().toString(36).slice(2),sc=document.createElement('script');let done=false;const timer=setTimeout(()=>finish(false,new Error('図鑑データの読み込みがタイムアウトしました。')),timeout);function clean(){clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}sc.remove()}function finish(ok,v){if(done)return;done=true;clean();ok?resolve(v):reject(v)}window[cb]=v=>finish(true,v);try{const u=new URL(DEFAULT_GAS_WEB_APP_URL);u.searchParams.set('api','1');u.searchParams.set('callback',cb);Object.entries(data||{}).forEach(([k,v])=>{if(v!==undefined&&v!==null)u.searchParams.set(k,typeof v==='object'?JSON.stringify(v):String(v))});u.searchParams.set('_t',Date.now());sc.src=u.toString();sc.onerror=()=>finish(false,new Error('図鑑データへ接続できませんでした。'));document.head.appendChild(sc)}catch(e){finish(false,e)}})}
 function post(action,payload,timeout=45000,probe=null){
   return new Promise((resolve,reject)=>{
-    const token=String(payload?.token||''),attempts=[];
-    let done=false,probeStarter=0,probeTimer=0,retryTimer=0,probing=false,attemptNo=0;
-    function clean(){
-      if(probeStarter)clearTimeout(probeStarter);if(probeTimer)clearInterval(probeTimer);if(retryTimer)clearInterval(retryTimer);
-      window.removeEventListener('message',onMessage);
-      attempts.forEach(({frame,form})=>setTimeout(()=>{try{frame.remove();form.remove();}catch(_){}},0));
-    }
+    const token=String(payload?.token||''),frames=[];
+    let done=false,probeStarter=0,probeTimer=0,retryTimer=0,timeoutTimer=0,probing=false,attemptNo=0;
+    function clean(){if(probeStarter)clearTimeout(probeStarter);if(probeTimer)clearInterval(probeTimer);if(retryTimer)clearInterval(retryTimer);if(timeoutTimer)clearTimeout(timeoutTimer);window.removeEventListener('message',onMessage);frames.forEach(frame=>setTimeout(()=>{try{frame.remove();}catch(_){}},0));}
     function finish(ok,v){if(done)return;done=true;clean();ok?resolve(v):reject(v)}
     async function runProbe(){if(done||probing||typeof probe!=='function')return;probing=true;try{const verified=await probe();if(verified)finish(true,verified)}catch(_){}finally{probing=false}}
-    function onMessage(e){
-      const d=e.data||{};if(d.type!=='recraft-db-post-result'||String(d.token||'')!==token)return;
-      const result=d.result||{ok:false,error:'保存結果が空です。'};
-      if(result.ok===false){finish(false,new Error(result.error||'保存に失敗しました。'));return;}
-      finish(true,result);
-    }
+    function onMessage(e){const d=e.data||{};if(d.type!=='recraft-db-post-result'||String(d.token||'')!==token)return;const result=d.result||{ok:false,error:'保存結果が空です。'};if(result.ok===false){finish(false,new Error(result.error||'保存に失敗しました。'));return;}finish(true,result);}
     function submitAttempt(){
       if(done)return;attemptNo++;
-      const frame=document.createElement('iframe'),form=document.createElement('form'),name='raBestiaryPost_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2);
-      frame.name=name;frame.style.display='none';frame.setAttribute('aria-hidden','true');
-      form.method='POST';form.target=name;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
-      const u=new URL(DEFAULT_GAS_WEB_APP_URL);u.searchParams.set('action',action);u.searchParams.set('responseMode','postMessage');u.searchParams.set('token',token);form.action=u.toString();
-      const field=document.createElement('textarea');field.name='payload';field.value=JSON.stringify(payload||{});field.style.display='none';form.appendChild(field);
-      attempts.push({frame,form});document.body.append(frame,form);try{form.submit()}catch(_){}
+      const frame=document.createElement('iframe');frame.name='raBestiaryPost_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2);frame.style.display='none';frame.setAttribute('aria-hidden','true');document.body.appendChild(frame);frames.push(frame);
+      try{const doc=frame.contentDocument||frame.contentWindow?.document;if(!doc)throw new Error('図鑑保存用通信フレームを初期化できませんでした。');const form=doc.createElement('form'),u=new URL(DEFAULT_GAS_WEB_APP_URL);u.searchParams.set('action',action);u.searchParams.set('responseMode','postMessage');u.searchParams.set('token',token);form.method='POST';form.action=u.toString();form.enctype='application/x-www-form-urlencoded';form.acceptCharset='UTF-8';const field=doc.createElement('input');field.type='hidden';field.name='payload';field.value=JSON.stringify(payload||{});form.appendChild(field);doc.body.appendChild(form);form.submit();}
+      catch(error){try{frame.remove();}catch(_){}const idx=frames.indexOf(frame);if(idx>=0)frames.splice(idx,1);if(attemptNo===1)finish(false,error);}
     }
-    window.addEventListener('message',onMessage);
-    if(typeof probe==='function')probeStarter=setTimeout(()=>{runProbe();probeTimer=setInterval(runProbe,1800)},900);
-    submitAttempt();
-    retryTimer=setInterval(()=>{runProbe();submitAttempt()},Math.max(8000,Math.min(15000,Number(timeout)||12000)));
+    window.addEventListener('message',onMessage);if(typeof probe==='function')probeStarter=setTimeout(()=>{runProbe();probeTimer=setInterval(runProbe,1800)},900);submitAttempt();if(done)return;
+    retryTimer=setInterval(()=>{runProbe();submitAttempt()},Math.max(8000,Math.min(15000,Math.floor((Number(timeout)||45000)/4))));
+    timeoutTimer=setTimeout(()=>finish(false,new Error('図鑑保存の応答確認がタイムアウトしました。')),Math.max(15000,Number(timeout)||45000));
   });
 }
+
 function actions(text=''){
   return String(text||'').split(/\r?\n/).map(line=>String(line||'').trim()).filter(Boolean).map(line=>{
     const cols=line.split('\t');
@@ -170,7 +158,7 @@ async function saveDirty(){
   $('status').className=failed?'status error':'status ok';
   $('status').textContent=failed?`100%（${saved}体保存 / ${failed}体失敗）`:`100%（${saved}体保存完了）`;
 }
-async function load(){if(busy)return;busy=true;$('reloadBtn').disabled=true;$('status').className='status';$('status').textContent='図鑑データと公開状態を読み込んでいます…';try{const [raw,disc]=await Promise.all([fetch(MASTER_URL+'?v=1.0.98',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('魔物マスターを読み込めませんでした。');return r.json()}),jsonp({action:'bestiaryDisclosureList'})]),src=raw?.data&&typeof raw.data==='object'?raw.data:raw;master={exploration_areas:Array.isArray(src?.exploration_areas)?src.exploration_areas:[],monsters:Array.isArray(src?.monsters)?src.monsters:[]};if(!disc||disc.ok===false)throw new Error(disc?.error||'図鑑公開状態を読み込めませんでした。');disclosures=disc.disclosures||{};draftDisclosures={};dirtyMonsterIds.clear();setBulkSaveProgress(0,0,{visible:false});fillAreas();render()}catch(e){$('status').className='status error';$('status').textContent=String(e?.message||e)+'　※ code.txt を更新した場合はGASの再デプロイも必要です。';$('areaList').innerHTML=''}finally{busy=false;$('reloadBtn').disabled=false}}
+async function load(){if(busy)return;busy=true;$('reloadBtn').disabled=true;$('status').className='status';$('status').textContent='図鑑データと公開状態を読み込んでいます…';try{const [raw,disc]=await Promise.all([fetch(MASTER_URL+'?v=1.0.99',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('魔物マスターを読み込めませんでした。');return r.json()}),jsonp({action:'bestiaryDisclosureList'})]),src=raw?.data&&typeof raw.data==='object'?raw.data:raw;master={exploration_areas:Array.isArray(src?.exploration_areas)?src.exploration_areas:[],monsters:Array.isArray(src?.monsters)?src.monsters:[]};if(!disc||disc.ok===false)throw new Error(disc?.error||'図鑑公開状態を読み込めませんでした。');disclosures=disc.disclosures||{};draftDisclosures={};dirtyMonsterIds.clear();setBulkSaveProgress(0,0,{visible:false});fillAreas();render()}catch(e){$('status').className='status error';$('status').textContent=String(e?.message||e)+'　※ code.txt を更新した場合はGASの再デプロイも必要です。';$('areaList').innerHTML=''}finally{busy=false;$('reloadBtn').disabled=false}}
 $('reloadBtn').addEventListener('click',load);
 $('searchInput').addEventListener('input',render);
 $('areaFilter').addEventListener('change',render);
