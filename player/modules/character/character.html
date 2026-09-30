@@ -2192,13 +2192,6 @@ function setCharacterSpecialSaveStatus(message,{automatic=false}={}){
   if(automatic){setAutoSaveStatus(String(message||''),'saving');return;}
   const el=$('editorStatus');if(!el)return;el.className='status-box';el.textContent=String(message||'');
 }
-async function characterEnsureStorageBeforeSave({automatic=false}={}){
-  if(currentMode==='new'||!currentCharacter?.id||cloudCharacterRowHint<2||cloudCharacterFolderReady)return;
-  setCharacterSpecialSaveStatus('既存キャラクターデータを移行しています…',{automatic});
-  const auth=getCloudAuth();
-  const res=await cloudRequest('ensureStorageStructure',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint});
-  cloudCharacterFolderReady=!!res?.ready;
-}
 async function characterCreateHistoryBeforeSave({automatic=false,force=false}={}){
   if(currentMode==='new'||!currentCharacter?.id||cloudCharacterRowHint<2)return;
   const due=!automatic||force||!characterLastHistoryAt||(Date.now()-characterLastHistoryAt>=10*60*1000);
@@ -2228,7 +2221,6 @@ async function saveCharacterNow({automatic=false,force=false}={}){
   // 新規作成と明示forceだけがDrive全体保存になる。
   const usePatch=!force&&currentMode!=='new'&&cloudCharacterRowHint>=2&&autoSaveDirtySections.size>0;
   try{
-    await characterEnsureStorageBeforeSave({automatic});
     await characterCreateHistoryBeforeSave({automatic,force});
   }catch(sequenceError){
     if(automatic)setAutoSaveStatus(`保存前処理に失敗しました：${sequenceError.message||sequenceError}`,'error');
@@ -2257,6 +2249,8 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     const hash=autoSaveContentHash(data);
     if(!force&&hash===autoSaveLastSavedHash){autoSaveDirty=false;autoSaveDirtySections.clear();setAutoSaveStatus('自動保存済み','ok');return {saved:false,unchanged:true};}
   }
+  const wasNewCharacter=currentMode==='new';
+  const previousCharacterName=String(currentCharacter?.name||'');
   const savingSections=new Set(autoSaveDirtySections);
   // 送信対象を現在のDirty集合から切り離す。await中に同じ区分が再編集された場合は、新しいDirtyとして残す。
   if(savingSections.has('all')) autoSaveDirtySections.clear();
@@ -2271,7 +2265,7 @@ async function saveCharacterNow({automatic=false,force=false}={}){
     cloudCharacterFolderReady=true;
     if(usePatch){currentCharacter={...(currentCharacter||{}),...patch};}
     else{currentCharacter=data;autoSaveLastSavedHash=autoSaveContentHash(data);}
-    const listMayHaveChanged=currentMode==='new'||(!usePatch&&String(currentCharacter?.name||'')!==String(data?.name||''))||(usePatch&&Object.prototype.hasOwnProperty.call(patch||{},'name'));
+    const listMayHaveChanged=wasNewCharacter||previousCharacterName!==String(currentCharacter?.name||'');
     currentMode='edit';
     try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_SAVED',id:String(currentCharacter?.id||''),name:String(currentCharacter?.name||''),updatedAt:String(currentCharacter?.updatedAt||patch?.updatedAt||''),revision:Number(cloudCharacterRevision||0)||0,storageRow:Number(cloudCharacterRowHint||0)||0},location.origin)}catch(_){}
     if(listMayHaveChanged){try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'RA_CHARACTER_LIST_CHANGED'},location.origin)}catch(_){}}
@@ -7975,7 +7969,7 @@ async function refreshCharacterHistory(){
 }
 async function createCharacterHistoryNow(){
   if(currentMode==='new'||!currentCharacter?.id)return;
-  const status=$('historyStatus');try{if(status){status.className='status-box';status.textContent='復元ポイントを作成しています…';}await characterEnsureStorageBeforeSave({automatic:false});const auth=getCloudAuth();await cloudRequest('historyCreate',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint,kind:'manual'});characterLastHistoryAt=Date.now();await refreshCharacterHistory();}catch(e){if(status){status.className='status-box error';status.textContent=e.message||String(e);}}
+  const status=$('historyStatus');try{if(status){status.className='status-box';status.textContent='復元ポイントを作成しています…';}const auth=getCloudAuth();await cloudRequest('historyCreate',{id:currentCharacter.id,playerKey:auth.playerKey,rowHint:cloudCharacterRowHint,kind:'manual'});characterLastHistoryAt=Date.now();await refreshCharacterHistory();}catch(e){if(status){status.className='status-box error';status.textContent=e.message||String(e);}}
 }
 async function restoreCharacterHistory(fileId){
   if(!fileId||!currentCharacter?.id)return;
@@ -8261,14 +8255,21 @@ function cloudPostMessageRequest(action, payload={}, timeoutMs=60000) {
   return new Promise((resolve,reject)=>{
     const url=gasUrl();
     if(!url){reject(new Error('GAS WebアプリURLが未設定です。'));return;}
-    const token='charpost_'+Date.now()+'_'+Math.random().toString(36).slice(2),attempts=[];
-    let settled=false,retryTimer=0,attemptNo=0;
+    const token='charpost_'+Date.now()+'_'+Math.random().toString(36).slice(2),frames=[];
+    let settled=false,retryTimer=0,timeoutTimer=0,attemptNo=0;
     function cleanup(){
-      if(retryTimer)clearInterval(retryTimer);window.removeEventListener('message',onMessage);
-      attempts.forEach(({form,frame})=>setTimeout(()=>{try{form.remove();frame.remove();}catch(_){}},0));
+      if(retryTimer)clearInterval(retryTimer);
+      if(timeoutTimer)clearTimeout(timeoutTimer);
+      window.removeEventListener('message',onMessage);
+      frames.forEach(frame=>setTimeout(()=>{try{frame.remove();}catch(_){}},0));
     }
     function finishResolve(value){if(settled)return;settled=true;cleanup();resolve(value);}
-    function finishReject(error){if(settled)return;settled=true;cleanup();reject(error);}
+    function finishReject(error){
+      if(settled)return;
+      settled=true;
+      try{error.postToken=token;}catch(_){}
+      cleanup();reject(error);
+    }
     function onMessage(event){
       const data=event.data||{};if(data.type!=='recraft-db-post-result'||String(data.token||'')!==token)return;
       const result=data.result||{ok:false,error:'クラウド保存結果が空です。'};
@@ -8276,15 +8277,35 @@ function cloudPostMessageRequest(action, payload={}, timeoutMs=60000) {
       finishResolve({...result,acknowledged:true});
     }
     function submitAttempt(){
-      if(settled)return;attemptNo++;
-      const frame=document.createElement('iframe'),frameName='recraftCharPost_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2),form=document.createElement('form');
-      frame.name=frameName;frame.style.display='none';frame.setAttribute('aria-hidden','true');
-      form.method='POST';const actionUrl=new URL(url);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);form.action=actionUrl.toString();form.target=frameName;form.enctype='text/plain';form.acceptCharset='UTF-8';form.style.display='none';
-      const field=document.createElement('textarea');field.name='payload';field.value=JSON.stringify({...payload,token});field.style.display='none';form.appendChild(field);
-      attempts.push({form,frame});document.body.appendChild(frame);document.body.appendChild(form);try{form.submit();}catch(_){}
+      if(settled)return;
+      attemptNo++;
+      const frame=document.createElement('iframe');
+      frame.name='recraftCharPost_'+Date.now()+'_'+attemptNo+'_'+Math.random().toString(36).slice(2);
+      frame.style.display='none';frame.setAttribute('aria-hidden','true');
+      document.body.appendChild(frame);frames.push(frame);
+      try{
+        // v1.0.99: 外側documentにformを置いてtarget名でiframeへ飛ばす方式を廃止。
+        // about:blank のiframe自身のdocument内にformを作り、target未指定でそのiframeだけを遷移させる。
+        // target解決競合でGAS画面がキャラシ本体へ露出する経路を物理的に無くす。
+        const doc=frame.contentDocument||frame.contentWindow?.document;
+        if(!doc)throw new Error('保存用通信フレームを初期化できませんでした。');
+        if(!doc.body){doc.open();doc.write('<!doctype html><html><body></body></html>');doc.close();}
+        const form=doc.createElement('form');
+        const actionUrl=new URL(url);actionUrl.searchParams.set('action',action);actionUrl.searchParams.set('responseMode','postMessage');actionUrl.searchParams.set('token',token);
+        form.method='POST';form.action=actionUrl.toString();form.enctype='application/x-www-form-urlencoded';form.acceptCharset='UTF-8';
+        const field=doc.createElement('input');field.type='hidden';field.name='payload';field.value=JSON.stringify({...payload,token});form.appendChild(field);
+        doc.body.appendChild(form);form.submit();
+      }catch(error){
+        try{frame.remove();}catch(_){}
+        const idx=frames.indexOf(frame);if(idx>=0)frames.splice(idx,1);
+        if(attemptNo===1)finishReject(error);
+      }
     }
     window.addEventListener('message',onMessage);submitAttempt();
-    retryTimer=setInterval(submitAttempt,Math.max(8000,Math.min(15000,Number(timeoutMs)||12000)));
+    if(settled)return;
+    const retryMs=Math.max(8000,Math.min(15000,Math.floor((Number(timeoutMs)||60000)/4)));
+    retryTimer=setInterval(submitAttempt,retryMs);
+    timeoutTimer=setTimeout(()=>finishReject(new Error('クラウド保存の応答確認がタイムアウトしました。')),Math.max(15000,Number(timeoutMs)||60000));
   });
 }
 async function cloudRequest(action, payload={}) {
@@ -8309,7 +8330,7 @@ async function cloudRequest(action, payload={}) {
     }
     throw lastError||new Error('DB読み込みに失敗しました。');
   }
-  if (action === 'save' || action === 'savePatch' || action === 'delete' || action === 'ensureStorageStructure' || action === 'historyCreate' || action === 'historyRestore' || action === 'historyRestoreInventoryCounts') {
+  if (action === 'save' || action === 'savePatch' || action === 'delete' || action === 'historyCreate' || action === 'historyRestore' || action === 'historyRestoreInventoryCounts') {
     // v90.8.594: 1回の応答付きPOSTで完了する。旧no-cors経路は互換フォールバックのみ。
     try{
       return await cloudPostMessageRequest(action,payload);
@@ -8318,7 +8339,7 @@ async function cloudRequest(action, payload={}) {
       // 通信経路そのものが失敗した時だけ互換フォールバックを使う。
       if(postError&&postError.cloudAcknowledged)throw postError;
       console.warn('acknowledged cloud POST failed; fallback to no-cors POST',postError);
-      return await cloudNoCorsPost(action,payload);
+      return await cloudNoCorsPost(action,postError?.postToken?{...payload,token:postError.postToken}:payload);
     }
   }
 
@@ -8914,7 +8935,7 @@ function sleepMs(ms) {
 }
 async function verifyCloudCharacterSave(data, playerKey) {
   const expectedHash=autoSaveContentHash(data);
-  for(let attempt=0;;attempt++){
+  for(let attempt=0;attempt<10;attempt++){
     if(attempt>0)await sleepMs(Math.min(4000,650+attempt*250));
     try{
       const res=await cloudRequest('load',{id:data.id,playerKey});
@@ -8922,6 +8943,7 @@ async function verifyCloudCharacterSave(data, playerKey) {
       if(loaded&&autoSaveContentHash(loaded)===expectedHash)return res;
     }catch(_){}
   }
+  throw new Error('保存要求は送信されましたが、クラウド上の保存完了を確認できませんでした。再読み込みして内容を確認してください。');
 }
 async function saveItem(data) {
   const auth = getCloudAuth();
@@ -8950,7 +8972,7 @@ async function saveItem(data) {
   return { saved:true, cloudSaved:true, verified:true, acknowledged:!!(saveResult&&saveResult.acknowledged) };
 }
 async function verifyCloudCharacterPatch(id, patch, playerKey) {
-  for(let attempt=0;;attempt++){
+  for(let attempt=0;attempt<10;attempt++){
     if(attempt>0)await sleepMs(Math.min(4000,650+attempt*250));
     try{
       const verify=await cloudRequest('load',{id,playerKey});
@@ -8959,6 +8981,7 @@ async function verifyCloudCharacterPatch(id, patch, playerKey) {
       if(!mismatch)return verify;
     }catch(_){}
   }
+  throw new Error('差分保存要求は送信されましたが、クラウド上の反映を確認できませんでした。再読み込みして内容を確認してください。');
 }
 async function savePatchItem(id,patch={}){
   const auth=getCloudAuth();
@@ -9913,9 +9936,9 @@ async function copyShareUrlForListItem(id) {
 
 async function onSave() {
   clearAutoSaveTimer();
-  // v1.0.52: 既存キャラの手動保存も、変更区分が分かる限り高速差分保存を使う。
-  // 新規キャラはsaveCharacterNow側で自動的にフル保存へ切り替わる。
-  await saveCharacterNow({automatic:false,force:false});
+  // v1.0.99: 手動保存はDirty判定に依存せず、その瞬間のキャラシ全体を必ずフル保存する。
+  // 自動保存だけが軽量な差分保存を使用する。
+  await saveCharacterNow({automatic:false,force:true});
 }
 
 function bindEvents() {
