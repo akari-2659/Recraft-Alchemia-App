@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.102';
+  const APP_VERSION='1.0.108';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const app=document.querySelector('#playerApp'),authError=document.querySelector('#authError');
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
@@ -125,6 +125,49 @@
         body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.42!important;filter:saturate(.70) brightness(1)!important}
         body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node.route-focus{opacity:1!important;filter:none!important}
         @media(max-width:720px){body.ra-app .branch-graph-node-name-inline{font-size:14px!important;line-height:1.2!important}body.ra-app .branch-graph-scroll.has-route-focus .branch-graph-node{opacity:.36!important}}
+      `;
+
+      let visibilityStyle=doc.getElementById('raAppThemeVisibilityV104');
+      if(!visibilityStyle){visibilityStyle=doc.createElement('style');visibilityStyle.id='raAppThemeVisibilityV104';doc.head?.appendChild(visibilityStyle)}
+      visibilityStyle.textContent=`
+        /* v1.0.108: theme-aware visibility normalization. Keep all themes readable without DOM scanning. */
+        body.ra-app :is(
+          .title-card,.table-wrap,.facility-summary-card,.facility-card,.facility-product,.facility-upgrade-box,
+          .facility-upgrade-result,.facility-fortune-result,.help-card,.monster-card,.monster-card-body,
+          .monster-action-card,.monster-drop-card,.record-field,.guild-quest-card,.guild-support-status,
+          .guild-support-card,.facility-branch-section,.upload-progress-panel,.skill-admin-status,.skill-result-card,
+          .crystal-upgrade-card,.copyist-result-card,.recipe-merchant-card,.area-select-modal-card,.progress-modal-card,
+          .bestiary-dialog,.bestiary-area,.bestiary-monster,.bestiary-stat,.bestiary-passive,.bestiary-action,
+          .encounter-drop-result-group,.responsive-data-table tr,.responsive-data-table td,.admin-global-search-panel,
+          .admin-global-search-card,.record-list-search,.community-manager-card,.event-card,.result,.status
+        ){background:var(--paper)!important;color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(
+          .panel>.toolbar,.tabs,.subtabs,.tab-nav,.quest-category-bar,.advanced-filters>summary,
+          .progress-fold>summary,.ra-progress-load-fold>summary,.branch-group>summary,.base-weapon>summary,
+          .bestiary-area>summary,.bestiary-action>summary,.help-card>summary,.help-card summary,.quest-event-row>summary,
+          .modal-head,.modal-foot,.area-select-modal-head,.area-select-modal-foot,.progress-modal-head,.progress-modal-foot,
+          .bestiary-head,.monster-card>summary
+        ){background:color-mix(in srgb,var(--paper2) 88%,var(--accent) 12%)!important;color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(
+          .advanced-filters summary::after,.help-card summary::after,.facility-chip,.facility-product-price,
+          .monster-badge,.admin-search-chip,.hidden-area-badge,.named-badge,.bestiary-named-badge,.badge
+        ){background:color-mix(in srgb,var(--paper2) 84%,var(--theme-highlight) 16%)!important;color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(.facility-product-body,.help-card-body,.monster-card-body,.bestiary-action-body,.record-field-value,.guild-support-card-line){color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(.note,.muted,.hint,.subtle,.help-note,.record-field-label,.bestiary-affinity small,.branch-table-label small){color:var(--muted)!important}
+        body.ra-app :is(th,.skill-prob-table th){background:color-mix(in srgb,var(--paper2) 82%,var(--theme-highlight) 18%)!important;color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(td[contenteditable="true"],.record-field,.responsive-data-table td){background:var(--theme-input)!important;color:var(--ink)!important;border-color:var(--line)!important}
+        body.ra-app :is(td[contenteditable="true"]:focus,.record-field:focus-within){background:color-mix(in srgb,var(--theme-input) 88%,var(--theme-soft) 12%)!important;outline-color:var(--accent)!important}
+        body.ra-app :is(.status.good,.skill-admin-status.ok,.event-card.active,.event-card.random,.skill-result-card.new,.crystal-upgrade-card.is-next){background:color-mix(in srgb,var(--paper) 84%,#64a578 16%)!important;color:color-mix(in srgb,var(--ink) 72%,#245c38 28%)!important;border-color:color-mix(in srgb,var(--line) 55%,#64a578 45%)!important}
+        body.ra-app :is(.status.warn,.day-warning,.event-card.next,.event-card.fixed,.badge.fixed,.skill-admin-status.warn,.skill-result-card.dup){background:color-mix(in srgb,var(--paper) 84%,#d9ad4f 16%)!important;color:color-mix(in srgb,var(--ink) 72%,#6f5111 28%)!important;border-color:color-mix(in srgb,var(--line) 55%,#d9ad4f 45%)!important}
+        body.ra-app :is(.status.bad,.day-blocked,.skill-admin-status.bad,.guild-support-status.is-error){background:color-mix(in srgb,var(--paper) 84%,#c96e66 16%)!important;color:color-mix(in srgb,var(--ink) 72%,#7b302b 28%)!important;border-color:color-mix(in srgb,var(--line) 55%,#c96e66 45%)!important}
+        body.ra-app :is(.badge.random){background:color-mix(in srgb,var(--paper) 86%,#64a578 14%)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--line) 58%,#64a578 42%)!important}
+        body.ra-app :is(button,.btn,[role="button"]):disabled{opacity:.58!important;filter:saturate(.65)!important;cursor:not-allowed!important}
+        body.ra-app :is(.modal-backdrop,.area-select-modal-backdrop,.progress-modal-backdrop,.bestiary-modal){background:color-mix(in srgb,var(--app-deep) 52%,transparent)!important}
+        body.ra-app :is(.ra-build-info){background:color-mix(in srgb,var(--paper) 94%,transparent)!important;color:var(--muted)!important;border-color:var(--line)!important}
+        @media(prefers-contrast:more){
+          body.ra-app :is(.panel,.card,.status,.result,.facility-card,.facility-product,.help-card,.monster-card,.bestiary-action){border-width:2px!important}
+          body.ra-app :is(.note,.muted,.hint,.subtle){color:color-mix(in srgb,var(--ink) 72%,var(--muted) 28%)!important}
+        }
       `;
     }catch(_){ }
   }
