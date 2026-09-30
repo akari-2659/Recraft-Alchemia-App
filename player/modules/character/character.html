@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>リクラフト・アルケミア キャラクター作成ツール v90.8.819</title>
+<title>リクラフト・アルケミア キャラクター作成ツール v90.8.820</title>
 <style>
   :root {
     --bg: #f5eee4;
@@ -1192,9 +1192,6 @@ body.public-view .loadout-preset-panel{display:none!important}
 }
 
 </style>
-
-<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.780-monster-turn-band-audit-20260914">
-
 <script id="raEmbeddedPlayerEarlyClass">
 try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-embedded')}catch(_){}
 </script>
@@ -1282,7 +1279,7 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 </style>
 </head>
 <body class="ra-app ra-player ra-character">
-<div class="ra-build-info">Version：v90.8.819 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.820 / 最終更新日：2026年9月25日</div>
 
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
@@ -2425,10 +2422,6 @@ function setStats(stats, syncAbilities=true) {
   if ($('currentMp')) $('currentMp').value = '';
   updateAll();
 }
-function computeAbilities(stats) {
-  if (arguments.length === 0) return getAbilityValues();
-  return computeAbilitiesFromStats(stats || {});
-}
 function emptyCategoryBonus() {
   return Object.fromEntries(SKILL_CATEGORIES.map(c => [c.key, 0]));
 }
@@ -2843,12 +2836,6 @@ function pushInventorySummaryLines(lines, inventory={}) {
   }
 }
 
-function parseFlatBonus(value) {
-  const s = String(value ?? '').trim();
-  if (!s) return 0;
-  if (/^[+-]?\d+$/.test(s)) return parseInt(s, 10) || 0;
-  return 0;
-}
 
 function modifierTargetOptionsHtml(selected='') {
   const groups = [
@@ -5477,7 +5464,7 @@ function isBagLikeFields(item={}) {
   const tags = String(item.tags || item.usageTags || '').trim();
   if (kind === 'バッグ' || /^bag$/i.test(kind)) return true;
   if (['バッグ','背負い袋','工具鞄','道具鞄'].includes(category)) return true;
-  return /(?:^|[,、\s])バッグ(?:$|[,、\s])/.test(tags) || /bag/i.test(tags);
+  return /(?:^|[,、\s])バッグ(?:$|[,、\s])/.test(tags) || /\bbag\b/i.test(tags);
 }
 function parseBagCapacity(itemOrValue={}) {
   if (typeof itemOrValue !== 'object' || itemOrValue === null) {
