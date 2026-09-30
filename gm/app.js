@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const APP_VERSION='1.0.109';
+const APP_VERSION='1.0.110';
 const ACCOUNT=window.RA_ACCOUNT;
 const app=document.querySelector('#gmApp'),authError=document.querySelector('#authError');
 const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop'),mobileTitle=document.querySelector('#mobileTitle');
@@ -125,7 +125,7 @@ let swRegistration=null;const timers=new Map();
       let visibilityStyle=doc.getElementById('raAppThemeVisibilityV109');
       if(!visibilityStyle){visibilityStyle=doc.createElement('style');visibilityStyle.id='raAppThemeVisibilityV109';doc.head?.appendChild(visibilityStyle)}
       visibilityStyle.textContent=`
-        /* v1.0.109: theme-aware visibility normalization. Keep all themes readable without DOM scanning. */
+        /* v1.0.110: theme-aware visibility normalization. Keep all themes readable without DOM scanning. */
         body.ra-app :is(
           .title-card,.table-wrap,.facility-summary-card,.facility-card,.facility-product,.facility-upgrade-box,
           .facility-upgrade-result,.facility-fortune-result,.help-card,.monster-card,.monster-card-body,
@@ -160,7 +160,7 @@ let swRegistration=null;const timers=new Map();
         body.ra-app :is(.modal-backdrop,.area-select-modal-backdrop,.progress-modal-backdrop,.bestiary-modal){background:color-mix(in srgb,var(--app-deep) 52%,transparent)!important}
         body.ra-app :is(.ra-build-info){background:color-mix(in srgb,var(--paper) 94%,transparent)!important;color:var(--muted)!important;border-color:var(--line)!important}
 
-        /* v1.0.109: active/inactive state must be visually distinct on every color theme. */
+        /* v1.0.110: active/inactive state must be visually distinct on every color theme. */
         body.ra-app :is(
           .tabs,.subtabs,.section-tabs,.section-subtabs,.major-tabs,.inventory-mode-tabs,.progress-modal-subtabs,
           .bestiary-tabs,.editor-tabs,.facility-inner-tabs,.facility-weapon-category-tabs,.quest-category-bar,
