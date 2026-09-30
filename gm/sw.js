@@ -1,7 +1,7 @@
-const APP_VERSION='1.0.95';
+const APP_VERSION='1.0.98';
 const CACHE=`ra-gm-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-app-v';
-const APP_FILES=["../js/ra_monster_rules.js", "./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "../assets/common.css", "../assets/account.js", "../assets/ra_magic_loader.js", "../icons/gm-app-v4-180.png", "../icons/gm-app-v4-192.png", "../icons/gm-app-v4-512.png", "../icons/gm-app-v4.ico", "./modules/manager/database_admin.html", "./modules/manager/progress_manager.html", "./modules/manager/help.html", "./modules/manager/data/recraft_alchemia_initial_data.json", "./modules/manager/data/public/manifest.json", "./modules/manager/data/public/recraft_alchemia_master.json", "./modules/manager/assets/vendor/jszip.min.js", "./modules/manager/assets/vendor/JSZip_LICENSE.md"];
+const APP_FILES=["../js/ra_monster_rules.js", "./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "../assets/common.css", "../assets/account.js", "../assets/ra_magic_loader.js", "../icons/gm-app-v4-180.png", "../icons/gm-app-v4-192.png", "../icons/gm-app-v4-512.png", "../icons/gm-app-v4.ico", "./modules/manager/database_admin.html", "./modules/manager/progress_manager.html", "./modules/manager/bestiary_manager.html", "./modules/manager/help.html", "./modules/manager/data/recraft_alchemia_initial_data.json", "./modules/manager/data/public/manifest.json", "./modules/manager/data/public/recraft_alchemia_master.json", "./modules/manager/data/public/recraft_alchemia_character_master.json", "./modules/manager/data/public/recraft_alchemia_facility_master.json", "./modules/manager/assets/vendor/jszip.min.js", "./modules/manager/assets/vendor/JSZip_LICENSE.md"];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -33,7 +33,8 @@ self.addEventListener('fetch',event=>{
   if(url.pathname.endsWith('/gm/version.json')){event.respondWith(fetch(event.request,{cache:'no-store'}));return;}
 
   const isFreshCode=event.request.mode==='navigate'||/\.(?:html|js|css)$/.test(url.pathname);
-  if(isFreshCode){
+  const isFreshData=/\/modules\/manager\/data\/(?:public\/)?[^/]+\.json$/.test(url.pathname);
+  if(isFreshCode||isFreshData){
     event.respondWith((async()=>{
       const cache=await caches.open(CACHE);
       try{

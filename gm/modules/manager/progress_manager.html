@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.819</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.820</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -182,9 +182,6 @@ header{padding-top:10px!important;padding-bottom:8px!important}.header-inner h1{
 .tab-panel{scroll-margin-top:76px}
 @media(max-width:620px){.ra-build-info{text-align:left}header{padding:8px!important}.fixed-url{display:none}.header-inner .version{font-size:.7rem}.day-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#progressTabNav{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
-
-<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.780-monster-turn-band-audit-20260914">
-
 <style id="raCheckboxSizeFixV375">
 input[type="checkbox"],input[type="radio"]{appearance:auto!important;-webkit-appearance:auto!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;max-height:18px!important;padding:0!important;margin:0!important;flex:0 0 18px!important;vertical-align:middle}
 #questShowOffWrap{display:inline-flex!important;width:auto!important;max-width:100%!important;align-items:center!important;gap:7px!important;margin:0!important;color:var(--ink)!important;line-height:1.45!important;white-space:normal!important}
@@ -328,7 +325,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </style>
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.819 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.820 / 最終更新日：2026年9月25日</div>
 
 <header>
   <div class="header-inner">
@@ -633,10 +630,10 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </div>
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=90.8.801"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.820"></script>
 <script>
 'use strict';
-const VERSION='v90.8.819';
+const VERSION='v90.8.820';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -1434,6 +1431,38 @@ async function verifyCommunityGatheringSave(facilityId,values){
         if(Object.entries(expected).every(([k,v])=>actual[k]===v))return result;
       }
     }catch(_){}
+  }
+}
+let communityGatheringManagerState={facilities:[]};
+function renderCommunityGatheringManager(){
+  const host=$('communityManagerCards');
+  if(!host)return;
+  const rows=Array.isArray(communityGatheringManagerState?.facilities)?communityGatheringManagerState.facilities:[];
+  if(!rows.length){host.innerHTML='<div class="card muted">共同採取設備の共有進捗はありません。</div>';return;}
+  host.innerHTML=rows.map(row=>{
+    const requirements=Array.isArray(row.requirements)?row.requirements:[];
+    const reqHtml=requirements.map(req=>{
+      const name=String(req.name||'');
+      const required=Math.max(0,Math.floor(Number(req.required)||0));
+      const current=Math.min(required,Math.max(0,Math.floor(Number(req.current)||0)));
+      return `<label class="community-manager-row"><span>${esc(name)} <small>${current}/${required}</small></span><input type="number" min="0" max="${required}" step="1" value="${current}" data-community-facility="${esc(String(row.id||''))}" data-community-material="${esc(name)}"><span>${required}</span></label>`;
+    }).join('');
+    const output=row.output&&typeof row.output==='object'?`${row.output.name||''}${row.output.amount?` ${row.output.amount}`:''}`:'';
+    return `<article class="community-manager-card"><h3>${esc(row.name||row.id||'共同採取設備')}</h3><div class="community-manager-meta">${esc(row.areaName||'')}${row.updatedAt?` / 更新：${esc(row.updatedAt)}`:''}</div>${row.description?`<p>${esc(row.description)}</p>`:''}<div class="community-manager-progress"><span style="width:${Math.max(0,Math.min(100,Number(row.percent)||0))}%"></span></div><div class="muted small">進捗 ${Math.max(0,Math.min(100,Number(row.percent)||0))}%${row.complete?' / 完成':''}</div>${reqHtml}${output?`<div class="muted small">完成後：${esc(output)}${row.usage?` / ${esc(row.usage)}`:''}</div>`:''}<div class="buttons"><button type="button" class="secondary" data-community-send="${esc(String(row.id||''))}">現在値を保存</button></div></article>`;
+  }).join('');
+}
+async function loadCommunityGatheringManager(){
+  const status=$('communityStatus');
+  if(status){status.className='status warn';status.textContent='共有進捗を読み込んでいます。';}
+  try{
+    const result=await jsonp({action:'communityGatheringState'},20000);
+    if(!result||result.ok===false)throw new Error(result?.error||'共有進捗を取得できませんでした。');
+    communityGatheringManagerState={facilities:Array.isArray(result.facilities)?result.facilities:[]};
+    renderCommunityGatheringManager();
+    if(status){status.className='status ok';status.textContent=`共有進捗を読み込みました（${communityGatheringManagerState.facilities.length}設備）。`;}
+  }catch(error){
+    communityGatheringManagerState={facilities:[]};renderCommunityGatheringManager();
+    if(status){status.className='status bad';status.textContent=`共有進捗の読込に失敗しました：${error?.message||error}`;}
   }
 }
 async function saveCommunityGatheringFacility(facilityId){
@@ -2532,13 +2561,21 @@ function parseAreaWeatherProfiles(area={}){
 }
 function weatherAreaKey(area={}){return String(area.id||area.name||'').trim();}
 function weatherAreaByKey(key=''){return (state.areas||[]).find(a=>weatherAreaKey(a)===String(key||'').trim()||String(a.name||'').trim()===String(key||'').trim())||null;}
-function weightedPick(rows=[],weightFn=row=>row.weight||1){
-  if(!rows.length)return null;
-  const entries=rows.map(row=>({row,weight:Math.max(0,Number(weightFn(row))||0)})).filter(x=>x.weight>0);
-  if(!entries.length)return rows[Math.floor(Math.random()*rows.length)];
-  let roll=Math.random()*entries.reduce((s,x)=>s+x.weight,0);
-  for(const e of entries){roll-=e.weight;if(roll<=0)return e.row;}
-  return entries.at(-1).row;
+function weightedPick(rows=[],weightFn=row=>row?.weight??1){
+  if(!Array.isArray(rows)||!rows.length)return null;
+  const getWeight=typeof weightFn==='function'?weightFn:(row=>row?.weight??1);
+  const entries=rows.map(row=>{
+    let raw;
+    try{raw=getWeight(row);}catch(_){raw=1;}
+    if(typeof raw==='string')raw=raw.trim().replace(/[^\d.+-]/g,'');
+    let weight=Number(raw);
+    if(!Number.isFinite(weight))weight=1;
+    return {row,weight:Math.max(0,weight)};
+  }).filter(x=>x.weight>0);
+  if(!entries.length)return rows[Math.floor(Math.random()*rows.length)]||null;
+  let roll=Math.random()*entries.reduce((sum,x)=>sum+x.weight,0);
+  for(const entry of entries){roll-=entry.weight;if(roll<=0)return entry.row;}
+  return entries[entries.length-1].row;
 }
 function ensureAreaWeather(area={},force=false){
   if(!areaUsesWorldCycle(area))return null;
@@ -4176,7 +4213,6 @@ const TREASURE_AREA_PROFILES={
   }
 };
 function selectedTreasureMeta(){ return treasureRows($('treasureTableSelect')?.value||'')[0]||null; }
-function randomInt(min,max){min=Number(min)||0;max=Number(max)||min;return min+Math.floor(Math.random()*(max-min+1));}
 function treasureAreaName(tableId, explicit=''){
   const direct=String(explicit||'').trim();
   if(direct)return direct;
@@ -4364,13 +4400,6 @@ function fillAppraisalRules(){
 function treasureRows(tableId){
   const id=String(tableId||'').trim();
   return (state.treasures||[]).filter(r=>enabledRow(r) && String(r.tableId||'').trim()===id);
-}
-function weightedPick(rows){
-  const weights=rows.map(r=>Math.max(0, Number(String(r.weight||'1').replace(/[^\d.]/g,'')) || 1));
-  const total=weights.reduce((a,b)=>a+b,0) || rows.length;
-  let roll=Math.random()*total;
-  for(let i=0;i<rows.length;i++){roll-=weights[i]; if(roll<=0)return rows[i];}
-  return rows[rows.length-1];
 }
 function rollDiceText(raw){
   const s=String(raw||'1').trim();
@@ -5929,7 +5958,7 @@ function bindTabs(){
 }
 function bind(){
   setupProgressModalUi();
-  $('fixedUrlLabel').textContent='GitHub共通DB（失敗時のみGAS）'; bindTabs(); bindV738ProgressUi(); setPartySize(state.partySize||4); setTimeSlot(state.timeSlot||'朝',{reset:false,render:false,save:false}); setQuestCategory('重要'); $('communityReloadBtn')?.addEventListener('click',loadCommunityGatheringManager); document.addEventListener('click',e=>{const b=e.target.closest('[data-community-send]');if(b)saveCommunityGatheringFacility(b.dataset.communitySend||'');}); $('loadDbBtn').addEventListener('click',()=>loadDb({auto:false})); $('saveStateBtn').addEventListener('click',()=>saveState(true)); $('restoreStateBtn').addEventListener('click',restoreSavedState); $('clearStateBtn').addEventListener('click',()=>{if(confirm('進行状態を初期化しますか？')){localStorage.removeItem(STORE_KEY); state.progress={quests:{},areas:{}}; state.dayState={day:1,fatigue:0,usedActions:0,awaitingEnd:false}; state.triggeredQuestEvents={}; state.triggeredAreaEvents={}; state.lastQuestFixedEventText=''; state.lastQuestCheckCopyText=''; state.lastQuestBattleCheckCopyText=''; state.lastEventCheckCopyText=''; state.lastBaseCheckCopyText=''; state.lastAreaFixedEventText=''; state.baseUnlockedAreaIds=defaultBaseUnlockedAreaIds(); state.lastBaseEventText=''; state.lastBaseEventKey=''; state.lastBaseRewardText=''; state.lastBaseRewardCopyText=''; state.questRewardCache={}; state.lastEncounter=null; state.dropEncounterInstances=[]; state.dropMode='encounter'; state.lastQuestReinforcementText=''; state.questWorkReinforcementCounts={}; state.tokenExportEncounter=null; state.dailyQuestUnlockedAreaIds=[]; state.areaWeatherById={}; state.timeSlot='朝'; state.log=[]; renderAll(); addLog('進行状態を初期化しました。');}});
+  $('fixedUrlLabel').textContent='GitHub共通DB（失敗時のみGAS）'; bindTabs(); bindV738ProgressUi(); setPartySize(state.partySize||4); setTimeSlot(state.timeSlot||'朝',{reset:false,render:false,save:false}); setQuestCategory('重要'); if(typeof loadCommunityGatheringManager==='function')$('communityReloadBtn')?.addEventListener('click',loadCommunityGatheringManager); document.addEventListener('click',e=>{const b=e.target.closest('[data-community-send]');if(b)saveCommunityGatheringFacility(b.dataset.communitySend||'');}); $('loadDbBtn').addEventListener('click',()=>loadDb({auto:false})); $('saveStateBtn').addEventListener('click',()=>saveState(true)); $('restoreStateBtn').addEventListener('click',restoreSavedState); $('clearStateBtn').addEventListener('click',()=>{if(confirm('進行状態を初期化しますか？')){localStorage.removeItem(STORE_KEY); state.progress={quests:{},areas:{}}; state.dayState={day:1,fatigue:0,usedActions:0,awaitingEnd:false}; state.triggeredQuestEvents={}; state.triggeredAreaEvents={}; state.lastQuestFixedEventText=''; state.lastQuestCheckCopyText=''; state.lastQuestBattleCheckCopyText=''; state.lastEventCheckCopyText=''; state.lastBaseCheckCopyText=''; state.lastAreaFixedEventText=''; state.baseUnlockedAreaIds=defaultBaseUnlockedAreaIds(); state.lastBaseEventText=''; state.lastBaseEventKey=''; state.lastBaseRewardText=''; state.lastBaseRewardCopyText=''; state.questRewardCache={}; state.lastEncounter=null; state.dropEncounterInstances=[]; state.dropMode='encounter'; state.lastQuestReinforcementText=''; state.questWorkReinforcementCounts={}; state.tokenExportEncounter=null; state.dailyQuestUnlockedAreaIds=[]; state.areaWeatherById={}; state.timeSlot='朝'; state.log=[]; renderAll(); addLog('進行状態を初期化しました。');}});
   document.querySelectorAll('[data-quest-category]').forEach(btn=>btn.addEventListener('click',()=>setQuestCategory(btn.dataset.questCategory)));
   $('questShowDisabledImportant')?.addEventListener('change',()=>{fillQuestSelect(); renderQuest();});
   $('questSelect').addEventListener('change',()=>{clearTokenExportEncounter('quest');state.lastQuestEventText=''; state.lastQuestEventKey=''; state.lastQuestCheckCopyText=''; state.lastQuestBattleCheckCopyText=''; state.lastQuestFixedEventText=''; state.lastQuestFixedEventKey=''; state.lastQuestCheckCopyText=''; state.lastQuestBattleCheckCopyText=''; state.lastQuestTreasureCopyText=''; state.lastQuestTreasureResults=[]; state.lastQuestEventTableRewardText=''; state.lastQuestEventTableRewardCopyText=''; state.lastQuestEventRewardState=null; state.lastQuestReinforcementText=''; renderEventRewardPanel('quest'); updateTreasureCopyButtons(); const q=selected($('questSelect'),state.quests); if(q&&questUsesRandomEncounter(q))resolveQuestPreviewEncounter(q,true); renderQuest();}); $('areaSelect').addEventListener('change',()=>{clearTokenExportEncounter('event');state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventTreasureCopyText='';state.lastEventTreasureResults=[];state.lastEventTableRewardText='';state.lastEventTableRewardCopyText='';state.lastEventRewardState=null;state.lastEventOutcomeKey='';clearRecipeMerchantOffers();state.lastAreaFixedEventText='';state.lastAreaFixedEventKey='';renderEventRewardPanel('event');updateTreasureCopyButtons();fillEventTables();renderArea();});
@@ -5976,7 +6005,7 @@ $('rumorAreaSelect').addEventListener('change',()=>{fillInnRumorSelect(); render
   $('copyLogBtn').addEventListener('click',()=>copyText(state.log.slice().reverse().join('\n'))); $('clearLogBtn').addEventListener('click',()=>{state.log=[]; renderLog(); saveState(false);});
 }
 tokenLoadExportDirectoryHandle().then(()=>tokenRefreshExportDirectoryUi()).catch(()=>{});
-loadState(); renderLog(); setStatus('warn','共通DBを読み込んでいます。'); loadDb({auto:true}); try{bind();}catch(error){console.error('進行管理UIの初期化でエラーが発生しました。',error);} loadCommunityGatheringManager();
+loadState(); renderLog(); setStatus('warn','共通DBを読み込んでいます。'); loadDb({auto:true}); try{bind();}catch(error){console.error('進行管理UIの初期化でエラーが発生しました。',error);} if(typeof loadCommunityGatheringManager==='function')loadCommunityGatheringManager();
 </script>
 
 <script id="raMaintenanceV287Script">

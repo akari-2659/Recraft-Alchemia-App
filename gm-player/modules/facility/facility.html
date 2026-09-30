@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.819</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.820</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -207,9 +207,6 @@ button.weapon-material-part:hover{background:#e2f2f5;transform:none}
 @media(max-width:980px){.facility-unlock-grid{grid-template-columns:minmax(170px,1fr) auto}.facility-unlock-grid .unlock-key-field{grid-column:1/2}.facility-unlock-grid #resetKey{grid-column:auto}}
 @media(max-width:620px){.facility-unlock-grid{grid-template-columns:1fr auto}.facility-unlock-grid .field{grid-column:1/2}.facility-unlock-grid button{width:auto}.facility-unlock-grid #resetKey{grid-column:1/3;justify-self:start}}
 </style>
-
-<link rel="stylesheet" href="../../../ra-design-system.css?v=90.8.780-monster-turn-band-audit-20260914">
-
 <style id="raFortuneCommunityV474">
 .community-rule{grid-column:1/-1;border:1px solid var(--line);border-radius:14px;background:#fffaf3;padding:12px;line-height:1.7}
 .community-card .community-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.community-status{font-size:12px;font-weight:900;border:1px solid var(--line);border-radius:999px;padding:3px 8px;background:#f5ead8}.community-status.complete{background:#f0fff6;color:#356346;border-color:#9bcdad}
@@ -655,7 +652,7 @@ html.ra-embedded-facility #sectionDescription{
 </style>
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.819 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.820 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -1040,7 +1037,7 @@ function facilityPostAction(action,params={},timeoutMs=30000){
 }
 
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
-const FACILITY_EXPECTED_DB_VERSION='v90.8.819';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.820';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}
@@ -1570,7 +1567,7 @@ function buildFacilityCatalogFromGithub(commonMaster,unlockState={}){
               craftType:r.craftType||'武器派生',
               description:locked?'':(resultItem?(resultItem.description||''):(r.description||'')),
               effect:locked?'？？？':(resultItem?(resultItem.effect||''):(r.effect||'')),
-              itemType:locked?'':(resultItem?.itemType||'武器'),itemCategory:locked?'':(resultItem?.itemCategory||category),equipmentEffects:locked?[]:parseEquipmentEffects(resultItem?.equipmentEffects),
+              itemType:locked?'':(resultItem?.itemType||'武器'),itemCategory:locked?'':(resultItem?.itemCategory||categoryName),equipmentEffects:locked?[]:parseEquipmentEffects(resultItem?.equipmentEffects),
               performance:locked?[]:facilityPerformance(resultItem),
               upgradeLimit:locked?'':(resultItem&&resultItem.upgradeLimit||''),
               namedProcessingOptions:locked?[]:parseNamedProcessingOptions(resultItem&&resultItem.namedProcessingOptions),
@@ -1737,9 +1734,6 @@ function restoreFacilityViewState(snapshot){
 }
 
 function performanceHtml(rows){return Array.isArray(rows)&&rows.length?`<div class="performance">${rows.map(x=>`<span class="chip">${esc(x.label)} ${esc(x.value)}</span>`).join('')}</div>`:'';}
-function facilityUpgradeDisplayName(r={}){
-  return String(r.equipmentUpgradeEffect||'').trim();
-}
 function itemTextRows(r){
   const rows=[['説明',r.description],['効果',r.effect]];
   if(String(r.dataKind||'')==='素材'&&String(r.equipmentUpgradeEffect||'').trim()){
