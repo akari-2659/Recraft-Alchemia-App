@@ -376,7 +376,7 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
   }
 
 
-  const STARTUP_APP_VERSION = '1.0.110';
+  const STARTUP_APP_VERSION = '1.0.120';
   const STARTUP_SESSION_KEY = `ra-startup-shown:${location.pathname}`;
   const LAST_RUN_VERSION_KEY = location.pathname.includes('/gm-player/')
     ? 'ra-gm-player-app-last-run-version'
