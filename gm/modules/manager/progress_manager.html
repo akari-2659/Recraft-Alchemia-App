@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.824</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.833</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -68,6 +68,11 @@ body.area-select-modal-open{overflow:hidden!important}
 .recipe-merchant-price{font-weight:900}
 .recipe-merchant-normal{text-decoration:line-through;color:var(--muted);font-size:12px;margin-left:6px}
 .recipe-merchant-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-top:10px}
+.kohaku-trade-block{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.kohaku-trade-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:8px}
+.kohaku-trade-card{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px}
+.kohaku-trade-card b{font-size:15px}
+.kohaku-trade-ledger{margin-top:8px}
 @media(max-width:620px){.recipe-merchant-tools{grid-template-columns:1fr}}
 
 /* v90.8.170: レイアウト安定化・左揃え・ボタン折返し */
@@ -256,6 +261,12 @@ body.progress-modal-open{overflow:hidden}
 }
 @media(max-width:360px){.progress-modal-card .buttons{grid-template-columns:1fr}.progress-modal-head,.progress-modal-body,.progress-modal-foot{padding-left:8px;padding-right:8px}}
 @media(max-height:520px) and (orientation:landscape){.progress-modal-backdrop{padding:4px}.progress-modal-card{max-height:calc(100dvh - 8px)}.progress-modal-head,.progress-modal-foot{padding-top:6px;padding-bottom:6px}.progress-modal-body{padding-top:8px;padding-bottom:8px}}
+.progress-modal-backdrop.boss-rumor-choice-modal{place-items:center;padding:12px}
+.progress-modal-backdrop.boss-rumor-choice-modal .progress-modal-card{width:min(440px,100%);height:auto;max-height:calc(100dvh - 24px);border:1px solid var(--line,#cbbd9d);border-radius:16px}
+.progress-modal-backdrop.boss-rumor-choice-modal .progress-modal-body{flex:0 1 auto;padding:18px 16px}
+.progress-modal-backdrop.boss-rumor-choice-modal .boss-rumor-question{margin:0;font-weight:800}
+.progress-modal-backdrop.boss-rumor-choice-modal .progress-modal-foot{display:grid;grid-template-columns:1fr 1fr}
+.progress-modal-backdrop.boss-rumor-choice-modal .progress-modal-foot button{width:100%}
 </style>
 
 
@@ -354,7 +365,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.824 / 最終更新日：2026年9月25日</div>
+<div class="ra-build-info">Version：v90.8.833 / 最終更新日：2026年10月1日</div>
 
 <header>
   <div class="header-inner">
@@ -495,7 +506,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
       </div>
       <h3>探索進行度</h3>
       <div class="progress-wrap"><div id="areaBar" class="progress-bar"></div><div id="areaLabel" class="progress-label">0%</div></div>
-      <div id="areaStepInfo" class="card muted">探索進行上昇値と、100%到達時のボス噂イベント状態がここに表示されます。</div>
+      <div id="areaStepInfo" class="card muted">探索進行上昇値と、噂によるイベント抽選補正がここに表示されます。</div>
       <div class="buttons">
         <button id="areaAdvanceBtn">探索進行度を進める</button>
         <button class="ghost" id="areaResetBtn">探索進行度をリセット</button>
@@ -659,10 +670,10 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </div>
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=90.8.824"></script>
+<script src="../../../js/ra_monster_rules.js?v=90.8.833"></script>
 <script>
 'use strict';
-const VERSION='v90.8.824';
+const VERSION='v90.8.833';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -751,7 +762,7 @@ const GUILD_DAILY_CHANNEL_NAME='recraft_alchemia_guild_daily_channel';
 const GUILD_DAILY_REQUEST_KINDS=['拠点内依頼','エリア依頼','納品依頼'];
 const MASTER_CACHE_KEY=STORE_KEY+'_master_cache_v1';
 const $=id=>document.getElementById(id);
-const state={quests:[],areas:[],events:[],monsters:[],items:[],treasures:[],appraisalRules:[],spells:[],recipes:[],progress:{quests:{},areas:{}},dayState:{day:1,fatigue:0,usedActions:0,awaitingEnd:false},lastEventText:'',lastEventKey:'',lastEventCheckCopyText:'',lastEventTreasureCopyText:'',lastEventTreasureResults:[],lastQuestEventText:'',lastQuestEventKey:'',lastQuestCheckCopyText:'',lastQuestBattleCheckCopyText:'',lastQuestFixedEventText:'',lastQuestFixedEventKey:'',lastQuestTreasureCopyText:'',lastQuestTreasureResults:[],lastQuestHasTreasure:false,lastQuestEventTableRewardText:'',lastQuestEventTableRewardCopyText:'',triggeredQuestEvents:{},lastAreaFixedEventText:'',lastAreaFixedEventKey:'',triggeredAreaEvents:{},baseUnlockedAreaIds:[],lastBaseEventText:'',lastBaseEventKey:'',lastBaseCheckCopyText:'',lastBaseRewardText:'',lastBaseRewardCopyText:'',lastBaseEventRewardState:null,lastBaseEventTableRewardState:null,questRewardCache:{},lastEventTableRewardText:'',lastEventTableRewardCopyText:'',lastEventTableRewardState:null,lastQuestEventTableRewardState:null,lastRecipeMerchantOffers:[],selectedRecipeMerchantId:'',lastRecipeMerchantContext:{scope:'',areaName:'',eventName:''},lastRumorText:'',lastRumorKey:'',lastTreasureText:'',lastTreasureCopyText:'',lastAppraisalText:'',lastAppraisalCopyText:'',lastDropText:'',lastDropSuccessText:'',lastDailyQuestText:'',lastDailyQuestKeys:[],lastDailyQuestKeysByKind:{'拠点内依頼':[],'エリア依頼':[],'納品依頼':[]},dailyQuestUnlockedAreaId:'',dailyQuestUnlockedAreaIds:[],questEncounterCache:{},partySize:4,areaBossEncountered:{},treasureSetup:null,treasureContext:null,lastEncounter:null,dropEncounterInstances:[],dropMode:'encounter',lastEventRewardState:null,lastQuestEventRewardState:null,lastEventOutcomeKey:'',lastQuestOutcomeKey:'',lastBaseOutcomeKey:'',lastQuestReinforcementText:'',questWorkReinforcementCounts:{},tokenExportEncounter:null,areaWeatherById:{},timeSlot:'朝',log:[]};
+const state={quests:[],areas:[],events:[],monsters:[],items:[],treasures:[],appraisalRules:[],spells:[],recipes:[],progress:{quests:{},areas:{}},dayState:{day:1,fatigue:0,usedActions:0,awaitingEnd:false},lastEventText:'',lastEventKey:'',lastEventCheckCopyText:'',lastEventTreasureCopyText:'',lastEventTreasureResults:[],lastQuestEventText:'',lastQuestEventKey:'',lastQuestCheckCopyText:'',lastQuestBattleCheckCopyText:'',lastQuestFixedEventText:'',lastQuestFixedEventKey:'',lastQuestTreasureCopyText:'',lastQuestTreasureResults:[],lastQuestHasTreasure:false,lastQuestEventTableRewardText:'',lastQuestEventTableRewardCopyText:'',triggeredQuestEvents:{},lastAreaFixedEventText:'',lastAreaFixedEventKey:'',triggeredAreaEvents:{},baseUnlockedAreaIds:[],lastBaseEventText:'',lastBaseEventKey:'',lastBaseCheckCopyText:'',lastBaseRewardText:'',lastBaseRewardCopyText:'',lastBaseEventRewardState:null,lastBaseEventTableRewardState:null,questRewardCache:{},lastEventTableRewardText:'',lastEventTableRewardCopyText:'',lastEventTableRewardState:null,lastQuestEventTableRewardState:null,lastRecipeMerchantOffers:[],lastRecipeMerchantTrades:[],selectedRecipeMerchantId:'',lastRecipeMerchantContext:{scope:'',areaName:'',eventName:''},lastRumorText:'',lastRumorKey:'',lastTreasureText:'',lastTreasureCopyText:'',lastAppraisalText:'',lastAppraisalCopyText:'',lastDropText:'',lastDropSuccessText:'',lastDailyQuestText:'',lastDailyQuestKeys:[],lastDailyQuestKeysByKind:{'拠点内依頼':[],'エリア依頼':[],'納品依頼':[]},dailyQuestUnlockedAreaId:'',dailyQuestUnlockedAreaIds:[],questEncounterCache:{},partySize:4,areaBossEncountered:{},treasureSetup:null,treasureContext:null,lastEncounter:null,dropEncounterInstances:[],dropMode:'encounter',lastEventRewardState:null,lastQuestEventRewardState:null,lastEventOutcomeKey:'',lastQuestOutcomeKey:'',lastBaseOutcomeKey:'',lastQuestReinforcementText:'',questWorkReinforcementCounts:{},tokenExportEncounter:null,areaWeatherById:{},timeSlot:'朝',log:[]};
 let currentQuestCategory='重要';
 const CCFOLIA_MONSTER_IMAGE_BASE=new URL('../../../assets/monsters/',window.location.href).toString();
 const CCFOLIA_MONSTER_IMAGE_SUBDIR=Object.freeze({
@@ -878,7 +889,7 @@ function tokenMonsterRowStatusNotes(row={}){const actions=tokenParseActions(row.
 function tokenActionRange(action={}){return tokenNormalizeActionRange(action);}
 function tokenActionCheckCommand(action={}){const parsed=tokenParseCheckType(action.checkType||'');if(!parsed.raw||parsed.left==='なし')return'';const base=tokenCompact(action.baseValue);if(base==='')return'';return`2D6+${base}+{補正}>=${parsed.right||'目標値'} 【${action.name||'魔物行動'}】`;}
 function tokenDamageCommand(action={}){let power=tokenCompact(action.power);if(!power||power==='なし'||power==='-')return'';const type=tokenNormalizeActionType(action),effect=String(action.effect||''),isRecovery=type==='回復'||/回復$/.test(power)||(['補助','防御'].includes(type)&&/HP.*回復/.test(effect));if(isRecovery){power=power.replace(/回復$/,'');return`${power} 【${action.name||'魔物行動'}・回復】`;}return`${power} 【${action.name||'魔物行動'}ダメージ】`;}
-function tokenMonsterChatPalette(row={}){const name=tokenCompact(row.name)||'名称未設定の魔物',actions=tokenParseActions(row.actions),lines=[];if(row.pullRule)lines.push(`// 引き寄せ：${row.pullRule}`);if(row.passiveName||row.passiveEffect){lines.push(`// 【固有パッシブ：${row.passiveName||'名称未設定'}】`);if(row.passiveEffect)lines.push(`// ${tokenCompact(row.passiveEffect)}`);}if(actions.length){const passiveOnly=new Set(String(row.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean)),selectable=actions.filter(a=>!passiveOnly.has(tokenCompact(a.name))),actionNames=selectable.map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean),conditional=a=>/(のみ使用|HPが半分以下|HP半分以下|次の行動で|戦闘中1回|1戦闘1回)/.test(`${a.effect||''} ${a.power||''}`),normal=selectable.filter(a=>!conditional(a)).map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean);if(normal.length&&normal.length<actionNames.length)lines.push(`choice[${normal.join(',')}]`);if(actionNames.length)lines.push(`choice[${actionNames.join(',')}]`);lines.push(`// ${name}`);actions.forEach(action=>{const actionName=action.name||'魔物行動',type=tokenNormalizeActionType(action),range=tokenActionRange(action),flags=tokenCompact(action.flags),target=tokenCompact(action.target)||'対象未設定',element=tokenCompact(action.element),check=tokenActionCheckCommand(action),damage=tokenDamageCommand(action),effect=tokenCompact(action.effect);if(passiveOnly.has(tokenCompact(action.name)))lines.push(`// 【パッシブ専用技】`);lines.push(`// 【${actionName}】 種別：${type}／距離：${range}${flags?` / ${flags}`:''}／対象：${target}${element?`／属性：${element}`:''}`);if(check)lines.push(check);if(damage){lines.push(damage);if(damage.includes('・回復】')){const alt=effect.match(/代わりに([0-9D+]+)回復/);if(alt)lines.push(`${alt[1]} 【${actionName}・条件成立時の回復】`);}}if(effect)lines.push(`// 効果：${effect}`);if(!check&&!damage&&!effect)lines.push(`// ${actionName}`);});const notes=tokenMonsterRowStatusNotes(row);if(notes.length){lines.push('// 【状態・フィールド】');notes.forEach(note=>lines.push(`// ${note}`));lines.push(...RAMonsterRules.fieldCommands([row.passiveEffect||'',...actions.map(a=>a.effect||'')].join(' ')));}}else{lines.push(`// ${name}`);lines.push('// 行動は未登録です。');}return lines.join('\n');}
+function tokenMonsterChatPalette(row={}){const name=tokenCompact(row.name)||'名称未設定の魔物',actions=tokenParseActions(row.actions),lines=[];if(row.pullRule)lines.push(`// 引き寄せ：${row.pullRule}`);const conditionLabel=tokenCompact(row.conditionProfileLabel);if(conditionLabel)lines.push(`// 【環境個体：${conditionLabel}】`);const behaviorAI=tokenCompact(row.behaviorAI),behaviorPriority=tokenCompact(row.behaviorPriority)||'優先';if(behaviorAI){lines.push(`// 【固有行動AI：${behaviorPriority}】`);lines.push(`// ${behaviorAI}`);lines.push(behaviorPriority==='最優先'?'// 処理：条件該当PCだけを対象候補にし、複数なら等確率で抽選。':'// 処理：条件該当PCの抽選重み3、非該当PCの抽選重み1。');}if(row.passiveName||row.passiveEffect){lines.push(`// 【固有パッシブ：${row.passiveName||'名称未設定'}】`);if(row.passiveEffect)lines.push(`// ${tokenCompact(row.passiveEffect)}`);}if(actions.length){const passiveOnly=new Set(String(row.passiveOnlyActionNames||'').split(/[,、，\n]+/).map(v=>v.trim()).filter(Boolean)),selectable=actions.filter(a=>!passiveOnly.has(tokenCompact(a.name))),actionNames=selectable.map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean),conditional=a=>/(のみ使用|HPが半分以下|HP半分以下|次の行動で|戦闘中1回|1戦闘1回)/.test(`${a.effect||''} ${a.power||''}`),normal=selectable.filter(a=>!conditional(a)).map(a=>tokenCompact(a.name)||'名称未設定').filter(Boolean);if(normal.length&&normal.length<actionNames.length)lines.push(`choice[${normal.join(',')}]`);if(actionNames.length)lines.push(`choice[${actionNames.join(',')}]`);lines.push(`// ${name}`);actions.forEach(action=>{const actionName=action.name||'魔物行動',type=tokenNormalizeActionType(action),range=tokenActionRange(action),flags=tokenCompact(action.flags),target=tokenCompact(action.target)||'対象未設定',element=tokenCompact(action.element),check=tokenActionCheckCommand(action),damage=tokenDamageCommand(action),effect=tokenCompact(action.effect);if(passiveOnly.has(tokenCompact(action.name)))lines.push(`// 【パッシブ専用技】`);lines.push(`// 【${actionName}】 種別：${type}／距離：${range}${flags?` / ${flags}`:''}／対象：${target}${element?`／属性：${element}`:''}`);if(check)lines.push(check);if(damage){lines.push(damage);if(damage.includes('・回復】')){const alt=effect.match(/代わりに([0-9D+]+)回復/);if(alt)lines.push(`${alt[1]} 【${actionName}・条件成立時の回復】`);}}if(effect)lines.push(`// 効果：${effect}`);if(!check&&!damage&&!effect)lines.push(`// ${actionName}`);});const notes=tokenMonsterRowStatusNotes(row);if(notes.length){lines.push('// 【状態・フィールド】');notes.forEach(note=>lines.push(`// ${note}`));lines.push(...RAMonsterRules.fieldCommands([row.passiveEffect||'',...actions.map(a=>a.effect||'')].join(' ')));}}else{lines.push(`// ${name}`);lines.push('// 行動は未登録です。');}return lines.join('\n');}
 function tokenMonsterByName(name=''){const target=String(name||'').trim();return(state.monsters||[]).find(row=>String(row.name||'').trim()===target)||null;}
 function tokenMonsterSize(row={}){const imageId=String(row.baseMonsterId||row.id||'');const size=Number(MONSTER_TOKEN_SIZE_OVERRIDES[imageId])||3;return{width:size,height:size};}
 function tokenNormalizeGroups(groups=[]){return normalizeEncounterFrontline((groups||[]).map(group=>({name:group?.name,count:group?.count,formation:group?.formation||group?.position||''}))).map(group=>({name:group.name,count:Math.max(1,Math.floor(Number(group.count)||1)),formation:group.formation||group.position||'前衛'}));}
@@ -886,7 +897,7 @@ function encounterGroupsSignature(groups=[]){return tokenNormalizeGroups(groups)
 function setTokenExportEncounter(label='',areaName='',groups=[],scope='event'){
   const clean=tokenNormalizeGroups(groups);if(!clean.length){clearTokenExportEncounter(scope);return;}
   const last=state.lastEncounter,matched=last&&Array.isArray(last.instances)&&last.instances.length&&encounterGroupsSignature(last.groups||[])===encounterGroupsSignature(clean);
-  const instances=matched?last.instances.map(x=>JSON.parse(JSON.stringify(x))):encounterInstanceRows(clean);
+  const instances=matched?last.instances.map(x=>JSON.parse(JSON.stringify(x))):encounterInstanceRows(clean,{areaName:String(areaName||'').trim()});
   state.tokenExportEncounter={label:String(label||'戦闘').trim(),areaName:String(areaName||'').trim(),scope:scope==='quest'?'quest':'event',groups:clean,instances,reinforcementInstances:[]};renderTokenExportPanels();
 }
 function clearTokenExportEncounter(scope=''){if(scope&&state.tokenExportEncounter?.scope!==scope)return;state.tokenExportEncounter=null;renderTokenExportPanels();}
@@ -932,7 +943,7 @@ function tokenPackZone(items=[],zone={left:-19,top:-6.5,width:8,height:7.5}){con
 function tokenAssignPositions(instances=[]){if(instances.length===1&&instances[0].isBoss){const item=instances[0],zone={left:-19,top:-6.5,width:18,height:7.5};item.x=tokenRoundCoord((zone.left+(zone.width-item.width)/2)*10);item.y=tokenRoundCoord((zone.top+(zone.height-item.height)/2)*10);return;}const rear=instances.filter(x=>x.formation==='後衛'),front=instances.filter(x=>x.formation!=='後衛');tokenPackZone(rear,{left:-19,top:-6.5,width:8,height:7.5});tokenPackZone(front,{left:-9,top:-6.5,width:8,height:7.5});}
 function tokenBuildInstances(encounter){
   const stored=Array.isArray(encounter?.instances)?encounter.instances:[];
-  if(!stored.length&&encounter?.groups?.length){encounter.instances=encounterInstanceRows(encounter.groups,{fixedIv:!!encounter.fixedIv});return tokenBuildInstances(encounter);}
+  if(!stored.length&&encounter?.groups?.length){encounter.instances=encounterInstanceRows(encounter.groups,{fixedIv:!!encounter.fixedIv,areaName:encounter.areaName||''});return tokenBuildInstances(encounter);}
   const totals=new Map();(encounter.groups||[]).forEach(g=>totals.set(g.name,(totals.get(g.name)||0)+g.count));
   const seen=new Map(),instances=[];
   if(stored.length){
@@ -1010,7 +1021,7 @@ async function exportReinforcementTokens(scope='event',sourceUid='',actionName='
   const action=tokenParseActions(source.monster?.actions||'').find(row=>String(row.name||'')===String(actionName||''));if(!action){setTokenExportStatus(scope,'この個体には現在その増援技が選出されていません。','bad');renderTokenExportPanels();return false;}
   const match=String(action.effect||'').match(/増援表「([^」]+)」/),resolvedTable=String(tableName||match?.[1]||'').trim(),table=RAMonsterRules.reinforcementTable(resolvedTable),picked=tokenPickReinforcementOption(table);
   if(!picked){setTokenExportStatus(scope,`増援表「${resolvedTable||'未設定'}」を解決できません。`,'bad');return false;}
-  const groups=tokenNormalizeGroups(picked.groups||[]),instances=encounterInstanceRows(groups),label=`${source.name||source.monster?.name||'魔物'}《${actionName}》の増援`,reinforcementEncounter={label,areaName:encounter.areaName||'',scope,groups,instances,reinforcementInstances:[]};
+  const groups=tokenNormalizeGroups(picked.groups||[]),instances=encounterInstanceRows(groups,{areaName:encounter.areaName||''}),label=`${source.name||source.monster?.name||'魔物'}《${actionName}》の増援`,reinforcementEncounter={label,areaName:encounter.areaName||'',scope,groups,instances,reinforcementInstances:[]};
   const success=await exportEncounterTokens(reinforcementEncounter,scope,button);if(!success)return false;
   source.usedReinforcementActions=[...used,actionName];
   if(!Array.isArray(encounter.reinforcementInstances))encounter.reinforcementInstances=[];
@@ -1894,7 +1905,7 @@ function appendEncounterForDrops(label='',areaName='',groups=[]){
   const clean=normalizeEncounterFrontline((groups||[]).map(g=>({name:g.name,count:g.count,formation:g.formation||g.position||''}))).map(g=>({name:g.name,count:g.count,formation:g.formation||g.position||''}));if(!clean.length)return;
   const current=(state.lastEncounter&&Array.isArray(state.lastEncounter.groups))?state.lastEncounter.groups:[],existingInstances=(state.lastEncounter&&Array.isArray(state.lastEncounter.instances))?state.lastEncounter.instances:[];
   const bountyEligible=state.lastEncounter?.bountyEligible!==false;
-  const added=encounterInstanceRows(clean,{fixedIv:false}),mergedGroups=mergeEncounterGroups([...current,...clean]),instances=[...existingInstances,...added];
+  const added=encounterInstanceRows(clean,{fixedIv:false,areaName:String(areaName||'').trim()}),mergedGroups=mergeEncounterGroups([...current,...clean]),instances=[...existingInstances,...added];
   state.lastEncounter={label:String(label||state.lastEncounter?.label||'戦闘').trim(),areaName:String(areaName||state.lastEncounter?.areaName||'').trim(),groups:mergedGroups,instances,bountyEligible,bountyG:bountyEligible?instances.reduce((sum,row)=>sum+Math.max(0,Number(row.bountyG)||0),0):0,fixedIv:false};
   const extra=added.map(row=>({uid:dropInstanceUid(),monsterId:row.monsterId,name:row.name,formation:row.formation,dismantleSuccess:false}));state.dropEncounterInstances=normalizeDropInstances([...(state.dropEncounterInstances||[]),...extra]);setDropMode('encounter');renderEncounterDropList();saveState(false);
 }
@@ -2206,7 +2217,7 @@ function eventCheckInfo(e={}){
   // 戦闘だけが確実に起き、別の判定が登録されていない場合は感知を振る。
   // 達成値は実際に出現する敵の中で最も高い先制値を使用する。
   if(!expr&&guaranteedBattle){
-    const highest=encounterHighestInitiative(eventEncounterGroupsForCopy(e));
+    const highest=encounterHighestInitiative(eventEncounterGroupsForCopy(e),e.areaName||'');
     if(highest!==null)expr=`感知>=${highest}`;
   }
   const skills=eventCheckExpressionParts(expr);
@@ -2388,7 +2399,7 @@ function rollQuestEvent(){
   const rows=questRandomEvents(q);
   if(!rows.length){state.lastQuestEventText=`【クエストランダムイベント】${q.name||q.id}
 ${baseQuest?'拠点内ランダムイベント':'該当エリアのランダムイベント'}候補がありません。`; renderQuestEvents(); updateTreasureCopyButtons(); return;}
-  const picked=baseQuest?pickRandomEvent(rows,state.lastQuestEventKey):pickAreaEvent(rows,state.lastQuestEventKey,questArea);
+  const picked=baseQuest?pickRandomEvent(rows,state.lastQuestEventKey):pickAreaEvent(rows,state.lastQuestEventKey,questArea,{rumor:null});
   state.lastQuestEventKey=eventUniqueKey(picked);
   state.lastQuestOutcomeKey=eventUniqueKey(picked);
   state.lastQuestBattleCheckCopyText='';
@@ -2452,7 +2463,7 @@ function triggerQuestSpecificEvents(q,before,after){
     if(isWorkQuest(q)&&Number(eventThreshold(e))===100){const workKey=String(q.id||q.name||'work');state.questWorkReinforcementCounts=state.questWorkReinforcementCounts||{};state.questWorkReinforcementCounts[workKey]=0;state.lastQuestReinforcementText='';}
     const extraLines=['このイベントはクエスト進行度による確定発生です。ランダム抽選ではありません。'];
     const supportNote=questPartyAdjustmentNote(q);if(supportNote)extraLines.push(supportNote);
-    if(resolvedEncounter){const resolvedGroups=encounterGroupsForDrop({},resolvedEncounter,effectiveSize);extraLines.push(encounterResolutionBlock(resolvedEncounter));extraLines.push(encounterInitiativeText(resolvedGroups));extraLines.push(...questBattleRoundLines(q));}
+    if(resolvedEncounter){const resolvedGroups=encounterGroupsForDrop({},resolvedEncounter,effectiveSize);extraLines.push(encounterResolutionBlock(resolvedEncounter));extraLines.push(encounterInitiativeText(resolvedGroups,area?.name||e.areaName||q.areaName||q.questLocation||''));extraLines.push(...questBattleRoundLines(q));}
     state.lastQuestFixedEventText=formatEventOutput(
       `【クエスト固有イベント】${e.eventName||'名称未設定'}`,
       e,
@@ -2515,9 +2526,8 @@ function renderQuest(){
   renderQuestEvents();
 }
 function areaBossEventForRumor(a,rumor=selectedRumor()){
-  if(!a||!rumor||!rumorActiveForTime(rumor,a))return null;
-  const tableId=String(a.eventTableId||'').trim();
-  return (state.events||[]).find(e=>String(e.tableId||'').trim()===tableId&&isBossEvent(e)&&bossMatchesSelectedRumor(e,rumor))||null;
+  // v90.8.833: ボス噂は100%到達時に任意選択。追う場合のみ対応ボスへ確定遭遇し、追わない場合は通常抽選。
+  return null;
 }
 function defaultBaseUnlockedAreaIds(){
   const initial=(state.areas||[]).filter(a=>String(a.unlockCondition||'').includes('初期解放')).map(a=>String(a.id||a.name||'')).filter(Boolean);
@@ -2695,12 +2705,43 @@ function crossBorderSourcePerDrawChance(area={}){
 }
 const NAMED_ENCOUNTER_PER_DRAW_CHANCE=0.05;
 const HIDDEN_NAMED_ENCOUNTER_PER_DRAW_CHANCE=0.25;
-function pickAreaEvent(rows=[],lastKey='',area={}){
+const RUMOR_DEFAULT_TOTAL_WEIGHT=6;
+const RUMOR_TIMED_TOTAL_WEIGHT=8;
+function rumorConfiguredWeight(rumor={},fallback=RUMOR_DEFAULT_TOTAL_WEIGHT){
+  const m=String(rumor&&rumor.notes||'').match(/【噂抽選重み】\s*([0-9.]+)/);
+  const n=m?Number(m[1]):NaN;
+  return Number.isFinite(n)&&n>0?n:fallback;
+}
+function rumorExplicitTargetIds(rumor={}){
+  const notes=String(rumor&&rumor.notes||'');
+  const m=notes.match(/【噂対象イベントID】\s*([^\n【]+)/);
+  return m?m[1].split(/[,、，;；\s]+/).map(v=>v.trim()).filter(Boolean):[];
+}
+function rumorWeightContext(rows=[],rumor=null,area={}){
+  if(!rumor||!rumorActiveForTime(rumor,area)||isBossRumor(rumor))return {active:false,condition:new Set(),explicit:new Set(),conditionEach:1,explicitEach:1};
+  const list=(rows||[]).filter(Boolean);
+  const condition=list.filter(row=>eventConditionType(row)==='噂話'&&eventMatchesRumor(row,rumor));
+  const explicitIds=new Set(rumorExplicitTargetIds(rumor));
+  const explicit=list.filter(row=>explicitIds.has(String(row.id||'').trim()));
+  const configured=rumorConfiguredWeight(rumor,rumorScope(rumor)==='時間帯'?RUMOR_TIMED_TOTAL_WEIGHT:RUMOR_DEFAULT_TOTAL_WEIGHT);
+  // 1つの噂が複数イベントに対応しても、噂全体の抽選質量が膨らみすぎないよう合計重みを分配する。
+  const each=(total,count)=>count?Math.max(1,total/count):1;
+  return {active:true,condition:new Set(condition),explicit:new Set(explicit),conditionEach:each(configured,condition.length),explicitEach:each(configured,explicit.length)};
+}
+function rumorEventWeight(row={},ctx={}){
+  if(!ctx.active)return 1;
+  if(ctx.explicit&&ctx.explicit.has(row))return ctx.explicitEach;
+  if(ctx.condition&&ctx.condition.has(row))return ctx.conditionEach;
+  return 1;
+}
+function pickAreaEvent(rows=[],lastKey='',area={},options={}){
   const list=(rows||[]).filter(Boolean);if(!list.length)return null;
   const filtered=list.length>1?list.filter(r=>eventUniqueKey(r)!==lastKey):list;
   // 隠しエリアでは二つ名再遭遇を許可するため、直前イベントの除外は行わない。
   // 非戦闘イベントの重複は v738 の seen 管理で別途防止する。
   const pool=isHiddenAreaRow(area)?list:(filtered.length?filtered:list);
+  const rumor=options.rumor||null;
+  const rumorCtx=rumorWeightContext(pool,rumor,area);
   const namedRows=pool.filter(isNamedEncounterEvent);
   const sourceRows=pool.filter(row=>isCrossBorderSourceEvent(row)&&!isNamedEncounterEvent(row));
   const normalRows=pool.filter(row=>!isCrossBorderSourceEvent(row)&&!isNamedEncounterEvent(row));
@@ -2710,13 +2751,13 @@ function pickAreaEvent(rows=[],lastKey='',area={}){
   const sourceChance=sourceRows.length?crossBorderSourcePerDrawChance(area):0;
   const specialRoll=Math.random();
   if(namedRows.length&&specialRoll<namedChance){
-    return weightedPick(namedRows,row=>weatherEventWeight(row,area)*eventTimeWeight(row,area));
+    return weightedPick(namedRows,row=>weatherEventWeight(row,area)*eventTimeWeight(row,area)*rumorEventWeight(row,rumorCtx));
   }
   if(sourceRows.length&&specialRoll<namedChance+sourceChance){
-    return weightedPick(sourceRows,row=>weatherEventWeight(row,area)*eventTimeWeight(row,area));
+    return weightedPick(sourceRows,row=>weatherEventWeight(row,area)*eventTimeWeight(row,area)*rumorEventWeight(row,rumorCtx));
   }
   const normalPool=normalRows.length?normalRows:pool.filter(row=>!isNamedEncounterEvent(row));
-  return weightedPick(normalPool,row=>weatherEventWeight(row,area)*eventTimeWeight(row,area));
+  return weightedPick(normalPool,row=>weatherEventWeight(row,area)*eventTimeWeight(row,area)*rumorEventWeight(row,rumorCtx));
 }
 function renderWeatherManager(){
   const selectedArea=selected($('areaSelect'),state.areas);
@@ -2826,9 +2867,9 @@ function renderArea(){
   const p=progressObj('areas',a.id||a.name);
   $('areaNote').value=p.note||''; renderTimeControls(); renderWeatherManager();$('areaBar').style.width=clamp(p.value)+'%';$('areaLabel').textContent=clamp(p.value)+'%';
   $('areaDetail').innerHTML=`<div class="kv"><b>種別</b><span>${esc(a.areaType||'')}</span><b>難度</b><span>${esc(a.difficulty||'')}</span><b>イベント表</b><span>${esc(a.eventTableId||'')}</span><b>探索進行上昇</b><span>+${areaStepAmount(a)}%</span><b>主な素材</b><span>${esc(a.mainMaterials||'')}</span><b>主な魔物</b><span>${esc(a.mainMonsters||'')}</span><b>フィールド効果</b><span>${esc(a.fieldEffect||'なし')}</span>${areaUsesWorldCycle(a)?`<b>時間帯</b><span>${esc(selectedTimeSlot())}</span>`:''}</div>${a.description?`<p class="muted">${esc(a.description)}</p>`:''}`;
-  const step=areaStepAmount(a),current=clamp(p.value),boss=areaBossEventForRumor(a),rumor=selectedRumor();
-  const bossText=boss?`100%：${boss.eventName||'ボスイベント'}に固定`:(rumor?'100%固定イベントなし（選択中の噂はボス噂ではありません）':'100%固定イベントなし');
-  $('areaStepInfo').innerHTML=`<div class="kv"><b>現在</b><span>${current}%</span><b>1回の進行</b><span>+${step}%</span><b>進行後</b><span>${clamp(current+step)}%</span><b>100%イベント</b><span>${esc(bossText)}</span></div><p class="muted small">エリア探索には通常の固定イベントを設定しません。対応するボス噂を選択している場合だけ、100%到達時にそのボスイベントが必ず発生します。途中のランダム抽選で同じボスに遭遇していても、100%到達時の確定発生は省略しません。ランダムイベント結果では進行度を自動変更しません。</p>`;
+  const step=areaStepAmount(a),current=clamp(p.value),rumor=selectedRumor();
+  const rumorText=rumor?(isBossRumor(rumor)?'100%到達時にボス追跡を選択可能':(rumorActiveForTime(rumor,a)?'選択中の噂に対応するイベントの抽選重みが上昇':'選択中の噂は現在の時間帯では無効')):'噂補正なし';
+  $('areaStepInfo').innerHTML=`<div class="kv"><b>現在</b><span>${current}%</span><b>1回の進行</b><span>+${step}%</span><b>進行後</b><span>${clamp(current+step)}%</span><b>噂補正</b><span>${esc(rumorText)}</span></div><p class="muted small">ボス噂は100%到達時に「噂を追う／通常イベント」を選択します。その他の噂は対応イベントの抽選重みを上げます。ランダムイベント結果では進行度を自動変更しません。</p>`;
   fillEventTables();
   resetImportantUsePanel('event');
   const roll=$('rollEventBtn');if(roll)roll.textContent=state.lastEventText?'イベント再抽選':'イベント抽選';updateEventCheckCopyButtons();
@@ -2894,7 +2935,7 @@ function renderRumorDetail(){
     box.textContent='噂なし。前提条件なしの通常イベントだけが候補に入ります。';
     return;
   }
-  const scope=rumorScope(r),slots=eventTimeSlots(r);const active=rumorActiveForTime(r,selected($('areaSelect'),state.areas));box.innerHTML=`<div class="kv"><b>噂</b><span>${esc(r.eventName||'')}</span><b>対象エリア</b><span>${esc(r.areaName||'')}</span><b>有効範囲</b><span>${esc(scope==='時間帯'?`${slots.join('・')||'指定時間'}のみ`:'一日全体')}${scope==='時間帯'&&!active?'（現在は時間外）':''}</span><b>探索中効果</b><span>${esc(r.progressEffect||'')}</span></div>${r.result?`<p class="muted">${esc(r.result)}</p>`:''}<p class="muted small">この噂はエリア探索イベントの候補だけに影響します。クエスト報酬・依頼報酬は増減しません。</p>`;
+  const scope=rumorScope(r),slots=eventTimeSlots(r);const active=rumorActiveForTime(r,selected($('areaSelect'),state.areas));const bossRumor=isBossRumor(r);box.innerHTML=`<div class="kv"><b>噂</b><span>${esc(r.eventName||'')}</span><b>対象エリア</b><span>${esc(r.areaName||'')}</span><b>有効範囲</b><span>${esc(scope==='時間帯'?`${slots.join('・')||'指定時間'}のみ`:'一日全体')}${scope==='時間帯'&&!active?'（現在は時間外）':''}</span><b>探索中効果</b><span>${esc(r.progressEffect||'')}</span></div>${r.result?`<p class="muted">${esc(r.result)}</p>`:''}<p class="muted small">${bossRumor?'ボス噂は探索途中の抽選率を変えません。探索進行度100%到達時に「噂を追う」を選んだ場合だけ、対応ボスへ確定遭遇します。追わなければ通常イベントです。':'この噂はエリア探索時だけ、対応イベントの抽選重みを上げます。探索度100%のイベントは固定せず、クエスト報酬・依頼報酬も増減しません。'}</p>`;
 }
 function fillRumorAreas(){
   const sel=$('rumorAreaSelect');
@@ -2976,7 +3017,7 @@ function renderRumorResult(row=null, mode=''){
     `有効範囲：${rumorScope(r)==='時間帯'?`${eventTimeSlots(r).join('・')||'指定時間'}のみ`:'一日全体'}`,
     r.progressEffect?`探索中効果：${r.progressEffect}`:'',
     r.result?`内容：${r.result}`:'',
-    '補足：この噂はエリア探索中のイベント候補にだけ影響します。'
+    isBossRumor(r)?'補足：探索進行度100%到達時に噂を追えば対応ボスへ確定遭遇します。追わなければ通常イベントを抽選します。':'補足：この噂はエリア探索中の対応イベントを出やすくします。探索度100%の結果は固定しません。'
   ].filter(Boolean);
   state.lastRumorText=lines.join('\n');
   box.textContent=state.lastRumorText;
@@ -3042,12 +3083,22 @@ function areaEventKey(area){
   return String(area && (area.id || area.name || area.eventTableId) || '').trim();
 }
 function bossRumorId(row){
-  const m=String(row && row.notes || '').match(/確定遭遇噂ID\s*[:：=]\s*([^\s,、;；]+)/);
+  const m=String(row && row.notes || '').match(/(?:対応|確定遭遇)噂ID\s*[:：=]\s*([^\s,、;；]+)/);
   return m ? String(m[1] || '').trim() : '';
 }
 function bossMatchesSelectedRumor(row, rumor){
   const required=bossRumorId(row);
   return !!required && required===String(rumor && rumor.id || '').trim();
+}
+function isBossRumor(rumor={}){
+  if(!rumor)return false;
+  if(String(rumor.notes||'').includes('【噂種別】ボス'))return true;
+  return (state.events||[]).some(row=>isBossEvent(row)&&bossMatchesSelectedRumor(row,rumor));
+}
+function bossEventForRumor(area={},rumor={}){
+  if(!area||!rumor||!isBossRumor(rumor))return null;
+  const tableId=String(area.eventTableId||'').trim();
+  return (state.events||[]).find(row=>String(row.tableId||'').trim()===tableId&&isBossEvent(row)&&bossMatchesSelectedRumor(row,rumor))||null;
 }
 function eventRowsForArea(area, options={}){
   const tableId=String((area&&area.eventTableId)||$('eventTableSelect')?.value||'').trim();
@@ -3696,10 +3747,8 @@ function randomEncounterOptionsForEvent(row={},partySize=selectedPartySize()){
 }
 const INDIVIDUAL_RANK_BOUNTY={hp:{D:-15,C:-7,B:0,A:7,S:15},evasion:{D:-15,C:-6,B:0,A:6,S:15},resist:{D:-10,C:-4,B:0,A:4,S:10}};
 const INDIVIDUAL_ATTACK_BOUNTY={'精密III':9,'精密II':6,'精密I':3,'標準':0,'強打I':3,'強打II':6,'強打III':9};
-function individualRollRank(width=3){
-  const r=Math.random()*100;
-  if(Number(width)>=2)return r<10?'D':r<30?'C':r<70?'B':r<90?'A':'S';
-  return r<20?'C':r<80?'B':'A';
+function individualRollRank(width=3,allowed=null){
+  const weights={D:10,C:20,B:40,A:20,S:10},pool=Array.isArray(allowed)&&allowed.length?allowed:INDIVIDUAL_RANK_ORDER;return individualWeightedPick(weights,pool);
 }
 function individualRankDelta(rank='B',width=3){
   const edge=Number(width)>=3?3:Number(width)>=2?2:1;
@@ -3711,11 +3760,52 @@ function individualStatWidth(monster={},kind='evasion'){
   return value>=8?3:2;
 }
 function individualAttackWidth(monster={}){return Number(monster.encounterValue)>=2?3:2;}
-function individualRollAttackTendency(width=3){
-  const r=Math.random()*100;
-  if(Number(width)>=3)return r<8?'精密III':r<20?'精密II':r<35?'精密I':r<65?'標準':r<80?'強打I':r<92?'強打II':'強打III';
-  if(Number(width)>=2)return r<10?'精密II':r<30?'精密I':r<70?'標準':r<90?'強打I':'強打II';
-  return r<20?'精密I':r<80?'標準':'強打I';
+const INDIVIDUAL_RANK_ORDER=['D','C','B','A','S'];
+const INDIVIDUAL_ATTACK_ORDER=['精密III','精密II','精密I','標準','強打I','強打II','強打III'];
+function individualParseProfile(raw){if(!raw)return{};if(raw&&typeof raw==='object')return raw;try{const parsed=JSON.parse(String(raw||''));return parsed&&typeof parsed==='object'?parsed:{};}catch(_e){return{};}}
+function individualRuleList(value){return Array.isArray(value)?value:String(value||'').split(/[,、，]/).map(v=>v.trim()).filter(Boolean);}
+function individualRuleMatches(rule={},context={}){
+  const areas=individualRuleList(rule.areaNames),times=individualRuleList(rule.timeSlots),weather=individualRuleList(rule.weather||rule.weatherNames);
+  if(areas.length&&!areas.includes(String(context.areaName||'')))return false;
+  if(times.length&&!times.includes(String(context.timeSlot||'')))return false;
+  if(weather.length&&!weather.includes(String(context.weatherName||'')))return false;
+  return true;
+}
+function individualProfileSelection(raw={},context={}){
+  const config=individualParseProfile(raw),base=(config.default&&typeof config.default==='object')?{...config.default}:{},rules=Array.isArray(config.rules)?config.rules:[];
+  const matched=rules.map((rule,index)=>({rule,index,priority:Number(rule?.priority)||0,specificity:(individualRuleList(rule?.areaNames).length?1:0)+(individualRuleList(rule?.timeSlots).length?1:0)+(individualRuleList(rule?.weather||rule?.weatherNames).length?1:0)})).filter(x=>individualRuleMatches(x.rule,context)).sort((a,b)=>b.priority-a.priority||b.specificity-a.specificity||a.index-b.index)[0];
+  const selected=matched?{...base,...matched.rule}:base;
+  return{profile:selected,label:String(selected.label||'').trim(),hint:String(selected.hint||'').trim()};
+}
+function individualEnvironmentContext(areaName='',options={}){
+  const name=String(areaName||options?.conditionContext?.areaName||'').trim(),area=(state.areas||[]).find(row=>String(row.name||row.id||'').trim()===name)||null;
+  if(options?.conditionContext)return{areaName:name,timeSlot:String(options.conditionContext.timeSlot||''),weatherName:String(options.conditionContext.weatherName||''),areaProfile:options.conditionContext.areaProfile||area?.monsterConditionProfile||''};
+  if(!area||!areaUsesWorldCycle(area))return{areaName:name,timeSlot:'',weatherName:'',areaProfile:area?.monsterConditionProfile||''};
+  const weather=currentAreaWeather(area);
+  return{areaName:name,timeSlot:normalizeTimeSlot(options.timeSlot||selectedTimeSlot()),weatherName:String(options.weatherName||weather?.name||''),areaProfile:area?.monsterConditionProfile||''};
+}
+function individualResolveConditionProfile(monster={},context={}){
+  const areaSel=individualProfileSelection(context.areaProfile||'',context),monsterSel=individualProfileSelection(monster.individualConditionProfile||'',context),merged={...areaSel.profile,...monsterSel.profile};
+  const labels=[areaSel.label,monsterSel.label].filter(Boolean),hints=[areaSel.hint,monsterSel.hint].filter(Boolean);
+  return{...merged,labels:[...new Set(labels)],hints:[...new Set(hints)]};
+}
+function individualRangePool(spec='',order=[],fallback=[]){
+  if(Array.isArray(spec)){const out=spec.map(String).filter(v=>order.includes(v));return out.length?out:fallback.slice();}
+  const raw=String(spec||'').trim();if(!raw)return fallback.slice();
+  const direct=raw.split(/[,、，]/).map(v=>v.trim()).filter(v=>order.includes(v));if(direct.length>1)return direct;
+  const normalized=raw.replace(/～/g,'-'),parts=normalized.split('-').map(v=>v.trim()).filter(Boolean);
+  if(parts.length===2&&order.includes(parts[0])&&order.includes(parts[1])){const a=order.indexOf(parts[0]),b=order.indexOf(parts[1]),lo=Math.min(a,b),hi=Math.max(a,b);return order.slice(lo,hi+1);}
+  if(order.includes(raw))return[raw];return fallback.slice();
+}
+function individualWeightedPick(weights={},allowed=[]){
+  const rows=allowed.map(key=>({key,weight:Math.max(0,Number(weights[key])||0)})).filter(x=>x.weight>0);if(!rows.length)return allowed[0]||'';
+  const total=rows.reduce((sum,row)=>sum+row.weight,0);let roll=Math.random()*total;for(const row of rows){roll-=row.weight;if(roll<0)return row.key;}return rows[rows.length-1].key;
+}
+function individualRankAllowed(profile={},kind='hp',width=3){return individualRangePool(profile[kind]||'',INDIVIDUAL_RANK_ORDER,INDIVIDUAL_RANK_ORDER);}
+function individualAttackAllowed(profile={},width=3){const base=Number(width)>=3?INDIVIDUAL_ATTACK_ORDER:INDIVIDUAL_ATTACK_ORDER.slice(1,-1),configured=individualRangePool(profile.attack||'',INDIVIDUAL_ATTACK_ORDER,base);const filtered=configured.filter(v=>base.includes(v));return filtered.length?filtered:base;}
+function individualRollAttackTendency(width=3,allowed=null){
+  const weights=Number(width)>=3?{'精密III':8,'精密II':12,'精密I':15,'標準':30,'強打I':15,'強打II':12,'強打III':8}:{'精密II':10,'精密I':20,'標準':40,'強打I':20,'強打II':10};
+  const base=Number(width)>=3?INDIVIDUAL_ATTACK_ORDER:INDIVIDUAL_ATTACK_ORDER.slice(1,-1),pool=Array.isArray(allowed)&&allowed.length?allowed.filter(v=>base.includes(v)):base;return individualWeightedPick(weights,pool.length?pool:base);
 }
 function individualPrecisionPower(power='',steps=1){
   const raw=String(power||'').trim();if(!raw||raw==='なし'||raw==='-')return raw;
@@ -3757,6 +3847,22 @@ function individualBounty(base=0,ranks={},tendency='標準'){
   pct=Math.max(-30,Math.min(35,pct));let value=Math.round((baseValue*(1+pct/100))/5)*5;
   if(pct>0&&value===baseValue)value=baseValue+5;if(pct<0&&value===baseValue)value=Math.max(0,baseValue-5);return value;
 }
+function monsterAreaVariant(monster={},areaName=''){
+  const raw=String(monster.areaVariants||'').trim();if(!raw||!String(areaName||'').trim())return null;
+  try{const map=JSON.parse(raw);return map&&typeof map==='object'?map[String(areaName||'').trim()]||null:null;}catch(_e){return null;}
+}
+function monsterVariantPower(power='',delta=0){
+  const raw=String(power||'').trim(),d=Math.trunc(Number(delta)||0);if(!d||!raw||raw==='なし'||raw==='-'||!/\d+D\d+/i.test(raw))return raw;
+  const m=raw.match(/^(.*?)(?:\+(\d+))?$/);if(!m)return raw;
+  const base=String(m[1]||raw).replace(/\+$/,''),fixed=Number(m[2]||0)+d;return fixed>0?`${base}+${fixed}`:base;
+}
+function monsterApplyAreaVariant(monster={},areaName=''){
+  const variant=monsterAreaVariant(monster,areaName);if(!variant)return JSON.parse(JSON.stringify(monster));
+  const out=JSON.parse(JSON.stringify(monster));['hp','mp','evasionValue','resistValue','defenseValue','initiative','encounterValue'].forEach(k=>{if(variant[k]!==undefined&&variant[k]!==null&&variant[k]!=='')out[k]=String(variant[k]);});
+  const skillDelta=Math.trunc(Number(variant.offenseSkillDelta)||0),damageDelta=Math.trunc(Number(variant.damageFixedDelta)||0);
+  if((skillDelta||damageDelta)&&out.actions){out.actions=String(out.actions).split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t');while(c.length<9)c.push('');const type=String(c[1]||''),check=String(c[2]||'');if(skillDelta&&['近接攻撃','遠距離攻撃','特殊'].includes(type)&&/(回避値|抵抗値)/.test(check)&&c[7]!==''&&!Number.isNaN(Number(c[7])))c[7]=String(Number(c[7])+skillDelta);if(damageDelta&&['近接攻撃','遠距離攻撃'].includes(type))c[5]=monsterVariantPower(c[5],damageDelta);return c.join('\t');}).join('\n');}
+  out.areaVariantName=String(areaName||'').trim();return out;
+}
 function encounterMonsterIsFixed(monster={}){return String(monster.individualValueEnabled||'').toUpperCase()==='FALSE'||String(monster.id||'').startsWith('mon_named_')||String(monster.monsterTraits||'').split(/[,、，]/).map(v=>v.trim()).includes('ボス');}
 function generateEncounterIndividual(monster={},options={}){
   const fixed=encounterMonsterIsFixed(monster)||String(monster.individualValueEnabled||'').toUpperCase()!=='TRUE';
@@ -3766,10 +3872,11 @@ function generateEncounterIndividual(monster={},options={}){
     {const keep=new Set([...(selected.actions||[]),...(selected.passiveOnlyActions||[])].map(a=>String(a.name||'').trim()));variant.actions=encounterSerializeActions(tokenParseActions(variant.actions||'').filter(a=>keep.has(String(a.name||'').trim())));}
     return{monster:variant,iv:{fixed:true,hp:'B',evasion:'B',resist:'B',attack:'標準'},bountyG:bounty,selectedActionNames:selected.selectedNames||[],selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,eligibleActionPoolSize:selected.eligiblePoolSize??selected.poolSize,validLoadoutCount:selected.validLoadoutCount||1};
   }
-  const forced=!!options.fixedIv;
-  const ranks={hp:forced?'B':individualRollRank(individualStatWidth(monster,'hp')),evasion:forced?'B':individualRollRank(individualStatWidth(monster,'evasion')),resist:forced?'B':individualRollRank(individualStatWidth(monster,'resist'))};
-  const attack=forced?'標準':individualRollAttackTendency(individualAttackWidth(monster));
+  const forced=!!options.fixedIv,conditionContext=individualEnvironmentContext(options.areaName||monster.areaVariantName||'',options),conditionProfile=forced?{labels:[],hints:[]}:individualResolveConditionProfile(monster,conditionContext);
+  const ranks={hp:forced?'B':individualRollRank(individualStatWidth(monster,'hp'),individualRankAllowed(conditionProfile,'hp',individualStatWidth(monster,'hp'))),evasion:forced?'B':individualRollRank(individualStatWidth(monster,'evasion'),individualRankAllowed(conditionProfile,'evasion',individualStatWidth(monster,'evasion'))),resist:forced?'B':individualRollRank(individualStatWidth(monster,'resist'),individualRankAllowed(conditionProfile,'resist',individualStatWidth(monster,'resist')))};
+  const attackWidth=individualAttackWidth(monster),attack=forced?'標準':individualRollAttackTendency(attackWidth,individualAttackAllowed(conditionProfile,attackWidth));
   let variant=individualApplyAttackTendency(monster,attack);
+  if(conditionProfile.labels?.length){variant.conditionProfileLabel=conditionProfile.labels.join(' / ');variant.conditionProfileHint=(conditionProfile.hints||[]).join(' / ');}
   const selected=encounterSelectedActionSet(variant,{...(options.selectionContext||{}),individual:{...ranks,attack}});
   {const keep=new Set([...(selected.actions||[]),...(selected.passiveOnlyActions||[])].map(a=>String(a.name||'').trim()));variant.actions=encounterSerializeActions(tokenParseActions(variant.actions||'').filter(a=>keep.has(String(a.name||'').trim())));}
   const baseHp=Math.max(1,Number(monster.hp)||1),hpPct=({D:-25,C:-12,B:0,A:12,S:25})[ranks.hp]||0;
@@ -3777,12 +3884,12 @@ function generateEncounterIndividual(monster={},options={}){
   variant.evasionValue=String(Math.max(0,(Number(monster.evasionValue)||0)+individualRankDelta(ranks.evasion,individualStatWidth(monster,'evasion'))));
   variant.resistValue=String(Math.max(0,(Number(monster.resistValue)||0)+individualRankDelta(ranks.resist,individualStatWidth(monster,'resist'))));
   const bounty=individualBounty(monster.baseBountyG,ranks,attack);
-  return{monster:variant,iv:{fixed:false,...ranks,attack},bountyG:bounty,selectedActionNames:selected.selectedNames,selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,eligibleActionPoolSize:selected.eligiblePoolSize??selected.poolSize,validLoadoutCount:selected.validLoadoutCount};
+  return{monster:variant,iv:{fixed:false,...ranks,attack,environmentLabel:(conditionProfile.labels||[]).join(' / '),timeSlot:conditionContext.timeSlot||'',weatherName:conditionContext.weatherName||''},bountyG:bounty,selectedActionNames:selected.selectedNames,selectedFixedActionNames:selected.fixedSelectedNames||[],actionPoolSize:selected.poolSize,eligibleActionPoolSize:selected.eligiblePoolSize??selected.poolSize,validLoadoutCount:selected.validLoadoutCount};
 }
 function encounterInstanceRows(groups=[],options={}){
   const rows=[],normalizedGroups=tokenNormalizeGroups(groups||[]);
   normalizedGroups.forEach(group=>{
-    const master=(state.monsters||[]).find(row=>String(row.name||'').trim()===String(group.name||'').trim())||null;if(!master)return;
+    const baseMaster=(state.monsters||[]).find(row=>String(row.name||'').trim()===String(group.name||'').trim())||null;if(!baseMaster)return;const master=monsterApplyAreaVariant(baseMaster,options.areaName||'');
     const selectionContext=encounterSelectionContext(normalizedGroups,{name:group.name,formation:group.formation});
     for(let i=0;i<Math.max(1,Math.floor(Number(group.count)||1));i++){
       const generated=generateEncounterIndividual(master,{...options,selectionContext});
@@ -3791,11 +3898,11 @@ function encounterInstanceRows(groups=[],options={}){
   });return rows;
 }
 function encounterBountyTotal(encounter=state.lastEncounter){if(encounter?.bountyEligible===false)return 0;return (encounter?.instances||[]).reduce((sum,row)=>sum+Math.max(0,Number(row.bountyG)||0),0);}
-function encounterIvLabel(row={}){const iv=row.iv||{};if(iv.fixed)return '固定個体';return `HP:${iv.hp||'B'} / 回避:${iv.evasion||'B'} / 抵抗:${iv.resist||'B'} / 攻撃:${iv.attack||'標準'}`;}
+function encounterIvLabel(row={}){const iv=row.iv||{};if(iv.fixed)return '固定個体';const env=String(iv.environmentLabel||'').trim();return `HP:${iv.hp||'B'} / 回避:${iv.evasion||'B'} / 抵抗:${iv.resist||'B'} / 攻撃:${iv.attack||'標準'}${env?` / 環境:${env}`:''}`;}
 function recordLastEncounter(label='',areaName='',groups=[],options={}){
   const clean=(groups||[]).map(group=>({name:String(group.name||'').trim(),count:Math.max(1,Math.floor(Number(group.count)||1)),formation:String(group.formation||group.position||'').trim()})).filter(group=>group.name);
   if(!clean.length)return;
-  const instances=encounterInstanceRows(clean,options);
+  const instances=encounterInstanceRows(clean,{...options,areaName:String(areaName||'').trim()});
   const bountyEligible=options.bountyEligible!==false;
   state.lastEncounter={label:String(label||'戦闘').trim(),areaName:String(areaName||'').trim(),groups:clean,instances,bountyEligible,bountyG:bountyEligible?instances.reduce((sum,row)=>sum+Math.max(0,Number(row.bountyG)||0),0):0,fixedIv:!!options.fixedIv};
   state.dropEncounterInstances=normalizeDropInstances(instances.map(row=>({uid:dropInstanceUid(),monsterId:row.monsterId,name:row.name,formation:row.formation,dismantleSuccess:false})));
@@ -3805,17 +3912,18 @@ function encounterGroupsForDrop(row={},resolution=null,partySize=selectedPartySi
   if(resolution&&Array.isArray(resolution.groups))return resolution.groups.map(g=>({name:g.name,count:g.count,formation:g.formation||g.position||''}));
   return encounterCompositionGroups(row,partySize).map(g=>({name:g.name,count:g.count,formation:g.position||''}));
 }
-function encounterHighestInitiative(groups=[]){
+function encounterHighestInitiative(groups=[],areaName=''){
   const values=(groups||[]).map(group=>{
     const name=String(group?.name||'').trim();
-    const monster=(state.monsters||[]).find(row=>String(row.name||'').trim()===name);
+    const base=(state.monsters||[]).find(row=>String(row.name||'').trim()===name);
+    const monster=base?monsterApplyAreaVariant(base,areaName):null;
     const value=Number(monster?.initiative);
     return Number.isFinite(value)?value:null;
   }).filter(value=>value!==null);
   return values.length?Math.max(...values):null;
 }
-function encounterInitiativeText(groups=[]){
-  const highest=encounterHighestInitiative(groups);
+function encounterInitiativeText(groups=[],areaName=''){
+  const highest=encounterHighestInitiative(groups,areaName);
   return highest===null?'':`先制値：${highest}`;
 }
 function eventEncounterBranch(row={}){
@@ -3849,45 +3957,68 @@ function formatEventOutput(prefix,picked,area,tableId,extraLines=[],partySizeOve
   const composition=random?encounterResolutionBlock(random):encounterCompositionText(picked,partySize);
   const dropGroups=(resolvedGroups.length?resolvedGroups:encounterGroupsForDrop(picked,random,partySize)).map(g=>({name:g.name,count:g.count,formation:g.formation||g.position||''}));
   picked.__resolvedEncounterGroups=dropGroups.map(g=>({name:g.name,count:g.count,formation:g.formation||g.position||''}));
-  const initiative=encounterInitiativeText(dropGroups);
+  const initiative=encounterInitiativeText(dropGroups,area?.name||picked.areaName||'');
   const encounterHeading=dropGroups.length?eventEncounterHeading(picked):'';
   if(dropGroups.length&&(!isBossEvent(picked)||encounterOptions.forceRecordEncounter))recordLastEncounter(picked.eventName||prefix,area?.name||picked.areaName||'',dropGroups,encounterOptions);
   if(dropGroups.length&&tokenScope)setTokenExportEncounter(picked.eventName||prefix,area?.name||picked.areaName||'',dropGroups,tokenScope);
   const weather=area?currentAreaWeather(area):null; const time=areaUsesWorldCycle(area)?selectedTimeSlot():''; return [prefix,area?`エリア：${area.name||area.id}`:'',time?`時間帯：${time}`:'',weather?`天気：${weather.name}`:'',weather?.detail?`天気詳細：${weather.detail}`:'',area&&area.fieldEffect&&area.fieldEffect!=='なし'?`フィールド効果：${area.fieldEffect}`:'',`表：${tableId}`,picked.eventName?`イベント：${picked.eventName}`:'',publicEventTypeName(picked)?`種別：${publicEventTypeName(picked)}`:'',condition,encounterHeading,encounter,composition,initiative,eventCheckDisplayText(picked),picked.result?`結果：${eventResultTextForDisplay(picked,partySize)}`:'',picked.progressEffect?`補足：${picked.progressEffect}`:'',...extraLines].filter(Boolean).join('\n');
 }
-function triggerAreaClearRumorEvent(area){
-  const rumor=selectedRumor();
-  if(!area || !rumor || !rumorActiveForTime(rumor,area)) return false;
-  const key=areaEventKey(area);
-  const tableId=String(area.eventTableId||'').trim();
-  const picked=state.events.find(e=>
-    String(e.tableId||'').trim()===tableId &&
-    isBossEvent(e) &&
-    bossMatchesSelectedRumor(e,rumor)
-  );
-  if(!picked) return false;
-  // 探索クリア固有イベントが確定した時点で、直前のランダムイベント履歴とドロップ状態を消す。
-  clearAreaRandomEventHistory();
-  state.areaBossEncountered[key]=true;
-  state.lastEventKey=eventUniqueKey(picked);
-  state.lastEventCheckCopyText=areaFixedEventCheckCopyText(area,picked);
+let bossRumorChoiceContext=null;
+function bossRumorDisplayName(boss={}){
+  const first=String(boss.encounterComposition||'').split(/\r?\n|;/)[0].split(',');
+  if(first.length>=2&&String(first[1]||'').trim())return String(first[1]).trim();
+  const m=String(boss.result||'').match(/エリアボス「([^」]+)」/);
+  return m?m[1]:String(boss.eventName||'ボス');
+}
+function ensureBossRumorChoiceModal(){
+  let modal=$('bossRumorChoiceModal');if(modal)return modal;
+  modal=v738CreateModal('bossRumorChoiceModal','bossRumorChoiceModalTitle',1600);modal.classList.add('boss-rumor-choice-modal');
+  modal.querySelector('.progress-modal-body').innerHTML='<p class="boss-rumor-question">噂を追いますか？</p>';
+  const foot=modal.querySelector('.progress-modal-foot');
+  foot.append(v738Button('bossRumorChaseBtn','噂を追う'),v738Button('bossRumorNormalBtn','通常イベント','secondary'));
+  $('bossRumorChaseBtn')?.addEventListener('click',()=>resolveBossRumorChoice(true));
+  $('bossRumorNormalBtn')?.addEventListener('click',()=>resolveBossRumorChoice(false));
+  return modal;
+}
+function resolveBossRumorEncounter(area,rumor,boss){
   clearTokenExportEncounter('event');
-  state.lastEventOutcomeKey=eventUniqueKey(picked);
-  const baseText=formatEventOutput(`【探索クリア時イベント】${picked.eventName||'名称未設定'}`, picked, area, tableId, [`噂：${rumor.eventName||''}`],null,'event');
-  const treasureBundle=resolveEventTreasures(picked,area?.name||picked.areaName||'',false);
-  state.lastEventRewardState=buildEventRewardState(picked);
-  const rewardSpec=eventRewardTableSpec(picked,area?.name||picked.areaName||'');
-  const maxSlots=Math.max(rewardSpec.drawCount,eventRewardMaxTableSlots(picked));
-  const tableReward=rollRewardItemTable(rewardSpec.tableId,maxSlots,area?.name||picked.areaName||'',picked.eventName||'イベント');
+  state.lastEventCheckCopyText='';state.lastEventOutcomeKey='';resetAreaEventItemCopyState();clearRecipeMerchantOffers();
+  state.lastEventKey=eventUniqueKey(boss);state.lastEventOutcomeKey=eventUniqueKey(boss);
+  const tableId=String(area?.eventTableId||boss.tableId||'').trim();
+  const baseText=formatEventOutput(`【ボス噂を追跡】${boss.eventName||'ボス遭遇'}`,boss,area,tableId,[`今日の噂：${rumor.eventName||''}`,`探索進行度100%：噂を追って確定遭遇`],null,'event',{forceRecordEncounter:true});
+  state.lastEventCheckCopyText=eventCheckCopyText(boss);
+  const treasureBundle=resolveEventTreasures(boss,area?.name||boss.areaName||'',false);
+  state.lastEventRewardState=buildEventRewardState(boss);
+  const rewardSpec=eventRewardTableSpec(boss,area?.name||boss.areaName||'');
+  const maxSlots=Math.max(rewardSpec.drawCount,eventRewardMaxTableSlots(boss));
+  const tableReward=rollRewardItemTable(rewardSpec.tableId,maxSlots,area?.name||boss.areaName||'',boss.eventName||'ボス遭遇');
   setEventTableRewardState('event',tableReward);syncEventTableRewardCopyState('event');
   state.lastEventText=[baseText,treasureBundle.displayText,tableReward.displayText].filter(Boolean).join('\n\n');
-  setEventTreasureResults('event',treasureBundle.results);
-  renderEventRewardPanel('event');
-  updateTreasureCopyButtons();updateAreaEventItemCopyButton();updateEventCheckCopyButtons();
-  $('eventResult').textContent=state.lastEventText;
-  resetImportantUsePanel('event');
-  saveState(false);
-  addLog(`探索クリア時イベント：${area.name||area.id} / ${picked.eventName||'名称未設定'}（任意戦闘）`);
+  setEventTreasureResults('event',treasureBundle.results);renderEventRewardPanel('event');resetImportantUsePanel('event');
+  updateTreasureCopyButtons();updateAreaEventItemCopyButton();updateEventCheckCopyButtons();updateEventContentCopyButtons();
+  state.areaBossEncountered[areaEventKey(area)]=true;
+  if($('eventResult'))$('eventResult').textContent=state.lastEventText;
+  const rollBtn=$('rollEventBtn');if(rollBtn)rollBtn.textContent='イベント再抽選';
+  if(typeof progressUiV738!=='undefined'&&progressUiV738.areaActive){progressUiV738.slotResolved.event=true;v738UpdateProgressControls();}
+  saveState(false);addLog(`ボス噂を追跡：${boss.eventName||'ボス遭遇'}へ確定遭遇。`);
+  return true;
+}
+function resolveBossRumorChoice(chase){
+  const ctx=bossRumorChoiceContext;if(!ctx)return;
+  bossRumorChoiceContext=null;v738SetModalOpen('bossRumorChoiceModal',false);
+  if(chase){resolveBossRumorEncounter(ctx.area,ctx.rumor,ctx.boss);return;}
+  addLog(`ボス噂「${ctx.rumor.eventName||''}」を追わず、100%イベントを通常抽選。`);
+  if(typeof progressUiV738!=='undefined'&&progressUiV738.areaActive){progressUiV738.slotResolved.event=false;v738UpdateProgressControls();}
+  rollEvent();
+}
+function triggerAreaClearRumorEvent(area){
+  const rumor=selectedRumor();
+  const boss=bossEventForRumor(area,rumor);
+  if(!boss)return false;
+  bossRumorChoiceContext={area,rumor,boss};
+  const modal=ensureBossRumorChoiceModal();
+  $('bossRumorChoiceModalTitle').textContent=`ボス噂：${bossRumorDisplayName(boss)}`;
+  v738SetModalOpen('bossRumorChoiceModal',true);
   return true;
 }
 function fillEventTables(){
@@ -3910,7 +4041,7 @@ function rollEvent(){
   state.lastEventOutcomeKey='';
   resetAreaEventItemCopyState();clearRecipeMerchantOffers();
   if(!rows.length){state.lastEventOutcomeKey='';$('eventResult').textContent='このエリアに登録されたランダムイベント候補がありません。前提条件付きイベントは、今日の噂が一致した時だけ候補に入ります。';renderEventRewardPanel('event');updateAreaEventItemCopyButton();return;}
-  const picked=pickAreaEvent(rows,state.lastEventKey,area);
+  const picked=pickAreaEvent(rows,state.lastEventKey,area,{rumor});
   state.lastEventKey=eventUniqueKey(picked);
   state.lastEventOutcomeKey=eventUniqueKey(picked);
   const rumorLine=rumor ? [`今日の噂：${rumor.eventName||''}${rumorScope(rumor)==='時間帯'?`（${eventTimeSlots(rumor).join('・')}のみ有効）`:''}`] : [];
@@ -3984,8 +4115,83 @@ function recipeMerchantPrice(row={}){
 function randomRowsWithoutReplacement(rows=[],count=4){
   const pool=rows.slice(),out=[];while(pool.length&&out.length<count){const i=Math.floor(Math.random()*pool.length);out.push(pool.splice(i,1)[0]);}return out;
 }
+function kohakuItemKey(row={}){return String(row.publicId||row.id||row.name||'').trim();}
+function kohakuMaterialValue(row={}){const sell=Number(String(row.sellPrice||'').trim());if(Number.isFinite(sell)&&sell>0)return sell;const rank=Math.max(1,Number(row.rank)||1);return rank*10;}
+function kohakuBossMonsterNames(){
+  const out=new Set();(state.events||[]).filter(e=>String(e.eventType||'').trim()==='ボス遭遇').forEach(e=>{String(e.encounterComposition||'').split(/[;\n]+/).forEach(part=>{const cols=part.split(',').map(v=>v.trim());if(cols[1])out.add(cols[1]);});});return out;
+}
+function kohakuIsRecipeOrScroll(row={}){const type=String(row.itemType||'').trim(),cat=String(row.itemCategory||'').trim(),kind=String(row.dataKind||'').trim();return type==='スクロール'||cat.includes('スクロール')||type==='レシピ'||cat==='レシピ'||kind==='レシピ';}
+function kohakuIsCrossBorderItem(row={}){return String(row.itemType||'').trim()==='重要アイテム'||String(row.id||'').startsWith('imp_')||/越境/.test(`${row.source||''} ${row.itemCategory||''} ${row.notes||''}`);}
+function kohakuIsNamedMaterial(row={}){return /^mat_named_/i.test(String(row.id||'').trim());}
+function kohakuIsBossMaterial(row={}){if(String(row.materialType||'').trim()!=='魔物素材')return false;const source=String(row.source||'').trim();return [...kohakuBossMonsterNames()].some(name=>name&&source.includes(name));}
+function kohakuIsValuableOnly(row={}){return String(row.itemType||'').trim()==='換金品'||String(row.itemCategory||'').trim()==='換金品';}
+function kohakuExcludedSpecial(row={}){return !row||kohakuIsRecipeOrScroll(row)||kohakuIsCrossBorderItem(row)||kohakuIsNamedMaterial(row)||kohakuIsBossMaterial(row);}
+function kohakuEligibleOfferRow(row={}){return !!row&&enabledRow(row)&&!kohakuExcludedSpecial(row)&&!kohakuIsValuableOnly(row);}
+function kohakuEligiblePaymentRow(row={}){return !!row&&enabledRow(row)&&!kohakuExcludedSpecial(row);}
+function kohakuAreaMainMaterialNames(area={}){return String(area.mainMaterials||'').split(/[、,，/／\n]+/).map(v=>v.trim()).filter(Boolean);}
+function kohakuAreaMonsterNames(area={}){return String(area.mainMonsters||'').split(/[、,，/／\n]+/).map(v=>v.trim()).filter(Boolean);}
+function kohakuAreaAvailabilityPool(area={}){
+  const map=new Map(),areaName=String(area.name||'').trim(),tableId=String(area.eventTableId||'').trim();
+  const add=(row,weight=1,source='')=>{if(!row||!enabledRow(row))return;const key=kohakuItemKey(row);if(!key)return;const cur=map.get(key);if(cur){cur.weight=Math.max(cur.weight,Number(weight)||1);if(source)cur.sources.add(source);return;}map.set(key,{row,weight:Number(weight)||1,sources:new Set(source?[source]:[])});};
+  // エリアの正式な入手アイテム表。加工素材・消耗品などもここから対象になる。
+  const rewardTableId=rewardItemTableIdForArea(areaName);rewardItemRows(rewardTableId).forEach(r=>add(findItemByNameOrId(r.entryName,r.entryPublicId),5,'入手アイテム表'));
+  // エリア説明上の主素材。
+  kohakuAreaMainMaterialNames(area).forEach(name=>add(findItemByNameOrId(name,''),5,'主素材'));
+  // エリア固有イベントの直接報酬と、そこで参照される宝箱表の中身。
+  const areaEvents=(state.events||[]).filter(e=>String(e.tableId||'').trim()===tableId||String(e.areaName||'').trim()===areaName);
+  areaEvents.forEach(e=>{
+    String(e.result||'').split(/[。\n]+/).forEach(clause=>eventRewardItemsFromClause(clause).forEach(item=>add(item.row||findItemByNameOrId(item.selectedName||item.name,''),4,'エリアイベント')));
+    const tid=String(e.treasureTableId||'').trim();if(tid)eligibleTreasureRows(tid,areaName).forEach(tr=>{if(String(tr.entryType||'').trim()==='通貨')return;add(findItemByNameOrId(tr.entryName,tr.entryPublicId),3,'宝箱');});
+  });
+  // そのエリアに通常出現する魔物のドロップ。ボス素材・二つ名素材は後段で除外。
+  const monsterByName=new Map((state.monsters||[]).map(m=>[String(m.name||'').trim(),m]));
+  kohakuAreaMonsterNames(area).forEach(name=>{const mon=monsterByName.get(name);if(!mon)return;parseDrops(mon.drops||'').forEach(d=>add(findDropMaterial(d),4,'魔物ドロップ'));});
+  return [...map.values()];
+}
+function kohakuAreaAllowedKeySet(area={}){return new Set(kohakuAreaAvailabilityPool(area).map(x=>kohakuItemKey(x.row)).filter(Boolean));}
+function kohakuOfferPool(area={}){return kohakuAreaAvailabilityPool(area).filter(entry=>kohakuEligibleOfferRow(entry.row));}
+function kohakuLedger(){return progressUiV738.kohakuMaterials||{areaId:'',seq:0,currentEventToken:'',sources:{}};}
+function kohakuResetLedger(area={}){progressUiV738.kohakuMaterials={areaId:String(area.id||area.name||''),seq:0,currentEventToken:'',sources:{}};state.lastRecipeMerchantTrades=[];}
+function kohakuCurrentTradeArea(){const name=String(state.lastRecipeMerchantContext?.areaName||'').trim();return (state.areas||[]).find(a=>String(a.name||a.id||'').trim()===name)||selectedExplorationArea()||{};}
+function kohakuAggregateMaterials(area=kohakuCurrentTradeArea()){
+  const map=new Map(),ledger=kohakuLedger(),allowed=kohakuAreaAllowedKeySet(area);Object.values(ledger.sources||{}).forEach(rows=>(rows||[]).forEach(item=>{const row=item.row||findItemByNameOrId(item.name,item.publicId);if(!kohakuEligiblePaymentRow(row))return;const key=kohakuItemKey(row)||String(item.name||'');if(!key||!allowed.has(key))return;const cur=map.get(key)||{name:row?.name||item.name,row,count:0};cur.count+=Math.max(0,Number(item.count)||0);map.set(key,cur);}));return[...map.values()].filter(x=>x.count>0);
+}
+function kohakuSetMaterialSource(sourceKey='',items=[]){
+  const key=String(sourceKey||'').trim();if(!key)return;const ledger=kohakuLedger();const map=new Map();(items||[]).forEach(item=>{const row=item.row||findItemByNameOrId(item.name,item.publicId);if(!row)return;const k=kohakuItemKey(row)||String(item.name||'');if(!k)return;const cur=map.get(k)||{name:row?.name||item.name,row,count:0};cur.count+=Math.max(0,Number(item.count)||0);map.set(k,cur);});ledger.sources[key]=[...map.values()];progressUiV738.kohakuMaterials=ledger;
+}
+function kohakuTreasureSelectedItems(scope='event'){
+  const out=[];eventTreasureResults(scope).filter(r=>eventTreasureAllowedBySelectedOutcome(scope,r)).forEach(result=>{const picked=result?.picked;if(!picked)return;const row=findItemByNameOrId(picked.entryName||picked.recipeName,picked.entryPublicId);if(!row)return;const m=String(result.quantity||'1').match(/\d+/),count=Math.max(1,Number(m?.[0]||1));out.push({name:row.name,row,count});});return out;
+}
+function kohakuCurrentEventMaterialItems(){return [...eventRewardCombinedSelectedItems('event'),...kohakuTreasureSelectedItems('event')];}
+function kohakuDiscardCurrentEventMaterials(){const ledger=kohakuLedger(),token=String(ledger.currentEventToken||'').trim();if(!token)return;Object.keys(ledger.sources||{}).forEach(key=>{if(key===`event:${token}`||key.startsWith(`drop:${token}:`))delete ledger.sources[key];});ledger.currentEventToken='';progressUiV738.kohakuMaterials=ledger;}
+function kohakuCommitCurrentAreaEventMaterials(){
+  if(!progressUiV738.areaActive||progressUiV738.areaMode!=='normal')return;const ledger=kohakuLedger(),token=String(ledger.currentEventToken||'').trim(),row=v738CurrentEventRow('event');if(!token)return;if(row&&!isRecipeMerchantEvent(row))kohakuSetMaterialSource(`event:${token}`,kohakuCurrentEventMaterialItems());ledger.currentEventToken='';progressUiV738.kohakuMaterials=ledger;
+}
+function kohakuEncounterSignature(instances=[]){const label=String(state.lastEncounter?.label||'encounter').trim();const body=(instances||[]).map(x=>`${String(x.monsterId||x.name||'')}:${String(x.formation||'')}`).sort().join('|');return `${label}::${body||'encounter'}`;}
+function kohakuCommitDropMaterials(aggregate,instances=[]){
+  if(!progressUiV738.areaActive||progressUiV738.areaMode!=='normal')return;const ledger=kohakuLedger(),token=String(ledger.currentEventToken||'').trim();if(!token)return;const rows=[];aggregate.forEach(v=>{const row=v.material||findDropMaterial(v.d||{});if(row)rows.push({name:row.name,row,count:Number(v.count)||0});});kohakuSetMaterialSource(`drop:${token}:${kohakuEncounterSignature(instances)}`,rows);
+}
+function kohakuWeightedPick(entries=[]){const rows=(entries||[]).filter(x=>Number(x.weight)>0);if(!rows.length)return null;const total=rows.reduce((s,x)=>s+Number(x.weight||1),0);let r=Math.random()*total;for(const x of rows){r-=Number(x.weight||1);if(r<=0)return x;}return rows.at(-1)||null;}
+function kohakuTradeCandidates(area={}){
+  const payments=kohakuAggregateMaterials(area),offers=kohakuOfferPool(area),out=[];
+  payments.forEach(pay=>{const payValue=kohakuMaterialValue(pay.row),maxPay=Math.min(Math.max(0,Math.floor(Number(pay.count)||0)),8);if(!payValue||!maxPay)return;
+    offers.forEach(entry=>{const give=entry.row;if(!give||kohakuItemKey(give)===kohakuItemKey(pay.row))return;const giveValue=kohakuMaterialValue(give);if(!giveValue)return;
+      for(let giveQty=1;giveQty<=5;giveQty++){
+        const giveTotal=giveValue*giveQty,needQty=Math.ceil(giveTotal/payValue);if(needQty<1||needQty>maxPay)continue;const needTotal=payValue*needQty,spread=needTotal/giveTotal;if(spread<0.999||spread>1.35)continue;
+        const closeness=spread<=1.12?2.0:spread<=1.22?1.45:1.0;const stock=Math.min(2,0.75+Math.sqrt(Math.max(1,pay.count))/2);out.push({give,giveQty,need:pay.row,needQty,giveValue:giveTotal,needValue:needTotal,weight:Number(entry.weight||1)*closeness*stock});
+      }
+    });
+  });return out;
+}
+function drawKohakuMaterialTrades(area={},count=5){
+  if(String(state.lastRecipeMerchantContext?.scope||'event')!=='event'){state.lastRecipeMerchantTrades=[];return;}
+  const pool=kohakuTradeCandidates(area),offers=[],work=pool.slice();while(offers.length<count&&work.length){const picked=kohakuWeightedPick(work);if(!picked)break;offers.push({...picked});const i=work.indexOf(picked);if(i>=0)work.splice(i,1);}while(offers.length<count&&pool.length){const picked=kohakuWeightedPick(pool);if(!picked)break;offers.push({...picked});}state.lastRecipeMerchantTrades=offers;
+}
+function kohakuTradeLine(t={}){return `${t.give?.name||'素材'}×${Number(t.giveQty)||1} ← ${t.need?.name||'素材'}×${Number(t.needQty)||1}`;}
+function kohakuTradeListCopyText(){const rows=state.lastRecipeMerchantTrades||[],lines=['【コハクの素材交換】'];if(!rows.length){lines.push('交換候補なし');return lines.join('\n');}rows.forEach(r=>lines.push(`・${kohakuTradeLine(r)}`));return lines.join('\n');}
+function kohakuLedgerSummary(){const rows=kohakuAggregateMaterials(kohakuCurrentTradeArea());return rows.length?rows.map(x=>`${x.name}×${x.count}`).join('、'):'なし';}
 function clearRecipeMerchantOffers(){
-  state.lastRecipeMerchantOffers=[];state.selectedRecipeMerchantId='';state.lastRecipeMerchantContext={scope:'',areaName:'',eventName:''};renderRecipeMerchantPanel();
+  state.lastRecipeMerchantOffers=[];state.lastRecipeMerchantTrades=[];state.selectedRecipeMerchantId='';state.lastRecipeMerchantContext={scope:'',areaName:'',eventName:''};renderRecipeMerchantPanel();
 }
 function drawRecipeMerchantOffers(area={},scope='event',eventName=''){
   const areaName=String(area?.name||area?.id||'').trim();
@@ -3993,7 +4199,7 @@ function drawRecipeMerchantOffers(area={},scope='event',eventName=''){
   state.lastRecipeMerchantOffers=randomRowsWithoutReplacement(pool,4);
   state.selectedRecipeMerchantId=recipeMerchantRecipeKey(state.lastRecipeMerchantOffers[0]||{});
   state.lastRecipeMerchantContext={scope:String(scope||'event'),areaName,eventName:String(eventName||'レシピ商人との遭遇')};
-  renderRecipeMerchantPanel();
+  drawKohakuMaterialTrades(area,5);renderRecipeMerchantPanel();
 }
 function selectedRecipeMerchantRow(){
   const key=String(state.selectedRecipeMerchantId||'');return (state.lastRecipeMerchantOffers||[]).find(r=>recipeMerchantRecipeKey(r)===key)||state.lastRecipeMerchantOffers?.[0]||null;
@@ -4042,14 +4248,19 @@ function renderRecipeMerchantPanel(){
   sanitizeRecipeMerchantOffers();
   const areaPanel=$('recipeMerchantPanel'),questPanel=$('questRecipeMerchantPanel');
   [areaPanel,questPanel].forEach(panel=>{if(panel){panel.classList.add('hidden');panel.innerHTML='';}});
-  const rows=state.lastRecipeMerchantOffers||[];if(!rows.length)return;
+  const rows=state.lastRecipeMerchantOffers||[],trades=state.lastRecipeMerchantTrades||[];if(!rows.length&&!trades.length)return;
   const scope=String(state.lastRecipeMerchantContext?.scope||'event');
   const panel=scope==='quest'?questPanel:areaPanel;if(!panel)return;
   panel.classList.remove('hidden');
-  if(!rows.some(r=>recipeMerchantRecipeKey(r)===state.selectedRecipeMerchantId))state.selectedRecipeMerchantId=recipeMerchantRecipeKey(rows[0]);
+  if(rows.length&&!rows.some(r=>recipeMerchantRecipeKey(r)===state.selectedRecipeMerchantId))state.selectedRecipeMerchantId=recipeMerchantRecipeKey(rows[0]);
   const cards=rows.map(r=>`<article class="recipe-merchant-card"><h4>${esc(r.name||r.resultItem||'名称未設定')}</h4><div>${esc(progressPlayerRank(r.rank)||'ランク未設定')} / ${esc(r.craftType||'製作区分未設定')}</div><div class="recipe-merchant-price">${recipeMerchantPrice(r)}G <span class="recipe-merchant-normal">通常${recipeMerchantNormalPrice(r)}G</span></div></article>`).join('');
   const opts=rows.map(r=>`<option value="${esc(recipeMerchantRecipeKey(r))}" ${recipeMerchantRecipeKey(r)===state.selectedRecipeMerchantId?'selected':''}>${esc(r.name||r.resultItem||'名称未設定')}</option>`).join('');
-  panel.innerHTML=`<section class="card"><h3>レシピ商人の販売品</h3><p class="muted small">常設店売りレシピを除き、この進行段階までに解放されるレシピ全体から4件抽選しています。宝箱限定・ボス由来を含みます。遭遇価格は通常販売価格の75%（10G単位切り捨て）です。</p><div class="recipe-merchant-grid">${cards}</div><div class="buttons"><button type="button" class="secondary" id="copyRecipeMerchantListBtn">販売商品リストをコピー</button></div><div class="recipe-merchant-tools"><label>情報コピーするレシピ<select id="recipeMerchantSelect">${opts}</select></label><button type="button" class="secondary" id="copyRecipeMerchantInfoBtn">選択レシピ情報をコピー</button></div></section>`;
+  const recipeHtml=rows.length?`<section class="card"><h3>レシピ商人の販売品</h3><p class="muted small">常設店売りレシピを除き、この進行段階までに解放されるレシピ全体から4件抽選しています。宝箱限定・ボス由来を含みます。遭遇価格は通常販売価格の75%（10G単位切り捨て）です。</p><div class="recipe-merchant-grid">${cards}</div><div class="buttons"><button type="button" class="secondary" id="copyRecipeMerchantListBtn">販売商品リストをコピー</button></div><div class="recipe-merchant-tools"><label>情報コピーするレシピ<select id="recipeMerchantSelect">${opts}</select></label><button type="button" class="secondary" id="copyRecipeMerchantInfoBtn">選択レシピ情報をコピー</button></div></section>`:'';
+  let tradeHtml='';if(scope==='event'){
+    const tradeCards=trades.map(t=>`<article class="kohaku-trade-card"><b>${esc(kohakuTradeLine(t))}</b></article>`).join('');
+    tradeHtml=`<section class="card kohaku-trade-block"><h3>素材交換</h3><p class="muted small">受取 ← 要求。受取はこのエリアで通常入手できる品から、要求はこの探索中に実際に入手した同エリア入手品から選ばれます。レシピ・スクロール・越境品・ボス素材・二つ名素材は対象外。換金品は要求側のみ使用できます。</p>${trades.length?`<div class="kohaku-trade-grid">${tradeCards}</div><div class="buttons"><button type="button" class="secondary" id="copyRecipeMerchantTradeListBtn">交換リストをコピー</button></div>`:'<div class="muted small">この探索中に交換へ使える対象品がまだありません。</div>'}<div class="muted small kohaku-trade-ledger">記録中：${esc(kohakuLedgerSummary())}</div></section>`;
+  }
+  panel.innerHTML=recipeHtml+tradeHtml;
 }
 function clearEncounterDropState(){
   state.lastEncounter=null;
@@ -5512,14 +5723,14 @@ function normalizeDropInstances(rows=[]){return rows.map(row=>({uid:String(row.u
 function loadLastEncounterForDrops(){
   const encounter=state.lastEncounter;
   if(!encounter||!Array.isArray(encounter.groups)||!encounter.groups.length){addLog('読み込める直前の出現構成がありません。');return;}
-  const rows=(Array.isArray(encounter.instances)&&encounter.instances.length?encounter.instances:encounterInstanceRows(encounter.groups||[],{fixedIv:!!encounter.fixedIv})).map(row=>({uid:dropInstanceUid(),monsterId:String(row.monsterId||row.monster?.id||''),name:String(row.name||row.monster?.name||''),formation:String(row.formation||''),dismantleSuccess:false}));
+  const rows=(Array.isArray(encounter.instances)&&encounter.instances.length?encounter.instances:encounterInstanceRows(encounter.groups||[],{fixedIv:!!encounter.fixedIv,areaName:encounter.areaName||''})).map(row=>({uid:dropInstanceUid(),monsterId:String(row.monsterId||row.monster?.id||''),name:String(row.name||row.monster?.name||''),formation:String(row.formation||''),dismantleSuccess:false}));
   state.dropEncounterInstances=normalizeDropInstances(rows);setDropMode('encounter');renderEncounterDropList();saveState(false);
 }
 function addSelectedMonsterToEncounter(){const m=selectedDropMonster();if(!m){addLog('先に追加する魔物を選択してください。');return;}state.dropEncounterInstances=normalizeDropInstances([...(state.dropEncounterInstances||[]),{uid:dropInstanceUid(),monsterId:m.id||'',name:m.name||m.id||'',formation:'',dismantleSuccess:false}]);setDropMode('encounter');renderEncounterDropList();saveState(false);}
 function renderEncounterDropList(){
   const rows=normalizeDropInstances(state.dropEncounterInstances||[]);state.dropEncounterInstances=rows;
   const summary=$('lastEncounterSummary');
-  if(summary){const source=state.lastEncounter;const initiative=source&&source.groups?.length?encounterInitiativeText(source.groups):'';const instances=Array.isArray(source?.instances)?source.instances:[],bountyEligible=source?.bountyEligible!==false,bounty=encounterBountyTotal(source);const ivLines=instances.map((row,index)=>{const selected=Array.isArray(row.selectedActionNames)?row.selectedActionNames.filter(Boolean):[];const fixedSelected=Array.isArray(row.selectedFixedActionNames)?row.selectedFixedActionNames.filter(Boolean):[];const randomSelected=selected.filter(name=>!fixedSelected.includes(name));const loadoutInfo=Number(row.actionPoolSize)>3?`（固定${fixedSelected.length}＋抽選${randomSelected.length} / 所持${Number(row.actionPoolSize)}技）`:'';const actionLine=selected.length?`<br>&emsp;選出技：${selected.map(name=>fixedSelected.includes(name)?`【固定】${esc(name)}`:esc(name)).join(' / ')}${loadoutInfo}`:'';return`${index+1}. ${esc(row.name)} / HP${esc(row.monster?.hp??'—')} / 回避${esc(row.monster?.evasionValue??'—')} / 抵抗${esc(row.monster?.resistValue??'—')} / ${esc(encounterIvLabel(row))}${bountyEligible?` / 討伐${Number(row.bountyG)||0}G`:''}${actionLine}`;}).join('<br>');summary.innerHTML=source&&source.groups?.length?`<b>${esc(source.label||'直前の出現構成')}</b>${source.areaName?`<br><span class="muted small">エリア：${esc(source.areaName)}</span>`:''}<br><span class="muted small">${source.groups.map(g=>`${esc(g.formation||'配置未設定')}：${esc(g.name)} ×${Math.max(1,Number(g.count)||1)}`).join(' / ')}</span>${initiative?`<br><span class="muted small">${esc(initiative)}</span>`:''}${ivLines?`<hr><span class="muted small">${ivLines}</span>`:''}${bounty>0?`<hr><b>討伐報酬：${bounty}G（PT共通）</b>`:''}`:'まだ出現構成が読み込まれていません。';}
+  if(summary){const source=state.lastEncounter;const initiative=source&&source.groups?.length?encounterInitiativeText(source.groups,source.areaName||''):'';const instances=Array.isArray(source?.instances)?source.instances:[],bountyEligible=source?.bountyEligible!==false,bounty=encounterBountyTotal(source);const ivLines=instances.map((row,index)=>{const selected=Array.isArray(row.selectedActionNames)?row.selectedActionNames.filter(Boolean):[];const fixedSelected=Array.isArray(row.selectedFixedActionNames)?row.selectedFixedActionNames.filter(Boolean):[];const randomSelected=selected.filter(name=>!fixedSelected.includes(name));const loadoutInfo=Number(row.actionPoolSize)>3?`（固定${fixedSelected.length}＋抽選${randomSelected.length} / 所持${Number(row.actionPoolSize)}技）`:'';const actionLine=selected.length?`<br>&emsp;選出技：${selected.map(name=>fixedSelected.includes(name)?`【固定】${esc(name)}`:esc(name)).join(' / ')}${loadoutInfo}`:'';return`${index+1}. ${esc(row.name)} / HP${esc(row.monster?.hp??'—')} / 回避${esc(row.monster?.evasionValue??'—')} / 抵抗${esc(row.monster?.resistValue??'—')} / ${esc(encounterIvLabel(row))}${bountyEligible?` / 討伐${Number(row.bountyG)||0}G`:''}${actionLine}`;}).join('<br>');summary.innerHTML=source&&source.groups?.length?`<b>${esc(source.label||'直前の出現構成')}</b>${source.areaName?`<br><span class="muted small">エリア：${esc(source.areaName)}</span>`:''}<br><span class="muted small">${source.groups.map(g=>`${esc(g.formation||'配置未設定')}：${esc(g.name)} ×${Math.max(1,Number(g.count)||1)}`).join(' / ')}</span>${initiative?`<br><span class="muted small">${esc(initiative)}</span>`:''}${ivLines?`<hr><span class="muted small">${ivLines}</span>`:''}${bounty>0?`<hr><b>討伐報酬：${bounty}G（PT共通）</b>`:''}`:'まだ出現構成が読み込まれていません。';}
   const box=$('encounterDropList');if(!box)return;
   if(!rows.length){box.innerHTML='<div class="card muted">戦闘イベント・クエストで出現構成が決定すると、ここへ自動表示されます。</div>';if($('rollEncounterDropBtn'))$('rollEncounterDropBtn').disabled=true;return;}if($('rollEncounterDropBtn'))$('rollEncounterDropBtn').disabled=false;
   const counts={};
@@ -5536,7 +5747,7 @@ function rollEncounterDrops(){
     drops.forEach(d=>{const material=findDropMaterial(d);const roll=1+Math.floor(Math.random()*100);const base=rateNum(d.rate);const rate=Math.min(100,base+bonus);const ok=roll<=rate;const itemName=d.name||d.id||material?.name||'名称未設定';const rateText=instance.dismantleSuccess?`${base}%→${rate}%`:`${rate}%`;let qty=null;let qtyText=String(d.count||'1個');if(ok){qty=dropQuantityRoll(d.count||'1');qtyText=qty.detail;const key=dropPublicId(material,d)||itemName;const current=aggregate.get(key)||{name:itemName,material,d,count:0};current.count+=qty.count;aggregate.set(key,current);}all.push(`${ok?'○':'×'} ${itemName} ${qtyText}（${rateText} / 出目${roll}）`);resultRows.push(`<div class="drop-row ${ok?'success':'fail'}"><div><b>${esc(itemName)}</b>${dropDetailHtml(material)}</div><span class="pill">${esc(rateText)}</span><span class="pill">${ok?`入手 ${esc(qtyText)}`:'なし'} / ${roll}</span></div>`);});
     html.push(`<section class="encounter-drop-result-group"><h4>${esc(label)}${instance.formation?` <span class="pill">${esc(instance.formation)}</span>`:''}</h4><div class="muted small">解体：${instance.dismantleSuccess?'成功（+10%）':'補正なし'}</div><div class="drop-list">${resultRows.join('')||'<div class="muted">ドロップ設定なし</div>'}</div></section>`);
   });
-  const got=['【出現構成ドロップ入手】'];if(!aggregate.size)got.push('入手なし');else aggregate.forEach(row=>{const d={...row.d,count:`${row.count}個`};got.push(dropPlayerInfoBlock(d));});const bounty=encounterBountyTotal(state.lastEncounter);if(bounty>0)got.push(`討伐報酬：${bounty}G（PT共通）`);state.lastDropText=all.join('\n');state.lastDropSuccessText=got.join('\n\n');$('dropResult').innerHTML=`${bounty>0?`<div class="card"><b>討伐報酬：${bounty}G（PT共通）</b></div>`:''}<div class="encounter-drop-result-list">${html.join('')}</div>`;addLog(`出現構成ドロップ判定：${instances.length}体${bounty>0?` / 討伐報酬${bounty}G`:''}`);
+  const got=['【出現構成ドロップ入手】'];if(!aggregate.size)got.push('入手なし');else aggregate.forEach(row=>{const d={...row.d,count:`${row.count}個`};got.push(dropPlayerInfoBlock(d));});kohakuCommitDropMaterials(aggregate,instances);const bounty=encounterBountyTotal(state.lastEncounter);if(bounty>0)got.push(`討伐報酬：${bounty}G（PT共通）`);state.lastDropText=all.join('\n');state.lastDropSuccessText=got.join('\n\n');$('dropResult').innerHTML=`${bounty>0?`<div class="card"><b>討伐報酬：${bounty}G（PT共通）</b></div>`:''}<div class="encounter-drop-result-list">${html.join('')}</div>`;addLog(`出現構成ドロップ判定：${instances.length}体${bounty>0?` / 討伐報酬${bounty}G`:''}`);
 }
 function rollDrops(){
   const m=selectedDropMonster(); if(!m){$('dropResult').textContent='候補から魔物を選択してください。';return;}
@@ -5619,6 +5830,7 @@ const progressUiV738={
   seen:{quest:new Set(),event:new Set(),base:new Set()},
   hidden:{active:false,snapshot:null,originScope:'',areaId:''},
   importantApplied:{quest:null,event:null,base:null},
+  kohakuMaterials:{areaId:'',seq:0,currentEventToken:'',sources:{}},
   dropRestore:null,
   importantVisibility:{}
 };
@@ -5793,6 +6005,7 @@ function v738ResetQuestSessionState(q){
 }
 function v738ResetAreaSessionState(areaKey,scope='event'){
   const p=progressObj('areas',areaKey);p.value=0;progressUiV738.seen[scope]=new Set();progressUiV738.slotResolved[scope]=false;progressUiV738.areaActive=true;
+  if(scope==='event'&&!isHiddenAreaRow(selectedExplorationArea()||{}))kohakuResetLedger(selectedExplorationArea()||{id:areaKey});
   if(scope==='base'){
     state.lastBaseEventText='';state.lastBaseEventKey='';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';state.lastBaseRewardText='';state.lastBaseRewardCopyText='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;progressUiV738.importantApplied.base=null;renderBaseEventControls();
   }else{clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;}
@@ -5850,13 +6063,13 @@ advanceAreaProgress=function(){
   if(progressUiV738.areaMode==='base'){
     const p=progressObj('areas',BASE_EXPLORATION_ID),before=clamp(p.value);if(!progressUiV738.slotResolved.base){alert('先に現在の進行度のイベントを処理してください。');return;}if(before>=100)return;p.value=clamp(before+25);state.lastBaseEventText='';state.lastBaseEventKey='';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;progressUiV738.importantApplied.base=null;progressUiV738.slotResolved.base=false;$('areaBar').style.width=p.value+'%';$('areaLabel').textContent=p.value+'%';$('areaStepInfo').innerHTML=`<div class="kv"><b>現在</b><span>${p.value}%</span><b>1回の進行</b><span>+25%</span><b>進行後</b><span>${Math.min(100,p.value+25)}%</span></div>`;renderBaseEventControls();v738UpdateProgressControls();saveState(false);addLog(`開拓拠点リクラフトの探索進行度：${before}% → ${p.value}%`);return;
   }
-  const a=selectedExplorationArea();if(!a)return;const p=progressObj('areas',a.id||a.name),before=clamp(p.value);if(!progressUiV738.slotResolved.event){alert('先に現在の進行度のイベントを処理してください。');return;}if(before>=100)return;const add=areaStepAmount(a);p.value=clamp(before+add);clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;let fixed=false;if(!isHiddenAreaRow(a)&&p.value===100)fixed=!!triggerAreaClearRumorEvent(a);progressUiV738.slotResolved.event=fixed;renderArea();v738UpdateProgressControls();saveState(false);addLog(`${a.name||a.id} の探索進行度：${before}% → ${p.value}%`);
+  const a=selectedExplorationArea();if(!a)return;const p=progressObj('areas',a.id||a.name),before=clamp(p.value);if(!progressUiV738.slotResolved.event){alert('先に現在の進行度のイベントを処理してください。');return;}if(before>=100)return;kohakuCommitCurrentAreaEventMaterials();const add=areaStepAmount(a);p.value=clamp(before+add);clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;let fixed=false;if(!isHiddenAreaRow(a)&&p.value===100)fixed=!!triggerAreaClearRumorEvent(a);progressUiV738.slotResolved.event=fixed;renderArea();v738UpdateProgressControls();saveState(false);addLog(`${a.name||a.id} の探索進行度：${before}% → ${p.value}%`);
 };
 
 const v737RollQuestEvent=rollQuestEvent;
 rollQuestEvent=function(){progressUiV738.importantApplied.quest=null;v737RollQuestEvent();if(state.lastQuestEventKey){v738MarkSeen('quest',state.lastQuestEventKey);progressUiV738.slotResolved.quest=true;}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
 const v737RollEvent=rollEvent;
-rollEvent=function(){progressUiV738.importantApplied.event=null;v737RollEvent();if(state.lastEventKey){v738MarkSeen('event',state.lastEventKey);progressUiV738.slotResolved.event=true;}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
+rollEvent=function(){progressUiV738.importantApplied.event=null;kohakuDiscardCurrentEventMaterials();v737RollEvent();if(state.lastEventKey){v738MarkSeen('event',state.lastEventKey);progressUiV738.slotResolved.event=true;const ledger=kohakuLedger();ledger.seq=(Number(ledger.seq)||0)+1;ledger.currentEventToken=`${ledger.seq}:${state.lastEventKey}`;progressUiV738.kohakuMaterials=ledger;}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
 const v737RollBaseEvent=rollBaseEvent;
 rollBaseEvent=function(){progressUiV738.importantApplied.base=null;v737RollBaseEvent();if(state.lastBaseEventKey){v738MarkSeen('base',state.lastBaseEventKey);progressUiV738.slotResolved.base=true;}if(progressUiV738.areaMode==='base'){const p=progressObj('areas',BASE_EXPLORATION_ID);$('areaBar').style.width=clamp(p.value)+'%';$('areaLabel').textContent=clamp(p.value)+'%';}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
 
@@ -5871,19 +6084,19 @@ function v738RefreshHiddenEntryAction(scope='event'){
   if(!hidden||progressUiV738.hidden.active){panel.classList.add('hidden');panel.innerHTML='';return;}
   panel.classList.remove('hidden');panel.innerHTML=`<h3>${esc(hidden.name||'隠しエリア')}</h3><p class="muted small">通常の探索路から外れた場所へ入れます。侵入時に行動回数を追加で1回消費します。</p><div class="buttons"><button type="button" data-hidden-area-start="${esc(hidden.id||'') }" data-hidden-origin="${esc(scope)}">探索開始</button></div>`;
 }
-const V738_EVENT_SNAPSHOT_FIELDS=['lastEventText','lastEventKey','lastEventCheckCopyText','lastEventTreasureCopyText','lastEventTreasureResults','lastEventTableRewardText','lastEventTableRewardCopyText','lastEventTableRewardState','lastEventRewardState','lastEventOutcomeKey','lastRecipeMerchantOffers','selectedRecipeMerchantId','lastRecipeMerchantContext','lastEncounter','dropEncounterInstances','lastDropText','lastDropSuccessText','tokenExportEncounter','areaBossEncountered'];
+const V738_EVENT_SNAPSHOT_FIELDS=['lastEventText','lastEventKey','lastEventCheckCopyText','lastEventTreasureCopyText','lastEventTreasureResults','lastEventTableRewardText','lastEventTableRewardCopyText','lastEventTableRewardState','lastEventRewardState','lastEventOutcomeKey','lastRecipeMerchantOffers','lastRecipeMerchantTrades','selectedRecipeMerchantId','lastRecipeMerchantContext','lastEncounter','dropEncounterInstances','lastDropText','lastDropSuccessText','tokenExportEncounter','areaBossEncountered'];
 function v738SnapshotEventScope(){const out={};V738_EVENT_SNAPSHOT_FIELDS.forEach(k=>out[k]=v738DeepClone(state[k]));return out;}
 function v738RestoreEventScope(snap={}){V738_EVENT_SNAPSHOT_FIELDS.forEach(k=>{if(Object.prototype.hasOwnProperty.call(snap,k))state[k]=v738DeepClone(snap[k]);});}
 function startHiddenExploration(areaId='',originScope='event'){
   const hidden=hiddenAreaById(areaId);if(!hidden||progressUiV738.hidden.active)return;if(!consumeDailyAction(`${hidden.name||'隠しエリア'}への侵入`))return;
   const areaSel=$('areaSelect'),runtime=$('areaProgressRuntime'),hiddenBody=$('hiddenProgressModal')?.querySelector('.progress-modal-body');if(!areaSel||!runtime||!hiddenBody)return;
-  progressUiV738.hidden={active:true,originScope,snapshot:{areaSelectValue:areaSel.value,eventState:v738SnapshotEventScope(),seen:[...v738CurrentSeenSet('event')],areaActive:progressUiV738.areaActive,areaMode:progressUiV738.areaMode,slotResolved:progressUiV738.slotResolved.event,importantAppliedEvent:v738DeepClone(progressUiV738.importantApplied.event)},areaId:String(areaId)};
+  progressUiV738.hidden={active:true,originScope,snapshot:{areaSelectValue:areaSel.value,eventState:v738SnapshotEventScope(),seen:[...v738CurrentSeenSet('event')],areaActive:progressUiV738.areaActive,areaMode:progressUiV738.areaMode,slotResolved:progressUiV738.slotResolved.event,importantAppliedEvent:v738DeepClone(progressUiV738.importantApplied.event),kohakuCurrentEventToken:String(kohakuLedger().currentEventToken||'')},areaId:String(areaId)};
   let opt=[...areaSel.options].find(o=>o.value===String(hidden.id||''));if(!opt){opt=document.createElement('option');opt.value=String(hidden.id||'');opt.textContent=String(hidden.name||hidden.id||'');opt.dataset.hiddenTemp='1';areaSel.appendChild(opt);}areaSel.value=String(hidden.id||'');
   hiddenBody.appendChild(runtime);v738ResetAreaSessionState(hidden.id||hidden.name,'event');progressUiV738.areaActive=true;progressUiV738.areaMode='normal';progressUiV738.slotResolved.event=false;v738ToggleAreaRuntime('normal');const hiddenEventBlock=runtime.querySelector('.area-event-block');if(hiddenEventBlock)hiddenEventBlock.classList.remove('hidden');if($('rollEventBtn')){$('rollEventBtn').classList.remove('hidden');$('rollEventBtn').disabled=false;$('rollEventBtn').textContent='エリアイベント';}if($('areaAdvanceBtn'))$('areaAdvanceBtn').disabled=true;$('hiddenProgressModalTitle').textContent=`${hidden.name||'隠しエリア'}：探索`;v738SetModalOpen('hiddenProgressModal',true);renderArea();v738PrepareAreaSlot(hidden);v738UpdateProgressControls();addLog(`隠しエリア探索開始：${hidden.name||hidden.id}`);
 }
 function endHiddenExploration(){
   if(!progressUiV738.hidden.active)return;const snap=progressUiV738.hidden.snapshot||{},areaSel=$('areaSelect'),runtime=$('areaProgressRuntime'),areaBody=$('areaProgressModal')?.querySelector('.progress-modal-body');v738SetModalOpen('hiddenProgressModal',false);
-  if(runtime&&areaBody)areaBody.insertBefore(runtime,$('baseProgressRuntime')||null);v738RestoreEventScope(snap.eventState||{});progressUiV738.seen.event=new Set(snap.seen||[]);progressUiV738.areaActive=!!snap.areaActive;progressUiV738.areaMode=snap.areaMode||'normal';progressUiV738.slotResolved.event=!!snap.slotResolved;progressUiV738.importantApplied.event=v738DeepClone(snap.importantAppliedEvent||null);
+  if(runtime&&areaBody)areaBody.insertBefore(runtime,$('baseProgressRuntime')||null);v738RestoreEventScope(snap.eventState||{});progressUiV738.seen.event=new Set(snap.seen||[]);progressUiV738.areaActive=!!snap.areaActive;progressUiV738.areaMode=snap.areaMode||'normal';progressUiV738.slotResolved.event=!!snap.slotResolved;progressUiV738.importantApplied.event=v738DeepClone(snap.importantAppliedEvent||null);kohakuLedger().currentEventToken=String(snap.kohakuCurrentEventToken||'');
   if(areaSel){[...areaSel.options].filter(o=>o.dataset.hiddenTemp==='1').forEach(o=>o.remove());areaSel.value=String(snap.areaSelectValue||BASE_EXPLORATION_ID);}const hiddenName=hiddenAreaById(progressUiV738.hidden.areaId)?.name||'隠しエリア';progressUiV738.hidden={active:false,snapshot:null,originScope:'',areaId:''};
   renderArea();renderQuest();renderTokenExportPanels();renderEncounterDropList();v738UpdateProgressControls();addLog(`隠しエリア探索終了：${hiddenName}`);
 }
@@ -6029,6 +6242,7 @@ $('rumorAreaSelect').addEventListener('change',()=>{fillInnRumorSelect(); render
     const reroll=e.target.closest('[data-event-reward-reroll]');if(reroll){rerollEventReward(reroll.dataset.eventRewardReroll);return;}
     if(e.target.closest('#copyRecipeMerchantListBtn')){const note=state.lastRecipeMerchantContext?.scope==='quest'?'questCopyNote':'eventCopyNote';copyText(recipeMerchantListCopyText(),note);return;}
     if(e.target.closest('#copyRecipeMerchantInfoBtn')){const note=state.lastRecipeMerchantContext?.scope==='quest'?'questCopyNote':'eventCopyNote';copyText(recipeMerchantInfoCopyText(selectedRecipeMerchantRow()),note);return;}
+    if(e.target.closest('#copyRecipeMerchantTradeListBtn')){copyText(kohakuTradeListCopyText(),'eventCopyNote');return;}
   });
   $('copyDropSuccessBtn')?.addEventListener('click',()=>copyText(state.lastDropSuccessText,'dropCopyNote'));
   $('copyLogBtn').addEventListener('click',()=>copyText(state.log.slice().reverse().join('\n'))); $('clearLogBtn').addEventListener('click',()=>{state.log=[]; renderLog(); saveState(false);});

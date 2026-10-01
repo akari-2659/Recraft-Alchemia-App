@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.824</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.833</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -691,7 +691,7 @@ html.ra-embedded-facility #sectionDescription{
 
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.824 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.833 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -803,7 +803,7 @@ const SECTION_DEFS={
  smith:[['sales','販売商品','鍛冶屋で購入できる品と、その段階で解放される常設店売りレシピです。宝箱限定レシピはここには表示しません。'],['craft','装備・道具作成','武器・防具・盾・バッグ・矢筒・仕掛けなどの作成です。装飾品は「装飾品」の派生図へまとめています。'],['upgrade','装備強化','強化する装備・素材・現在の強化回数・使用済み強化枠を選び、自作時の難易度と鍛冶屋へ依頼した場合の成功率・料金を確認できます。'],['accessory','装飾品','白環の聖印・蒼刻の魔印だけは骨董屋の常設販売品です。それ以外の装飾品は完成品を販売せず作成で入手し、エリア進行で解放される段階強化を★ランク列に揃えた派生図で確認できます。'],['materials','素材加工','自作はレシピ不要で、対応する鍛冶道具と判定成功が必要です。施設依頼は判定不要ですが加工依頼費が必要です。'],['crystal','クリスタル強化','現在の解放エリアで利用できる、スキルクリスタルの強化段階・必要素材・費用です。'],['branches','武器派生','武器種を選び、大枠の素材系統と順当強化・分岐を接続線でつないだ派生図を確認できます。武器の詳細では強化枠、必要素材、派生元、次の派生先を確認できます。未解放の派生先は「？？？」で表示します。']],
  apothecary:[['sales','販売商品','薬屋で購入できる調合品・調合道具と、その段階で解放される常設店売りレシピです。宝箱限定レシピはここには表示しません。'],['alchemy','調合品作成','薬品・香・爆弾・瓶などの調合です。'],['materials','素材加工','一般の加工素材はレシピ不要です。魔導インク・祈祷紙は対応レシピが必要な特殊加工としてここに表示します。施設依頼はどちらもレシピ不要・判定不要です。']],
  antique:[['sales','常設販売','骨董屋で常時購入できる品と店売りレシピです。骨董装備はG販売ではなく、魔物素材を使うガチャで入手します。武器種・防具種と★帯を選び、個体ごとに基礎性能・属性・強化枠・固定強化内容が変化します。抽選後の強化追加・変更はできません。抽選個体には通常と同じ形式の登録IDが発行されます。'],['scrolls','未鑑定スクロール価格','販売内容はランダムのため、各ランクの価格だけを表示します。']],
- eatery:[['meals','食材持ち込み料理','必要食材と調理代を確認できます。食事効果は次の探索・依頼から帰還するまで継続し、同時に1種類のみ有効です。']],
+ eatery:[['meals','食材持ち込み料理','必要食材と調理代を確認できます。食事効果は食べた当日中継続し、同時に1種類のみ有効です。']],
  plaza:[['gathering','共同採取設備','通常エリアの到達に応じて整備計画が増えます。全員で納品数を共有し、完成後は1人1日1回、卓上で採取量を決定できます。異界では共同採取設備は増えません。']],
  bestiary:[['catalog','魔物図鑑','解放済みエリアで確認した魔物情報を閲覧できます。未開示の魔物は「？？？」で表示され、詳細は開けません。']]
 };
@@ -1075,7 +1075,7 @@ function facilityPostAction(action,params={},timeoutMs=30000){
 }
 
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
-const FACILITY_EXPECTED_DB_VERSION='v90.8.824';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.833';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}
@@ -2585,6 +2585,20 @@ function bestiaryActionPowerRange(monster={},action={}){
   const steps=Number(monster.encounterValue||1)>=2?3:2,min=bestiaryPrecisionPower(power,steps),max=bestiaryStrongPower(power,steps);
   return min===max?min:`${min}～${max}`;
 }
+function bestiaryAreaVariant(monster={},areaName=''){
+  const raw=String(monster.areaVariants||'').trim();if(!raw)return null;try{const map=JSON.parse(raw);return map&&typeof map==='object'?map[String(areaName||'').trim()]||null:null;}catch(_e){return null;}
+}
+function bestiaryVariantPower(power='',delta=0){
+  const raw=String(power||'').trim(),d=Math.trunc(Number(delta)||0);if(!d||!raw||raw==='なし'||raw==='-'||!/\d+D\d+/i.test(raw))return raw;const m=raw.match(/^(.*?)(?:\+(\d+))?$/);if(!m)return raw;const base=String(m[1]||raw).replace(/\+$/,''),fixed=Number(m[2]||0)+d;return fixed>0?`${base}+${fixed}`:base;
+}
+function bestiaryApplyAreaVariant(monster={},areaName=''){
+  const v=bestiaryAreaVariant(monster,areaName);if(!v)return monster;const out={...monster};['hp','mp','evasionValue','resistValue','defenseValue','initiative','encounterValue'].forEach(k=>{if(v[k]!==undefined&&v[k]!==null&&v[k]!=='')out[k]=String(v[k]);});const skillDelta=Math.trunc(Number(v.offenseSkillDelta)||0),damageDelta=Math.trunc(Number(v.damageFixedDelta)||0);if(skillDelta||damageDelta){out.actions=String(monster.actions||'').split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t');while(c.length<9)c.push('');const type=String(c[1]||''),check=String(c[2]||'');if(skillDelta&&['近接攻撃','遠距離攻撃','特殊'].includes(type)&&/(回避値|抵抗値)/.test(check)&&c[7]!==''&&!Number.isNaN(Number(c[7])))c[7]=String(Number(c[7])+skillDelta);if(damageDelta&&['近接攻撃','遠距離攻撃'].includes(type))c[5]=bestiaryVariantPower(c[5],damageDelta);return c.join('\t');}).join('\n');}return out;
+}
+function bestiaryProfileHints(raw='',areaName=''){
+  if(!raw)return[];let config={};try{config=raw&&typeof raw==='object'?raw:JSON.parse(String(raw||''));}catch(_e){return[];}
+  const rows=Array.isArray(config?.rules)?config.rules:[],area=String(areaName||'').trim();return[...new Set(rows.filter(rule=>{const areas=Array.isArray(rule?.areaNames)?rule.areaNames:String(rule?.areaNames||'').split(/[,、，]/).map(v=>v.trim()).filter(Boolean);return !areas.length||areas.includes(area);}).map(rule=>String(rule?.hint||'').trim()).filter(Boolean))];
+}
+function bestiaryConditionHints(monster={},area={}){const own=bestiaryProfileHints(monster.individualConditionProfile||'',area?.name||''),global=bestiaryProfileHints(area?.monsterConditionProfile||'',area?.name||'');return[...new Set([...global,...own])];}
 function bestiaryBuildAreas(disclosures={},unlockedIds=[]){
   const data=facilityCommonMasterData||{},areas=Array.isArray(data.exploration_areas)?data.exploration_areas:[],monsters=Array.isArray(data.monsters)?data.monsters:[];
   const byName=new Map(monsters.map(m=>[String(m.name||'').trim(),m])),byId=new Map(monsters.map(m=>[String(m.id||'').trim(),m]));
@@ -2593,13 +2607,14 @@ function bestiaryBuildAreas(disclosures={},unlockedIds=[]){
     const names=String(area.mainMonsters||'').split(/[,、，]/).map(v=>v.trim()).filter(Boolean),rows=names.map(n=>byName.get(n)).filter(Boolean);
     monsters.forEach(m=>{if(String(m.areaName||'').trim()===String(area.name||'').trim()&&!rows.some(x=>String(x.id)===String(m.id)))rows.push(m);});
     return{id:String(area.id||''),name:String(area.name||''),monsters:rows.map(m=>{
-      const id=String(m.id||''),d=bestiaryDisclosureState(disclosures[id]||{}),named=/^mon_named_/.test(id);
-      if(!d.encounter)return{id,name:'？？？',known:false};
+      m=bestiaryApplyAreaVariant(m,area.name);const id=String(m.id||''),d=bestiaryDisclosureState(disclosures[id]||{}),named=/^mon_named_/.test(id);
+      if(!d.encounter)return{id,name:'？？？',known:false,areaName:String(area.name||'')};
       const individual=String(m.individualValueEnabled||'').toUpperCase()==='TRUE',base=named?(byId.get(String(m.baseMonsterId||''))||m):m;
       const affinityFields={physical:'physicalAffinity',fire:'fireAffinity',water:'waterAffinity',wind:'windAffinity',thunder:'thunderAffinity',light:'lightAffinity',dark:'darkAffinity',neutral:'neutralAffinity'},affinities={};
       Object.entries(affinityFields).forEach(([key,field])=>{affinities[key]=(named||d.affinities[key])?String(base[field]||'-'):'？';});
       return{
-        id,name:String(m.name||''),known:true,isNamed:named,imageUrl:String(m.imageUrl||m.iconUrl||''),
+        id,name:String(m.name||''),known:true,isNamed:named,areaName:String(area.name||''),imageUrl:String(m.imageUrl||m.iconUrl||''),
+        habit:String(m.habit||base.habit||''),environmentHints:named?[]:bestiaryConditionHints(m,area),
         stats:{hp:bestiaryNumberRange(m.hp,individual,'hp'),mp:String(m.mp||0),initiative:String(m.initiative||0),evasion:bestiaryNumberRange(m.evasionValue,individual,'evasion'),resist:bestiaryNumberRange(m.resistValue,individual,'resist'),defense:String(m.defenseValue||0)},
         passive:d.passive&&m.passiveName?{name:String(m.passiveName||''),effect:String(m.passiveEffect||'')}:{hidden:!!m.passiveName},
         affinities,
@@ -2641,7 +2656,7 @@ function bestiaryCatalogHtml(){
   if(!bestiaryState.areas.length)return '<div class="empty">解放済みエリアの図鑑情報はまだありません。</div>';
   const areas=bestiaryFilteredAreas(),q=searchNorm(bestiarySearch);
   if(q&&!areas.length)return '<div class="empty">検索条件に一致する魔物・エリアはありません。</div>';
-  return `<div class="bestiary-area-list">${areas.map((area,index)=>`<details class="bestiary-area" ${(q||index===0)?'open':''}><summary>${esc(area.name||'エリア')}</summary><div class="bestiary-monster-list">${(area.monsters||[]).map(m=>m.known?`<button type="button" class="bestiary-monster" data-bestiary-monster="${esc(m.id)}"><span>${esc(m.name)}</span>${m.isNamed?'<span class="bestiary-named-badge">二つ名</span>':''}</button>`:`<div class="bestiary-monster unknown" aria-disabled="true">？？？</div>`).join('')}</div></details>`).join('')}</div>`;
+  return `<div class="bestiary-area-list">${areas.map((area,index)=>`<details class="bestiary-area" ${(q||index===0)?'open':''}><summary>${esc(area.name||'エリア')}</summary><div class="bestiary-monster-list">${(area.monsters||[]).map(m=>m.known?`<button type="button" class="bestiary-monster" data-bestiary-monster="${esc(m.id)}" data-bestiary-area="${esc(area.name||'')}"><span>${esc(m.name)}</span>${m.isNamed?'<span class="bestiary-named-badge">二つ名</span>':''}</button>`:`<div class="bestiary-monster unknown" aria-disabled="true">？？？</div>`).join('')}</div></details>`).join('')}</div>`;
 }
 function bestiarySearchSummary(){
   const q=searchNorm(bestiarySearch),areas=bestiaryFilteredAreas();
@@ -2649,23 +2664,25 @@ function bestiarySearchSummary(){
   const known=areas.reduce((sum,area)=>sum+(area.monsters||[]).filter(m=>m?.known).length,0);
   return `${areas.length}エリア / 既知${known}体`;
 }
-function bestiaryMonsterById(id){
+function bestiaryMonsterById(id,areaName=''){
+  const wanted=String(areaName||'').trim();
+  if(wanted){const area=(bestiaryState.areas||[]).find(a=>String(a.name||'').trim()===wanted);const found=(area?.monsters||[]).find(m=>String(m.id)===String(id));if(found)return found;}
   for(const area of bestiaryState.areas||[]){const found=(area.monsters||[]).find(m=>String(m.id)===String(id));if(found)return found;}return null;
 }
 function bestiaryAffinityHtml(m){
   return `<div class="bestiary-affinities">${Object.entries(BESTIARY_AFFINITY_LABELS).map(([key,label])=>`<div class="bestiary-affinity"><small>${label}</small>${esc(m?.affinities?.[key]??'？')}</div>`).join('')}</div>`;
 }
 function bestiaryStatsHtml(m){
-  const s=m.stats||{};
-  return `<div class="bestiary-stats">${[['HP',s.hp],['MP',s.mp],['先制',s.initiative],['回避',s.evasion],['抵抗',s.resist],['防御',s.defense]].map(([k,v])=>`<div class="bestiary-stat"><span>${k}</span><b>${esc(v??'？？？')}</b></div>`).join('')}</div><div class="bestiary-passive"><h4>固有パッシブ</h4>${m.passive?.name?`<b>${esc(m.passive.name)}</b><div style="margin-top:5px;white-space:pre-wrap">${esc(m.passive.effect||'')}</div>`:`<div class="muted">？？？</div>`}</div>`;
+  const s=m.stats||{},hints=Array.isArray(m.environmentHints)?m.environmentHints:[],ecology=[String(m.habit||'').trim(),...hints].filter(Boolean);
+  return `<div class="bestiary-stats">${[['HP',s.hp],['MP',s.mp],['先制',s.initiative],['回避',s.evasion],['抵抗',s.resist],['防御',s.defense]].map(([k,v])=>`<div class="bestiary-stat"><span>${k}</span><b>${esc(v??'？？？')}</b></div>`).join('')}</div><div class="bestiary-passive"><h4>生態・特性</h4>${ecology.length?ecology.map((text,i)=>`<div style="${i?'margin-top:6px;':''}white-space:pre-wrap">${esc(text)}</div>`).join(''):`<div class="muted">情報なし</div>`}</div><div class="bestiary-passive"><h4>固有パッシブ</h4>${m.passive?.name?`<b>${esc(m.passive.name)}</b><div style="margin-top:5px;white-space:pre-wrap">${esc(m.passive.effect||'')}</div>`:`<div class="muted">？？？</div>`}</div>`;
 }
 function bestiaryActionsHtml(m){
   const actions=Array.isArray(m.actions)?m.actions:[];
   if(!actions.length)return '<div class="empty">行動情報はありません。</div>';
   return `<div class="bestiary-actions">${actions.map(a=>a.known?`<details class="bestiary-action"><summary>${esc(a.name)}</summary><div class="bestiary-action-body"><div class="bestiary-action-meta"><div><b>種別</b><br>${esc(a.actionType||'なし')}</div><div><b>距離</b><br>${esc(a.range||'なし')}</div><div><b>対象</b><br>${esc(a.target||'なし')}</div><div><b>属性</b><br>${esc(a.element||'なし')}</div><div><b>威力</b><br>${esc(a.power||'なし')}</div><div><b>判定値</b><br>${esc(a.hit||'なし')}</div><div><b>判定</b><br>${esc(a.reference||'なし')}</div></div><div class="bestiary-action-effect"><b>効果</b><br>${a.effect!==null?esc(a.effect||'なし'):'？？？'}</div></div></details>`:`<details class="bestiary-action"><summary>？？？</summary><div class="bestiary-action-body"><div class="bestiary-action-meta"><div>種別：？？？</div><div>距離：？？？</div><div>対象：？？？</div><div>属性：？？？</div><div>威力：？？？</div><div>判定値：？？？</div><div>判定：？？？</div></div><div class="bestiary-action-effect">効果：？？？</div></div></details>`).join('')}</div>`;
 }
-function openBestiaryMonster(id){
-  const m=bestiaryMonsterById(id);if(!m||!m.known)return;
+function openBestiaryMonster(id,areaName=''){
+  const m=bestiaryMonsterById(id,areaName);if(!m||!m.known)return;
   $('bestiaryModalTitle').textContent=m.name||'魔物図鑑';
   const visual=bestiaryVisualHtml(m);
   $('bestiaryModalBody').innerHTML=`${visual}${bestiaryAffinityHtml(m)}<div class="bestiary-tabs"><button type="button" class="bestiary-tab active" data-bestiary-tab="stats">能力値</button><button type="button" class="bestiary-tab" data-bestiary-tab="actions">行動</button></div><section class="bestiary-pane" data-bestiary-pane="stats">${bestiaryStatsHtml(m)}</section><section class="bestiary-pane" data-bestiary-pane="actions" hidden>${bestiaryActionsHtml(m)}</section>`;
@@ -3002,7 +3019,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('fullscreenchange',syncBranchGraphFullscreen);
 $('weaponCategorySelect').addEventListener('change',e=>{closeWeaponModal();currentWeaponCategory=e.target.value||'';raStorage.set(WEAPON_CATEGORY_STORAGE_KEY,currentWeaponCategory);render();});
-$('cards').addEventListener('click',e=>{const b=e.target.closest('[data-bestiary-monster]');if(b){openBestiaryMonster(b.dataset.bestiaryMonster);return;}});
+$('cards').addEventListener('click',e=>{const b=e.target.closest('[data-bestiary-monster]');if(b){openBestiaryMonster(b.dataset.bestiaryMonster,b.dataset.bestiaryArea||'');return;}});
 $('bestiaryModal')?.addEventListener('click',e=>{if(e.target===$('bestiaryModal')||e.target.closest('[data-close-bestiary]')){closeBestiaryModal();return;}const tab=e.target.closest('[data-bestiary-tab]');if(tab){$('bestiaryModalBody').querySelectorAll('[data-bestiary-tab]').forEach(x=>x.classList.toggle('active',x===tab));$('bestiaryModalBody').querySelectorAll('[data-bestiary-pane]').forEach(x=>x.hidden=x.dataset.bestiaryPane!==tab.dataset.bestiaryTab);}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('bestiaryModal')?.hidden){closeBestiaryModal();return;}if(!$('accessoryUpgradeDetailModal')?.hidden){closeAccessoryUpgradeModal();return;}if(!$('materialSourceModal')?.hidden){closeMaterialSourceModal();return;}closeWeaponModal();closeUnlockedAreaModal();}});
 $('openUnlockedAreas').addEventListener('click',openUnlockedAreaModal);

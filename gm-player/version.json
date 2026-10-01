@@ -1,11 +1,11 @@
 {
-  "app": "v1.0.110",
-  "version": "1.0.110",
-  "raVersion": "v90.8.824",
+  "app": "v1.0.120",
+  "version": "1.0.120",
+  "raVersion": "v90.8.833",
   "updateUnit": "app",
-  "publishedAt": "2026-09-30T18:25:00+09:00",
-  "releasedAt": "2026-09-30T18:25:00+09:00",
-  "updatedAt": "2026-09-30",
+  "publishedAt": "2026-10-01T17:31:41+09:00",
+  "releasedAt": "2026-10-01T17:31:41+09:00",
+  "updatedAt": "2026-10-01",
   "characterSaveApiVersion": 1,
   "characterSaveApiMinSupported": 1
 }
