@@ -4174,10 +4174,10 @@ function kohakuCommitDropMaterials(aggregate,instances=[]){
 function kohakuWeightedPick(entries=[]){const rows=(entries||[]).filter(x=>Number(x.weight)>0);if(!rows.length)return null;const total=rows.reduce((s,x)=>s+Number(x.weight||1),0);let r=Math.random()*total;for(const x of rows){r-=Number(x.weight||1);if(r<=0)return x;}return rows.at(-1)||null;}
 function kohakuTradeCandidates(area={}){
   const payments=kohakuAggregateMaterials(area),offers=kohakuOfferPool(area),out=[];
-  payments.forEach(pay=>{const payValue=kohakuMaterialValue(pay.row),maxPay=Math.min(Math.max(0,Math.floor(Number(pay.count)||0)),8);if(!payValue||!maxPay)return;
+  payments.forEach(pay=>{const payValue=kohakuMaterialValue(pay.row),valuablePayment=kohakuIsValuableOnly(pay.row),maxPay=valuablePayment?Math.min(Math.max(0,Math.floor(Number(pay.count)||0)),1):Math.min(Math.max(0,Math.floor(Number(pay.count)||0)),8);if(!payValue||!maxPay)return;
     offers.forEach(entry=>{const give=entry.row;if(!give||kohakuItemKey(give)===kohakuItemKey(pay.row))return;const giveValue=kohakuMaterialValue(give);if(!giveValue)return;
       for(let giveQty=1;giveQty<=5;giveQty++){
-        const giveTotal=giveValue*giveQty,needQty=Math.ceil(giveTotal/payValue);if(needQty<1||needQty>maxPay)continue;const needTotal=payValue*needQty,spread=needTotal/giveTotal;if(spread<0.999||spread>1.35)continue;
+        const giveTotal=giveValue*giveQty,needQty=valuablePayment?1:Math.ceil(giveTotal/payValue);if(needQty<1||needQty>maxPay)continue;const needTotal=payValue*needQty,spread=needTotal/giveTotal;if(spread<0.999||spread>1.35)continue;
         const closeness=spread<=1.12?2.0:spread<=1.22?1.45:1.0;const stock=Math.min(2,0.75+Math.sqrt(Math.max(1,pay.count))/2);out.push({give,giveQty,need:pay.row,needQty,giveValue:giveTotal,needValue:needTotal,weight:Number(entry.weight||1)*closeness*stock});
       }
     });
@@ -4258,7 +4258,7 @@ function renderRecipeMerchantPanel(){
   const recipeHtml=rows.length?`<section class="card"><h3>レシピ商人の販売品</h3><p class="muted small">常設店売りレシピを除き、この進行段階までに解放されるレシピ全体から4件抽選しています。宝箱限定・ボス由来を含みます。遭遇価格は通常販売価格の75%（10G単位切り捨て）です。</p><div class="recipe-merchant-grid">${cards}</div><div class="buttons"><button type="button" class="secondary" id="copyRecipeMerchantListBtn">販売商品リストをコピー</button></div><div class="recipe-merchant-tools"><label>情報コピーするレシピ<select id="recipeMerchantSelect">${opts}</select></label><button type="button" class="secondary" id="copyRecipeMerchantInfoBtn">選択レシピ情報をコピー</button></div></section>`:'';
   let tradeHtml='';if(scope==='event'){
     const tradeCards=trades.map(t=>`<article class="kohaku-trade-card"><b>${esc(kohakuTradeLine(t))}</b></article>`).join('');
-    tradeHtml=`<section class="card kohaku-trade-block"><h3>素材交換</h3><p class="muted small">受取 ← 要求。受取はこのエリアで通常入手できる品から、要求はこの探索中に実際に入手した同エリア入手品から選ばれます。レシピ・スクロール・越境品・ボス素材・二つ名素材は対象外。換金品は要求側のみ使用できます。</p>${trades.length?`<div class="kohaku-trade-grid">${tradeCards}</div><div class="buttons"><button type="button" class="secondary" id="copyRecipeMerchantTradeListBtn">交換リストをコピー</button></div>`:'<div class="muted small">この探索中に交換へ使える対象品がまだありません。</div>'}<div class="muted small kohaku-trade-ledger">記録中：${esc(kohakuLedgerSummary())}</div></section>`;
+    tradeHtml=`<section class="card kohaku-trade-block"><h3>素材交換</h3><p class="muted small">受取 ← 要求。受取はこのエリアで通常入手できる品から、要求はこの探索中に実際に入手した同エリア入手品から選ばれます。レシピ・スクロール・越境品・ボス素材・二つ名素材は対象外。換金品は要求側のみ使用でき、要求数は原則1個です。</p>${trades.length?`<div class="kohaku-trade-grid">${tradeCards}</div><div class="buttons"><button type="button" class="secondary" id="copyRecipeMerchantTradeListBtn">交換リストをコピー</button></div>`:'<div class="muted small">この探索中に交換へ使える対象品がまだありません。</div>'}<div class="muted small kohaku-trade-ledger">記録中：${esc(kohakuLedgerSummary())}</div></section>`;
   }
   panel.innerHTML=recipeHtml+tradeHtml;
 }
