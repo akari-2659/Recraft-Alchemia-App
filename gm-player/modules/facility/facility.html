@@ -794,6 +794,7 @@ html.ra-embedded-facility #sectionDescription{
   </div>
 </div>
 </main><footer>固定マスターと解放キー照合用ハッシュはGitHub共通DBから取得します。解放済みエリアは端末へ即時保存し、GASにはエリアIDだけをクラウド同期します。共同採取設備の納品進捗はGASで全員共有します。</footer>
+<script src="../../../js/ra_monster_rules.js?v=1.0.122"></script>
 <script>
 'use strict';
 const DEFAULT_GAS_WEB_APP_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
@@ -2586,7 +2587,9 @@ function bestiaryActionPowerRange(monster={},action={}){
   return min===max?min:`${min}～${max}`;
 }
 function bestiaryAreaVariant(monster={},areaName=''){
-  const raw=String(monster.areaVariants||'').trim();if(!raw)return null;try{const map=JSON.parse(raw);return map&&typeof map==='object'?map[String(areaName||'').trim()]||null:null;}catch(_e){return null;}
+  const raw=String(monster.areaVariants||'').trim(),name=String(areaName||'').trim();let base=null;
+  if(raw&&name){try{const map=JSON.parse(raw);base=map&&typeof map==='object'?map[name]||null:null;}catch(_e){base=null;}}
+  return globalThis.RAMonsterRules?.mergeAreaVariant?.(monster,name,base)??base;
 }
 function bestiaryVariantPower(power='',delta=0){
   const raw=String(power||'').trim(),d=Math.trunc(Number(delta)||0);if(!d||!raw||raw==='なし'||raw==='-'||!/\d+D\d+/i.test(raw))return raw;const m=raw.match(/^(.*?)(?:\+(\d+))?$/);if(!m)return raw;const base=String(m[1]||raw).replace(/\+$/,''),fixed=Number(m[2]||0)+d;return fixed>0?`${base}+${fixed}`:base;
