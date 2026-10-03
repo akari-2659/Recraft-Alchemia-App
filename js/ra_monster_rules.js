@@ -143,6 +143,22 @@ const fields = {
     "damageKind": "防御無視"
   }
 };
+const areaVariantOverrides = Object.freeze({
+  "mon_glide_scale": Object.freeze({
+    "灰冠の火山峡谷": Object.freeze({hp:50,defenseValue:3})
+  })
+});
+function areaVariantOverride(monster={},areaName=''){
+  const key=String(monster?.id||'').trim(),name=String(areaName||'').trim();
+  if(!key||!name)return null;
+  return areaVariantOverrides[key]?.[name]||null;
+}
+function mergeAreaVariant(monster={},areaName='',baseVariant=null){
+  const override=areaVariantOverride(monster,areaName);
+  if(!override)return baseVariant;
+  return {...(baseVariant&&typeof baseVariant==='object'?baseVariant:{}),...override};
+}
+
 const reinforcements = Object.freeze({
   "ラフィンラットの呼び声": Object.freeze([
     Object.freeze({weight:1,groups:Object.freeze([Object.freeze({name:"ラフィンラット",count:1,formation:"前衛"})])})
@@ -193,5 +209,5 @@ function fieldCommands(text=''){
     return [`2D6+${f.hit}>=回避値 【${key}・終了時判定／妨害対象外】`,`${f.power} 【${key}・${f.element}属性${f.damageKind}ダメージ】`];
   });
 }
-root.RAMonsterRules=Object.freeze({definitions,fields,reinforcements,reinforcementTable,common,keysFromText,notesFromText,validateText,fieldCommands});
+root.RAMonsterRules=Object.freeze({definitions,fields,areaVariantOverrides,areaVariantOverride,mergeAreaVariant,reinforcements,reinforcementTable,common,keysFromText,notesFromText,validateText,fieldCommands});
 })(globalThis);
