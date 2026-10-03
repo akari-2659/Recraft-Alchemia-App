@@ -670,7 +670,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </div>
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=90.8.833"></script>
+<script src="../../../js/ra_monster_rules.js?v=1.0.122"></script>
 <script>
 'use strict';
 const VERSION='v90.8.833';
@@ -3848,8 +3848,9 @@ function individualBounty(base=0,ranks={},tendency='標準'){
   if(pct>0&&value===baseValue)value=baseValue+5;if(pct<0&&value===baseValue)value=Math.max(0,baseValue-5);return value;
 }
 function monsterAreaVariant(monster={},areaName=''){
-  const raw=String(monster.areaVariants||'').trim();if(!raw||!String(areaName||'').trim())return null;
-  try{const map=JSON.parse(raw);return map&&typeof map==='object'?map[String(areaName||'').trim()]||null:null;}catch(_e){return null;}
+  const raw=String(monster.areaVariants||'').trim(),name=String(areaName||'').trim();let base=null;
+  if(raw&&name){try{const map=JSON.parse(raw);base=map&&typeof map==='object'?map[name]||null:null;}catch(_e){base=null;}}
+  return globalThis.RAMonsterRules?.mergeAreaVariant?.(monster,name,base)??base;
 }
 function monsterVariantPower(power='',delta=0){
   const raw=String(power||'').trim(),d=Math.trunc(Number(delta)||0);if(!d||!raw||raw==='なし'||raw==='-'||!/\d+D\d+/i.test(raw))return raw;
