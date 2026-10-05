@@ -6079,7 +6079,9 @@ advanceQuestProgress=function(){
   if(!progressUiV738.questActive)return v737AdvanceQuestProgress();const q=selected($('questSelect'),state.quests);if(!q)return;const p=progressObj('quests',q.id||q.name),before=clamp(p.value);
   if(!progressUiV738.slotResolved.quest){alert('先に現在の進行度のイベントを処理してください。');return;}
   if(isDeliveryQuest(q)){p.value=100;renderQuest();v738UpdateProgressControls();saveState(false);addLog(`${q.name||q.id} の納品を完了しました。`);return;}
-  if(before>=100)return;const add=questStepAmount(q);p.value=clamp(before+add);clearQuestRandomEventHistory();progressUiV738.importantApplied.quest=null;
+  if(before>=100)return;
+  if(!consumeDailyAction(`${q.name||q.id} のクエスト進行`))return;
+  const add=questStepAmount(q);p.value=clamp(before+add);clearQuestRandomEventHistory();progressUiV738.importantApplied.quest=null;
   const fired=triggerQuestSpecificEvents(q,before,p.value);progressUiV738.slotResolved.quest=fired.length>0;renderQuest();v738UpdateProgressControls();saveState(false);addLog(`${q.name||q.id} の進行度を +${add}% しました。${before}% → ${p.value}%`);
 };
 const v737AdvanceAreaProgress=advanceAreaProgress;
