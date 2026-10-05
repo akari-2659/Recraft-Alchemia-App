@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Recraft-Alchemia GMガイド</title><style>:root{--bg:#f5efe4;--ink:#3d3025;--muted:#7e6d5b;--line:#dccbb4;--accent:#a96f37;--shadow:0 14px 34px rgba(76,49,25,.15);--radius:18px}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fbf7ef 0%,var(--bg) 100%);min-height:100vh}header,main{max-width:1180px;margin:0 auto;padding:22px}.title-card,.panel{background:rgba(255,250,242,.9);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}.subtitle,.notice{margin:0 0 14px;color:var(--muted);line-height:1.7}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}input{flex:1;min-width:220px;border:1px solid #cfbea8;border-radius:12px;background:#fffdf8;color:var(--ink);padding:10px 12px;font:inherit}button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;padding:10px 14px;cursor:pointer}button.ghost{background:#fff9f1;color:var(--ink);border:1px solid #e3cdb4}.help-layout{display:grid;gap:12px}.help-card{border:1px solid #ead9c4;background:#fffdf8;border-radius:16px;overflow:hidden}.help-card[hidden]{display:none}.help-card summary{cursor:pointer;list-style:none;padding:13px 15px;font-weight:900;color:#5b3821;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.tags span{display:inline-flex;border:1px solid #ead9c4;background:#fffaf3;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;color:#684c31}.help-body{border-top:1px solid #ead9c4;padding:12px 15px;color:#5d4935;line-height:1.75;font-size:14px}.help-body ul{margin:0;padding-left:1.35em}textarea{position:absolute;left:-9999px;width:1px;height:1px}
+/* v90.8.176: レイアウト安定化・左揃え・ボタン折返し */
+html,body{max-width:100%;overflow-x:hidden}
+body,button,input,select,textarea,label,summary,th,td,.tab,.subtab,.tab-btn,.quest-category-btn,.facility-chip,.badge{text-align:left!important}
+button,.tab,.subtab,.tab-btn,.quest-category-btn{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;word-break:normal;line-height:1.35;height:auto;min-width:0;max-width:100%}
+.buttons,.tabs,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{justify-content:flex-start!important;max-width:100%}
+.toolbar,.filter-head,.facility-card-head,.header-inner,.top{max-width:100%;min-width:0}
+.field,.card,.panel,.facility-card,.facility-product,.facility-upgrade-box,.tab-panel{min-width:0;max-width:100%}
+@media(max-width:760px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  .buttons>button,.subtabs>button,.tab-nav>button,.quest-category-bar>button,.section-actions>button,.filter-actions>button,.facility-actions>button,.modal-foot>button{width:100%!important;min-width:0!important}
+}
+@media(max-width:460px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{grid-template-columns:1fr!important}
+}
+</style>
+<style id="raBuildInfoStyle">
+.ra-build-info{position:fixed;top:8px;right:8px;z-index:99999;padding:6px 10px;border:1px solid rgba(91,69,45,.28);border-radius:999px;background:rgba(255,253,248,.94);box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:12px;font-weight:800;color:#5b452d;line-height:1.2;backdrop-filter:blur(4px)}
+@media(max-width:760px){.ra-build-info{position:static;margin:8px auto 0;width:max-content;max-width:calc(100% - 16px);text-align:center}}
+</style>
+<style id="raNoHorizontalScrollV165">
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+main,header,section,.panel,.card,.tabs,.subtabs{min-width:0;max-width:100%}
+button,input,select,textarea,label,summary,th,td{min-width:0;max-width:100%;text-align:left!important;white-space:normal!important;overflow-wrap:anywhere;word-break:break-word}
+pre,code{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+</style>
+<style id="raCompactButtonsV166">
+/* v90.8.176: ボタン幅を文字量に合わせる */
+button,.tab,.subtab,.tab-btn{
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  padding-left:12px;
+  padding-right:12px;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  flex:0 1 auto!important;
+}
+.buttons,.tabs,.subtabs,.actions,.section-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+  align-items:flex-start!important;
+  gap:7px!important;
+  max-width:100%;
+}
+.buttons>button,.tabs>button,.subtabs>button,.actions>button,.section-actions>button{width:auto!important;flex:0 1 auto!important}
+</style>
+<style id="raHelpAlignmentV174">body,input,textarea,summary,.help-body,.notice{text-align:left!important}button,.tags span{text-align:center!important}.toolbar{justify-content:flex-start!important}</style><style id="raMaintenanceV287">.ra-build-info{font-size:12px;padding:6px 12px;text-align:right;color:var(--muted)}header{padding-top:10px!important;padding-bottom:8px!important}.title-card{padding:14px!important}.title-card h1{font-size:clamp(21px,3vw,30px)!important}.panel>.toolbar{position:sticky;top:0;z-index:30;padding:8px;background:rgba(247,242,232,.97);border-radius:12px;box-shadow:0 4px 12px rgba(80,50,20,.06)}@media(max-width:600px){.ra-build-info{text-align:left}.title-card .subtitle{display:none}.panel>.toolbar{display:grid!important;grid-template-columns:1fr 1fr}.panel>.toolbar input{grid-column:1/-1;min-width:0}}</style>
+<script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
+
+<style id="raWebAppUsabilityV011">
+html.ra-web-embedded body{background:#f6f0e7}
+html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{display:none!important}
+html.ra-web-embedded main{max-width:1320px;margin:0 auto;padding:10px 12px 34px}
+html.ra-web-embedded .panel{padding:14px;border-radius:13px}
+html.ra-web-embedded .panel>.toolbar{gap:6px!important;padding:9px 10px!important;margin-bottom:10px!important;border:1px solid var(--line);border-radius:11px}
+html.ra-web-embedded .panel>.toolbar button{min-height:34px!important;padding:7px 10px!important;font-size:13.5px!important;border-radius:9px!important}
+html.ra-web-embedded .panel>.toolbar input{min-height:40px;padding:8px 10px}
+html.ra-web-embedded .help-layout{gap:8px}
+html.ra-web-embedded .help-card{border-radius:11px}
+html.ra-web-embedded .help-card summary{padding:10px 12px}
+html.ra-web-embedded .help-body{padding:10px 12px;font-size:13.5px;line-height:1.7}
+@media(max-width:600px){
+ html.ra-web-embedded main{padding:6px 7px 28px}
+ html.ra-web-embedded .panel>.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
+ html.ra-web-embedded .panel>.toolbar input{grid-column:1/-1}
+ html.ra-web-embedded .panel>.toolbar button{width:100%!important;min-height:38px!important;font-size:14px!important}
+ html.ra-web-embedded .help-card summary{grid-template-columns:1fr;gap:6px}.tags{justify-content:flex-start}
+}
+</style>
+
+<style id="raHelpWebLayoutV013">
+html.ra-web-embedded body>header{display:none!important}html.ra-web-embedded main{width:min(1380px,calc(100% - 18px))!important;margin:8px auto 28px!important}
+html.ra-web-embedded .panel,html.ra-web-embedded section,html.ra-web-embedded .card{padding:12px 13px!important;margin:8px 0!important;border-radius:11px!important}
+html.ra-web-embedded button{width:auto!important;min-width:max-content!important;padding:7px 10px!important;min-height:34px!important}
+@media(max-width:720px){html.ra-web-embedded main{width:100%!important;margin:0!important;padding:0 5px 24px!important}}
+</style>
+
+<style id="ra-module-interaction-feedback-v102">
+:where(button,.btn,[role="button"],a.btn){transition:transform .09s ease,filter .11s ease,box-shadow .12s ease,background-color .12s ease,border-color .12s ease}
+:where(button,.btn,[role="button"],a.btn):focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#8b4a41) 45%,transparent);outline-offset:2px}
+:where(button,.btn,[role="button"],a.btn):active,.ra-feedback-hit{transform:translateY(1px) scale(.982)!important;filter:brightness(.84) saturate(1.08)!important}
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target]).active,
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target])[aria-selected="true"]{
+  background:color-mix(in srgb,var(--paper,#fffaf0) 68%,var(--accent,#8b4a41) 32%)!important;
+  border-color:var(--accent,#8b4a41)!important;
+  color:var(--ink,#2f241d)!important;
+  box-shadow:inset 0 -4px 0 var(--accent,#8b4a41),0 0 0 2px color-mix(in srgb,var(--accent,#8b4a41) 24%,transparent)!important;
+  font-weight:900!important;filter:saturate(1.08) brightness(1.02);
+}
+#saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
+@media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
+</style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.110: ヘルプの折り畳み矢印を専用列に固定 */
+.help-layout > details { min-width:0!important; max-width:100%!important; overflow:hidden; }
+.help-layout > details > summary { box-sizing:border-box!important; list-style:none!important; display:grid!important; grid-template-columns:16px minmax(0,1fr) auto!important; align-items:center!important; gap:8px!important; min-width:0!important; max-width:100%!important; width:100%!important; }
+.help-layout > details > summary::-webkit-details-marker { display:none!important; }
+.help-layout > details > summary::marker { content:""!important; }
+.help-layout > details > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; width:16px!important; min-width:16px!important; height:16px!important; color:var(--accent)!important; font-size:.72rem!important; line-height:1!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; }
+.help-layout > details[open] > summary::before { transform:rotate(90deg)!important; }
+.help-layout > details > summary > * { min-width:0; max-width:100%; }
+@media(max-width:620px){ .help-layout > details > summary { grid-template-columns:16px minmax(0,1fr)!important; } .help-layout > details > summary .tags { grid-column:2!important; justify-content:flex-start!important; } }
+</style>
+
+</head><body class="ra-app ra-manager ra-help">
+<div class="ra-build-info">整理版 / 2026年10月5日</div>
+<header><div class="title-card"><h1>Recraft-Alchemia GMガイド</h1><p class="subtitle">卓進行、イベント、魔物、報酬処理などGMが運用時に参照する内容。</p></div></header>
+<main><section class="panel"><div class="toolbar">
+<input id="search" placeholder="キーワードで検索" type="search"/>
+<button class="ghost" id="openAll" type="button">すべて開く</button>
+<button class="ghost" id="closeAll" type="button">すべて閉じる</button>
+</div><div class="help-layout"><details class="help-card">
+<summary><span>探索・イベント進行</span><span class="tags"><span>GM</span><span>探索</span><span>イベント</span></span></summary>
+<div class="help-body"><ul><li>通常のエリアイベントで戦闘だけが発生し別判定がない場合、敵編成中の最大先制値を目標値とする感知判定で先制を決める。</li><li>クエストやイベント側に別の先制判定が指定されている場合は、その指定判定を使用する。</li><li>イベントの結果は原則その場で完結させ、不要な『次の判定』『次の戦闘』への持ち越し効果を増やさない。</li></ul></div></details>
+<details class="help-card">
+<summary><span>イベント判定コピー</span><span class="tags"><span>GM</span><span>コピー</span></span></summary>
+<div class="help-body"><ul><li>判定コピー1行目は【イベント名】、2行目は判定内容。</li><li>素材入手は /素材入手、宝箱は /宝箱発見、直接被害等を避ける判定は /危機回避 を使用する。</li><li>戦闘が確定している場合は実際の魔物構成を『技能 / 達成値：X / 魔物A×1・魔物B×2』形式で記載する。二つ名は戦闘前に二つ名を伏せ、『通常種名？×1』と表示する。</li></ul></div></details>
+<details class="help-card">
+<summary><span>魔物・ボス運用</span><span class="tags"><span>GM</span><span>魔物</span><span>ボス</span></span></summary>
+<div class="help-body"><ul><li>通常魔物は遭遇時にHP・回避・抵抗・攻撃傾向の個体値を決定する。二つ名・ボスは固定値。</li><li>エリアボスはHP0相当まで追い込むと戦闘終了し、死亡・討伐・解体扱いにしない。勝利後は専用褒賞箱を授ける。</li><li>二つ名個体は通常種とは別の固定個体として扱う。通常種の汎用ドロップは維持するが、通常種のレア固有素材は引き継がず、二つ名専用素材へ置き換える。</li></ul></div></details>
+<details class="help-card">
+<summary><span>増援・固有パッシブ</span><span class="tags"><span>GM</span><span>増援</span><span>パッシブ</span></span></summary>
+<div class="help-body"><ul><li>増援を呼ぶ行動は状態異常ではなく、行動文に記載されたタイミングで処理する。</li><li>1戦闘1回の増援は使用済み管理を行い、増援側にも増援技が選出されている場合は追加の増援処理を用意する。</li><li>固有パッシブの自動・即時発動は通常行動を消費しない。パッシブ専用技は通常の所持技抽選へ含めない。</li></ul></div></details>
+<details class="help-card">
+<summary><span>ドロップ・採取・報酬</span><span class="tags"><span>GM</span><span>報酬</span></span></summary>
+<div class="help-body"><ul><li>通常戦闘の戦闘後処理として採取・ドロップチェックを行う。</li><li>エリアボス固有素材は設定確率ごとに独立判定し、通常魔物用の採取・解体補正を適用しない。</li><li>逃走成功時は、その戦闘ですでに倒した敵を含め戦闘報酬をすべて失う。</li></ul></div></details>
+<details class="help-card">
+<summary><span>魔物出力</span><span class="tags"><span>魔物</span><span>チャットパレット</span><span>出力</span></span></summary>
+<div class="help-body"><ul><li>魔物出力はJSONではなく、クリップボードコピー形式にする。</li><li>魔物出力にキャラクターメモは含めない。</li><li>魔物出力にドロップは含めない。</li><li>チャットパレットは「choice[技名1,技名2,…]」から始める。条件付きの技がある場合は平常時と全技のchoiceを分ける。</li><li>ラウンド開始時にプレイヤーへ公開するのは使用予定の行動名だけ。対象となるPC・対象列・距離・威力・効果は事前公開しない。対象PC・対象列は、その魔物の行動を実際に解決する時点で選ぶ。</li><li>GM用チャットパレットには行動種別、対象、距離（近距離／遠距離／自身）、ダメージ、効果を表示する。</li><li>魔物に固有行動AIが設定されている場合だけ、GM用チャットパレットへ「固有行動AI」とその標的・行動優先ルールを表示する。固有行動AIが空欄の魔物は従来どおり対象・行動を自由／ランダムに選び、チャットパレットにもAI欄を表示しない。</li><li><strong>固有行動AIの固定化監査：</strong>「直前に選んだ対象を次も最優先」のように条件そのものが自己維持して永久固定されるAIは原則使わない。高防御・高回避など相性の悪い対象へ無意味に攻撃し続ける場合と、低防御対象へ確定集中して事故死させる場合の両方を確認する。継続狙いを持たせる場合は、実ダメージ発生など意味のある成功条件と、0ダメージ・失敗・対象不成立時に通常抽選へ戻る解除条件を持たせる。</li><li>固有行動AIは魔物の生態・既存行動と結び付け、対象候補が複数いる場合はランダム選択を残すなど、特定PCへの恒常的な集中攻撃にならないようにする。AIを追加・変更した場合は、先制順・後衛到達・状態異常・かばう・遭遇編成まで含め、狙われ方が理不尽な即死圧にならないか再監査する。</li><li>状態異常を付与する行動は、状態名だけでなく具体的な効果と継続期間も表示する。段階制の状態異常は、行動側の「1段階付与」「2段階付与」だけで済ませず、I・II・IIIなど現在定義されている全段階の効果説明をGM用チャットパレットへまとめて表示する。</li><li>ダイスのない効果も技能セクションに入れる。</li></ul></div>
+</details></div></section></main>
+<script>
+const search=document.getElementById('search');const cs=Array.from(document.querySelectorAll('.help-card'));
+function filter(){const q=(search.value||'').trim().toLowerCase();cs.forEach(c=>c.hidden=!!q&&!c.textContent.toLowerCase().includes(q));}
+search.addEventListener('input',filter);
+document.getElementById('openAll').addEventListener('click',()=>cs.forEach(c=>{if(!c.hidden)c.open=true;}));
+document.getElementById('closeAll').addEventListener('click',()=>cs.forEach(c=>c.open=false));
+</script></body></html>
