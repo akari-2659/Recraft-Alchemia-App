@@ -6035,8 +6035,31 @@ function startAreaProgressSession(){
   }
   const a=selectedExplorationArea();if(!a||isHiddenAreaRow(a))return;v738ToggleAreaRuntime('normal');v738ResetAreaSessionState(a.id||a.name,'event');v738OpenAreaModal(`${a.name||a.id}：探索`);renderArea();v738PrepareAreaSlot(a);saveState(false);addLog(`探索開始：${a.name||a.id}`);
 }
-function v738CloseQuestSession(){progressUiV738.questActive=false;v738SetModalOpen('questProgressModal',false);addLog('クエスト進行画面を閉じました。');}
-function v738CloseAreaSession(){if(progressUiV738.hidden.active){endHiddenExploration();return;}progressUiV738.areaActive=false;v738SetModalOpen('areaProgressModal',false);addLog('探索を終了しました。');}
+function v738CloseQuestSession(){
+  const q=selected($('questSelect'),state.quests);
+  if(!q){progressUiV738.questActive=false;v738SetModalOpen('questProgressModal',false);return;}
+  const key=String(q.id||q.name||''),p=progressObj('quests',key),value=clamp(p.value);
+  if(value<100){
+    if(!confirm('未完了のクエストから撤退しますか？\n現在のクエスト進行度は破棄され、次回は0%から開始します。'))return;
+    p.value=0;
+    Object.keys(state.triggeredQuestEvents||{}).filter(k=>k.startsWith(key+':')).forEach(k=>delete state.triggeredQuestEvents[k]);
+    state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';
+    state.lastQuestTreasureCopyText='';state.lastQuestTreasureResults=[];state.lastQuestEventTableRewardText='';state.lastQuestEventTableRewardCopyText='';
+    state.lastQuestEventRewardState=null;state.lastQuestReinforcementText='';if(state.questWorkReinforcementCounts)delete state.questWorkReinforcementCounts[key];
+    clearQuestRandomEventHistory();progressUiV738.slotResolved.quest=false;progressUiV738.importantApplied.quest=null;
+    addLog(`クエスト撤退：${q.name||q.id}（進行度を破棄）`);
+  }else addLog(`クエスト終了：${q.name||q.id}`);
+  progressUiV738.questActive=false;v738SetModalOpen('questProgressModal',false);saveState(false);renderQuest();
+}
+function v738CloseAreaSession(){
+  if(progressUiV738.hidden.active){endHiddenExploration();return;}
+  const scope=progressUiV738.areaMode==='base'?'base':'event';
+  const a=scope==='base'?null:selectedExplorationArea();
+  const key=scope==='base'?BASE_EXPLORATION_ID:String(a?.id||a?.name||'');
+  if(key){const p=progressObj('areas',key);p.value=0;}
+  progressUiV738.areaActive=false;progressUiV738.slotResolved[scope]=false;v738SetModalOpen('areaProgressModal',false);
+  saveState(false);addLog('探索を終了しました。探索進行度は次回へ持ち越しません。');
+}
 function v738CurrentProgressValue(scope){if(scope==='quest'){const q=selected($('questSelect'),state.quests);return q?clamp(progressObj('quests',q.id||q.name).value):0;}if(scope==='base')return clamp(progressObj('areas',BASE_EXPLORATION_ID).value);const a=selectedExplorationArea();return a?clamp(progressObj('areas',a.id||a.name).value):0;}
 function v738UpdateProgressControls(){
   const qVal=v738CurrentProgressValue('quest'),aScope=progressUiV738.areaMode==='base'?'base':'event',aVal=v738CurrentProgressValue(aScope);
