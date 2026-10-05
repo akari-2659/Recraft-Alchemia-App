@@ -1,0 +1,244 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Recraft-Alchemia プレイヤールール</title><style>:root{--bg:#f5efe4;--ink:#3d3025;--muted:#7e6d5b;--line:#dccbb4;--accent:#a96f37;--shadow:0 14px 34px rgba(76,49,25,.15);--radius:18px}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fbf7ef 0%,var(--bg) 100%);min-height:100vh}header,main{max-width:1180px;margin:0 auto;padding:22px}.title-card,.panel{background:rgba(255,250,242,.9);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}.subtitle,.notice{margin:0 0 14px;color:var(--muted);line-height:1.7}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}input{flex:1;min-width:220px;border:1px solid #cfbea8;border-radius:12px;background:#fffdf8;color:var(--ink);padding:10px 12px;font:inherit}button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;padding:10px 14px;cursor:pointer}button.ghost{background:#fff9f1;color:var(--ink);border:1px solid #e3cdb4}.help-layout{display:grid;gap:12px}.help-card{border:1px solid #ead9c4;background:#fffdf8;border-radius:16px;overflow:hidden}.help-card[hidden]{display:none}.help-card summary{cursor:pointer;list-style:none;padding:13px 15px;font-weight:900;color:#5b3821;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.tags span{display:inline-flex;border:1px solid #ead9c4;background:#fffaf3;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;color:#684c31}.help-body{border-top:1px solid #ead9c4;padding:12px 15px;color:#5d4935;line-height:1.75;font-size:14px}.help-body ul{margin:0;padding-left:1.35em}textarea{position:absolute;left:-9999px;width:1px;height:1px}
+/* v90.8.176: レイアウト安定化・左揃え・ボタン折返し */
+html,body{max-width:100%;overflow-x:hidden}
+body,button,input,select,textarea,label,summary,th,td,.tab,.subtab,.tab-btn,.quest-category-btn,.facility-chip,.badge{text-align:left!important}
+button,.tab,.subtab,.tab-btn,.quest-category-btn{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;word-break:normal;line-height:1.35;height:auto;min-width:0;max-width:100%}
+.buttons,.tabs,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{justify-content:flex-start!important;max-width:100%}
+.toolbar,.filter-head,.facility-card-head,.header-inner,.top{max-width:100%;min-width:0}
+.field,.card,.panel,.facility-card,.facility-product,.facility-upgrade-box,.tab-panel{min-width:0;max-width:100%}
+@media(max-width:760px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  .buttons>button,.subtabs>button,.tab-nav>button,.quest-category-bar>button,.section-actions>button,.filter-actions>button,.facility-actions>button,.modal-foot>button{width:100%!important;min-width:0!important}
+}
+@media(max-width:460px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{grid-template-columns:1fr!important}
+}
+</style>
+<style id="raBuildInfoStyle">
+.ra-build-info{position:fixed;top:8px;right:8px;z-index:99999;padding:6px 10px;border:1px solid rgba(91,69,45,.28);border-radius:999px;background:rgba(255,253,248,.94);box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:12px;font-weight:800;color:#5b452d;line-height:1.2;backdrop-filter:blur(4px)}
+@media(max-width:760px){.ra-build-info{position:static;margin:8px auto 0;width:max-content;max-width:calc(100% - 16px);text-align:center}}
+</style>
+<style id="raNoHorizontalScrollV165">
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+main,header,section,.panel,.card,.tabs,.subtabs{min-width:0;max-width:100%}
+button,input,select,textarea,label,summary,th,td{min-width:0;max-width:100%;text-align:left!important;white-space:normal!important;overflow-wrap:anywhere;word-break:break-word}
+pre,code{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+</style>
+<style id="raCompactButtonsV166">
+/* v90.8.176: ボタン幅を文字量に合わせる */
+button,.tab,.subtab,.tab-btn{
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  padding-left:12px;
+  padding-right:12px;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  flex:0 1 auto!important;
+}
+.buttons,.tabs,.subtabs,.actions,.section-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+  align-items:flex-start!important;
+  gap:7px!important;
+  max-width:100%;
+}
+.buttons>button,.tabs>button,.subtabs>button,.actions>button,.section-actions>button{width:auto!important;flex:0 1 auto!important}
+</style>
+<style id="raHelpAlignmentV174">body,input,textarea,summary,.help-body,.notice{text-align:left!important}button,.tags span{text-align:center!important}.toolbar{justify-content:flex-start!important}</style><style id="raMaintenanceV287">.ra-build-info{font-size:12px;padding:6px 12px;text-align:right;color:var(--muted)}header{padding-top:10px!important;padding-bottom:8px!important}.title-card{padding:14px!important}.title-card h1{font-size:clamp(21px,3vw,30px)!important}.panel>.toolbar{position:sticky;top:0;z-index:30;padding:8px;background:rgba(247,242,232,.97);border-radius:12px;box-shadow:0 4px 12px rgba(80,50,20,.06)}@media(max-width:600px){.ra-build-info{text-align:left}.title-card .subtitle{display:none}.panel>.toolbar{display:grid!important;grid-template-columns:1fr 1fr}.panel>.toolbar input{grid-column:1/-1;min-width:0}}</style>
+<script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
+
+<style id="raWebAppUsabilityV011">
+html.ra-web-embedded body{background:#f6f0e7}
+html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{display:none!important}
+html.ra-web-embedded main{max-width:1320px;margin:0 auto;padding:10px 12px 34px}
+html.ra-web-embedded .panel{padding:14px;border-radius:13px}
+html.ra-web-embedded .panel>.toolbar{gap:6px!important;padding:9px 10px!important;margin-bottom:10px!important;border:1px solid var(--line);border-radius:11px}
+html.ra-web-embedded .panel>.toolbar button{min-height:34px!important;padding:7px 10px!important;font-size:13.5px!important;border-radius:9px!important}
+html.ra-web-embedded .panel>.toolbar input{min-height:40px;padding:8px 10px}
+html.ra-web-embedded .help-layout{gap:8px}
+html.ra-web-embedded .help-card{border-radius:11px}
+html.ra-web-embedded .help-card summary{padding:10px 12px}
+html.ra-web-embedded .help-body{padding:10px 12px;font-size:13.5px;line-height:1.7}
+@media(max-width:600px){
+ html.ra-web-embedded main{padding:6px 7px 28px}
+ html.ra-web-embedded .panel>.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
+ html.ra-web-embedded .panel>.toolbar input{grid-column:1/-1}
+ html.ra-web-embedded .panel>.toolbar button{width:100%!important;min-height:38px!important;font-size:14px!important}
+ html.ra-web-embedded .help-card summary{grid-template-columns:1fr;gap:6px}.tags{justify-content:flex-start}
+}
+</style>
+
+<style id="raHelpWebLayoutV013">
+html.ra-web-embedded body>header{display:none!important}html.ra-web-embedded main{width:min(1380px,calc(100% - 18px))!important;margin:8px auto 28px!important}
+html.ra-web-embedded .panel,html.ra-web-embedded section,html.ra-web-embedded .card{padding:12px 13px!important;margin:8px 0!important;border-radius:11px!important}
+html.ra-web-embedded button{width:auto!important;min-width:max-content!important;padding:7px 10px!important;min-height:34px!important}
+@media(max-width:720px){html.ra-web-embedded main{width:100%!important;margin:0!important;padding:0 5px 24px!important}}
+</style>
+
+<style id="ra-module-interaction-feedback-v102">
+:where(button,.btn,[role="button"],a.btn){transition:transform .09s ease,filter .11s ease,box-shadow .12s ease,background-color .12s ease,border-color .12s ease}
+:where(button,.btn,[role="button"],a.btn):focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#8b4a41) 45%,transparent);outline-offset:2px}
+:where(button,.btn,[role="button"],a.btn):active,.ra-feedback-hit{transform:translateY(1px) scale(.982)!important;filter:brightness(.84) saturate(1.08)!important}
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target]).active,
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target])[aria-selected="true"]{
+  background:color-mix(in srgb,var(--paper,#fffaf0) 68%,var(--accent,#8b4a41) 32%)!important;
+  border-color:var(--accent,#8b4a41)!important;
+  color:var(--ink,#2f241d)!important;
+  box-shadow:inset 0 -4px 0 var(--accent,#8b4a41),0 0 0 2px color-mix(in srgb,var(--accent,#8b4a41) 24%,transparent)!important;
+  font-weight:900!important;filter:saturate(1.08) brightness(1.02);
+}
+#saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
+@media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
+</style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.110: ヘルプの折り畳み矢印を専用列に固定 */
+.help-layout > details { min-width:0!important; max-width:100%!important; overflow:hidden; }
+.help-layout > details > summary { box-sizing:border-box!important; list-style:none!important; display:grid!important; grid-template-columns:16px minmax(0,1fr) auto!important; align-items:center!important; gap:8px!important; min-width:0!important; max-width:100%!important; width:100%!important; }
+.help-layout > details > summary::-webkit-details-marker { display:none!important; }
+.help-layout > details > summary::marker { content:""!important; }
+.help-layout > details > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; width:16px!important; min-width:16px!important; height:16px!important; color:var(--accent)!important; font-size:.72rem!important; line-height:1!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; }
+.help-layout > details[open] > summary::before { transform:rotate(90deg)!important; }
+.help-layout > details > summary > * { min-width:0; max-width:100%; }
+@media(max-width:620px){ .help-layout > details > summary { grid-template-columns:16px minmax(0,1fr)!important; } .help-layout > details > summary .tags { grid-column:2!important; justify-content:flex-start!important; } }
+</style>
+
+</head><body class="ra-app ra-manager ra-help">
+<div class="ra-build-info">整理版 / 2026年10月5日</div>
+<header><div class="title-card"><h1>Recraft-Alchemia プレイヤールール</h1><p class="subtitle">PCを作成し、探索・戦闘・制作を行うために必要なルールだけをまとめたページ。</p></div></header>
+<main><section class="panel"><div class="toolbar">
+<input id="search" placeholder="キーワードで検索" type="search"/>
+<button class="ghost" id="openAll" type="button">すべて開く</button>
+<button class="ghost" id="closeAll" type="button">すべて閉じる</button>
+</div><div class="help-layout"><details class="help-card">
+<summary><span>ランクと解放</span><span class="tags"><span>★</span><span>ランク</span></span></summary>
+<div class="help-body"><ul><li>ランクを持つデータは★1、★2のように表示する。ランクは性能・難易度の目安で、実際の解放はエリア進行・施設解放に従う。</li><li>道具は対応上限以下の対象に使用でき、上位段階の道具を使うと自作難易度を下げられる。</li></ul></div></details>
+<details class="help-card">
+<summary><span>施設</span><span class="tags"><span>鍛冶屋</span><span>薬屋</span><span>食事処</span><span>宿屋</span><span>NPC</span></span></summary>
+<div class="help-body"><ul><li>基本施設は鍛冶屋、薬屋、食事処、宿屋、骨董屋、レシピ販売、ギルド。</li><li>鍛冶屋は武器、盾、防具、バッグ、矢筒、鍛冶素材、戦闘用罠、細工道具、鍛冶・仕掛け製作施設利用を扱う。</li><li>薬屋はポーション系、薬品系調合品、調合素材、調合施設利用を扱う。</li><li>食事処は解放エリアに応じた今日のおすすめ3品と、食材持ち込み料理を扱う。料理は各エリア5品を基本とし、食材以外でも用途タグが「食用可能」の素材を材料に使用できる。</li><li>宿屋は宿泊45G、休息30G、噂、クエスト情報を扱う。商品販売は主目的にしない。</li><li>休息は1行動を消費してHP・MPを全回復する。日付と疲労度は変化しない。</li><li>宿泊は一日を終了して翌日へ進み、HP・MPを全回復して疲労度を0にする。</li><li>レシピ販売は、常設店売りではなくボス以外の宝箱から入手できるレシピを日替わりで扱う管理機能。品揃えは管理HTMLで選出・コピーし、施設HTMLには表示しない。</li><li>雑貨屋は現時点では使用しない。</li><li>施設NPCは、リネット、ガルド・ヴェルナー、マリエッタ・ロゼル、ミレイユ・オルセーヌ、ロジーナ・エルメル。</li><li>リネットは拠点と工房の案内役。</li><li>ガルド・ヴェルナーは鍛冶屋担当。</li><li>マリエッタ・ロゼルは食事処担当。</li><li>ミレイユ・オルセーヌは薬屋担当。</li><li>ロジーナ・エルメルは宿屋担当。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>1日の行動回数・疲労</span><span class="tags"><span>行動回数</span><span>疲労</span></span></summary>
+<div class="help-body"><ul><li>パーティー共通の基本行動回数は1日4回。</li><li>クエストを1段階進行する、またはエリア探索を1回行うたびに1行動を消費する。</li><li>行動回数を使い切ったら、その日の新しい行動は行えず、宿泊するか宿泊せず翌日へ進む。</li><li>宿泊せず一日を終えるたび疲労度が1増加する。一部の探索イベントでは判定失敗で疲労度が増加することがある。</li></ul></div></details>
+<details class="help-card">
+<summary><span>状態・フィールド</span><span class="tags"><span>状態</span><span>戦闘</span></span></summary>
+<div class="help-body"><ul><li>行動に状態名が記載されている場合、効果は共通状態定義を参照する。同名状態は原則として自己重複せず、再付与は残り期間を更新する。段階制状態は各状態の段階ルールに従う。</li><li>戦闘用の状態・バフ・デバフ・継続効果は原則として戦闘終了時に解除する。</li><li>状態自身に解除条件が定義されている場合、その解除条件を優先する。通常の数値バフ・デバフは、重複不可の指定がなければ累積する。</li></ul></div></details>
+<details class="help-card">
+<summary><span>未鑑定スクロール</span><span class="tags"><span>魔法</span><span>祈祷</span><span>鑑定</span><span>術式</span></span></summary>
+<div class="help-body"><ul><li>未鑑定スクロールは、未鑑定の魔法スクロールと未鑑定の祈祷スクロールに分ける。</li><li>未鑑定の段階で魔法か祈祷か、およびスクロールランクは判別できる。</li><li>鑑定結果は、スクロールの種別とランクに一致する候補だけから抽選する。</li><li>術式は魔法と祈祷の両方を含む総称なので、鑑定道具の名称は術式鑑定具のままとする。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>倉庫・所持品・バッグ</span><span class="tags"><span>倉庫</span><span>所持品</span><span>バッグ</span></span></summary>
+<div class="help-body"><ul><li>旧所持品は倉庫。旧携行品は所持品。</li><li>倉庫は保管上限なし。スタック数や枠数を気にせず最大限所持できる。</li><li>倉庫アイテムは個数0でも登録・保存できる。</li><li>冒険中に使用できるのは所持品に入っているアイテムのみ。</li><li>バッグは倉庫内アイテムから選択する。</li><li>バッグに設定された容量に応じて、キャラシート側の所持品枠数が変化する。</li><li>初期バッグは簡素なバッグ。バッグ容量は8。</li><li>採取袋は使用しない。袋カテゴリも使用しない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>キャラクターシート：プリセット</span><span class="tags"><span>装備プリセット</span><span>所持品プリセット</span><span>術式</span><span>不足確認</span></span></summary>
+<div class="help-body"><ul><li>装備プリセットは右手・左手・鎧・装飾品と、魔導書・祈祷書・魔印・聖印にセットしている術式をまとめて保存する。</li><li>所持品プリセットはバッグ・矢筒・矢筒内の矢弾・冒険へ持ち出す所持品と個数をまとめて保存する。</li><li>プリセットの新規登録、現在状態での更新、呼び出しはすべて専用モーダルで確認して実行する。更新モーダルでは名称も変更できる。</li><li>呼び出し前に、必要な装備・術式・バッグ・矢筒・アイテム個数・矢弾個数・収納容量を確認する。不足がある場合は「〇〇が不足しています」と不足内容をモーダルへ一覧表示する。</li><li>不足があっても呼び出しは禁止しない。確認モーダルで「不足分を除いて呼び出す」を選択すると、用意できる装備・術式・所持品だけを反映し、不足分は未設定または未配置のままにする。</li><li>所持品プリセットの不足確認では、現在持ち出している所持品・矢筒内矢弾を倉庫へ戻した場合の総所持数を基準に判定する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>作成・道具</span><span class="tags"><span>作成</span><span>道具</span></span></summary>
+<div class="help-body"><ul><li>調合・細工・鍛冶では対応する道具と素材を使用する。自作では判定を行い、施設依頼では素材と依頼費を支払い、原則として作成判定を行わない。</li><li>適正段階より上位の道具を使うと、1段階上ごとに作成難易度-2。下位道具では対応上限を超える作成はできない。</li><li>作成補助材は自作時のみ追加消費でき、1個につき作成難易度-2。</li></ul></div></details>
+<details class="help-card">
+<summary><span>店売り・初期販売</span><span class="tags"><span>店売り</span><span>初期武器</span><span>防具</span><span>矢筒</span></span></summary>
+<div class="help-body"><ul><li>鍛冶屋では、DB上の初期所持品タグ付き武器を購入可能にする。</li><li>初期販売武器はショートダガー、ロングソード、ハンドアックス、ウォーハンマー、ショートスピア、ウッドスタッフ、ショートボウ、クロスボウ、ヘヴィクロスボウ、ロングスピア、グレートソード、グレートハンマー。</li><li>鍛冶屋販売枠としてバトルサイズ、アイアンガントレットも扱う。</li><li>防具の商品名はカテゴリ名をそのまま使わない。</li><li>初期販売防具は、旅風のジャケット、鉄紐のベスト、鋲打ちの胴衣、星糸のケープ、祈り布のストール。</li><li>普段着は0Gの初期装備扱い。店売り防具にはしない。</li><li>矢筒は初期配布しない。鍛冶屋販売品にする。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>矢弾・矢筒</span><span class="tags"><span>遠距離武器</span><span>矢弾</span><span>矢筒</span><span>スタック</span></span></summary>
+<div class="help-body"><ul><li>遠距離武器は通常攻撃でも矢弾を1つ消費する。矢弾は実際に発射した時点で消費し、命中・失敗を問わず返還しない。装填だけでは消費しない。</li><li>矢弾がない場合、対応する遠距離武器で攻撃できない。弓・クロスボウ・ヘヴィクロスボウ自体には攻撃属性を持たせず、攻撃属性は使用した矢弾で決定する。属性指定のない通常矢弾・状態異常矢弾は物属性とする。武器基礎ダメージと矢弾の加算ダメージは合算し、矢弾属性で処理する。特殊矢弾の非ダメージ効果は命中時のみ発動し、別枠の追加ダメージがある場合は独立したダメージイベントとして防御・属性相性を処理する。</li><li>矢弾は種類ごとに管理する。</li><li>矢弾は種類ごとに最大スタック数を持つ。</li><li>矢弾を矢筒に入れない場合、1種類につき所持品枠を1枠使う。</li><li>初期遠距離武器を選んだ場合、対応する通常矢弾を最大スタック数分だけ初期支給する。</li><li>通常矢は最大20。通常ボルトは最大20。大型ボルトは最大10。</li><li>特殊矢弾の最大スタック数は効果に応じて個別に設定する。クロスボウ・ヘヴィクロスボウは戦闘開始時は装填済み。射撃後の再装填は主行動を1回消費し、装填しただけでは矢弾を消費しない。戦闘終了時に装填済みで未発射の矢弾も消費しない。</li><li>矢筒は装備枠『矢筒』に装備する。</li><li>矢筒自体は所持品枠を消費しない。</li><li>矢筒に入れた矢弾は所持品枠を消費しない。</li><li>簡素な矢筒は2種類、旅人の矢筒は3種類、狩人の矢筒は4種類の矢弾を収納できる。</li><li>キャラシート側では、矢筒を装備した場合、収納種類数ぶんの矢弾枠を入力する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>クロスボウの2発に1回効果</span><span class="tags"><span>クロスボウ</span><span>2発に1回</span><span>武器効果</span><span>攻撃</span></span></summary>
+<div class="help-body"><ul><li>「攻撃2回につき1回」と書かれた武器効果は、同じ武器による偶数回目の攻撃だけに適用する。</li><li>1回目の攻撃には適用せず、2回目に適用する。以降も奇数回目は効果なし、偶数回目は効果ありとして交互に処理する。</li><li>命中・失敗を問わず、攻撃判定を行った時点でその武器の攻撃回数を1回増やす。</li><li>攻撃回数は武器ごとに数え、戦闘終了時にリセットする。</li><li>基本の流れは「1発目（効果なし）→2発目（効果あり）→3発目（効果なし）→4発目（効果あり）」とする。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>スキルガチャ・共鳴片</span><span class="tags"><span>スキル</span><span>共鳴片</span><span>重複</span></span></summary>
+<div class="help-body"><ul><li>習得済みのスキルと同じ登録IDをキャラシへ追加した場合、そのスキルは増えず、同じ★ランクの共鳴片へ変換する。</li><li>重複1件につき共鳴片を1個獲得し、共鳴片は「特殊素材＞共鳴素材」として倉庫で個数管理する。売却不可。</li><li><b>スキル解放段階：</b>★1は1-2（近郊の森）解放時、★2は3-2、★3は5-2、★4は7-2、★5は9-2で解放する。★1解放時にはスキルクリスタルも同時に入手する。</li><li><b>スキルクリスタル強化：</b>★2以降は、その★ランクのスキルが解放される1つ前のエリア解放段階で強化を解放する。★2前＝3-1、★3前＝5-1、★4前＝7-1、★5前＝9-1。</li><li>現在排出可能なランクだけをスキルガチャで選択できる。未解放ランクは選択・抽選できない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>レシピ・武器派生</span><span class="tags"><span>レシピ</span><span>派生</span></span></summary>
+<div class="help-body"><ul><li>通常の自作には対応レシピ・必要素材・必要道具・製作判定が必要。通常の加工素材はレシピ不要。</li><li>武器上位化は派生元武器と素材を使用して派生する。武器派生にも対応レシピが必要。</li><li>施設依頼では必要素材と依頼費を支払い、原則として判定不要。</li></ul></div></details>
+<details class="help-card">
+<summary><span>装飾品強化</span><span class="tags"><span>装飾品</span><span>強化</span></span></summary>
+<div class="help-body"><ul><li>装飾品は通常の装備強化枠を持たず、専用の段階強化・派生によって成長する。</li><li>装飾品強化では強化元の装飾品1個と必要素材を使用して上位段階へ置き換える。施設依頼は判定不要、自作は細工で判定する。</li></ul></div></details>
+<details class="help-card">
+<summary><span>装備強化</span><span class="tags"><span>装備</span><span>強化</span></span></summary>
+<div class="help-body"><ul><li>素材強化の対象は武器（魔導書・祈祷書を含む）・鎧・盾。装飾品・バッグ・矢筒・道具・消耗品などは通常の素材強化対象外。</li><li>強化回数と強化枠は別に管理する。同じ通常強化は重複可能で、重複した分だけ強化枠を消費する。</li><li>強化内容・必要素材・費用・成功率は鍛冶屋の強化画面で確認できる。</li></ul></div></details>
+<details class="help-card">
+<summary><span>戦闘の基本</span><span class="tags"><span>戦闘</span><span>行動</span><span>ダメージ</span></span></summary>
+<div class="help-body"><ul><li>戦闘では移動だけがターンを消費しない。PC・サポートは1ラウンドにつき行動権を1回持ち、ラウンド開始時に行動使用状態を全員リセットする。PC・サポート側の行動順は自由。敵側は先制値の高い順、同値ならシステム内部で割り振った小数点が小さい順に行動する。通常戦闘は敵編成の最大先制値を目標値とする感知判定（イベント指定がある場合はその別判定）で先制を決め、成功時はPC側→敵側、失敗時は敵側→PC側。重要クエスト100%戦闘・エリアボス戦は敵側→PC側で固定する。戦闘開始時に決まった陣営順は戦闘終了まで全ラウンド維持する。ラウンド開始時の複数処理は自由順だが、敵の予定行動公開だけは開始時処理の最後に行う。ラウンド終了時の複数処理は自由順。</li><li>通常は移動後に、ターンを消費する行動を1回行う。</li><li>攻撃、力業、集中、術式、祈祷、防御、かばう、妨害、鼓舞、解析、道具使用はターンを消費する。</li><li>装備効果だけで追加の攻撃行動や反撃行動を発生させない。</li><li>戦闘後処理として、採取やドロップチェックを扱う。</li><li>防御と回避は別処理。通常ダメージは「基礎ダメージ→最終防御値による軽減→属性相性」の順で処理する。最終防御値が負ならその絶対値ぶんダメージが増加する。防御で最終ダメージ0になっても命中自体は成立しており、『1点以上のダメージ』など別条件がなければ命中時効果は発生する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>防御</span><span class="tags"><span>防御</span><span>防御値</span><span>防御行動値</span><span>防御技能</span></span></summary>
+<div class="help-body"><ul><li>防御は行動権を消費する。自身の通常手番以外でも使用でき、そのラウンドですでに行動権を使用している場合は使用できない。手番前に防御で行動権を使用した場合、そのラウンドの自身の手番では移動も主行動も行えない。</li><li>防御行動中は敵からの攻撃が確実に命中する。</li><li>装備の防御行動値ぶん、使用時点から次のラウンド開始時の行動使用状態リセットまで防御値を上昇させる。</li><li>防御技能に割り振ったポイントと常時防御値は、防御行動の有無にかかわらずダメージを軽減する。</li><li>通常時の最終ダメージは、受けるダメージ－防御技能配分P－常時防御値。</li><li>防御行動時の最終ダメージは、受けるダメージ－防御行動値－防御技能配分P－常時防御値。</li><li>防御行動そのものに判定は行わない。</li><li>最終ダメージは0未満にならない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>かばう</span><span class="tags"><span>かばう</span><span>防御技能</span><span>先制値</span></span></summary>
+<div class="help-body"><ul><li>かばうは行動権を消費し、味方への攻撃1回に割り込んで自分が引き受ける。自身の通常手番以外でも使用できるが、そのラウンドですでに行動権を使用している場合は使用できない。</li><li>処理順は「敵の攻撃対象を決定 → かばう判定 → 成功時に防御行動値を次のその攻撃の間だけ追加 → 敵の攻撃判定を行わずダメージ算出 → 防御による軽減を適用」の順。</li><li>かばう判定は2D6＋防御技能 &gt;= その攻撃を行う敵の先制値。同じエリアの味方は補正なし、異なるエリアの味方をかばう場合は判定-2。</li><li>成功した場合は攻撃対象を自分へ変更し、その敵の攻撃判定は行わない。かばったPCが攻撃を受けるものとしてダメージだけを算出する。</li><li>成功時は防御行動値を含めた最終防御値でその攻撃を処理する。防御値半分無視・固定値無視などの防御無視は、基礎防御・防御技能配分P・防御行動値・状態やバフ／デバフによる補正を反映した最終防御値に対して適用する。最終防御値が負の場合、防御無視は作用せず、その負値ぶん受けるダメージが増加する。</li><li>1回のかばうで引き受けられるのは、敵1体が行う1回の攻撃に含まれる味方1人分まで。多段攻撃に対するかばう判定は最初の1回だけ行い、成功した場合はその攻撃終了まで同じ対象を継続してかばえる。かばう側が途中で戦闘不能になった場合、残りの段は元の対象へ戻る。</li><li>前列のみ／後列のみを対象とする範囲攻撃は、その範囲内の味方1人分だけかばえる。前列・後列の両方を対象とする全体攻撃はかばえない。</li><li>低命中・高威力攻撃をかばうと敵の攻撃判定を飛ばすため、本来は回避で外れた可能性も失う。危険行動だから常にかばうのが正解とは限らない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>妨害</span><span class="tags"><span>妨害</span><span>先制値</span><span>判定補正</span></span></summary>
+<div class="help-body"><ul><li>妨害は行動権を消費する。自身の通常手番以外でも使用できるが、そのラウンドですでに行動権を使用している場合は使用できない。</li><li>提案内容に応じて対応技能と適用エリアを決める。</li><li>判定は2D6＋対応技能値 &gt;= 敵の先制値。</li><li>成功すると、対象が次に関与する判定1回について、その対象側の参照値-2。対象自身が行う判定だけでなく、その対象の回避値・抵抗値などが参照される判定にも適用する。敵側では術式・祈祷・妨害などの分類を用いず、すべて「判定」として扱う。</li><li>能動・受動を問わず、その対象が次に関与した判定1回で消費する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>武器攻撃・力業攻撃・集中攻撃</span><span class="tags"><span>武器攻撃</span><span>力業</span><span>集中</span><span>近接</span><span>射撃</span><span>魔法</span></span></summary>
+<div class="help-body"><ul><li>攻撃判定は2D6＋使用技能値 &gt;= 対象の回避値。成功するとダメージが発生する。</li><li>近接武器は前衛の敵だけを攻撃できる。</li><li>武器の使用技能は、近接武器＝近接、弓・クロスボウ・ヘヴィクロスボウ＝射撃、魔導書＝魔法、祈祷書＝祈祷として固定する。武器作成・武器派生・武器強化の製作判定には細工を使用する。設計は現状、罠の作成・調整にのみ使用する。</li><li>遠距離武器は後衛も攻撃できるが、敵前衛がいる状態で後衛を狙う場合は判定-2。</li><li>魔法は前衛・後衛を同じ条件で対象にできる。</li><li>ダメージには本来使用する技能へ割り振ったポイント分の固定値を加算する。</li><li>武器ダメージ1D6+1、近接配分P+2なら、成功時ダメージは1D6+3。</li><li>力業攻撃は近接攻撃時に近接の代わりに力業で攻撃判定を行う。</li><li>力業攻撃に成功した場合、武器ダメージのダイスを+1個し、対象の最終防御値の半分に相当する量（端数切り上げ）を無視する。</li><li>力業攻撃の防御半分無視は、基礎防御・防御技能配分P・防御行動値・状態やバフ／デバフによる補正を反映した最終防御値に対して適用する。属性耐性や、防御値とは別に記載された個別軽減は無視しない。</li><li>力業攻撃の固定値は近接に割り振ったポイントを参照する。</li><li>力業攻撃を行った場合、成否にかかわらず、次の自分のターンは移動を含む一切の行動ができない。</li><li>常時防御値-2は、力業攻撃を行った直後から行動不能ターンの終了時まで適用する。その次の自分のターンから通常どおり行動できる。</li><li>集中は主行動を使用して集中状態になる。移動は通常どおり別処理で行える。</li><li>集中開始後から次の自分のターン開始までに1点以上のダメージを受けた場合、集中状態を解除する。防御などで最終ダメージが0なら解除しない。</li><li>集中状態を維持したまま次の自分のターンを迎えた場合、射撃武器による攻撃またはダメージを与える魔法を1回行える。</li><li>集中攻撃では、本来の射撃または魔法の代わりに集中技能を使用して判定し、その判定に+2する。元の攻撃が参照する回避値・抵抗値などの目標値は変更しない。</li><li>集中攻撃のダメージは、本来の射撃または魔法へ割り振ったポイントを参照し、通常のダメージにダメージダイスを+1個する。集中へ割り振ったポイントをダメージへ加えるわけではない。</li><li>集中攻撃は単体・複数・列・範囲を問わず使用できる。複数対象では各対象への判定とダメージを通常どおり個別に行い、命中した各対象の直接ダメージへダメージダイス+1個を適用する。</li><li>射撃武器で敵前衛がいる状態から後衛を狙う場合の判定-2は集中攻撃でも適用する。集中の+2と相殺できる。</li><li>集中攻撃の矢弾・MPなどの消費は、その攻撃・魔法1回分のみ。攻撃後は成否にかかわらず集中状態を解除する。</li><li>集中攻撃は祈祷には使用できない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>術式・祈祷</span><span class="tags"><span>術式</span><span>祈祷</span><span>属性</span><span>防御判定</span></span></summary>
+<div class="help-body"><ul><li>初期魔法術式は魔力弾のみ。</li><li>初期祈祷は癒しの祈りのみ。</li><li>初期魔法術式と初期祈祷は全員が取得する。</li><li>術式と祈祷には属性を設定する。</li><li>魔導書のセット術式枠は、1＋魔法への振り分けポイント＋装備固有の術式枠補正＋強化による術式枠補正。</li><li>祈祷書のセット術式枠は、1＋祈祷への振り分けポイント＋装備固有の術式枠補正＋強化による術式枠補正。</li><li>セット術式とセット祈祷は、所持している術式データから選択する。</li><li>火球、氷槍、雷撃、光弾、闇弾、爆発範囲などの攻撃・投射・範囲系魔法は回避で防ぐ。</li><li>毒・汚染・呪い・麻痺・睡眠などの身体・精神・状態異常系効果は抵抗で防ぐ。</li><li>魔物行動も同じ基準とし、攻撃・投射・範囲攻撃は回避、身体・精神・状態異常系効果は抵抗を達成値にする。</li><li>抵抗値を参照する魔物行動は、魔物側がその行動に設定された基礎技能値で判定し、PCの抵抗値以上なら効果を適用する。PC側は抵抗判定を行わない。敵側の行動では術式・祈祷・妨害などのPC側分類を用いず、すべて行動ごとの「判定」として扱う。</li><li>探索・環境処理などでPCが自分から行う回避判定・抵抗判定は、2D6＋対応する技能合計（装備の回避補正・抵抗補正込み）で行い、+5は加えない。戦闘中、敵攻撃に対してPCが能動的な回避判定を行うことはなく、敵側の判定がPCの回避値を参照する。敵の行動から参照される回避値・抵抗値は、その技能合計に+5し、回避値・抵抗値専用補正があればさらに加算する。</li><li>PCには先制値を設定しない。先制値は魔物側の妨害・かばう・逃亡などで参照する値として扱う。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>技能の戦闘利用</span><span class="tags"><span>採取</span><span>知識</span><span>鼓舞</span><span>魅力</span></span></summary>
+<div class="help-body"><ul><li>採取は、魔物撃破後の採取判定に成功するとドロップチェックに+1する。</li><li>知識カテゴリは魔物、素材、属性。</li><li>解析は敵の属性を1つ指定し、2D6＋知識技能 &gt;= 対象の抵抗値で判定する。</li><li>解析成功時、指定した属性の相性（通常・弱点・耐性・無効・吸収・反射）を完全に看破する。判明した属性相性は魔物種単位で共有・記録し、以後は既知として扱う。</li><li>鼓舞はターンを消費し、2D6＋鼓舞技能 &gt;= 10で判定する。</li><li>鼓舞成功時、対象の次の判定+2。</li><li>逃走は、パーティーの運動技能合計が敵全体の先制値合計以上なら判定なしで成功する。運動技能合計が不足している場合も、1ラウンドにつきパーティーで1回まで「2D6＋パーティーの運動技能合計 &gt;= 敵全体の先制値合計＋6」で逃走判定を行える。成功すれば逃走し、失敗しても追加攻撃などは発生せず、そのまま戦闘を続行する。敵を倒して先制値合計が下がれば必要出目も下がり、運動技能合計以上まで下がれば判定なしの逃走へ移行する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>判定式</span><span class="tags"><span>判定</span><span>対抗</span><span>カスタムチェック</span></span></summary>
+<div class="help-body"><ul><li>対抗式の表記は『○○vs○○』ではなく『○○&gt;=○○』に統一する。2D6を使用する判定は共通して、出目6・6なら技能値・達成値・補正に関係なくクリティカルとして自動成功、出目1・1ならファンブルとして自動失敗する。クリティカル／ファンブルに追加効果はない。</li><li>左側はカテゴリに合う技能を使う。</li><li>右側は任意入力、または選択肢から設定する。</li><li>非術式系のチェックも、必要なものは同じ形式に統一する。</li><li>カスタムチェックは保存と読込を可能にする。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>属性・複合属性・属性開示</span><span class="tags"><span>属性</span><span>二刀流</span><span>解析</span><span>弱点</span><span>反射</span></span></summary>
+<div class="help-body"><ul>
+<li>属性は物・火・水・風・雷・光・闇・無の8種類。無属性も他属性と同様に通常・弱点・耐性・無効・吸収・反射を持ち得る。</li>
+<li>通常ダメージは防御処理後に属性相性を適用する。弱点は2倍、耐性は半減して端数切り上げ、無効は0、吸収は受けるはずだったダメージ分だけHP回復（最大HPまで）、反射は受けるはずだったダメージを攻撃者へ防御無視で返す。</li>
+<li>本体攻撃が無効・吸収された場合、その本体攻撃に付随する命中時効果は発生しない。反射された場合は本体攻撃の命中時効果も攻撃者側へ反射する。防御処理で0になっただけなら命中自体は成立しているため、別条件がなければ命中時効果は発生する。</li>
+<li>近接二刀流の複合属性は、主手の通常ダメージ＋副手攻撃値を合算してから防御を1回だけ適用し、その後に含まれる属性相性の優先度を判定する。優先度は「通常＜弱点＜耐性＜無効＜吸収＜反射」。主手・副手が同属性なら合算して単一属性として扱う。副手武器自身の武器効果は発動しない。遠距離武器には副手攻撃値を使用しない。</li>
+<li>解析は属性を1つ指定し、2D6＋知識技能&gt;=対象の抵抗値。成功するとその属性の相性を完全に開示する。実際の攻撃でも、命中して属性相性処理へ到達し、その相性がダメージ処理へ関与した時点で開示される。防御だけで0になり属性相性処理へ到達しなかった場合は開示しない。</li>
+<li>判明した属性相性は魔物種単位で共有・記録する。同種の二つ名・後のエリアで再登場した同種にも既知情報を引き継ぐ。エリアボスは固有相性として別管理する。</li>
+</ul></div>
+</details>
+<details class="help-card">
+<summary><span>戦闘不能・全滅</span><span class="tags"><span>HP0</span><span>戦闘不能</span><span>全滅</span><span>帰還</span></span></summary>
+<div class="help-body"><ul>
+<li>HPが0以下になった時点で即座に戦闘不能。HPは0未満を記録せず0に固定する。</li>
+<li>戦闘不能者は敵の対象候補から外れ、その時点で状態・バフ・デバフ・継続効果を解除する。通常の回復・道具では戦闘不能から復帰できず、専用の蘇生効果だけが復帰を可能にする。</li>
+<li>戦闘不能中は後続戦闘へ参加できず、探索・イベント・採取等の技能判定にも参加できない。そのキャラクターの所持品や装備効果を他PCが借りて使用することもできない。サポートも同様。</li>
+<li>同じタイミングで複数がHP0になった場合は同時に戦闘不能とする。「戦闘不能になる時」「HP0になる時」などへ介入する複数効果がある場合、その処理順は使用者側が自由に決める。</li>
+<li>PC全員が戦闘不能すると全滅。拠点へ強制帰還し、クエスト中ならクエスト失敗。帰還時は全員HP1・MP1。現在所持金の25%（端数切り上げ）と、その探索・クエスト中に新規獲得した全アイテムの50%（端数切り上げ）を失う。新規獲得物の損失はアイテム1個単位でランダム判定し、探索開始前から所持していた物は対象外。</li>
+<li>一部PCが戦闘不能でも残存PCが勝利すれば通常の勝利報酬を得られ、戦闘不能者も報酬対象に含む。サポート同行時にサポート以外のPC全員が戦闘不能しサポートだけが残った場合は自動帰還するが、全滅扱いではなく全滅ペナルティを適用しない。</li>
+</ul></div>
+</details>
+<details class="help-card">
+<summary><span>逃走</span><span class="tags"><span>逃走</span><span>運動</span><span>先制値</span></span></summary>
+<div class="help-body"><ul>
+<li>逃走は主行動ではなく、PC陣営の行動中にパーティー単位で行う独立処理。1ラウンドにつきパーティー全体で1回までで、逃走を試みたラウンドでも各PC・サポートは通常どおり行動できる。</li>
+<li>パーティーの運動技能合計&gt;=生存している敵全体の先制値合計なら判定なしで成功。</li>
+<li>不足時は2D6＋パーティーの運動技能合計&gt;=敵全体の先制値合計＋6で判定し、成功で即戦闘終了。失敗しても追加ペナルティはない。</li>
+<li>逃走成功時、その戦闘の報酬はすべて失う。逃走前にすでに倒していた敵の報酬も獲得できない。</li>
+<li>エリアボス戦および逃走不可と定められた固定クエスト戦闘では逃走できない。</li>
+</ul></div>
+</details>
+<details class="help-card">
+<summary><span>初期矢弾</span><span class="tags"><span>初期所持品</span><span>矢弾</span><span>所持品</span></span></summary>
+<div class="help-body"><ul><li>初期武器の選択に関係なく、通常矢、通常ボルト、大型ボルトをそれぞれ1スタック分、初期所持品に入れる。</li><li>通常矢と通常ボルトは20個、大型ボルトは10個を1スタックとする。</li><li>矢筒は初期支給しない。矢弾は所持品枠を使用する。</li></ul></div>
+</details></div></section></main>
+<script>
+const search=document.getElementById('search');const cs=Array.from(document.querySelectorAll('.help-card'));
+function filter(){const q=(search.value||'').trim().toLowerCase();cs.forEach(c=>c.hidden=!!q&&!c.textContent.toLowerCase().includes(q));}
+search.addEventListener('input',filter);
+document.getElementById('openAll').addEventListener('click',()=>cs.forEach(c=>{if(!c.hidden)c.open=true;}));
+document.getElementById('closeAll').addEventListener('click',()=>cs.forEach(c=>c.open=false));
+</script></body></html>
