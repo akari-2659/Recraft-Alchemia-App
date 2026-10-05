@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Recraft-Alchemia アプリ操作ガイド</title><style>:root{--bg:#f5efe4;--ink:#3d3025;--muted:#7e6d5b;--line:#dccbb4;--accent:#a96f37;--shadow:0 14px 34px rgba(76,49,25,.15);--radius:18px}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fbf7ef 0%,var(--bg) 100%);min-height:100vh}header,main{max-width:1180px;margin:0 auto;padding:22px}.title-card,.panel{background:rgba(255,250,242,.9);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}.subtitle,.notice{margin:0 0 14px;color:var(--muted);line-height:1.7}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}input{flex:1;min-width:220px;border:1px solid #cfbea8;border-radius:12px;background:#fffdf8;color:var(--ink);padding:10px 12px;font:inherit}button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;padding:10px 14px;cursor:pointer}button.ghost{background:#fff9f1;color:var(--ink);border:1px solid #e3cdb4}.help-layout{display:grid;gap:12px}.help-card{border:1px solid #ead9c4;background:#fffdf8;border-radius:16px;overflow:hidden}.help-card[hidden]{display:none}.help-card summary{cursor:pointer;list-style:none;padding:13px 15px;font-weight:900;color:#5b3821;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.tags span{display:inline-flex;border:1px solid #ead9c4;background:#fffaf3;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;color:#684c31}.help-body{border-top:1px solid #ead9c4;padding:12px 15px;color:#5d4935;line-height:1.75;font-size:14px}.help-body ul{margin:0;padding-left:1.35em}textarea{position:absolute;left:-9999px;width:1px;height:1px}
+/* v90.8.176: レイアウト安定化・左揃え・ボタン折返し */
+html,body{max-width:100%;overflow-x:hidden}
+body,button,input,select,textarea,label,summary,th,td,.tab,.subtab,.tab-btn,.quest-category-btn,.facility-chip,.badge{text-align:left!important}
+button,.tab,.subtab,.tab-btn,.quest-category-btn{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;word-break:normal;line-height:1.35;height:auto;min-width:0;max-width:100%}
+.buttons,.tabs,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{justify-content:flex-start!important;max-width:100%}
+.toolbar,.filter-head,.facility-card-head,.header-inner,.top{max-width:100%;min-width:0}
+.field,.card,.panel,.facility-card,.facility-product,.facility-upgrade-box,.tab-panel{min-width:0;max-width:100%}
+@media(max-width:760px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  .buttons>button,.subtabs>button,.tab-nav>button,.quest-category-bar>button,.section-actions>button,.filter-actions>button,.facility-actions>button,.modal-foot>button{width:100%!important;min-width:0!important}
+}
+@media(max-width:460px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{grid-template-columns:1fr!important}
+}
+</style>
+<style id="raBuildInfoStyle">
+.ra-build-info{position:fixed;top:8px;right:8px;z-index:99999;padding:6px 10px;border:1px solid rgba(91,69,45,.28);border-radius:999px;background:rgba(255,253,248,.94);box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:12px;font-weight:800;color:#5b452d;line-height:1.2;backdrop-filter:blur(4px)}
+@media(max-width:760px){.ra-build-info{position:static;margin:8px auto 0;width:max-content;max-width:calc(100% - 16px);text-align:center}}
+</style>
+<style id="raNoHorizontalScrollV165">
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+main,header,section,.panel,.card,.tabs,.subtabs{min-width:0;max-width:100%}
+button,input,select,textarea,label,summary,th,td{min-width:0;max-width:100%;text-align:left!important;white-space:normal!important;overflow-wrap:anywhere;word-break:break-word}
+pre,code{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+</style>
+<style id="raCompactButtonsV166">
+/* v90.8.176: ボタン幅を文字量に合わせる */
+button,.tab,.subtab,.tab-btn{
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  padding-left:12px;
+  padding-right:12px;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  flex:0 1 auto!important;
+}
+.buttons,.tabs,.subtabs,.actions,.section-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+  align-items:flex-start!important;
+  gap:7px!important;
+  max-width:100%;
+}
+.buttons>button,.tabs>button,.subtabs>button,.actions>button,.section-actions>button{width:auto!important;flex:0 1 auto!important}
+</style>
+<style id="raHelpAlignmentV174">body,input,textarea,summary,.help-body,.notice{text-align:left!important}button,.tags span{text-align:center!important}.toolbar{justify-content:flex-start!important}</style><style id="raMaintenanceV287">.ra-build-info{font-size:12px;padding:6px 12px;text-align:right;color:var(--muted)}header{padding-top:10px!important;padding-bottom:8px!important}.title-card{padding:14px!important}.title-card h1{font-size:clamp(21px,3vw,30px)!important}.panel>.toolbar{position:sticky;top:0;z-index:30;padding:8px;background:rgba(247,242,232,.97);border-radius:12px;box-shadow:0 4px 12px rgba(80,50,20,.06)}@media(max-width:600px){.ra-build-info{text-align:left}.title-card .subtitle{display:none}.panel>.toolbar{display:grid!important;grid-template-columns:1fr 1fr}.panel>.toolbar input{grid-column:1/-1;min-width:0}}</style>
+<script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
+
+<style id="raWebAppUsabilityV011">
+html.ra-web-embedded body{background:#f6f0e7}
+html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{display:none!important}
+html.ra-web-embedded main{max-width:1320px;margin:0 auto;padding:10px 12px 34px}
+html.ra-web-embedded .panel{padding:14px;border-radius:13px}
+html.ra-web-embedded .panel>.toolbar{gap:6px!important;padding:9px 10px!important;margin-bottom:10px!important;border:1px solid var(--line);border-radius:11px}
+html.ra-web-embedded .panel>.toolbar button{min-height:34px!important;padding:7px 10px!important;font-size:13.5px!important;border-radius:9px!important}
+html.ra-web-embedded .panel>.toolbar input{min-height:40px;padding:8px 10px}
+html.ra-web-embedded .help-layout{gap:8px}
+html.ra-web-embedded .help-card{border-radius:11px}
+html.ra-web-embedded .help-card summary{padding:10px 12px}
+html.ra-web-embedded .help-body{padding:10px 12px;font-size:13.5px;line-height:1.7}
+@media(max-width:600px){
+ html.ra-web-embedded main{padding:6px 7px 28px}
+ html.ra-web-embedded .panel>.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
+ html.ra-web-embedded .panel>.toolbar input{grid-column:1/-1}
+ html.ra-web-embedded .panel>.toolbar button{width:100%!important;min-height:38px!important;font-size:14px!important}
+ html.ra-web-embedded .help-card summary{grid-template-columns:1fr;gap:6px}.tags{justify-content:flex-start}
+}
+</style>
+
+<style id="raHelpWebLayoutV013">
+html.ra-web-embedded body>header{display:none!important}html.ra-web-embedded main{width:min(1380px,calc(100% - 18px))!important;margin:8px auto 28px!important}
+html.ra-web-embedded .panel,html.ra-web-embedded section,html.ra-web-embedded .card{padding:12px 13px!important;margin:8px 0!important;border-radius:11px!important}
+html.ra-web-embedded button{width:auto!important;min-width:max-content!important;padding:7px 10px!important;min-height:34px!important}
+@media(max-width:720px){html.ra-web-embedded main{width:100%!important;margin:0!important;padding:0 5px 24px!important}}
+</style>
+
+<style id="ra-module-interaction-feedback-v102">
+:where(button,.btn,[role="button"],a.btn){transition:transform .09s ease,filter .11s ease,box-shadow .12s ease,background-color .12s ease,border-color .12s ease}
+:where(button,.btn,[role="button"],a.btn):focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#8b4a41) 45%,transparent);outline-offset:2px}
+:where(button,.btn,[role="button"],a.btn):active,.ra-feedback-hit{transform:translateY(1px) scale(.982)!important;filter:brightness(.84) saturate(1.08)!important}
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target]).active,
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target])[aria-selected="true"]{
+  background:color-mix(in srgb,var(--paper,#fffaf0) 68%,var(--accent,#8b4a41) 32%)!important;
+  border-color:var(--accent,#8b4a41)!important;
+  color:var(--ink,#2f241d)!important;
+  box-shadow:inset 0 -4px 0 var(--accent,#8b4a41),0 0 0 2px color-mix(in srgb,var(--accent,#8b4a41) 24%,transparent)!important;
+  font-weight:900!important;filter:saturate(1.08) brightness(1.02);
+}
+#saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
+@media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
+</style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.110: ヘルプの折り畳み矢印を専用列に固定 */
+.help-layout > details { min-width:0!important; max-width:100%!important; overflow:hidden; }
+.help-layout > details > summary { box-sizing:border-box!important; list-style:none!important; display:grid!important; grid-template-columns:16px minmax(0,1fr) auto!important; align-items:center!important; gap:8px!important; min-width:0!important; max-width:100%!important; width:100%!important; }
+.help-layout > details > summary::-webkit-details-marker { display:none!important; }
+.help-layout > details > summary::marker { content:""!important; }
+.help-layout > details > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; width:16px!important; min-width:16px!important; height:16px!important; color:var(--accent)!important; font-size:.72rem!important; line-height:1!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; }
+.help-layout > details[open] > summary::before { transform:rotate(90deg)!important; }
+.help-layout > details > summary > * { min-width:0; max-width:100%; }
+@media(max-width:620px){ .help-layout > details > summary { grid-template-columns:16px minmax(0,1fr)!important; } .help-layout > details > summary .tags { grid-column:2!important; justify-content:flex-start!important; } }
+</style>
+
+</head><body class="ra-app ra-manager ra-help">
+<div class="ra-build-info">整理版 / 2026年10月5日</div>
+<header><div class="title-card"><h1>Recraft-Alchemia アプリ操作ガイド</h1><p class="subtitle">管理画面・キャラクターシート・コピー／出力などアプリ固有の操作・表示仕様。</p></div></header>
+<main><section class="panel"><div class="toolbar">
+<input id="search" placeholder="キーワードで検索" type="search"/>
+<button class="ghost" id="openAll" type="button">すべて開く</button>
+<button class="ghost" id="closeAll" type="button">すべて閉じる</button>
+</div><div class="help-layout"><details class="help-card">
+<summary><span>プレイヤー向け施設カタログ</span><span class="tags"><span>プレイヤーキー</span><span>解放キー蓄積</span><span>鍛冶屋</span><span>薬屋</span><span>食事処</span><span>骨董屋</span><span>管理HTML選出</span></span></summary>
+<div class="help-body"><ul><li><b>越境ランダムイベント：</b>通常のエリア／拠点ランダムイベントへ混在します。越境アイテムを使用できるイベントが発生した場合、進行HTMLには対象となる越境アイテム名・消費数と「越境アイテムを使用」ボタンを必ず表示します。使用結果は通常のイベント入手とは分離して処理・コピーします。通常の越境アイテムはなるべく同一セット内で完結し、《眠れる種核》だけは外の探索エリアごとのランダム変化表を持ち、新エリア追加時に使い道を増やせます。拠点では《眠れる種核》は変化しません。</li><li>プレイヤー向け施設HTMLは鍛冶屋・薬屋・食事処・骨董屋を扱う。レシピ販売の品揃えは管理HTMLで選出・コピーする。宿屋、ギルドは含めない。鍛冶屋の装備強化では、強化対象・素材・強化回数・使用済み枠・鍛冶道具・補助剤を選び、自作難易度と施設依頼の成功率・料金を確認できる。鍛冶屋では装飾品の新規作成と段階強化を通常の作成一覧から分離し、全装飾品をひとつの横スクロール派生図で閲覧する。★ランクごとに縦列を揃え、各装飾品を選ぶと詳細モーダルで必要素材・費用・難度を確認できる。食事処には食材持ち込み料理だけを表示し、今日のおすすめ3品は表示しない。</li><li>骨董屋では常設販売品と店売りレシピを表示する。未鑑定スクロールは販売内容がランダムのため、魔法・祈祷や中身を分けず、★ごとの価格だけを表示する。</li><li>施設HTMLの販売商品は管理HTMLの各施設販売欄と同じDB行を参照し、買値はbuyPrice、売値はsellPriceを使用する。販売商品・作成一覧などカテゴリを持つ一覧はカテゴリ選択モーダルから絞り込み、カテゴリ選択モーダルには必ず「全て」を用意する。カテゴリを選ぶと追加の確定操作を挟まず、そのカテゴリを直ちに表示する。 管理HTMLの選択モーダルは、ヘッダーに内部ID・name属性などのプログラム用識別子を出さず、画面上の項目名だけを表示する。</li><li>施設HTMLへプレイヤーキーを入力し、GMから受け取った解放キーを順次追加する。入力した解放キーはGitHub公開DB内のSHA-256ハッシュと施設HTML上で照合し、一致したエリアだけを端末へ即時追加する。解放済みエリアIDはプレイヤーキー単位でGASへクラウド同期する。通常エリア・異界とも自動の累積解放は行わない。通常の加工素材はレシピ不要。自作は対応道具と必要素材を用意し、加工判定に成功すれば費用0G。施設依頼は必要素材と加工依頼費が必要だが判定不要。魔導インク・祈祷紙は例外として個別レシピが必要で、薬屋の素材加工に表示する。両レシピは薬屋で常設販売し、草原の工房レシピ箱からも入手できる。完成品は骨董屋でも常設購入できる。キー照合は施設HTMLとGitHub公開DBだけで行い、GASは解放済みエリアIDの保存だけを担当する。施設一覧の表示は端末保存状態を使って先に完了させ、GASの読込・同期はバックグラウンドで行う。GASがタイムアウトしても施設一覧そのものは表示済みの状態を維持する。公開共通DBには平文キーを含めず、照合用SHA-256ハッシュだけを含める。GM全エリア解放キーを登録したプレイヤーキーは、現在の全エリアを表示し、公開DBへ後から追加されたエリアにも自動で追従する。</li><li>レシピ販売は、管理HTMLで選択した解放済みエリアに対応する、常設店売りではなくボス以外の宝箱から実際に入手できるレシピから毎日6種類を選出する。1枠は指定エリア、残り5枠は解放済みエリア全体から完全ランダムで選ぶ。料理・装備強化・装飾品強化・クリスタル強化・エリアボス褒賞箱限定レシピは対象外。選出後は管理HTMLから結果をコピーする。</li><li>ランクは性能・難易度の目安であり、解放条件には使わない。</li><li>通常の商品・作成・素材加工は必要エリアに達するまで非表示。加工素材の加工情報はレシピ表ではなく素材データ側で管理する。</li><li>武器派生は未解放でも派生枠を表示し、派生後の名称、必要素材、効果を「？？？」にする。</li><li>ポーションと上級ポーションの必要素材は従来どおり変更しない。</li><li>公開カタログは閲覧専用とし、コピー機能は付けない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>キャラクターシート：プリセット</span><span class="tags"><span>装備プリセット</span><span>所持品プリセット</span><span>術式</span><span>不足確認</span></span></summary>
+<div class="help-body"><ul><li>装備プリセットは右手・左手・鎧・装飾品と、魔導書・祈祷書・魔印・聖印にセットしている術式をまとめて保存する。</li><li>所持品プリセットはバッグ・矢筒・矢筒内の矢弾・冒険へ持ち出す所持品と個数をまとめて保存する。</li><li>プリセットの新規登録、現在状態での更新、呼び出しはすべて専用モーダルで確認して実行する。更新モーダルでは名称も変更できる。</li><li>呼び出し前に、必要な装備・術式・バッグ・矢筒・アイテム個数・矢弾個数・収納容量を確認する。不足がある場合は「〇〇が不足しています」と不足内容をモーダルへ一覧表示する。</li><li>不足があっても呼び出しは禁止しない。確認モーダルで「不足分を除いて呼び出す」を選択すると、用意できる装備・術式・所持品だけを反映し、不足分は未設定または未配置のままにする。</li><li>所持品プリセットの不足確認では、現在持ち出している所持品・矢筒内矢弾を倉庫へ戻した場合の総所持数を基準に判定する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>キャラクター出力</span><span class="tags"><span>チャットパレット</span><span>ココフォリア</span><span>出力</span></span></summary>
+<div class="help-body"><ul><li>武器ダメージ出力は、片手武器の場合『【左手(右手)武器ダメージ】』形式にする。</li><li>両手武器のダメージ出力は『【両手武器ダメージ】』形式にする。</li><li>術式の出力名は『【術式名】』形式にする。</li><li>武器ダメージが設定されている武器のみ出力する。</li><li>装備中の弓・クロスボウ・ヘヴィクロスボウには通常の射撃命中判定に加えて、集中技能を使う『集中攻撃命中』も出力する。装備中の魔導書・魔印にセットされたダメージ魔法も、通常の魔法判定に加えて集中攻撃判定を出力する。</li><li>集中攻撃判定には集中固有の+2だけでなく、その攻撃に適用される武器・魔導書の命中補正、命中強化、装飾品などによる共通の命中補正も通常判定と同様に加算する。</li><li>装備・装飾品から技能値へ直接加わる補正は最終値へ潰さず、『2D6+5+1&gt;=目標値 【細工】』のように+Xの独立項として表示する。</li><li>防御値の出力ラベルは『防御』。</li><li>回避値の出力ラベルは『回避』。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>魔物出力</span><span class="tags"><span>魔物</span><span>チャットパレット</span><span>出力</span></span></summary>
+<div class="help-body"><ul><li>魔物出力はJSONではなく、クリップボードコピー形式にする。</li><li>魔物出力にキャラクターメモは含めない。</li><li>魔物出力にドロップは含めない。</li><li>チャットパレットは「choice[技名1,技名2,…]」から始める。条件付きの技がある場合は平常時と全技のchoiceを分ける。</li><li>ラウンド開始時にプレイヤーへ公開するのは使用予定の行動名だけ。対象となるPC・対象列・距離・威力・効果は事前公開しない。対象PC・対象列は、その魔物の行動を実際に解決する時点で選ぶ。</li><li>GM用チャットパレットには行動種別、対象、距離（近距離／遠距離／自身）、ダメージ、効果を表示する。</li><li>魔物に固有行動AIが設定されている場合だけ、GM用チャットパレットへ「固有行動AI」とその標的・行動優先ルールを表示する。固有行動AIが空欄の魔物は従来どおり対象・行動を自由／ランダムに選び、チャットパレットにもAI欄を表示しない。</li><li><strong>固有行動AIの固定化監査：</strong>「直前に選んだ対象を次も最優先」のように条件そのものが自己維持して永久固定されるAIは原則使わない。高防御・高回避など相性の悪い対象へ無意味に攻撃し続ける場合と、低防御対象へ確定集中して事故死させる場合の両方を確認する。継続狙いを持たせる場合は、実ダメージ発生など意味のある成功条件と、0ダメージ・失敗・対象不成立時に通常抽選へ戻る解除条件を持たせる。</li><li>固有行動AIは魔物の生態・既存行動と結び付け、対象候補が複数いる場合はランダム選択を残すなど、特定PCへの恒常的な集中攻撃にならないようにする。AIを追加・変更した場合は、先制順・後衛到達・状態異常・かばう・遭遇編成まで含め、狙われ方が理不尽な即死圧にならないか再監査する。</li><li>状態異常を付与する行動は、状態名だけでなく具体的な効果と継続期間も表示する。段階制の状態異常は、行動側の「1段階付与」「2段階付与」だけで済ませず、I・II・IIIなど現在定義されている全段階の効果説明をGM用チャットパレットへまとめて表示する。</li><li>ダイスのない効果も技能セクションに入れる。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>管理HTML</span><span class="tags"><span>管理</span><span>検索</span><span>コピー</span></span></summary>
+<div class="help-body"><ul><li>アイテム、素材、装備カテゴリなどの一覧では名前検索を常時表示する。</li><li>管理HTMLの選択式リストは原則として共通モーダルから選択する。フォーム、絞り込み、施設作業、アイテム種別・素材種別・小カテゴリなど、候補数が増える項目を横長のリストや長いプルダウンへ並べない。</li><li>カテゴリ・小カテゴリを絞り込むモーダルには必ず「全て」を用意する。素材一覧は「素材種別」と「小カテゴリ」を別々に選べるようにし、★1共鳴片は「特殊素材 ＞ 共鳴素材」で管理する。</li><li>詳細フィルターとソート情報は折り畳み式の『絞り込み・ソート』にまとめる。</li><li>各行の情報コピーから、プレイヤーに渡すアイテム情報と登録IDをコピーできる。</li><li>情報コピーには、内部ID、登録者、解放施設を含めない。魔物素材では装備強化内容・効果説明・強化対象を表示する。</li><li>情報コピーは、プレイヤーが読んで分かる範囲のアイテム情報と登録IDを出す。</li><li>素材は、名称、登録ID、個数、ランク、分類、売値、説明を基本に出す。魔物素材は装備強化内容・効果説明・強化対象を追加する。</li><li>武器、防具、術式、道具、矢弾などは、使用に必要なコスト、対象、判定、属性、威力、最大スタックなどを追加で出す。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>公開ID・貼り付け登録</span><span class="tags"><span>公開ID</span><span>倉庫</span><span>ドロップ</span><span>ネタバレ対策</span></span></summary>
+<div class="help-body"><ul><li>公開IDは、プレイヤーに渡しても内容を推測しにくい規則性のないID。</li><li>キャラクターシートの倉庫では、貼り付けられた登録IDと個数を読み取り、DBから必要情報を自動登録する。</li><li>プレイヤーは未入手アイテム一覧を検索しない。</li><li>貼り付け登録では装備強化内容と効果説明を表示・登録しない。</li><li>プレイヤーに渡す情報は、未入手一覧ではなく、入手したアイテムごとの情報と登録IDにする。</li><li>装備強化内容、効果説明、内部ID、登録者、解放施設などの内部管理情報は表示しない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>ヘルプ分離方針</span><span class="tags"><span>アプリ</span><span>ヘルプ</span></span></summary>
+<div class="help-body"><ul><li>プレイヤー向けルール、GM運用、アプリ操作、開発・監査基準を別ページで管理する。</li><li>卓中に参照するルールと、DB・UI・監査の内部仕様を同じカードへ混在させない。</li><li>同じ仕様を複数ページへ重複記載せず、必要な場合は参照先を示す。</li></ul></div></details></div></section></main>
+<script>
+const search=document.getElementById('search');const cs=Array.from(document.querySelectorAll('.help-card'));
+function filter(){const q=(search.value||'').trim().toLowerCase();cs.forEach(c=>c.hidden=!!q&&!c.textContent.toLowerCase().includes(q));}
+search.addEventListener('input',filter);
+document.getElementById('openAll').addEventListener('click',()=>cs.forEach(c=>{if(!c.hidden)c.open=true;}));
+document.getElementById('closeAll').addEventListener('click',()=>cs.forEach(c=>c.open=false));
+</script></body></html>
