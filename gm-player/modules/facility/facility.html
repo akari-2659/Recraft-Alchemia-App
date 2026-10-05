@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 施設カタログ v90.8.833</title>
+<title>リクラフト・アルケミア 施設カタログ v90.8.834</title>
 <style>
 :root{--bg:#f6efe2;--paper:#fffaf0;--ink:#2f251c;--muted:#766757;--line:#d9c5a8;--accent:#98612f;--green:#58765f;--danger:#a54d43;--shadow:0 14px 36px rgba(78,50,22,.13)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Sans",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#ffe8bf 0,transparent 28rem),linear-gradient(180deg,#fff9ee,var(--bg));min-height:100svh}
@@ -691,7 +691,7 @@ html.ra-embedded-facility #sectionDescription{
 
 </head>
 <body class="ra-app ra-player ra-facility">
-<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.833 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
+<header><div class="hero"><div class="hero-head"><div><div class="build">Version：v90.8.834 / 最終更新日：2026年9月25日</div><h1>施設カタログ</h1></div><div class="hero-brand" aria-label="Recraft Alchemia">RECRAFT ALCHEMIA</div></div><p class="subtitle">鍛冶屋・薬屋・骨董屋・食事処と、広場の共同採取設備を確認できます。装備強化では、自作難易度・鍛冶屋への依頼成功率・依頼料金・全強化解除料金を確認できます。</p></div></header>
 <main>
 <details class="panel unlock-panel" id="unlockPanel" open>
   <summary><span>プレイヤー別の解放設定</span><span id="unlockSummary">確認中</span></summary>
@@ -794,7 +794,7 @@ html.ra-embedded-facility #sectionDescription{
   </div>
 </div>
 </main><footer>固定マスターと解放キー照合用ハッシュはGitHub共通DBから取得します。解放済みエリアは端末へ即時保存し、GASにはエリアIDだけをクラウド同期します。共同採取設備の納品進捗はGASで全員共有します。</footer>
-<script src="../../../js/ra_monster_rules.js?v=1.0.122"></script>
+<script src="../../../js/ra_monster_rules.js?v=1.0.123"></script>
 <script>
 'use strict';
 const DEFAULT_GAS_WEB_APP_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
@@ -1076,7 +1076,7 @@ function facilityPostAction(action,params={},timeoutMs=30000){
 }
 
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
-const FACILITY_EXPECTED_DB_VERSION='v90.8.833';
+const FACILITY_EXPECTED_DB_VERSION='v90.8.834';
 let commonMasterPromise=null;
 let facilityEquipmentCategoryMaster=[];
 function facilityNormalizeVersion(value){return String(value||'').trim().replace(/^v/i,'');}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>リクラフト・アルケミア 進行管理 v90.8.833</title>
+<title>リクラフト・アルケミア 進行管理 v90.8.834</title>
 <style>
 :root{
   --bg:#f7f2e8;--card:#fffaf3;--ink:#2d241b;--muted:#76695b;--line:#d9c7a8;
@@ -365,7 +365,7 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 
 </head>
 <body class="ra-app ra-manager ra-progress">
-<div class="ra-build-info">Version：v90.8.833 / 最終更新日：2026年10月1日</div>
+<div class="ra-build-info">Version：v90.8.834 / 最終更新日：2026年10月1日</div>
 
 <header>
   <div class="header-inner">
@@ -670,10 +670,10 @@ button,.tab-btn,.quest-category-btn{font-size:14px;min-height:42px;padding-top:1
 </div>
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 <script src="./assets/vendor/jszip.min.js"></script>
-<script src="../../../js/ra_monster_rules.js?v=1.0.122"></script>
+<script src="../../../js/ra_monster_rules.js?v=1.0.123"></script>
 <script>
 'use strict';
-const VERSION='v90.8.833';
+const VERSION='v90.8.834';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
@@ -2526,7 +2526,7 @@ function renderQuest(){
   renderQuestEvents();
 }
 function areaBossEventForRumor(a,rumor=selectedRumor()){
-  // v90.8.833: ボス噂は100%到達時に任意選択。追う場合のみ対応ボスへ確定遭遇し、追わない場合は通常抽選。
+  // v90.8.834: ボス噂は100%到達時に任意選択。追う場合のみ対応ボスへ確定遭遇し、追わない場合は通常抽選。
   return null;
 }
 function defaultBaseUnlockedAreaIds(){
