@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Recraft-Alchemia 開発・監査仕様</title><style>:root{--bg:#f5efe4;--ink:#3d3025;--muted:#7e6d5b;--line:#dccbb4;--accent:#a96f37;--shadow:0 14px 34px rgba(76,49,25,.15);--radius:18px}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fbf7ef 0%,var(--bg) 100%);min-height:100vh}header,main{max-width:1180px;margin:0 auto;padding:22px}.title-card,.panel{background:rgba(255,250,242,.9);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}.subtitle,.notice{margin:0 0 14px;color:var(--muted);line-height:1.7}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}input{flex:1;min-width:220px;border:1px solid #cfbea8;border-radius:12px;background:#fffdf8;color:var(--ink);padding:10px 12px;font:inherit}button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;padding:10px 14px;cursor:pointer}button.ghost{background:#fff9f1;color:var(--ink);border:1px solid #e3cdb4}.help-layout{display:grid;gap:12px}.help-card{border:1px solid #ead9c4;background:#fffdf8;border-radius:16px;overflow:hidden}.help-card[hidden]{display:none}.help-card summary{cursor:pointer;list-style:none;padding:13px 15px;font-weight:900;color:#5b3821;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.tags span{display:inline-flex;border:1px solid #ead9c4;background:#fffaf3;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;color:#684c31}.help-body{border-top:1px solid #ead9c4;padding:12px 15px;color:#5d4935;line-height:1.75;font-size:14px}.help-body ul{margin:0;padding-left:1.35em}textarea{position:absolute;left:-9999px;width:1px;height:1px}
+/* v90.8.176: レイアウト安定化・左揃え・ボタン折返し */
+html,body{max-width:100%;overflow-x:hidden}
+body,button,input,select,textarea,label,summary,th,td,.tab,.subtab,.tab-btn,.quest-category-btn,.facility-chip,.badge{text-align:left!important}
+button,.tab,.subtab,.tab-btn,.quest-category-btn{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;word-break:normal;line-height:1.35;height:auto;min-width:0;max-width:100%}
+.buttons,.tabs,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{justify-content:flex-start!important;max-width:100%}
+.toolbar,.filter-head,.facility-card-head,.header-inner,.top{max-width:100%;min-width:0}
+.field,.card,.panel,.facility-card,.facility-product,.facility-upgrade-box,.tab-panel{min-width:0;max-width:100%}
+@media(max-width:760px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  .buttons>button,.subtabs>button,.tab-nav>button,.quest-category-bar>button,.section-actions>button,.filter-actions>button,.facility-actions>button,.modal-foot>button{width:100%!important;min-width:0!important}
+}
+@media(max-width:460px){
+  .buttons,.subtabs,.tab-nav,.quest-category-bar,.section-actions,.filter-actions,.facility-actions,.modal-foot{grid-template-columns:1fr!important}
+}
+</style>
+<style id="raBuildInfoStyle">
+.ra-build-info{position:fixed;top:8px;right:8px;z-index:99999;padding:6px 10px;border:1px solid rgba(91,69,45,.28);border-radius:999px;background:rgba(255,253,248,.94);box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:12px;font-weight:800;color:#5b452d;line-height:1.2;backdrop-filter:blur(4px)}
+@media(max-width:760px){.ra-build-info{position:static;margin:8px auto 0;width:max-content;max-width:calc(100% - 16px);text-align:center}}
+</style>
+<style id="raNoHorizontalScrollV165">
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+main,header,section,.panel,.card,.tabs,.subtabs{min-width:0;max-width:100%}
+button,input,select,textarea,label,summary,th,td{min-width:0;max-width:100%;text-align:left!important;white-space:normal!important;overflow-wrap:anywhere;word-break:break-word}
+pre,code{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+</style>
+<style id="raCompactButtonsV166">
+/* v90.8.176: ボタン幅を文字量に合わせる */
+button,.tab,.subtab,.tab-btn{
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  padding-left:12px;
+  padding-right:12px;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  flex:0 1 auto!important;
+}
+.buttons,.tabs,.subtabs,.actions,.section-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+  align-items:flex-start!important;
+  gap:7px!important;
+  max-width:100%;
+}
+.buttons>button,.tabs>button,.subtabs>button,.actions>button,.section-actions>button{width:auto!important;flex:0 1 auto!important}
+</style>
+<style id="raHelpAlignmentV174">body,input,textarea,summary,.help-body,.notice{text-align:left!important}button,.tags span{text-align:center!important}.toolbar{justify-content:flex-start!important}</style><style id="raMaintenanceV287">.ra-build-info{font-size:12px;padding:6px 12px;text-align:right;color:var(--muted)}header{padding-top:10px!important;padding-bottom:8px!important}.title-card{padding:14px!important}.title-card h1{font-size:clamp(21px,3vw,30px)!important}.panel>.toolbar{position:sticky;top:0;z-index:30;padding:8px;background:rgba(247,242,232,.97);border-radius:12px;box-shadow:0 4px 12px rgba(80,50,20,.06)}@media(max-width:600px){.ra-build-info{text-align:left}.title-card .subtitle{display:none}.panel>.toolbar{display:grid!important;grid-template-columns:1fr 1fr}.panel>.toolbar input{grid-column:1/-1;min-width:0}}</style>
+<script id="raWebAppEmbeddedEarlyClass">try{if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('ra-web-embedded')}catch(_){}</script>
+
+<style id="raWebAppUsabilityV011">
+html.ra-web-embedded body{background:#f6f0e7}
+html.ra-web-embedded body>.ra-build-info,html.ra-web-embedded body>header{display:none!important}
+html.ra-web-embedded main{max-width:1320px;margin:0 auto;padding:10px 12px 34px}
+html.ra-web-embedded .panel{padding:14px;border-radius:13px}
+html.ra-web-embedded .panel>.toolbar{gap:6px!important;padding:9px 10px!important;margin-bottom:10px!important;border:1px solid var(--line);border-radius:11px}
+html.ra-web-embedded .panel>.toolbar button{min-height:34px!important;padding:7px 10px!important;font-size:13.5px!important;border-radius:9px!important}
+html.ra-web-embedded .panel>.toolbar input{min-height:40px;padding:8px 10px}
+html.ra-web-embedded .help-layout{gap:8px}
+html.ra-web-embedded .help-card{border-radius:11px}
+html.ra-web-embedded .help-card summary{padding:10px 12px}
+html.ra-web-embedded .help-body{padding:10px 12px;font-size:13.5px;line-height:1.7}
+@media(max-width:600px){
+ html.ra-web-embedded main{padding:6px 7px 28px}
+ html.ra-web-embedded .panel>.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:7px!important}
+ html.ra-web-embedded .panel>.toolbar input{grid-column:1/-1}
+ html.ra-web-embedded .panel>.toolbar button{width:100%!important;min-height:38px!important;font-size:14px!important}
+ html.ra-web-embedded .help-card summary{grid-template-columns:1fr;gap:6px}.tags{justify-content:flex-start}
+}
+</style>
+
+<style id="raHelpWebLayoutV013">
+html.ra-web-embedded body>header{display:none!important}html.ra-web-embedded main{width:min(1380px,calc(100% - 18px))!important;margin:8px auto 28px!important}
+html.ra-web-embedded .panel,html.ra-web-embedded section,html.ra-web-embedded .card{padding:12px 13px!important;margin:8px 0!important;border-radius:11px!important}
+html.ra-web-embedded button{width:auto!important;min-width:max-content!important;padding:7px 10px!important;min-height:34px!important}
+@media(max-width:720px){html.ra-web-embedded main{width:100%!important;margin:0!important;padding:0 5px 24px!important}}
+</style>
+
+<style id="ra-module-interaction-feedback-v102">
+:where(button,.btn,[role="button"],a.btn){transition:transform .09s ease,filter .11s ease,box-shadow .12s ease,background-color .12s ease,border-color .12s ease}
+:where(button,.btn,[role="button"],a.btn):focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#8b4a41) 45%,transparent);outline-offset:2px}
+:where(button,.btn,[role="button"],a.btn):active,.ra-feedback-hit{transform:translateY(1px) scale(.982)!important;filter:brightness(.84) saturate(1.08)!important}
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target]).active,
+:where(.editor-tab-btn,.tab-btn,.tab,.subtab,.bestiary-tab,.section-tab,.section-tab-btn,.facility-inner-tab,.facility-weapon-category-tab,.quest-category-btn,.facility-switch button,.section-tabs button,.rank-filter-buttons button,.weapon-category-tabs button,.ra-area-filter-tabs button,.ra-facility-picker-tabs button,.ra-manager-picker-tabs button,[data-category-subtab],[data-tab-target])[aria-selected="true"]{
+  background:color-mix(in srgb,var(--paper,#fffaf0) 68%,var(--accent,#8b4a41) 32%)!important;
+  border-color:var(--accent,#8b4a41)!important;
+  color:var(--ink,#2f241d)!important;
+  box-shadow:inset 0 -4px 0 var(--accent,#8b4a41),0 0 0 2px color-mix(in srgb,var(--accent,#8b4a41) 24%,transparent)!important;
+  font-weight:900!important;filter:saturate(1.08) brightness(1.02);
+}
+#saveBtn.is-saving{cursor:wait!important;opacity:.86;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b4a41) 22%,transparent)!important}
+@media(prefers-reduced-motion:reduce){:where(button,.btn,[role="button"],a.btn){transition:none!important}}
+</style>
+
+<style id="ra-collapse-stability-v103">
+/* v1.0.110: ヘルプの折り畳み矢印を専用列に固定 */
+.help-layout > details { min-width:0!important; max-width:100%!important; overflow:hidden; }
+.help-layout > details > summary { box-sizing:border-box!important; list-style:none!important; display:grid!important; grid-template-columns:16px minmax(0,1fr) auto!important; align-items:center!important; gap:8px!important; min-width:0!important; max-width:100%!important; width:100%!important; }
+.help-layout > details > summary::-webkit-details-marker { display:none!important; }
+.help-layout > details > summary::marker { content:""!important; }
+.help-layout > details > summary::before { content:"▶"!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; width:16px!important; min-width:16px!important; height:16px!important; color:var(--accent)!important; font-size:.72rem!important; line-height:1!important; transform:rotate(0deg)!important; transform-origin:center!important; transition:transform .14s ease!important; }
+.help-layout > details[open] > summary::before { transform:rotate(90deg)!important; }
+.help-layout > details > summary > * { min-width:0; max-width:100%; }
+@media(max-width:620px){ .help-layout > details > summary { grid-template-columns:16px minmax(0,1fr)!important; } .help-layout > details > summary .tags { grid-column:2!important; justify-content:flex-start!important; } }
+</style>
+
+</head><body class="ra-app ra-manager ra-help">
+<div class="ra-build-info">整理版 / 2026年10月5日</div>
+<header><div class="title-card"><h1>Recraft-Alchemia 開発・監査仕様</h1><p class="subtitle">数値設計、データ設計、経済、魔物・装備の監査基準。卓中参照用ではない。</p></div></header>
+<main><section class="panel"><div class="toolbar">
+<input id="search" placeholder="キーワードで検索" type="search"/>
+<button class="ghost" id="openAll" type="button">すべて開く</button>
+<button class="ghost" id="closeAll" type="button">すべて閉じる</button>
+</div><div class="help-layout"><details class="help-card">
+<summary><span>数値ランク</span><span class="tags"><span>★N</span><span>共通表示</span><span>解放エリア</span></span></summary>
+<div class="help-body"><ul><li>魔物・素材・装備・道具・レシピ・術式・クエスト・宝箱など、ランクを持つデータは1以上で上限なしの数値ランクを使用する。</li><li>内部データは数値で管理し、管理画面・進行画面・キャラシ・プレイヤー施設のすべてで★1、★2の形式に統一して表示する。</li><li>調合・鍛冶・細工道具は、道具本体のランクと使用可能上限ランクを同じ値にする。使用上限は★3・★6・★9のような飛び番でも構わない。</li><li>旧データの名称ランクは読込時だけ数値へ変換し、保存後や画面上には残さない。</li><li>ランクは性能・難易度の目安であり、施設の商品・作成・武器派生の解放判定には使用しない。解放は解放エリアキーと解放施設で管理する。</li><li>道具は使用可能上限ランクを持ち、★N以下のレシピ・素材に使用できる。作成対象の適正道具段階は3ランク刻みで、適正段階と同じ道具では基礎難易度のまま、1段階上の道具を使うごとに作成難易度を2下げる。下位道具では対応上限を超える作成はできない。</li><li>強化可能な装備は「強化素材最低ランク」を持ち、その値以上の素材だけを強化に使用できる。初期値は装備自身のランクと同じ。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>道具カテゴリ</span><span class="tags"><span>道具</span><span>調合</span><span>鍛冶</span></span></summary>
+<div class="help-body"><ul><li>道具カテゴリは戦闘、調合、細工、鍛冶、その他。</li><li>調合道具・細工道具・鍛冶道具は、それぞれの技能用途ごとに管理する。</li><li>調合と鍛冶は施設を借りられる前提。</li><li>採取道具セット、採掘道具セット、探索道具セットは現時点では使用しない。</li><li>武器と防具の破損、修理ルールは現時点では扱わない。</li><li>調合道具・細工道具・鍛冶道具は3ランク刻みの対応上限ごとに登録する。</li><li>素材ランクは1以上の数値で管理し、表示は★Nとする。</li><li>調合道具は旅薬師の乳鉢具、硝子秤の調合具、晶瓶の調合具、星滴の蒸留具、月環の錬成具。</li><li>鍛冶道具は野鍛冶の槌箱、焼入れ金床具、鋼噛み火ばさみ具、星鉄火ばさみ具、竜炉の鍛冶具。</li><li>各道具は自身の数値ランク以下の作成対象を扱う道具。調合判定は調合道具、罠の設計判定は細工道具、武器・防具作成・武器派生・装備強化などの細工判定は鍛冶道具を使用する。</li><li>自作では道具を使用する。適正段階より1段階上で作成難易度－2、2段階上で－4とし、以降も1段階ごとに－2する。施設依頼では道具と判定を必要としない。</li><li>作成補助材は自作判定でのみ任意個数を追加消費でき、1個につき作成難易度－2。道具による難易度軽減と重複する。施設依頼には使用しない。</li><li>「調合安定剤」は調合作成と調合判定の素材加工、「機巧調整剤」は設計判定の罠・仕掛け作成、「工作定着剤」は武器作成・武器派生・装備強化を除く細工作成と細工判定の素材加工、「武装融和剤」は武器作成・武器派生に使用する。武装融和剤の対象★ランク上限は設けない。</li><li>装備強化を自作する場合は「強化定着剤」を任意個数追加消費でき、1個につき自作の作成難易度を2下げる。道具軽減と重複するが、施設依頼成功率には適用しない。</li><li>調合道具は薬屋、鍛冶道具は鍛冶屋で扱う。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>レシピ・武器派生</span><span class="tags"><span>レシピ</span><span>武器派生</span><span>鍛冶</span></span></summary>
+<div class="help-body"><ul><li>レシピはDB上では1表で管理する。</li><li>管理HTML上では、調合レシピ、鍛冶レシピ、仕掛け製作、武器派生、防具製作、装飾品製作・装飾品強化、バッグ製作、料理に分けて表示する。加工素材はレシピではなく素材データとして管理する。</li><li>武器上位化は、初期武器や基礎武器から素材で派生する方式。</li><li>武器派生を含む作成可能品には対応レシピを用意する。</li><li>通常の自作では対応レシピ、素材、必要道具、製作判定が必要。通常の加工素材だけはレシピ不要。自作は対応道具・必要素材・加工判定が必要で費用0G、施設依頼は必要素材と加工依頼費が必要だが判定不要。魔導インク・祈祷紙は個別レシピを使う薬屋の特殊な素材加工として扱う。調合・細工・設計のすべてで上位道具による難易度軽減を適用する。</li><li>基礎武器レシピ17種は、すべて店売りかつ街はずれの草原の宝箱から入手可能とする。武器派生レシピは店売りせず、対応する宝箱からのみ入手する。</li><li>道中宝箱は、通常補給箱・武具設計箱・工房レシピ箱・術師鞄などの特殊箱・希少箱・ボス戦利品箱に分ける。通常補給箱へ大量のレシピを混在させない。武器および武器派生レシピは武具設計箱、調合・防具・矢弾・罠・バッグなどは工房レシピ箱から入手する。 武具設計箱・工房レシピ箱はレシピ確定箱にせず、通常品も混在させる。通常抽選時は空25%を基準とし、箱全体でレシピ約30%・通常品約45%となる配分を基準にする。武具設計箱の通常品には通常矢・通常ボルト・大型ボルトを含めてよい。</li><li>店売りレシピは恒久解放品として高めに設定する。宝箱などで既習レシピと重複した場合に備え、レシピの販売価格・施設依頼費とは別に売値を設定する。常設店売りとレシピショップの価格は同じ「販売価格」項目で管理し、入手先によって出現先を分ける。</li><li>店売りされる完成品には買値・売値を両方設定する。装飾品は原則として完成品を販売せず、buyPriceを持たずsellPriceのみ設定する。ただし白環の聖印・蒼刻の魔印は骨董屋の常設販売例外とし、buyPriceとsellPriceを持つ。それ以外の販売品は既存のbuyPriceを店頭販売価格の基準として維持し、買値と売値の差額調整はsellPrice側で行う。通常はsellPriceをbuyPriceの80%以下にする。調合・細工で作成可能な品は、1回の完成品売却総額を「消費素材の売値合計＋施設依頼費の50%」として計算し、完成数で割った1個売値の1G未満を切り捨てる。全必要素材を店頭購入できる場合は、完成品売却総額を素材購入総額未満にする。安価な品でも買値と売値を1G差だけにしない。管理HTMLとGASの双方で同じルールを検証する。</li><li>調合・細工の完成品売値は、素材をそのまま売る場合の価値に加工技能の価値を上乗せするため、「消費する全アイテム・素材の売値合計＋施設依頼費の50%」を1回の製作で得られる完成品売却総額の基準とする。武器派生では派生元武器も必要素材として売値へ含め、連続派生は前段階の完成品も新基準売値で再計算して累積する。複数個完成するレシピは完成数で割り、1個売値の1G未満を切り捨てる。完成品にbuyPriceがある場合はbuyPriceの80%を上限とする。全必要素材を店頭購入できる場合は、素材を購入して自作・売却するだけで利益が出ないよう完成品売却総額を素材購入総額未満にする。再利用できるレシピ代・道具代は1回ごとの計算には含めない。</li><li>アイテム・素材の価格はbuyPrice（買値）とsellPrice（売値）の2項目だけで管理し、Itemsでは汎用price列を使用しない。売却可能品は1G以上の整数を設定し、素手・スキルクリスタルのように物として売却できないシステム定義だけ0Gを設定して「売却不可」と表示する。店頭販売する品はbuyPriceも空欄にしない。ただし、作成限定の装飾品はbuyPriceを空欄とする。白環の聖印・蒼刻の魔印は作成限定ではなく骨董屋販売品とする。</li><li>施設の武器派生は、武器種選択モーダルの横書きボタンから武器種を選び、素材系統を縦、★ランクを横にした派生図で表示する。モーダルには「全て」も用意し、武器種ボタンを押した時点でその派生図へ切り替える。強い区切り帯は置かず、背景の薄い縦ガイドと小さな★ランク表示を補助線として使い、各カード内の★表記でもランクを示す。同一★内の連続派生は同じランク帯の追加列へ進め、異なる★ランクを同じ縦列へ重ねない。順当強化と分岐は派生元から矢印で接続し、詳細モーダルから派生元・派生先を開ける。素材や解放エリアが変わるだけでは新しい派生名を作らず、同じ大枠の素材系統内でつなぐ。</li><li>草角・樹心・沼核・穿王・反照・嵐翼の各エリアボス素材は、素手を除く全17武器カテゴリへ必ず派生を用意する。</li><li>各エリアボスには、ボス素材を使う防具または装飾品も必ず用意する。</li><li>エリアボス素材を使う武器派生・防具・装飾品のレシピは、そのボスから授けられる専用褒賞箱だけを入手元とする。ボスへ勝利しただけで鍛冶屋・薬屋・通常レシピ箱へ自動解放せず、通常のレシピ販売候補にも含めない。</li><li>通常魔物素材の★2派生は、役割の異なる横方向の選択肢として追加してよい。ボス派生の必須前提にはしない。</li><li>武器派生の魔物素材要求量は、★2で合計1～2個、★3で合計2～3個を目安とする。既存の複合素材派生は維持してよい。</li><li>★3以降は複数の魔物素材を要求してよいが、ボス固有素材は原則1個のままとし、大量周回を前提にしない。</li><li>鉱石を主題とする鉱山鋼派生などは、魔物素材を要求しない例外にしてよい。</li><li>属性派生を全属性分作る方針にはしない。</li><li>武器の属性は派生武器自体の性能として設定し、魔物素材による後付けの属性付与は行わない。攻撃属性は物・火・水・風・雷・光・闇・無の8種だけとし、可変属性は使用しない。弓・クロスボウ・ヘヴィクロスボウだけは矢弾依存を表示補助として使用する。</li><li>順当強化で同じ★ランクに留まるのは連続2個までとし、3個目はランクを上げるか別分岐として独立させる。別派生へ降りた後に元の派生列へ戻すような接続は作らない。</li><li>武器の効果文言は同じ処理なら同じ表現へ統一する。武器の外観説明は現武器単体の素材・形状・意匠を中心に書き、派生元武器名を安易に本文へ入れない。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>装飾品段階強化</span><span class="tags"><span>装飾品</span><span>固有名称</span><span>段階強化</span><span>5セット</span></span></summary>
+<div class="help-body"><ul><li>段階強化型装飾品は、通常の装備強化枠とは別に「装飾品強化」で上位段階へ置き換え、固有効果そのものを強くする。</li><li>装飾品強化は、強化元の装飾品1個と必要素材を使い、上位段階の装飾品へ置き換える。施設依頼は判定不要、自作は細工で判定する。</li><li>装飾品は種類を問わず通常の装備強化枠を持たない。性能成長は「装飾品強化」による段階強化・派生だけで扱い、素材強化との二重取りをしない。</li><li>進行の大区切りは「通常エリア3つ＋異界1つ」を1セットとし、5セットで1区切りとして装飾品の最大段階を設計する。</li><li>低負荷の数値型（最大HP・最大MPなど）は最大5段階を目安にし、1セットごとに伸ばしてよい。</li><li>技能補正型は最大3段階程度を目安にし、+1、+2、+3のように伸ばす。段階間隔は数値型より広くしてよい。</li><li>回復調合品補助など対象が限定される効果は3～4段階程度まで許可し、適用範囲が広いほど段階数を減らす。攻撃調合品の直接ダメージ補助は、複数対象にも各対象へ適用されるため回復補助より段階数を少なめにする。</li><li>罠の直接ダメージ補助も装飾品固有効果として扱い、継続ダメージ・状態異常由来のダメージには適用しない。水辺の湿地で「刻歯の指輪（罠直接ダメージ+1）」、山麓の旧鉱山で「震牙の指輪（罠直接ダメージ+2）」へ段階強化する。</li><li>装飾品による技能・能力・最大HP/MP・近接ダメージ・攻撃調合品ダメージ・罠ダメージ・回復調合品回復量などの数値補正は、効果文だけでなく補正値データへ別項として登録する。キャラシでは技能値・ダメージ式・回復式へ「+X」の別項として加算し、チャットパレットには装飾品名・補正値・効果詳細を併記する。</li><li>後衛狙い補正の緩和、回数制の強力効果、複数効果を持つ特殊装飾品なども通常の装備強化枠は持たせず、必要な成長は専用の段階強化・派生で扱う。</li><li>異界由来の特殊装飾品は通常エリアの数値型と同じ速度で伸ばさず、必要な場合のみ後続異界で専用の段階強化・派生を追加する。</li><li>異界産の装飾品を段階強化する場合、強化段階の解放先も異界とする。異界外の素材や通常加工素材を副材料として要求してよいが、強化先の異界由来素材を必ず主材料とし、必要個数の合計は異界外素材より多くする。異界に生息する通常魔物のドロップ素材と、異界ボスから勝利後に授けられる固有素材は、その異界由来素材として数える。</li><li>未定義の将来エリア名や解放キーは先に作らない。現在実装済みのエリアだけ実データ化し、残りの段階は5セット設計に沿って後続エリア実装時に追加する。</li><li>装飾品では、武器・防具の素材強化で扱う威力・命中・防御値・防御行動値の単純な焼き直しより、技能、最大HP/MP、調合品効率、状態対策、探索補助など装飾品固有の役割を優先する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>魔物素材・装備強化</span><span class="tags"><span>魔物素材</span><span>装備強化</span><span>武器</span><span>防具</span><span>equipmentUpgradeEffect</span></span></summary>
+<div class="help-body"><ul><li>魔物素材には、装備強化に使用した際の効果名と効果説明を設定する。</li><li>魔物素材はすべて何かしらの装備強化内容を持つ。</li><li>魔物素材は装備強化内容・効果説明・強化対象の3項目を必須とし、未設定のまま保存またはDB送信できない。</li><li>威力強化・威力固定強化・命中強化・防御強化・回避強化・回復量強化などの通常強化は、同名でも同一装備へ複数付与でき、段階数または合計値として累積する。同名効果の重複不可は素材固有の特殊効果だけに適用し、旧データで特殊効果が重複している場合も1件だけ有効とする。</li><li>各エリアボスから授けられる固有素材の獲得率が最も低いものには、通常素材より強い固有特殊効果を設定してよい。</li><li>山麓の旧鉱山以降に初登場する通常魔物の魔物素材は、基本ドロップを★3、ドロップ率20%のレア固有素材だけ★4にする。20%以外の通常素材を★4にしない。エリアボス固有素材はこの通常魔物ルールの対象外。</li><li>装備強化内容は選択式の項目『equipmentUpgradeEffect / 装備強化内容』で管理する。</li><li>数値用の別項目は使用しない。すべての処理・補正値・条件は『equipmentUpgradeDetail / 効果説明』で管理する。</li><li>装備強化内容には、効果が単独で判別できる名称を設定する。素材固有の処理は固有の効果名を使用する。</li><li>武器用の例：威力強化、威力固定強化、命中強化、術式枠拡張、術式省力化、回復量強化、回復量固定強化、素材固有効果。</li><li>装備強化では防御貫通・装甲貫通・防御値無視を使用しません。安定したダメージ補正には、最低2枠を消費する威力固定強化を使用します。</li><li>防具用の例：防御強化、防御行動強化、回避強化、属性系効果、素材固有効果。</li><li>防具の防御系強化は、キャラシのステータス名に準拠して防御値と防御行動値を分ける。</li><li>防御強化は、通常時から適用される防御値を+1する。</li><li>防御行動強化は、防御を選択した時の防御行動値を+1する。</li><li>回避強化は、装備による回避値を+1する。</li><li>防御強化は強力な強化として扱い、低ランク素材では原則付与しない。</li><li>低ランク素材の防具強化は、防御行動強化、回避強化、属性系効果、素材固有効果を基本とする。</li><li>硬い甲殻や金属殻など、常時の硬さを明確に表す素材だけ防御強化を持たせる。</li><li>強化内容は、何が上がるのか、何が付与されるのかを表す。</li><li>効果説明には、具体的な数値、対象、発動条件、持続、解除条件、重複可否を記載する。</li><li>例：装備強化内容『威力強化』、効果説明『1段階は+1、2段階は+1D2、3段階は+1D3としてダメージへ追加する。』。</li><li>武器へ属性を後付けする強化内容は使用しない。</li><li>例：装備強化内容『防御行動強化』、効果説明『防御行動中のみ防御行動値+1。』。</li><li>例：装備強化内容『回避強化』、効果説明『回避値+1。』。</li><li>例：装備強化内容『水属性軽減』、効果説明『受ける水属性ダメージを1点軽減する。』。</li><li>武器は素材による派生や強化に反映する。</li><li>防具は派生式ではなく、購入または作成した防具を後から強化する方式。</li><li>属性として扱う値は、物、火、水、風、雷、光、闇、無。</li><li>採取素材など、魔物素材ではない素材は装備強化内容と効果説明を空欄にしてよい。</li><li>魔物素材の特徴が装備性能に出るように、素材ごとに装備強化内容と効果説明を設定する。</li><li>ドロップ判定やドロップ入手の出力では、素材の説明、効果、売値などを表示してよい。</li><li>ドロップ出力では、装備強化内容と効果説明は表示しない。</li><li>装備強化内容・効果説明・強化対象は、施設タブの強化項目と素材の情報コピーで確認できる。</li><li>鍛冶屋の装備強化では、武器（魔導書・祈祷書を含む）・鎧・盾だけを選択できる。装飾品・バッグ・矢筒・道具などは素材強化の対象外。盾は鎧と同じ防御系素材を使用できる場合、「防具・盾」として双方の候補に扱う。</li><li>装備強化の施設工賃は「[(素材の基準価格×今回消費枠)+(50G×装備ランク)]×[1+0.2×現在の使用済み強化枠]」で算出し、10G単位で切り上げる。素材の売値が未設定の場合は素材ランクの基準価格を使う。施設依頼成功率は装備ランク・現在の強化回数・素材ランク差で算出し、自作時の道具による難易度軽減は施設依頼成功率へ適用しない。</li><li>装備強化の全解除は、個別解除ではなく装備へ付与された全強化をまとめて外す。解除価格は、各強化について「20G×装備ランク倍率×消費枠×効果係数」を計算して合計し、10G単位で切り上げる。</li><li>全解除の効果係数は、威力強化・命中強化・防御行動強化・回避強化・回復量強化などの基礎強化が×1.00、威力固定強化・回復量固定強化・防御強化・術式枠拡張・術式省力化などの高度強化が×1.25、素材固有の特殊効果が×1.50。</li><li>全強化解除費用はPlayer施設の「鍛冶屋→装備強化」で、装備と現在付いている強化を設定して確認する。キャラクターシートには解除料金を表示しない。強化がない場合は解除対象なしと表示する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>魔物データ</span><span class="tags"><span>魔物</span><span>属性耐性</span><span>ドロップ</span><span>行動</span></span></summary>
+<div class="help-body"><ul><li>エリアボスは各エリアに一体だけ存在する固有個体とし、戦闘勝利時も死亡・討伐・解体扱いにしない。HP0相当まで追い込むとPCの実力を認め、戦闘を終える。</li><li>エリアボスへの勝利後は、ボス自身から専用の褒賞箱を授けられる。褒賞箱には鍵・罠がなく、感知・細工・採取・解体判定を行わない。</li><li>エリアボス固有素材はmonster.drops欄の設定確率を素材ごとに独立判定し、解体成功による+10%補正など通常魔物のドロップ補正は適用しない。獲得した固有素材に加え、対応するボス宝箱表からランダム報酬を1枠抽選して同じ褒賞箱へ入れる。</li><li>エリアボスのボーナスポイントは初回勝利時のみ獲得し、2回目以降の勝利では獲得しない。</li><li>二つ名個体は通常種とは別の固定個体として扱い、個体値を使用しない。通常種の行動・属性・固有パッシブを基礎にしつつ、HP・回避・抵抗・防御・先制を強化した固定戦闘値を持つ。</li><li>二つ名個体のドロップは通常種の汎用ドロップを維持するが、通常種が持つ20%の固有素材は引き継がない。代わりに、その二つ名個体専用素材を20%で1個抽選する。</li><li>二つ名個体は該当エリアの通常ランダムイベント候補数へ直接混ぜず、通常エリアではエリアイベント抽選時の専用5%枠で判定する。専用枠へ当選した場合、そのエリアの二つ名個体から1体を抽選して戦闘する。隠しエリアでは各探索5回の抽選ごとに二つ名遭遇専用25%枠を使用し、非戦闘12件＋二つ名遭遇6件を候補とする。隠しエリアの非戦闘イベントは同一探索中の重複を抑止するが、二つ名遭遇イベントは一度遭遇した後も同一探索中の再抽選を許可する。</li><li>二つ名個体は、該当エリア到達時点で現実的な装備強化・成長を行った4人PTでも敗北の可能性が残る格上戦として扱い、勝率70～80%程度を監査目安とする。弱点を適切に突けば有利になるが、弱点を突けるPCが複数いるだけで2ラウンド程度の撃破が標準になる状態にはしない。単体・適正進行帯・4人PTでは、通常魔物1～2ラウンド、強敵2～3ラウンド、二つ名個体4～6ラウンドを戦闘時間の監査目安とする。二つ名個体は固有行動・固有反応が複数回機能する余地を持たせる。難度はHPだけで作らず、防御・回避・抵抗・回復・状態連携・固有反応・行動圧を個体の役割に応じて組み合わせる。</li><li>魔物は物、火、水、風、雷、光、闇、無の8属性に対する相性を持つ。</li><li>魔物種別は、粘体・獣・虫・植物・爬虫・水棲・軟体・霊体・造魔・竜・異界の大分類で管理する。</li><li>飛行・甲殻・異界・鉱質など、大分類と重なる特徴は「魔物特性」へ分けて登録する。</li><li>魔物素材カテゴリは魔物種別と同じ大分類を使い、派生候補を種別から探せるようにする。</li><li>属性相性は、通常、耐、無、反、吸、弱で管理する。</li><li>耐はダメージ半減。</li><li>無はダメージ0、属性効果なし。</li><li>反はダメージ0、受けるはずだったダメージを攻撃者へ返す。</li><li>吸はダメージ0、受けるはずだったダメージ分だけHPを回復する。</li><li>弱はダメージ2倍。</li><li>同一エリア内で、同じ属性に対して「耐・無・反・吸」のいずれかを持つ、そのエリア所属の魔物はボスを含めて原則2体までとする。他エリアから混成・出張して出現する魔物はこの上限のカウントから除外する。エリアの環境・生態・テーマ上その属性に強いことが明確に自然な場合のみ、最大3体まで許可する。</li><li>異界存在だからという理由だけで光弱点にはしない。異界存在には原則として光属性への耐・無・反・吸を設定せず、光属性の異界特攻を妨げない。光弱点は、その個体自身の性質として光に弱い場合だけ設定する。</li><li>異界では耐性だけでなく、無効・反射・吸収も属性個性として使用してよい。ただし特定属性への不利相性がエリア全体へ偏らないよう、上記の同属性上限を守る。</li><li>弱点属性も同一エリアへ偏らせすぎない。通常魔物6体＋ボス1体の現行構成では、同じ弱点属性は原則3体までを目安とし、4体以上へ設定する場合は「そのエリア自体が明確にその属性攻略を主題とする」理由を必要とする。生態・身体構造・環境との整合を優先し、風を主題とする高原の生物へ理由なく風弱点を付ける、火山環境へ適応した生物へ理由なく火弱点を付ける、水辺へ適応した生物へ理由なく水弱点を付ける、といった設定は行わない。弱点なしの魔物も選択肢として許容する。</li><li>魔物の行動は1行動1行で管理する。</li><li>魔物本体には共通の命中値を持たせず、判定を行う各行動ごとに固有の基礎技能値を設定する。チャットパレットは「2D6+基礎技能値+{補正}&gt;=参照値」の形で出力し、{補正}には妨害・バフ・デバフ・一時的なパッシブ効果など戦闘中に変動する値だけを加算する。</li><li>行動ごとの基礎技能値とダメージ威力は独立して評価する。基礎技能値だけを理由に威力を機械的に上下させない。通常魔物は各エリアで確定している火力帯を基準にし、対象数・追加効果・防御貫通・予告・想定防御帯を含めて個別に威力を決める。 抵抗値を参照する直接ダメージ技も使用してよい。回避特化を迂回しやすいことを加味して、原則として低～中威力を基準にし、範囲・状態異常・防御無視などを併せ持つ場合は総合的な被害量を個別監査する。</li><li>過去値への復元・ロールバックは比較基準を戻す処理であり、その値をそのまま最終値にしない。復元後に現行の命中補正・対象数・追加効果・防御貫通・予告/セットアップ・想定防御帯・エリア火力帯を再監査してから確定する。</li><li>魔物の直接ダメージ式はD6を必ず含める。最大構成は「xD6+yD2～D5+z」とし、D2～D5は補助ダイスとしてのみ使用できる。補助ダイスを含む場合は補助ダイス個数yはD6個数x以下（y&lt;=x）を必須とする。固定値zは0以上のみとし、ダメージ式へのマイナス固定値は禁止する。D2～D5単独のダメージ式は禁止する。毒などの継続ダメージはこの制限の対象外。</li><li>防御・補助・回復行動も自動成功にはせず、行動ごとの基礎技能値を使う「技能値&gt;=固定達成値」の判定を設定する。失敗時はその行動の防御・強化・回復・準備効果を適用しない。妨害による「次の判定値-2」はこの判定にも適用する。</li><li>準備・予告・状態セットアップ・次行動固定などで次の大技を事前に察知できる場合も、その大技の基礎技能値は威力・対象数と合わせて個別に設定する。妨害は複数人分を累積できるため、大技を最初から-2にして妨害前から外れやすくしない。</li><li>通常魔物の登録行動数は役割に必要な数だけとし、選択可能な行動が4個以上ある場合は遭遇時にその中から3個を選出して、その戦闘中の使用行動として固定する。3個なら全て使用する。完全ランダムを前提にはせず、魔物の生態・固有パッシブ・状態セットアップ・固有ローテーションの核になる行動は「固定選出技」として0～2個指定できる。固定選出技は必ず3技へ含め、残り枠だけをランダム選出する。二つ名個体も登録行動数を役割に応じて決め、3～4個なら全て使用する。選択可能な行動が5個以上ある場合は遭遇時に4個を選出してよい。ボスは4技固定とする。固有パッシブは技数に含めない。固有パッシブが特定行動を参照していても、その行動を一律に固定選出へ昇格させない。パッシブで発動しつつ通常ランダム選出にも存在する／固定選出にも存在する／通常選出には存在せずパッシブ専用、の3パターンを個別に設定する。準備・連携などで特定の別行動を明示参照する場合は、参照関係が成立する組み合わせだけを選出候補にする。</li><li>ランダム選出・戦闘中の行動選択を前提とする通常魔物・強敵・二つ名では、別のセットアップ行動を先に使わないと後続技が弱い・使用不能になる構成を原則作らない。各攻撃・回復・補助は前提条件なしでも最低限成立し、セットアップは追加ダメージ・命中・対象拡張・防御崩しなどの上乗せとして扱う。例外は、パッシブ・予告大技・次行動固定など、使用順と接続が実装上保証される場合だけとする。</li><li>準備と次ターンの大技で構成される予告攻撃は、2段階を1つの技として同じ行に登録する。</li><li>固有パッシブは「情報を知っていれば発動条件を踏まずに完全無効化できる罠」にはしない。戦闘を続ける限り自然に発動機会が生じ、PLは発動そのものを消すのではなく、発動させるタイミング・受ける対象・被害量・その後の立て直しを工夫できる設計を基本とする。耐性属性で攻撃された時だけ、任意の前後移動をした時だけ、特定の不利行動を選んだ時だけ、など通常の最適攻略で永続的に回避できる条件は原則使用しない。</li><li>固有パッシブによる自動発動・次行動固定も、参照する行動の通常の対象条件・距離に従う。特定PCを強制対象にする場合、その行動がそのPCを合法的に対象にできることを必ず確認する。後衛も選ばれ得るマーキングや強制対象を後続行動で参照する場合、その後続行動は原則として距離：遠距離にする。通常は距離：近距離だが、固有パッシブや事前効果によって条件成立時だけ後衛まで届く場合は、距離を近距離のまま維持し、その対象拡張条件をパッシブまたは効果文へ明記する。対象数2体以上の行動を1体だけへ強制発動する場合も、その強制発動時の対象数を明記する。</li><li>次行動固定型の固有パッシブは、敵の行動予定公開ルールと矛盾させない。HP閾値・被弾回数などラウンド途中で成立し得る条件から次行動を固定する場合、原則としてそのラウンド終了時に判定し、次ラウンド開始時に固定行動を公開する。</li><li>魔物は自由意志による任意の通常移動を行わない。ただし行動種別に基づく自動列移動は行動直前に処理する。現在位置を条件にする効果、PCの移動へ反応する効果、強制移動、行動そのものによる追加の位置変更は使用できる。</li><li>魔物行動には距離とは別に行動種別を設定する。行動種別は行動者側の自動列移動、距離は対象へ届く範囲として別々に判定する。</li><li>行動種別は、近接攻撃、遠距離攻撃、防御、補助、回復、特殊。術式・祈祷は魔物の行動種別として使用しない。直接ダメージを与える行動は近接攻撃または遠距離攻撃、敵へ状態異常・弱体だけを与える行動は特殊、自身・味方の能力を変動させる行動は補助、自身・味方のHP等を回復する行動は回復とする。近接攻撃は行動時に前衛へ移動する。遠距離攻撃は自身以外の味方前衛がいる場合は後衛へ移動し、いない場合は前衛で行動する。防御・補助・回復・特殊は原則現在位置のまま処理し、自身以外の味方前衛がいない場合だけ前衛へ移動する。</li><li>距離：近距離は敵前衛のみを対象にできる。距離：遠距離は敵前衛・敵後衛のどちらも対象にできる。行動種別が近接攻撃でも、距離：遠距離なら後衛を合法的に対象にできる。前衛限定の攻撃は「距離：近距離／対象：敵○体」で表し、「距離：遠距離／対象：敵前衛○体」のように距離と対象で同じ制限を二重表記しない。</li><li>魔物の判定は行動種別にかかわらず、その行動に設定された基礎技能値を使用する。判定欄は「技能値&gt;=回避値」「技能値&gt;=抵抗値」「技能値&gt;=固定達成値」で参照先を示す。</li><li>魔物行動の「敵1列」は前衛固定ではない。ラウンド開始時には使用予定の行動名だけを公開し、その行動を実際に解決する時点で前衛・後衛のどちらか1列を選ぶ。列内の各対象について攻撃・抵抗等の判定とダメージ判定を個別に行う。</li><li>ドロップはメモ式ではなく行単位で管理する。</li><li>進行管理HTMLでは、魔物1体ごとの判定に加え、直前の出現構成を読み込んで全個体のドロップを一括判定できる。解体判定の成否は個体ごとに指定する。</li><li>ドロップ素材は魔物素材カテゴリから選択する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>魔物の回避値</span><span class="tags"><span>回避</span><span>命中</span><span>重要クエスト</span><span>鼓舞</span></span></summary>
+<div class="help-body"><ul><li>魔物の回避値・各行動の基礎技能値・HP・防御値・抵抗値・直接ダメージは、エリア番号だけで一律上昇させない。体格、役割、行動内容と、そのエリア到達時点で成立するPC性能の幅を突き合わせて決める。</li><li>数値監査では単一の「標準PC」だけを使わず、低投資／標準／得意／特化に加え、軽装・中装・重装、回避特化、防御特化、火力特化、装備未強化～現実的な強化済み、鼓舞・妨害・状態異常・属性相性・防御行動・人数差を別々に確認する。理論上成立する極端な一点特化も確認するが、それだけを基準に通常値を引き上げない。 模擬戦・数値監査で使う「程ほど」は未強化の標準装備を意味しない。防御「程ほど」は中装～重装を基準に、現実的な防御系強化を取り入れるが、盾と防御強化を積極的に重ねる特化構成までは行わない。防御「特化」は盾を装備し、防御値・防御行動値などの防御系強化も重ねて運用する構成とし、重装を着ているだけでは防御特化に数えない。回避「程ほど」は中装を基準に回避強化を行い、成長ポイントも一部を回避へ振る構成とする。特に中装では、防御強化と回避強化を片方だけへ寄せず、両方を現実的に積んだバランス構成を「程ほど」の代表例として扱う。回避「特化」は回避を主目的に装備・強化枠・成長配分を大きく寄せた構成として、程ほどとは分けて監査する。</li><li>回避側の進行参考帯は固定上限ではなく監査用の目安とする。表記は「低投資／程ほど／回避特化」で、程ほどは未強化中装ではなく、中装を中心に回避強化と成長配分を現実的に取り入れた構成を指す。草原：8～10／11～13／14～15、森：8～10／12～14／15～16、湿地：9～11／13～15／16～17、鉱山：9～11／15～16／18～19、反照：10～12／15～17／19～20、高原：10～12／16～18／20～21、火山峡谷：11～13／17～19／21～22。湿地の「ぬかるみ」など実戦補正はこの値へ別途適用する。</li><li>抵抗値の監査は回避・防御と同じ伸び方を前提にしない。抵抗を高水準まで伸ばすPCは少ないため、低投資～程ほどの抵抗帯を実戦上の中心に置き、高抵抗・抵抗特化は上限側の感度確認として別枠で扱う。抵抗特化に合わせて敵の術式・状態異常の基礎技能値を引き上げない。状態異常・弱体は一般PCには十分な脅威を持たせつつ、抵抗へ明確に投資したPCでは成功率が下がることを確認する。とくに麻痺・睡眠・呪い複数段階・汚染進行・行動強制・全体弱体・抵抗参照の高めの直接ダメージなど、失敗時の影響が大きい行動は、程ほど抵抗帯でも失敗余地を十分に残す。軽い単体弱体はそれより通りやすくしてよい。監査用参考帯は、草原6～7／8～9／10～11／12～13、森6～8／8～9／10～11／12～13、湿地7～8／8～10／10～12／13～14、鉱山7～9／9～10／11～12／13～14、反照7～9／9～10／11～12／13～14、高原8～9／9～11／11～13／14～15、火山峡谷8～10／10～11／12～13／14～15（低投資／程ほど／高め／特化）とする。状態専用の抵抗補正装備は該当状態の感度確認へ別途加算する。</li><li>通常攻撃を極端な回避特化へ必中させるため、全行動の基礎技能値を一律に上げない。標準的な軽装には普通の攻撃を避ける価値を残し、回避特化は通常攻撃に明確に強くする。そのうえで、エリア内の一部だけに高命中・低～中威力の精密攻撃、抵抗値参照、弱体、位置操作など別軸の対抗手段を配置する。</li><li>鉱山以降の精密攻撃は進行に伴う回避成長も考慮する。監査基準の代表例として、鉱山の精密行動の基礎技能値9、反照10、高原11、火山峡谷12程度なら、その段階の通常軽装へ高めに当たりつつ、回避特化にはなお大きな回避優位を残せる。これは全攻撃へ適用する基準ではなく、精密役の一部行動だけの目安である。</li><li>高回避・高防御・高HPを通常魔物へ同時に持たせず、高回避型は命中した後に倒しやすい構成を基本とする。PCが過去エリアの魔物へ成長後に安定して命中・回避できることは成長実感として許容する。</li></ul></div>
+</details>
+<details class="help-card">
+<summary><span>装備強化</span><span class="tags"><span>装備</span><span>強化</span><span>素材</span></span></summary>
+<div class="help-body"><ul><li>強化枠上限を持つのは武器・鎧・盾だけとする。魔導書・祈祷書は武器に含む。装飾品・バッグ・矢筒・道具・消耗品・素材などには強化枠を設定しない。</li><li>★1の武器・防具・盾は原則2枠の強化枠上限を持つ。</li><li>装飾品の性能成長は通常の素材強化ではなく、専用の「装飾品強化」による段階強化・派生で扱う。</li><li>魔導書と祈祷書は武器として、対応する武器ランクの強化枠ルールを適用する。</li><li>強化枠上限は装備性能を差別化する要素として扱い、同ランクでも威力・命中・回避・固有効果との釣り合いに応じて増減させてよい。</li><li>低めの基礎威力や扱いづらい条件を持つ派生は、強化枠を多くして成長性で補う設計を選択できる。</li><li>素手、普段着、装飾品、バッグ、矢筒、素材、調合品、道具、矢弾、スクロールには強化枠上限を表示しない。</li><li>実際に適用した強化内容はキャラクターシートの装備欄で、1強化1行で記録する。</li></ul></div>
+</details>
+<details class="help-card"><summary><span>進行帯別の数値・判定バランス</span><span class="tags"><span>難易度</span><span>採取</span><span>探索</span><span>ダメージ</span></span></summary><div class="help-body"><ul><li>採取・探索・感知・加工・調合・細工・クエスト固定判定・宝箱など、すべての2D6判定は「エリアが進んだから」という理由だけで目標値を上げない。</li><li>判定ごとに、その時点の不得意／低投資、標準、少し得意、専門特化の達成値幅を確認し、何割程度成功させたい判定なのかを先に決める。通常素材・基本探索・日常作業は専門特化を必須にしない。希少素材、危険地形、高度な加工、希少箱など難しい理由があるものだけ高目標値にする。</li><li>PCが成長した結果、過去の通常採取・探索・加工が以前より成功しやすくなることを許容する。成長へ追従して全目標値を引き上げ、成長実感を相殺しない。</li><li>ダメージ監査では低防御・標準防御・防御特化を分け、通常攻撃、高命中軽打、低命中重打、貫通、継続ダメージ、範囲、状態異常付きの各役割ごとに最終ダメージを確認する。防御特化が弱い通常攻撃を0にできること自体は許容し、全攻撃を防御特化へ通すための一律火力上昇は行わない。</li><li>HP監査では単体の撃破ターンだけでなく、人数対応の敵数、命中率、範囲攻撃、属性弱点・耐性、PC側の火力特化・集中・力業・強化済み武器を含める。高HP化だけで難度を作らない。</li><li>新エリア作成・既存数値改定の前に、成立し得る主要ケースを列挙して成功率・被害量を確認し、変更理由を説明できない数値上昇は行わない。</li>
+<li><b>装備強化は実際の枠競合まで含めて監査する。</b> 命中強化1枠・威力強化1枠・威力固定強化2枠、回避強化1枠・防御強化2枠・防御行動強化1枠など、同じ強化枠を同時に最大化できないことを前提にする。「最大命中＋最大威力」「最大回避＋最大防御」のような成立しないPCを基準にしない。</li><li><b>模擬戦PCの「程ほど／特化」を固定定義する。</b> 防御「程ほど」は中装～重装＋現実的な防御系強化で、盾と防御強化を積極的に重ねるところまでは含めない。防御「特化」は盾を装備し、防御系強化も重ねて運用する構成であり、重装だけでは特化にしない。回避「程ほど」は中装＋回避強化＋成長ポイントの一部配分を基本とし、中装では防御強化と回避強化を片方へ偏らせずバランスよく積む。回避「特化」は回避へ装備・強化枠・成長配分を大きく寄せる。したがって「程ほど」を未強化中装として模擬戦しない。</li>
+<li>山麓の旧鉱山の現行監査では、回避へほとんど投資しない中装等を9～11、回避「程ほど」は中装を基準に防御・回避の強化枠をバランスよく使い、成長ポイントも一部を回避へ振って15～16程度、ダストランナーコートの基礎回避+2と5強化枠を回避へ大きく寄せた「回避特化」は18～19程度までを実戦帯として扱う。程ほどを未強化中装や単なる軽装と同義にはしない。これは固定上限ではなく、以降は新装備・強化枠・ボーナスポイントに応じて再計算する。</li>
+<li>風渡りの高原のボス戦前監査では、その時点で入手可能な装備だけを使用し、ヴェルグラート勝利後に作成できるテンペストクロークなどのボス報酬装備は事前戦力へ含めない。ボス後装備を含む理論上の回避特化値は将来エリアの監査で別途扱い、それを理由に高原通常魔物やヴェルグラート自身の命中を一律上昇させない。</li>
+<li>ダメージ側も、武器の命中補正・威力式・強化枠・威力強化と命中強化の競合、力業・集中、属性相性、対象の常時防御・防御行動を同時に確認する。敵HP・防御を「火力特化の最大値」だけへ合わせない。</li></ul></div></details>
+<details class="help-card"><summary><span>武器・魔物のダメージ式と小ダイス</span><span class="tags"><span>戦闘</span><span>武器</span><span>魔物</span><span>ダメージ</span></span></summary><div class="help-body"><ul><li>武器の基礎ダメージ式と魔物の基礎直接ダメージ式は <b>xD6 + yD(2～5) + z</b> を上限構成とし、D6を必ず1個以上含める。</li><li>補助ダイスを含む場合は<b>y&lt;=x</b>、固定値は0以上。マイナス固定値は使用しない。</li><li>D2～D5は最低値・最大値・期待値・振れ幅を細かく調整する補助ダイスとして使い、最低ダメージ確保だけを理由に固定値を増やさない。D2は小さい振れ幅、D3は軽～中程度、D4は標準的な補助、D5は大きめの振れ幅を持たせたい攻撃の調整に向く。ただし使用数を均等にすることや、小ダイスを必ず使うこと自体は目的にしない。</li><li>条件成立時に別途加算される追加ダメージは、この基礎式制限から除外する。追加ダメージによって最終的に異なる種類の補助ダイスが混在しても問題ない。</li><li>武器効果・魔物行動とも、条件付き追加ダメージを理由だけに基礎ダメージ式を変更しない。</li><li>エリアごとに最低ダメージ値を固定しない。魔物は行動ごとの基礎技能値、武器は命中補正を含め、対象数、追加効果、防御貫通、予告の有無、想定防御帯まで見て個別に決める。</li><li>新エリアの通常魔物は直前までに確定した通常魔物の火力帯を比較基準にし、エリアボスは通常魔物と別枠で評価する。</li></ul></div></details>
+<details class="help-card">
+<summary><span>設計・監査の原則</span><span class="tags"><span>開発</span><span>監査</span></span></summary>
+<div class="help-body"><ul><li>開発・監査基準は卓中のルール説明から分離し、数値設計・DB構造・経済式・UI内部仕様をここへ集約する。</li><li>プレイヤー向けルールを変更する場合は、この監査基準だけで完結させず、該当するプレイヤールール／GMルール側も同時に更新する。</li><li>設計値の変更は、到達時点で実在する装備・成長・強化枠・4人PT戦術まで含めて再監査する。</li></ul></div></details></div></section></main>
+<script>
+const search=document.getElementById('search');const cs=Array.from(document.querySelectorAll('.help-card'));
+function filter(){const q=(search.value||'').trim().toLowerCase();cs.forEach(c=>c.hidden=!!q&&!c.textContent.toLowerCase().includes(q));}
+search.addEventListener('input',filter);
+document.getElementById('openAll').addEventListener('click',()=>cs.forEach(c=>{if(!c.hidden)c.open=true;}));
+document.getElementById('closeAll').addEventListener('click',()=>cs.forEach(c=>c.open=false));
+</script></body></html>
