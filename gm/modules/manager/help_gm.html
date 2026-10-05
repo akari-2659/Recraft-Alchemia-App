@@ -114,7 +114,8 @@ html.ra-web-embedded button{width:auto!important;min-width:max-content!important
 <input id="search" placeholder="キーワードで検索" type="search"/>
 <button class="ghost" id="openAll" type="button">すべて開く</button>
 <button class="ghost" id="closeAll" type="button">すべて閉じる</button>
-</div><div class="help-layout"><details class="help-card">
+</div><div class="help-layout"><details class="help-card"><summary><span>エリア探索の進行手順</span><span class="tags"><span>GM</span><span>探索</span><span>進行度</span></span></summary><div class="help-body"><ul><li>探索開始時にその日の行動回数を1回消費し、探索進行度を0%へ初期化する。開始できる行動回数が残っていない場合は探索を開始しない。</li><li>各進行地点では「イベント解決→進行度上昇」の順。進行度だけ先に進めない。0%と100%もイベント処理対象。</li><li>進行上昇値はエリアデータのprogressStepを使用する。開拓拠点は25%。通常エリアは各エリア設定に従う。</li><li>固定イベントがない地点では、そのエリアのランダムイベント表から抽選する。同一探索内で既出の通常イベントは候補から除く。</li><li>通常エリアのイベント抽選・魔物遭遇には、その日の天気、現在の時間帯、有効な噂を反映する。異界には天気・時間帯を適用しない。</li><li>戦闘が発生したら戦闘を最後まで処理し、必要な採取・ドロップ処理を済ませてからその進行地点を解決済みにする。</li><li>隠しエリア入口イベントが成立した場合、侵入を選ぶと追加で1行動消費。隠し探索の状態は元探索とは分離し、終了後に元探索の状態へ復帰する。</li><li>途中帰還ではその探索セッションを終了する。次回探索は0%から開始する。</li><li>100%地点のイベント解決後、その探索を完了として終了する。</li></ul></div></details>
+<details class="help-card">
 <summary><span>探索・イベント進行</span><span class="tags"><span>GM</span><span>探索</span><span>イベント</span></span></summary>
 <div class="help-body"><ul><li>通常のエリアイベントで戦闘だけが発生し別判定がない場合、敵編成中の最大先制値を目標値とする感知判定で先制を決める。</li><li>クエストやイベント側に別の先制判定が指定されている場合は、その指定判定を使用する。</li><li>イベントの結果は原則その場で完結させ、不要な『次の判定』『次の戦闘』への持ち越し効果を増やさない。</li></ul></div></details>
 <details class="help-card">
