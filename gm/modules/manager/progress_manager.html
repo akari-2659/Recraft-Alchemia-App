@@ -6028,6 +6028,7 @@ function startQuestProgressSession(){
   const q=selected($('questSelect'),state.quests);if(!q)return;v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
 }
 function startAreaProgressSession(){
+  if(!consumeDailyAction(isBaseExplorationSelected()?'開拓拠点リクラフトの探索':`${selectedExplorationArea()?.name||'エリア'}の探索`))return;
   if(isBaseExplorationSelected()){
     v738ToggleAreaRuntime('base');v738ResetAreaSessionState(BASE_EXPLORATION_ID,'base');v738OpenAreaModal('開拓拠点リクラフト：探索');
     $('areaBar').style.width='0%';$('areaLabel').textContent='0%';$('areaStepInfo').innerHTML='<div class="kv"><b>現在</b><span>0%</span><b>1回の進行</b><span>+25%</span><b>イベント</b><span>毎回ランダム</span></div>';v738PrepareBaseSlot();addLog('探索開始：開拓拠点リクラフト');return;
