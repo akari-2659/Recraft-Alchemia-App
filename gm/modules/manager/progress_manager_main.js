@@ -615,8 +615,13 @@ function readFacilityDailyQuestState(){
   }
 }
 function syncDailyQuestSelectionFromFacility({render=false,log=false}={}){
+  const activeQuestBefore=progressUiV738.questActive?selected($('questSelect'),state.quests):null;
+  const activeDailyId=activeQuestBefore&&questCategoryFor(activeQuestBefore)==='デイリー'?String(activeQuestBefore.id||activeQuestBefore.name||''):'';
+  const activeEncounterCache=activeDailyId
+    ?Object.fromEntries(Object.entries(state.questEncounterCache||{}).filter(([key])=>String(key).includes(`::${activeDailyId}::`)))
+    :{};
   const shared=readFacilityDailyQuestState();
-  state.questEncounterCache={};
+  state.questEncounterCache={...activeEncounterCache};
   if(!shared){
     state.lastDailyQuestKeys=[];
     state.lastDailyQuestKeysByKind=emptyDailyQuestKeysByKind();
@@ -641,10 +646,21 @@ function syncDailyQuestSelectionFromFacility({render=false,log=false}={}){
     renderDailyQuestResult();
     if(currentQuestCategory==='デイリー'){
       const availableKeys=new Set((state.lastDailyQuestKeys||[]).map(String));
-      const preferredQuestId=selectedQuestId && availableKeys.has(selectedQuestId)
-        ? selectedQuestId
-        : String(state.lastDailyQuestKeys[0]||'');
+      const preferredQuestId=activeDailyId
+        || (selectedQuestId&&availableKeys.has(selectedQuestId)?selectedQuestId:String(state.lastDailyQuestKeys[0]||''));
       fillQuestSelect(preferredQuestId);
+      if(activeDailyId){
+        const sel=$('questSelect');
+        let opt=[...(sel?.options||[])].find(o=>o.value===activeDailyId);
+        if(!opt&&activeQuestBefore&&sel){
+          opt=document.createElement('option');
+          opt.value=activeDailyId;
+          opt.textContent=`${activeQuestBefore.name||activeDailyId} / 進行中`;
+          opt.dataset.activeDailySession='1';
+          sel.appendChild(opt);
+        }
+        if(opt)sel.value=activeDailyId;
+      }
       renderQuest();
     }
   }
