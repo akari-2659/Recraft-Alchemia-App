@@ -144,7 +144,11 @@ function v738ResetQuestSessionState(q){
 }
 function v738ResetAreaSessionState(areaKey,scope='event'){
   const p=progressObj('areas',areaKey);p.value=0;progressUiV738.seen[scope]=new Set();progressUiV738.slotResolved[scope]=false;progressUiV738.areaActive=true;
-  if(scope==='event'&&!isHiddenAreaRow(selectedExplorationArea()||{}))kohakuResetLedger(selectedExplorationArea()||{id:areaKey});
+  if(scope==='event'&&!isHiddenAreaRow(selectedExplorationArea()||{})){
+    const area=selectedExplorationArea()||{id:areaKey};
+    delete state.areaBossEncountered[areaEventKey(area)];
+    kohakuResetLedger(area);
+  }
   if(scope==='base'){
     state.lastBaseEventText='';state.lastBaseEventKey='';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';state.lastBaseRewardText='';state.lastBaseRewardCopyText='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;progressUiV738.importantApplied.base=null;renderBaseEventControls();
   }else{clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;}
