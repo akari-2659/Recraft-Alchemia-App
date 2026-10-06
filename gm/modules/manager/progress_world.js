@@ -47,7 +47,7 @@ function questTimeRestrictionText(q={}){const slots=questTimeSlots(q);return slo
 function eventMatchesTime(row={},area={}){if(!areaUsesWorldCycle(area))return true;const slots=eventTimeSlots(row);return !slots.length||slots.includes(selectedTimeSlot());}
 function eventTimeWeight(row={},area={}){if(!areaUsesWorldCycle(area))return 1;const spec=String(row.timeWeights||'').trim();if(!spec)return 1;const map={};spec.split(/[;；\n]+/).forEach(chunk=>{const m=String(chunk||'').trim().match(/^(.+?)[:：]\s*([0-9.]+)$/);if(m)map[m[1].trim()]=Number(m[2]);});const value=map[selectedTimeSlot()];return Number.isFinite(value)?Math.max(0,value):1;}
 function rumorScope(row={}){return String(row.rumorScope||'').trim()==='時間帯'?'時間帯':'一日';}
-function rumorActiveForTime(row={},area={}){if(!row)return false;if(!areaUsesWorldCycle(area))return true;if(rumorScope(row)!=='時間帯')return true;const slots=eventTimeSlots(row);return !slots.length||slots.includes(selectedTimeSlot());}
+function rumorActiveForTime(row={},area={}){if(!row||!areaUsesWorldCycle(area))return false;if(rumorScope(row)!=='時間帯')return true;const slots=eventTimeSlots(row);return !slots.length||slots.includes(selectedTimeSlot());}
 function timeMonsterWeight(areaName='',monsterName=''){
   const area=(state.areas||[]).find(a=>String(a.name||'').trim()===String(areaName||'').trim()||String(a.id||'').trim()===String(areaName||'').trim());
   const profile=area?currentAreaTimeProfile(area):null;const name=String(monsterName||'').trim();if(!profile||!name)return 1;
