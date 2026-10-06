@@ -150,9 +150,11 @@ function v738PrepareQuestSlot(q){
   v738UpdateProgressControls();renderQuest();
 }
 function v738PrepareAreaSlot(a){
-  if(!a)return;const p=progressObj('areas',a.id||a.name),current=clamp(p.value);let fixed=false;
-  if(!isHiddenAreaRow(a)&&current===100){fixed=!!triggerAreaClearRumorEvent(a);}
-  progressUiV738.slotResolved.event=fixed;v738UpdateProgressControls();renderArea();
+  if(!a)return;const p=progressObj('areas',a.id||a.name),current=clamp(p.value);
+  // 100%のボス噂は、モーダルを開いただけでは未処理。
+  // 「噂を追う」または「通常イベント」を実際に決定した時点で slotResolved を立てる。
+  if(!isHiddenAreaRow(a)&&current===100)triggerAreaClearRumorEvent(a);
+  progressUiV738.slotResolved.event=false;v738UpdateProgressControls();renderArea();
 }
 function v738PrepareBaseSlot(){progressUiV738.slotResolved.base=false;v738UpdateProgressControls();renderBaseEventControls();}
 function startQuestProgressSession(){
@@ -244,7 +246,7 @@ advanceAreaProgress=function(){
   if(progressUiV738.areaMode==='base'){
     const p=progressObj('areas',BASE_EXPLORATION_ID),before=clamp(p.value);if(!progressUiV738.slotResolved.base){alert('先に現在の進行度のイベントを処理してください。');return;}if(before>=100)return;p.value=clamp(before+25);state.lastBaseEventText='';state.lastBaseEventKey='';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;progressUiV738.importantApplied.base=null;progressUiV738.slotResolved.base=false;$('areaBar').style.width=p.value+'%';$('areaLabel').textContent=p.value+'%';$('areaStepInfo').innerHTML=`<div class="kv"><b>現在</b><span>${p.value}%</span><b>1回の進行</b><span>+25%</span><b>進行後</b><span>${Math.min(100,p.value+25)}%</span></div>`;renderBaseEventControls();v738UpdateProgressControls();saveState(false);addLog(`開拓拠点リクラフトの探索進行度：${before}% → ${p.value}%`);return;
   }
-  const a=selectedExplorationArea();if(!a)return;const p=progressObj('areas',a.id||a.name),before=clamp(p.value);if(!progressUiV738.slotResolved.event){alert('先に現在の進行度のイベントを処理してください。');return;}if(before>=100)return;kohakuCommitCurrentAreaEventMaterials();const add=areaStepAmount(a);p.value=clamp(before+add);clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;let fixed=false;if(!isHiddenAreaRow(a)&&p.value===100)fixed=!!triggerAreaClearRumorEvent(a);progressUiV738.slotResolved.event=fixed;renderArea();v738UpdateProgressControls();saveState(false);addLog(`${a.name||a.id} の探索進行度：${before}% → ${p.value}%`);
+  const a=selectedExplorationArea();if(!a)return;const p=progressObj('areas',a.id||a.name),before=clamp(p.value);if(!progressUiV738.slotResolved.event){alert('先に現在の進行度のイベントを処理してください。');return;}if(before>=100)return;kohakuCommitCurrentAreaEventMaterials();const add=areaStepAmount(a);p.value=clamp(before+add);clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;if(!isHiddenAreaRow(a)&&p.value===100)triggerAreaClearRumorEvent(a);progressUiV738.slotResolved.event=false;renderArea();v738UpdateProgressControls();saveState(false);addLog(`${a.name||a.id} の探索進行度：${before}% → ${p.value}%`);
 };
 
 const v737RollQuestEvent=rollQuestEvent;
