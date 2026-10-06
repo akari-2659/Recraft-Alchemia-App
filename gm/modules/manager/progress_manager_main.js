@@ -554,7 +554,7 @@ function clearAreaSelectionContext(){
   progressUiV738.importantApplied.event=null;
   progressUiV738.slotResolved.event=false;
 }
-function setQuestCategory(cat='重要'){
+function setQuestCategory(cat='重要',options={}){
   const before=String($('questSelect')?.value||'');
   currentQuestCategory = cat === 'デイリー' ? 'デイリー' : '重要';
   document.querySelectorAll('[data-quest-category]').forEach(btn=>btn.classList.toggle('active', btn.dataset.questCategory===currentQuestCategory));
@@ -566,8 +566,8 @@ function setQuestCategory(cat='重要'){
   if(dailyTools) dailyTools.classList.toggle('hidden', currentQuestCategory !== 'デイリー');
   fillQuestSelect();
   const after=String($('questSelect')?.value||'');
-  if(before&&after!==before){clearQuestSelectionContext();saveState(false);}
-  renderQuest();
+  if(options.resetContext!==false&&before&&after!==before){clearQuestSelectionContext();if(options.save!==false)saveState(false);}
+  if(options.render!==false)renderQuest();
 }
 function questIsCleared(q={}){
   if(questCategoryFor(q)!=='重要') return false;
