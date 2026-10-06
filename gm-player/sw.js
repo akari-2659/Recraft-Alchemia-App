@@ -1,4 +1,4 @@
-const APP_VERSION='1.0.143';
+const APP_VERSION='1.0.144';
 const CACHE=`ra-gm-player-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-player-app-v';
 const APP_FILES=[
