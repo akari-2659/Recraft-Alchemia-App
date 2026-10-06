@@ -463,7 +463,24 @@ function v738RestoreSavedSessionUi(saved={}){
       $('hiddenProgressModalTitle').textContent=`${hidden.name||'隠しエリア'}：探索`;
       v738SetModalOpen('hiddenProgressModal',true);
     }else{
+      const snap=progressUiV738.hidden.snapshot||{};
+      v738RestoreEventScope(snap.eventState||{});
+      progressUiV738.seen.event=new Set(snap.seen||[]);
+      progressUiV738.areaActive=!!snap.areaActive;
+      progressUiV738.areaMode=snap.areaMode||'normal';
+      progressUiV738.slotResolved.event=!!snap.slotResolved;
+      progressUiV738.importantApplied.event=v738DeepClone(snap.importantAppliedEvent||null);
+      if(snap.kohakuMaterials&&typeof snap.kohakuMaterials==='object')progressUiV738.kohakuMaterials=v738DeepClone(snap.kohakuMaterials);
+      else if(Object.prototype.hasOwnProperty.call(snap,'kohakuCurrentEventToken')){const legacy=v738DeepClone(progressUiV738.kohakuMaterials||{areaId:'',seq:0,currentEventToken:'',sources:{}});legacy.currentEventToken=String(snap.kohakuCurrentEventToken||'');progressUiV738.kohakuMaterials=legacy;}
+      const parentId=String(snap.areaSelectValue||BASE_EXPLORATION_ID);
+      fillExplorationAreaSelect(parentId);
+      if(areaSel&&[...areaSel.options].some(o=>o.value===parentId))areaSel.value=parentId;
       progressUiV738.hidden={active:false,snapshot:null,originScope:'',areaId:''};
+      if(progressUiV738.areaActive){
+        v738ToggleAreaRuntime(progressUiV738.areaMode);
+        const title=progressUiV738.areaMode==='base'?'開拓拠点リクラフト：探索':`${selectedExplorationArea()?.name||'エリア'}：探索`;
+        v738OpenAreaModal(title);
+      }
     }
   }else if(progressUiV738.areaActive){
     v738ToggleAreaRuntime(progressUiV738.areaMode);
