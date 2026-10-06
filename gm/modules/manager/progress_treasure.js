@@ -254,7 +254,7 @@ function renderTreasureTrapInfo(){
  }
  box.textContent=treasureSetupLines(r).join('\n');
 }
-function trapDetectText(){const r=currentTreasureSetup(); if(!r)return '宝箱の状態はまだ決定されていません。'; if(r.bossReward)return 'エリアボスの褒賞箱には罠がないため、感知判定は行いません。'; return `【罠感知判定】\n2D6+{感知}>=${r.trapDetectDifficulty}`;}
+function trapDetectText(){const r=currentTreasureSetup(); if(!r)return '宝箱の状態はまだ決定されていません。'; if(r.bossReward)return 'エリアボスの褒賞箱には罠がないため、感知判定は行いません。'; if(r.questFixed)return 'このクエスト固有宝箱では罠感知判定を行いません。'; return `【罠感知判定】\n2D6+{感知}>=${r.trapDetectDifficulty}`;}
 function trapDisarmText(){const r=currentTreasureSetup(); if(!r)return '宝箱の状態はまだ決定されていません。'; if(r.bossReward)return 'エリアボスの褒賞箱には罠がありません。'; if(r.questFixed)return 'このクエスト固有宝箱では罠解除判定を行いません。'; return r.hasTrap?`【罠解除判定】\n2D6+{細工}>=${r.trapDisarmDifficulty}`:'この宝箱に罠はありません。';}
 function unlockText(){const r=currentTreasureSetup(); if(!r)return '宝箱の状態はまだ決定されていません。'; if(r.bossReward)return 'エリアボスの褒賞箱には鍵がありません。'; if(r.questFixed)return 'このクエスト固有宝箱では解錠判定を行いません。'; return r.hasLock?`【鍵の解除判定】\n2D6+{細工}>=${r.unlockDifficulty}`:'この宝箱に鍵はありません。';}
 const LEGACY_PROGRESS_NUMERIC_RANKS={'初期':1,'初級':1,'低級':1,'チュートリアル':1,'小規模':1,'中級':2,'普通':2,'通常':2,'標準':2,'上級':3,'良質':3,'大規模':3,'特級':4,'希少':4,'強敵':4,'ボス':4,'高難度':4,'最上級':5,'高級':5};
