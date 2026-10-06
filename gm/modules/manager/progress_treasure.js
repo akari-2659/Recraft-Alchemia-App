@@ -683,7 +683,7 @@ function treasureConditionLabel(sentence=''){
   const threshold=text.match(/目標値\s*[+＋]\s*(\d+)\s*以上/);
   if(threshold)return `目標値+${Number(threshold[1])}以上`;
   if(text.includes('勝利後'))return '勝利後';
-  if(text.includes('判定成功')||/^成功/.test(text))return '成功時';
+  if(/成功\s*[：:]/.test(text))return '成功時';
   return '';
 }
 function treasureTableForAreaKind(areaName='',kind='common'){
