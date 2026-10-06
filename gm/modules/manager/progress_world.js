@@ -24,6 +24,8 @@ function setTimeSlot(value,options={}){
   const slot=normalizeTimeSlot(value);state.timeSlot=slot;
   ['areaTimeSlotSelect','questTimeSlotSelect'].forEach(id=>{const el=$(id);if(el)el.value=slot;});
   if(options.reset!==false){
+    const hadAreaRandom=!!state.lastEventKey;
+    const hadQuestRandom=!!state.lastQuestEventKey;
     // 時間帯が変わると候補イベント・遭遇傾向・噂の有効性が変わるため、
     // 直前イベントの本文だけでなく報酬・宝箱・越境使用・ドロップ状態もまとめて破棄する。
     if(typeof clearAreaRandomEventHistory==='function')clearAreaRandomEventHistory();
@@ -33,6 +35,16 @@ function setTimeSlot(value,options={}){
     if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied){
       progressUiV738.importantApplied.event=null;
       progressUiV738.importantApplied.quest=null;
+      if(progressUiV738.areaActive&&progressUiV738.areaMode==='normal'&&hadAreaRandom){
+        const a=typeof selectedExplorationArea==='function'?selectedExplorationArea():selected($('areaSelect'),state.areas);
+        if(a&&clamp(progressObj('areas',a.id||a.name).value)<100)progressUiV738.slotResolved.event=false;
+      }
+      if(progressUiV738.questActive&&hadQuestRandom){
+        const q=selected($('questSelect'),state.quests);
+        const value=q?clamp(progressObj('quests',q.id||q.name).value):0;
+        const fixed=q&&typeof v738QuestFixedAt==='function'?v738QuestFixedAt(q,value):[];
+        if(!fixed.length)progressUiV738.slotResolved.quest=false;
+      }
     }
     clearTokenExportEncounter();
   }
