@@ -331,7 +331,7 @@ $('historyList')?.addEventListener('click',e=>{const countBtn=e.target.closest('
 
   $('makeTokenOutputBtn').addEventListener('click', () => copyOutput('token'));
   $('makePaletteOutputBtn').addEventListener('click', () => copyOutput('palette'));
-  $('closeOutputDialogBtn').addEventListener('click', () => $('outputDialog').close());
+  $('closeOutputDialogBtn').addEventListener('click', () => $('outputDialog').close()); if ($('outputDialog')) $('outputDialog').addEventListener('click',e=>{if(e.target===$('outputDialog'))$('outputDialog').close();});
   if ($('addByPublicIdPasteBtn')) $('addByPublicIdPasteBtn').addEventListener('click', addInventoryByPublicIdPaste);
   if ($('publicIdInput')) $('publicIdInput').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); addInventoryByPublicIdPaste(); } });
   if ($('clearPublicIdPasteBtn')) $('clearPublicIdPasteBtn').addEventListener('click', () => { if($('publicIdInput')) $('publicIdInput').value=''; if($('publicIdCountInput')) $('publicIdCountInput').value='1'; if($('publicIdPasteStatus')) { $('publicIdPasteStatus').className='status-box'; $('publicIdPasteStatus').textContent='登録IDを入力してください。'; } });
