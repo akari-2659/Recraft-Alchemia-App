@@ -41,17 +41,33 @@ function updateInitialDataStatus(){
   }
 }
 function applyInitialData(raw, sourceLabel='表示用マスター'){
-  const source = extractInitialDataPayload(raw);
-  const loaded = normalizeInitialDataPayload(raw);
-  window.RA_SKILL_MASTER = { skills: Array.isArray(loaded.skills) ? loaded.skills : [] };
-  if(initialDataRowCount(loaded) === 0) throw new Error('表示用マスターに登録データがありません');
-  DEFAULTS = loaded;
-  initialDataLoaded = true;
-  initialDataSource = sourceLabel;
-  state = unifyEffectNotesForDisplayRows(raDeepClone(DEFAULTS));
-  renderAll();
-  updateInitialDataStatus();
-  toast(`表示用マスターを読み込みました（${initialDataRowCount(DEFAULTS)}件）`);
+  let stage='形式確認';
+  try{
+    const source = extractInitialDataPayload(raw);
+    stage='正規化';
+    const loaded = normalizeInitialDataPayload(raw);
+    stage='技能マスター反映';
+    window.RA_SKILL_MASTER = { skills: Array.isArray(loaded.skills) ? loaded.skills : [] };
+    if(initialDataRowCount(loaded) === 0) throw new Error('表示用マスターに登録データがありません');
+    stage='初期データ反映';
+    DEFAULTS = loaded;
+    initialDataLoaded = true;
+    initialDataSource = sourceLabel;
+    // normalizeInitialDataPayload() 内で表示互換の正規化は完了済み。
+    // ここで同じ処理を再度かけず、複製だけ行う。
+    state = raDeepClone(DEFAULTS);
+    stage='画面描画';
+    renderAll();
+    stage='状態表示';
+    updateInitialDataStatus();
+    toast(`表示用マスターを読み込みました（${initialDataRowCount(DEFAULTS)}件）`);
+  }catch(error){
+    const detail=error&&error.message?error.message:String(error);
+    const wrapped=new Error(`表示用マスター読込失敗［${stage}］: ${detail}`);
+    try{wrapped.cause=error;}catch(_){}
+    console.error('applyInitialData failed', {stage, sourceLabel, error});
+    throw wrapped;
+  }
 }
 function managerGithubDelay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
 function managerMasterDataRowCount(master){
