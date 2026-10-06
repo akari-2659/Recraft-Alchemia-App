@@ -699,12 +699,16 @@ function eventTreasurePlans(row={},areaName=''){
   // 同一条件内の重複記述だけをまとめる。
   const add=(tableId,label='')=>{const id=String(tableId||'').trim(),key=String(label||'');if(!id)return;const found=plans.find(p=>p.tableId===id&&String(p.labels?.[0]||'')===key);if(found)return;plans.push({tableId:id,labels:key?[key]:[]});};
   const sentences=String(row.result||'').split('。').map(v=>v.trim()).filter(Boolean);
+  let lastReferencedTables=[];
   sentences.forEach(sentence=>{
-    const label=treasureConditionLabel(sentence);
+    const label=treasureConditionLabel(sentence),refs=[];
     const explicit=[...sentence.matchAll(/宝箱表「([^」]+)」/g)].map(m=>m[1]);
-    explicit.forEach(id=>add(id,label));
-    if(sentence.includes('通常宝箱表'))add(treasureTableForAreaKind(areaName,'common'),label);
-    if(sentence.includes('希少宝箱表'))add(treasureTableForAreaKind(areaName,'rare'),label);
+    explicit.forEach(id=>{add(id,label);refs.push(id);});
+    if(sentence.includes('通常宝箱表')){const id=treasureTableForAreaKind(areaName,'common');add(id,label);if(id)refs.push(id);}
+    if(sentence.includes('希少宝箱表')){const id=treasureTableForAreaKind(areaName,'rare');add(id,label);if(id)refs.push(id);}
+    const shorthand=/もう\s*1回(?:抽選する|引く)|同じ宝箱表を\s*1回(?:抽選する|引く)/.test(sentence);
+    if(!refs.length&&label&&shorthand)lastReferencedTables.forEach(id=>add(id,label));
+    if(refs.length)lastReferencedTables=[...new Set(refs)];
   });
   const configured=String(row.treasureTableId||'').trim();
   if(configured&&!plans.some(p=>p.tableId===configured))add(configured,isBossEvent(row)?'勝利後':'');
