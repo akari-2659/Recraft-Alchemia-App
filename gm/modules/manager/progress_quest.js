@@ -728,7 +728,7 @@ function triggerQuestSpecificEvents(q,before,after){
       {fixedIv:isImportantQuest(q),bountyEligible:false,resolvedGroups:fixedDropGroups,forceRecordEncounter:true}
     );
     if(fixedDropGroups.length)setTokenExportEncounter(e.eventName||q.name||'クエスト戦闘',area?.name||q.areaName||'',fixedDropGroups,'quest');
-    if(e.treasureTableId){
+    if(eventHasTreasure(e)){
       const treasureBundle=resolveEventTreasures(e,area?.name||e.areaName||'',true);
       state.lastQuestFixedEventText=[state.lastQuestFixedEventText,treasureBundle.displayText].filter(Boolean).join('\n\n');
       setEventTreasureResults('quest',treasureBundle.results);
