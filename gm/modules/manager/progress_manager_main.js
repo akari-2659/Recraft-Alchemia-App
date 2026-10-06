@@ -643,11 +643,14 @@ function readFacilityDailyQuestState(){
 function syncDailyQuestSelectionFromFacility({render=false,log=false}={}){
   const activeQuestBefore=progressUiV738.questActive?selected($('questSelect'),state.quests):null;
   const activeDailyId=activeQuestBefore&&questCategoryFor(activeQuestBefore)==='デイリー'?String(activeQuestBefore.id||activeQuestBefore.name||''):'';
+  const dailyQuestIds=new Set((state.quests||[]).filter(q=>questCategoryFor(q)==='デイリー').map(q=>String(q.id||q.name||'')));
+  const cacheEntries=Object.entries(state.questEncounterCache||{});
+  const nonDailyEncounterCache=Object.fromEntries(cacheEntries.filter(([key])=>!dailyQuestIds.has(String(key).split('::')[1]||'')));
   const activeEncounterCache=activeDailyId
-    ?Object.fromEntries(Object.entries(state.questEncounterCache||{}).filter(([key])=>String(key).includes(`::${activeDailyId}::`)))
+    ?Object.fromEntries(cacheEntries.filter(([key])=>String(key).includes(`::${activeDailyId}::`)))
     :{};
   const shared=readFacilityDailyQuestState();
-  state.questEncounterCache={...activeEncounterCache};
+  state.questEncounterCache={...nonDailyEncounterCache,...activeEncounterCache};
   if(!shared){
     state.lastDailyQuestKeys=[];
     state.lastDailyQuestKeysByKind=emptyDailyQuestKeysByKind();
