@@ -807,7 +807,12 @@ function resolveEventTreasures(row={},areaName='',questFixed=false){
   return {results,displayText,copyText};
 }
 function updateTreasureCopyButtons(){
-  const treasureBtn=$('copyTreasureBtn');if(treasureBtn)treasureBtn.disabled=!state.lastTreasureCopyText;
+  const setup=currentTreasureSetup(),treasureBtn=$('copyTreasureBtn');
+  if(treasureBtn)treasureBtn.disabled=!state.lastTreasureCopyText;
+  const detectBtn=$('copyTrapDetectBtn'),disarmBtn=$('copyTrapDisarmBtn'),unlockBtn=$('copyUnlockBtn');
+  if(detectBtn)detectBtn.disabled=!setup||!!setup.bossReward||!!setup.questFixed;
+  if(disarmBtn)disarmBtn.disabled=!setup||!!setup.bossReward||!!setup.questFixed||!setup.hasTrap;
+  if(unlockBtn)unlockBtn.disabled=!setup||!!setup.bossReward||!!setup.questFixed||!setup.hasLock;
   updateQuestEventItemCopyButton();updateAreaEventItemCopyButton();
 }
 function rollTreasure(){
