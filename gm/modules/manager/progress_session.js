@@ -385,8 +385,29 @@ function v738RestoreSavedSessionUi(saved={}){
     ?v738DeepClone(ui.kohakuMaterials)
     :{areaId:'',seq:0,currentEventToken:'',sources:{}};
 
-  setQuestCategory(ui.questCategory==='デイリー'?'デイリー':'重要');
-  if(ui.questId&&[...($('questSelect')?.options||[])].some(o=>o.value===String(ui.questId)))$('questSelect').value=String(ui.questId);
+  const savedQuestId=String(ui.questId||'');
+  const savedQuest=(state.quests||[]).find(q=>String(q.id||q.name||'')===savedQuestId)||null;
+  const savedQuestCategory=savedQuest?questCategoryFor(savedQuest):(ui.questCategory==='デイリー'?'デイリー':'重要');
+  setQuestCategory(savedQuestCategory);
+  const questSel=$('questSelect');
+  if(savedQuestId&&questSel){
+    let opt=[...questSel.options].find(o=>o.value===savedQuestId);
+    if(!opt&&savedQuest&&progressUiV738.questActive){
+      opt=document.createElement('option');
+      opt.value=savedQuestId;
+      opt.textContent=`${savedQuest.name||savedQuestId} / 保存済み進行`;
+      opt.dataset.restoredSession='1';
+      questSel.appendChild(opt);
+    }
+    if(opt)questSel.value=savedQuestId;
+    else if(progressUiV738.questActive){
+      progressUiV738.questActive=false;
+      progressUiV738.slotResolved.quest=false;
+    }
+  }else if(progressUiV738.questActive){
+    progressUiV738.questActive=false;
+    progressUiV738.slotResolved.quest=false;
+  }
 
   const savedAreaId=String(ui.areaId||'');
   fillExplorationAreaSelect(savedAreaId||BASE_EXPLORATION_ID);
