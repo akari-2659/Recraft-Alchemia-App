@@ -162,10 +162,23 @@ function rerollAreaWeather(area={}){
   saveState(false);renderArea();renderWeatherManager();addLog(`${area.name||area.id} の天気を再抽選：${row.weatherName}`);
 }
 function rerollUnlockedWeatherForNewDay(){
+  const hadAreaRandom=!!state.lastEventKey,hadQuestRandom=!!state.lastQuestEventKey;
   ensureWeatherForUnlockedAreas(true);
   if(typeof clearAreaRandomEventHistory==='function')clearAreaRandomEventHistory();
   else{state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventRewardState=null;}
-  if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied)progressUiV738.importantApplied.event=null;
+  if(typeof clearQuestRandomEventHistory==='function')clearQuestRandomEventHistory();
+  else{state.lastQuestEventText='';state.lastQuestEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';state.lastQuestOutcomeKey='';}
+  if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied){
+    progressUiV738.importantApplied.event=null;
+    progressUiV738.importantApplied.quest=null;
+    if(progressUiV738.areaActive&&progressUiV738.areaMode==='normal'&&hadAreaRandom)progressUiV738.slotResolved.event=false;
+    if(progressUiV738.questActive&&hadQuestRandom){
+      const q=selected($('questSelect'),state.quests),value=q?clamp(progressObj('quests',q.id||q.name).value):0;
+      const fixed=q&&typeof v738QuestFixedAt==='function'?v738QuestFixedAt(q,value):[];
+      if(!fixed.length)progressUiV738.slotResolved.quest=false;
+    }
+  }
+  clearTokenExportEncounter();
 }
 function weatherCopyText(){
   ensureWeatherForUnlockedAreas(false);
