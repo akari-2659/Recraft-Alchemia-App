@@ -434,6 +434,10 @@ function v738RestoreSavedSessionUi(saved={}){
     v738ToggleAreaRuntime(progressUiV738.areaMode);
     const title=progressUiV738.areaMode==='base'?'開拓拠点リクラフト：探索':`${selectedExplorationArea()?.name||'エリア'}：探索`;
     v738OpenAreaModal(title);
+    if(progressUiV738.areaMode==='normal'&&!progressUiV738.slotResolved.event){
+      const area=selectedExplorationArea();
+      if(area&&clamp(progressObj('areas',area.id||area.name).value)>=100)triggerAreaClearRumorEvent(area);
+    }
   }
   if(progressUiV738.questActive)v738OpenQuestModal();
 
