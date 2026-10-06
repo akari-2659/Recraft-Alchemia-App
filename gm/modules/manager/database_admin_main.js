@@ -745,8 +745,6 @@ document.addEventListener('input',e=>{
   if(e.target.closest('[data-quest-fixed-events-editor]')) syncQuestFixedEventsEditor(e.target.closest('[data-quest-fixed-events-editor]'));
   if(e.target.closest('[data-modifier-editor]')) syncModifierEditor(e.target.closest('[data-modifier-editor]'));
   if(e.target.closest('[data-named-process-editor]')) syncAdminNamedProcessingEditor(e.target.closest('[data-named-process-editor]'));
-  if(e.target.closest('[data-modifier-editor]')) syncModifierEditor(e.target.closest('[data-modifier-editor]'));
-  if(e.target.closest('[data-named-process-editor]')) syncAdminNamedProcessingEditor(e.target.closest('[data-named-process-editor]'));
 });
 document.addEventListener('change',e=>{
   if(e.target?.matches?.('[data-facility-general-area-check]')){
