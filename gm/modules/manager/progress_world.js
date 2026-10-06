@@ -413,6 +413,25 @@ function fillRumorSelect(){
   renderRumorDetail();
   if($('rumorSelectForInn')) fillInnRumorSelect();
 }
+function rumorSelectionEventKey(){
+  const r=selectedRumor();
+  return r?eventUniqueKey(r):'';
+}
+function restoreRumorSelectionByEventKey(key=''){
+  const rows=rumorRows(),target=String(key||'').trim();
+  const idx=target?rows.findIndex(r=>eventUniqueKey(r)===target):-1;
+  const raw=idx>=0?String(idx):'';
+  if($('rumorSelect'))$('rumorSelect').value=raw;
+  fillInnRumorSelect();
+  if($('rumorSelectForInn')){
+    const inn=$('rumorSelectForInn');
+    inn.value=[...inn.options].some(o=>o.value===raw)?raw:'';
+  }
+  renderRumorDetail();
+  renderRumorResult(idx>=0?rows[idx]:null,raw===''?'clear':'apply');
+  return idx>=0;
+}
+
 function renderRumorDetail(){
   const box=$('rumorDetail');
   if(!box)return;
