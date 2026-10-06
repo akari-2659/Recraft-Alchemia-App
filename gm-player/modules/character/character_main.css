@@ -267,8 +267,8 @@
   .inventory-card { border: 1px solid rgba(221, 203, 176, .9); background: rgba(255, 253, 248, .78); border-radius: 14px; padding: 12px; }
   .inventory-card > summary { list-style: none; cursor: pointer; }
   .inventory-card > summary::-webkit-details-marker { display: none; }
-  .inventory-card-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
-  .inventory-card-head::before { content: "▼"; color: var(--accent2); font-weight: 900; margin-top: 2px; transition: transform .16s ease; }
+  .inventory-card-head { display:grid; grid-template-columns:18px minmax(0,1fr) auto; gap:8px; align-items:flex-start; margin-bottom:8px; min-width:0; }
+  .inventory-card-head::before { content:"▼"; color:var(--accent2); font-weight:900; line-height:1.45; width:18px; text-align:center; transform-origin:50% 50%; transition:transform .16s ease; }
   .inventory-card:not([open]) .inventory-card-head::before { transform: rotate(-90deg); }
   .inventory-card:not([open]) .inventory-card-head { margin-bottom: 0; }
   .inventory-title { font-weight: 900; color: var(--accent2); }
