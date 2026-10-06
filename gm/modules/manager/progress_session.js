@@ -209,7 +209,10 @@ function v738CloseAreaSession(){
 function v738CurrentProgressValue(scope){if(scope==='quest'){const q=selected($('questSelect'),state.quests);return q?clamp(progressObj('quests',q.id||q.name).value):0;}if(scope==='base')return clamp(progressObj('areas',BASE_EXPLORATION_ID).value);const a=selectedExplorationArea();return a?clamp(progressObj('areas',a.id||a.name).value):0;}
 function v738UpdateProgressControls(){
   const qVal=v738CurrentProgressValue('quest'),aScope=progressUiV738.areaMode==='base'?'base':'event',aVal=v738CurrentProgressValue(aScope);
-  if($('questAdvanceBtn'))$('questAdvanceBtn').disabled=!progressUiV738.slotResolved.quest||qVal>=100;
+  const selectedQuest=selected($('questSelect'),state.quests)||{};
+  const questNeedsAction=!isDeliveryQuest(selectedQuest);
+  const noQuestActions=questNeedsAction&&(state.dayState?.awaitingEnd||dailyActionsRemaining()<=0);
+  if($('questAdvanceBtn'))$('questAdvanceBtn').disabled=!progressUiV738.slotResolved.quest||qVal>=100||noQuestActions;
   if($('areaAdvanceBtn'))$('areaAdvanceBtn').disabled=!progressUiV738.slotResolved[aScope]||aVal>=100;
   if($('questEndBtn'))$('questEndBtn').textContent=qVal>=100&&progressUiV738.slotResolved.quest?'クエスト完了':'撤退';
   if($('areaEndBtn'))$('areaEndBtn').textContent=aVal>=100&&progressUiV738.slotResolved[aScope]?'探索完了':'探索を終了';
