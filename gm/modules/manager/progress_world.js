@@ -427,6 +427,7 @@ function restoreRumorSelectionByEventKey(key=''){
     const inn=$('rumorSelectForInn');
     inn.value=[...inn.options].some(o=>o.value===raw)?raw:'';
   }
+  state.savedRumorEventKey=idx>=0?eventUniqueKey(rows[idx]):'';
   renderRumorDetail();
   renderRumorResult(idx>=0?rows[idx]:null,raw===''?'clear':'apply');
   return idx>=0;
@@ -498,6 +499,7 @@ function applyRumorIndex(raw, fromInn=false){
   }
   const rows=rumorRows();
   const r=value==='' ? null : rows[Number(value)];
+  state.savedRumorEventKey=r?eventUniqueKey(r):'';
   renderRumorResult(r, value==='' ? 'clear' : 'apply');
   renderArea();
   saveState(false);
@@ -555,6 +557,7 @@ function clearRumor(){
   if($('rumorSelectForInn')) $('rumorSelectForInn').value='';
   if($('rumorSelect')) $('rumorSelect').value='';
   state.lastRumorKey='';
+  state.savedRumorEventKey='';
   state.lastRumorText='【宿屋の噂】\n今日は特定の噂を適用しません。';
   renderRumorDetail();
   renderRumorResult(null,'clear');
