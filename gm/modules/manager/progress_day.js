@@ -30,8 +30,8 @@ function renderDayStatus(){
   }
   const blocked=state.dayState.awaitingEnd || remaining<=0;
   ['manualActionBtn','innRestBtn'].forEach(id=>{if($(id))$(id).disabled=blocked;});
-  ['questAdvanceBtn','areaAdvanceBtn'].forEach(id=>{if($(id))$(id).disabled=false;});
   if($('undoActionBtn')) $('undoActionBtn').disabled=state.dayState.usedActions<=0;
+  if(typeof v738UpdateProgressControls==='function')v738UpdateProgressControls();
 }
 function consumeDailyAction(label='行動'){
   state.dayState=normalizeDayState(state.dayState);
