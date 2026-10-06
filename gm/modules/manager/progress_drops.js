@@ -79,7 +79,7 @@ function eventRewardTrigger(clause='',branchKey=''){
   const text=String(clause||'').trim();const threshold=text.match(/目標値\s*\+\s*(\d+)\s*以上/);
   if(threshold)return{kind:'threshold',value:Number(threshold[1]),label:`目標値+${Number(threshold[1])}以上`,branchKey:String(branchKey||'')};
   if(/勝利後/.test(text))return{kind:'victory',value:0,label:'戦闘勝利後',branchKey:''};
-  if(/^失敗\s*[：:]/.test(text)||/^判定失敗\s*[：:]/.test(text))return{kind:'failure',value:0,label:'失敗',branchKey:''};
+  if(/^失敗\s*[：:]/.test(text)||/^判定失敗\s*[：:]/.test(text))return{kind:'failure',value:0,label:'失敗',branchKey:String(branchKey||'判定')};
   const skillFailure=text.match(/^([^：:。]{1,24}?)失敗\s*[：:]/);
   if(skillFailure&&!/^クエスト/.test(String(skillFailure[1]||'').trim())){const key=String(skillFailure[1]||'').trim()||'判定';return{kind:'failure',value:0,label:key==='判定'?'失敗':`${key}失敗`,branchKey:key};}
   const skillSuccess=text.match(/^([^：:。]{1,24}?)成功\s*[：:]/);
@@ -167,6 +167,39 @@ function buildEventRewardState(row={}){
   return groups.length?{eventName:String(row.eventName||row.name||'イベント'),row:{...row},groups}:null;
 }
 function eventRewardState(scope='event'){if(scope==='quest')return state.lastQuestEventRewardState;if(scope==='base')return state.lastBaseEventRewardState;return state.lastEventRewardState;}
+function eventRewardTableSlotCountForGroups(groups=[]){
+  const active=(groups||[]).filter(g=>Number(g?.tableSlots)>0);
+  let total=0;
+  const branches=new Map();
+  active.forEach(group=>{
+    const trigger=group.trigger||{},kind=String(trigger.kind||'always'),slots=Math.max(0,Number(group.tableSlots)||0);
+    if(!slots)return;
+    if(kind==='always'){total+=slots;return;}
+    if(['success','failure','threshold'].includes(kind)){
+      const key=String(trigger.branchKey||'判定');
+      const bucket=branches.get(key)||{success:[],failure:[],threshold:[]};
+      bucket[kind].push(group);branches.set(key,bucket);return;
+    }
+    if(kind==='questClear'||kind==='questFailure'){
+      const key='__questOutcome';
+      const bucket=branches.get(key)||{success:[],failure:[],threshold:[]};
+      bucket[kind==='questClear'?'success':'failure'].push(group);branches.set(key,bucket);return;
+    }
+    total+=slots;
+  });
+  branches.forEach(bucket=>{
+    const successBase=bucket.success.reduce((sum,g)=>sum+Math.max(0,Number(g.tableSlots)||0),0);
+    let successTotal=successBase;
+    bucket.threshold.slice().sort((a,b)=>(Number(a.trigger?.value)||0)-(Number(b.trigger?.value)||0)).forEach(g=>{
+      const slots=Math.max(0,Number(g.tableSlots)||0);
+      if(/追加/.test(String(g.clause||'')))successTotal+=slots;
+      else successTotal=Math.max(successTotal,slots);
+    });
+    const failureTotal=bucket.failure.reduce((sum,g)=>sum+Math.max(0,Number(g.tableSlots)||0),0);
+    total+=Math.max(successTotal,failureTotal);
+  });
+  return total;
+}
 function eventRewardPanelId(scope='event'){if(scope==='quest')return'questEventRewardPanel';if(scope==='base')return'baseEventRewardPanel';return'eventRewardPanel';}
 function eventRewardSelectedItems(scope='event'){
   const reward=eventRewardState(scope),map=new Map();if(!reward)return[];
@@ -234,7 +267,7 @@ function eventOutcomeIncludedBranches(branches=[],target={}){
   return branches.filter(group=>{
     const g=group.trigger;
     if(g.kind!==t.kind)return false;
-    if(g.kind==='success')return eventOutcomeSameBranch(g,t);
+    if(g.kind==='success'||g.kind==='failure')return eventOutcomeSameBranch(g,t);
     return true;
   });
 }
@@ -249,7 +282,7 @@ function eventOutcomeRewardGroups(scope='event',target={}){
       return g.kind==='success'||(g.kind==='threshold'&&(Number(g.value)||0)<=(Number(t.value)||0));
     }
     if(g.kind!==t.kind)return false;
-    if(g.kind==='success')return eventOutcomeSameBranch(g,t);
+    if(g.kind==='success'||g.kind==='failure')return eventOutcomeSameBranch(g,t);
     return true;
   });
 }
@@ -307,7 +340,7 @@ function eventOutcomeItems(scope='event',target={}){
   const add=(name,row,count)=>{const key=String(row?.publicId||row?.id||name),cur=map.get(key)||{name,row,count:0};cur.count+=Number(count)||0;map.set(key,cur);};
   const groups=eventOutcomeRewardGroups(scope,target);
   groups.forEach(group=>(group.items||[]).forEach(item=>{const name=item.selectedName||item.name;const row=eventRewardItemRows().find(x=>String(x.name||'').trim()===String(name||'').trim())||item.row||null;add(name,row,item.count||1);}));
-  const table=eventTableRewardState(scope),limit=Math.max(0,...groups.map(g=>Number(g.tableSlots)||0));
+  const table=eventTableRewardState(scope),limit=eventRewardTableSlotCountForGroups(groups);
   if(table?.slots?.length&&limit){
     table.slots.slice(0,limit).forEach(slot=>{const row=slot.row||findItemByNameOrId(slot.name,slot.publicId);add(slot.name,row,slot.count||1);});
   }
@@ -467,14 +500,14 @@ function updateEventRewardSelection(scope,uid,checked){
   const key=String(target.trigger.branchKey||'');
   const sameBranch=g=>String(g.trigger.branchKey||'')===key;
   if(target.trigger.kind==='failure'&&checked){
-    reward.groups.forEach(g=>{if(g.trigger.kind!=='always'&&g!==target)g.selected=false;});
+    reward.groups.forEach(g=>{if(g!==target&&['success','failure','threshold'].includes(g.trigger.kind)&&sameBranch(g))g.selected=false;});
   }
   if(['questClear','questFailure'].includes(target.trigger.kind)&&checked){
     reward.groups.forEach(g=>{if(g!==target&&['questClear','questFailure'].includes(g.trigger.kind))g.selected=false;});
   }
   if(target.trigger.kind==='success'){
     if(checked){
-      reward.groups.forEach(g=>{if(g.trigger.kind==='failure')g.selected=false;});
+      reward.groups.forEach(g=>{if(g.trigger.kind==='failure'&&sameBranch(g))g.selected=false;});
       reward.groups.forEach(g=>{if(g.trigger.kind==='success'&&g!==target&&!sameBranch(g))g.selected=false;if(g.trigger.kind==='threshold'&&!sameBranch(g))g.selected=false;});
     }else{
       reward.groups.forEach(g=>{if(g.trigger.kind==='threshold'&&sameBranch(g))g.selected=false;});
@@ -483,7 +516,7 @@ function updateEventRewardSelection(scope,uid,checked){
   if(target.trigger.kind==='threshold'){
     const n=Number(target.trigger.value)||0;
     if(checked){
-      reward.groups.forEach(g=>{if(g.trigger.kind==='failure')g.selected=false;});
+      reward.groups.forEach(g=>{if(g.trigger.kind==='failure'&&sameBranch(g))g.selected=false;});
       reward.groups.forEach(g=>{
         if(g.trigger.kind==='success')g.selected=sameBranch(g);
         if(g.trigger.kind==='threshold')g.selected=sameBranch(g)&&(Number(g.trigger.value)||0)<=n;
@@ -492,9 +525,10 @@ function updateEventRewardSelection(scope,uid,checked){
       reward.groups.forEach(g=>{if(g.trigger.kind==='threshold'&&sameBranch(g)&&(Number(g.trigger.value)||0)>=n)g.selected=false;});
     }
   }
-  syncEventTableRewardCopyState(scope);syncEventTreasureCopyState(scope);renderEventRewardPanel(scope);updateEventContentCopyButtons();
+  if(typeof syncEventTreasureSelectionForOutcome==='function')syncEventTreasureSelectionForOutcome(scope);
+  syncEventTableRewardCopyState(scope);syncEventTreasureCopyState(scope);renderEventRewardPanel(scope);updateEventContentCopyButtons();saveState(false);
 }
-function rerollEventReward(scope='event'){const reward=eventRewardState(scope);if(!reward)return;reward.groups.forEach(g=>g.items.forEach(item=>Object.assign(item,eventRewardRoll(item.expr||'1'))));syncEventTableRewardCopyState(scope);renderEventRewardPanel(scope);updateEventContentCopyButtons();}
+function rerollEventReward(scope='event'){const reward=eventRewardState(scope);if(!reward)return;reward.groups.forEach(g=>g.items.forEach(item=>Object.assign(item,eventRewardRoll(item.expr||'1'))));syncEventTableRewardCopyState(scope);renderEventRewardPanel(scope);updateEventContentCopyButtons();saveState(false);}
 function dropInstanceUid(){return `drop_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;}
 function renderDropMode(){state.dropMode='encounter';$('dropEncounterPanel')?.classList.remove('hidden');}
 function setDropMode(){state.dropMode='encounter';renderDropMode();saveState(false);}
