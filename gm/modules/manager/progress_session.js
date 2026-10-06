@@ -43,11 +43,9 @@ const v737EventRowsForArea=eventRowsForArea;
 eventRowsForArea=function(area,options={}){
   const rows=v737EventRowsForArea(area,options);
   if(!(progressUiV738.areaActive||progressUiV738.hidden.active))return rows;
-  // 隠しエリアの二つ名遭遇は狩り直し用途でもあるため、同一探索中の既出除外を適用しない。
-  // 非戦闘イベントは従来どおり重複を避け、探索ごとの景色変化を保つ。
+  // 隠しエリアは二つ名戦闘のみ。二つ名遭遇は狩り直し用途のため同一探索中でも再出現可。
   if(isHiddenAreaRow(area)||progressUiV738.hidden.active){
-    const seen=v738CurrentSeenSet('event');
-    return rows.filter(row=>isNamedEncounterEvent(row)||!seen.has(eventUniqueKey(row)));
+    return rows.filter(row=>isNamedEncounterEvent(row));
   }
   return v738FilterUnseen('event',rows);
 };
