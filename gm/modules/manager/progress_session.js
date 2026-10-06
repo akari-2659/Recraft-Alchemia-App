@@ -161,12 +161,15 @@ function startQuestProgressSession(){
   const q=selected($('questSelect'),state.quests);if(!q)return;v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
 }
 function startAreaProgressSession(){
-  if(!consumeDailyAction(isBaseExplorationSelected()?'開拓拠点リクラフトの探索':`${selectedExplorationArea()?.name||'エリア'}の探索`))return;
-  if(isBaseExplorationSelected()){
+  const baseSelected=isBaseExplorationSelected();
+  const selectedArea=baseSelected?null:selectedExplorationArea();
+  if(!baseSelected&&(!selectedArea||isHiddenAreaRow(selectedArea)))return;
+  if(!consumeDailyAction(baseSelected?'開拓拠点リクラフトの探索':`${selectedArea.name||'エリア'}の探索`))return;
+  if(baseSelected){
     v738ToggleAreaRuntime('base');v738ResetAreaSessionState(BASE_EXPLORATION_ID,'base');v738OpenAreaModal('開拓拠点リクラフト：探索');
     $('areaBar').style.width='0%';$('areaLabel').textContent='0%';$('areaStepInfo').innerHTML='<div class="kv"><b>現在</b><span>0%</span><b>1回の進行</b><span>+25%</span><b>イベント</b><span>毎回ランダム</span></div>';v738PrepareBaseSlot();addLog('探索開始：開拓拠点リクラフト');return;
   }
-  const a=selectedExplorationArea();if(!a||isHiddenAreaRow(a))return;v738ToggleAreaRuntime('normal');v738ResetAreaSessionState(a.id||a.name,'event');v738OpenAreaModal(`${a.name||a.id}：探索`);renderArea();v738PrepareAreaSlot(a);saveState(false);addLog(`探索開始：${a.name||a.id}`);
+  const a=selectedArea;v738ToggleAreaRuntime('normal');v738ResetAreaSessionState(a.id||a.name,'event');v738OpenAreaModal(`${a.name||a.id}：探索`);renderArea();v738PrepareAreaSlot(a);saveState(false);addLog(`探索開始：${a.name||a.id}`);
 }
 function v738CloseQuestSession(){
   const q=selected($('questSelect'),state.quests);
@@ -248,8 +251,9 @@ const V738_EVENT_SNAPSHOT_FIELDS=['lastEventText','lastEventKey','lastEventCheck
 function v738SnapshotEventScope(){const out={};V738_EVENT_SNAPSHOT_FIELDS.forEach(k=>out[k]=v738DeepClone(state[k]));return out;}
 function v738RestoreEventScope(snap={}){V738_EVENT_SNAPSHOT_FIELDS.forEach(k=>{if(Object.prototype.hasOwnProperty.call(snap,k))state[k]=v738DeepClone(snap[k]);});}
 function startHiddenExploration(areaId='',originScope='event'){
-  const hidden=hiddenAreaById(areaId);if(!hidden||progressUiV738.hidden.active)return;if(!consumeDailyAction(`${hidden.name||'隠しエリア'}への侵入`))return;
+  const hidden=hiddenAreaById(areaId);if(!hidden||progressUiV738.hidden.active)return;
   const areaSel=$('areaSelect'),runtime=$('areaProgressRuntime'),hiddenBody=$('hiddenProgressModal')?.querySelector('.progress-modal-body');if(!areaSel||!runtime||!hiddenBody)return;
+  if(!consumeDailyAction(`${hidden.name||'隠しエリア'}への侵入`))return;
   progressUiV738.hidden={active:true,originScope,snapshot:{areaSelectValue:areaSel.value,eventState:v738SnapshotEventScope(),seen:[...v738CurrentSeenSet('event')],areaActive:progressUiV738.areaActive,areaMode:progressUiV738.areaMode,slotResolved:progressUiV738.slotResolved.event,importantAppliedEvent:v738DeepClone(progressUiV738.importantApplied.event),kohakuCurrentEventToken:String(kohakuLedger().currentEventToken||'')},areaId:String(areaId)};
   let opt=[...areaSel.options].find(o=>o.value===String(hidden.id||''));if(!opt){opt=document.createElement('option');opt.value=String(hidden.id||'');opt.textContent=String(hidden.name||hidden.id||'');opt.dataset.hiddenTemp='1';areaSel.appendChild(opt);}areaSel.value=String(hidden.id||'');
   hiddenBody.appendChild(runtime);v738ResetAreaSessionState(hidden.id||hidden.name,'event');progressUiV738.areaActive=true;progressUiV738.areaMode='normal';progressUiV738.slotResolved.event=false;v738ToggleAreaRuntime('normal');const hiddenEventBlock=runtime.querySelector('.area-event-block');if(hiddenEventBlock)hiddenEventBlock.classList.remove('hidden');if($('rollEventBtn')){$('rollEventBtn').classList.remove('hidden');$('rollEventBtn').disabled=false;$('rollEventBtn').textContent='エリアイベント';}if($('areaAdvanceBtn'))$('areaAdvanceBtn').disabled=true;$('hiddenProgressModalTitle').textContent=`${hidden.name||'隠しエリア'}：探索`;v738SetModalOpen('hiddenProgressModal',true);renderArea();v738PrepareAreaSlot(hidden);v738UpdateProgressControls();addLog(`隠しエリア探索開始：${hidden.name||hidden.id}`);
