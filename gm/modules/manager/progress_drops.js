@@ -76,7 +76,7 @@ function dropOutputBlock(d={}){
 function eventRewardUid(){return `reward_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;}
 function eventRewardItemRows(){return(state.items||[]).filter(row=>String(row.name||'').trim()).slice().sort((a,b)=>String(b.name||'').length-String(a.name||'').length);}
 function eventRewardTrigger(clause='',branchKey=''){
-  const text=String(clause||'').trim();const threshold=text.match(/目標値\s*\+\s*(\d+)\s*以上/);
+  const text=String(clause||'').trim();const threshold=text.match(/目標値\s*[+＋]\s*(\d+)\s*以上/);
   if(threshold)return{kind:'threshold',value:Number(threshold[1]),label:`目標値+${Number(threshold[1])}以上`,branchKey:String(branchKey||'')};
   if(/勝利後/.test(text))return{kind:'victory',value:0,label:'戦闘勝利後',branchKey:''};
   if(/^失敗\s*[：:]/.test(text)||/^判定失敗\s*[：:]/.test(text))return{kind:'failure',value:0,label:'失敗',branchKey:String(branchKey||'判定')};
@@ -187,6 +187,7 @@ function eventRewardTableSlotCountForGroups(groups=[]){
     }
     total+=slots;
   });
+  const branchTotals=[];
   branches.forEach(bucket=>{
     const successBase=bucket.success.reduce((sum,g)=>sum+Math.max(0,Number(g.tableSlots)||0),0);
     let successTotal=successBase;
@@ -196,9 +197,11 @@ function eventRewardTableSlotCountForGroups(groups=[]){
       else successTotal=Math.max(successTotal,slots);
     });
     const failureTotal=bucket.failure.reduce((sum,g)=>sum+Math.max(0,Number(g.tableSlots)||0),0);
-    total+=Math.max(successTotal,failureTotal);
+    branchTotals.push(Math.max(successTotal,failureTotal));
   });
-  return total;
+  // 成功枝はUI上で排他的に選択するため、事前抽選する最大枠数も
+  // 全枝の合計ではなく「同時に成立し得る枝の最大値」に合わせる。
+  return total+(branchTotals.length?Math.max(...branchTotals):0);
 }
 function eventRewardPanelId(scope='event'){if(scope==='quest')return'questEventRewardPanel';if(scope==='base')return'baseEventRewardPanel';return'eventRewardPanel';}
 function eventRewardSelectedItems(scope='event'){
@@ -500,14 +503,17 @@ function updateEventRewardSelection(scope,uid,checked){
   const key=String(target.trigger.branchKey||'');
   const sameBranch=g=>String(g.trigger.branchKey||'')===key;
   if(target.trigger.kind==='failure'&&checked){
-    reward.groups.forEach(g=>{if(g!==target&&['success','failure','threshold'].includes(g.trigger.kind)&&sameBranch(g))g.selected=false;});
+    // 失敗は同一イベント内の成功・追加成功と排他。
+    // 「集中成功 / 感知成功 / 失敗」や「両方成功 / 片方成功 / 両方失敗」のように
+    // 成功ラベルのbranchKeyが複数でも、失敗と成功が同時選択されたまま残さない。
+    reward.groups.forEach(g=>{if(g!==target&&['success','failure','threshold'].includes(g.trigger.kind))g.selected=false;});
   }
   if(['questClear','questFailure'].includes(target.trigger.kind)&&checked){
     reward.groups.forEach(g=>{if(g!==target&&['questClear','questFailure'].includes(g.trigger.kind))g.selected=false;});
   }
   if(target.trigger.kind==='success'){
     if(checked){
-      reward.groups.forEach(g=>{if(g.trigger.kind==='failure'&&sameBranch(g))g.selected=false;});
+      reward.groups.forEach(g=>{if(g.trigger.kind==='failure')g.selected=false;});
       reward.groups.forEach(g=>{if(g.trigger.kind==='success'&&g!==target&&!sameBranch(g))g.selected=false;if(g.trigger.kind==='threshold'&&!sameBranch(g))g.selected=false;});
     }else{
       reward.groups.forEach(g=>{if(g.trigger.kind==='threshold'&&sameBranch(g))g.selected=false;});
