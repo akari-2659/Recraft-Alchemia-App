@@ -29,8 +29,11 @@ const v737SortedDropAreas=sortedDropAreas;
 sortedDropAreas=function(){return v737SortedDropAreas().filter(a=>!isHiddenAreaRow(a));};
 const v737ApplyProgressMaster=applyProgressMaster;
 applyProgressMaster=function(master){
+  const questBefore=String($('questSelect')?.value||'');
+  const areaBefore=String($('areaSelect')?.value||BASE_EXPLORATION_ID);
   const result=v737ApplyProgressMaster(master);
-  fillExplorationAreaSelect(BASE_EXPLORATION_ID);
+  fillQuestSelect(questBefore);
+  fillExplorationAreaSelect(areaBefore);
   normalizeBaseUnlockedAreaIds();renderBaseEventControls();renderDailyUnlockedAreaControl();renderArea();renderQuest();
   return result;
 };
