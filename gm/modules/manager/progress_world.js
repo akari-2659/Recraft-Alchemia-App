@@ -690,6 +690,17 @@ function questPartyAdjustmentNote(q={}){
   return questCategoryFor(q)==='重要' && selectedPartySize()<2 ? 'PCが1人のため、サポートを加えた2人編成として処理します。' : '';
 }
 function handlePartySizeChange(value){
+  const beforeSize=selectedPartySize(),q=selected($('questSelect'),state.quests);
+  const qValue=q?clamp(progressObj('quests',q.id||q.name).value):0;
+  const currentFixed=(typeof progressUiV738!=='undefined'&&progressUiV738.questActive&&q&&typeof v738QuestFixedAt==='function')
+    ?v738QuestFixedAt(q,qValue).some(e=>state.lastQuestFixedEventKey===`${String(q.id||q.name||'')}:${eventUniqueKey(e)}:${eventThreshold(e)??''}`)
+    :false;
+  if(currentFixed){
+    setPartySize(beforeSize);
+    alert('現在の固定イベント処理中は参加人数を変更できません。固定イベントを処理して次の進行へ移ってから変更してください。');
+    return;
+  }
+  const hadAreaRandom=!!state.lastEventKey,hadQuestRandom=!!state.lastQuestEventKey;
   setPartySize(value);
   // 人数変更で遭遇構成が変わるため、現在のランダムイベント結果は
   // 本文・報酬・宝箱・越境使用・ドロップまでまとめて無効化する。
@@ -700,8 +711,10 @@ function handlePartySizeChange(value){
   if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied){
     progressUiV738.importantApplied.event=null;
     progressUiV738.importantApplied.quest=null;
+    if(progressUiV738.areaActive&&progressUiV738.areaMode==='normal'&&hadAreaRandom)progressUiV738.slotResolved.event=false;
+    if(progressUiV738.questActive&&hadQuestRandom)progressUiV738.slotResolved.quest=false;
+    if(typeof v738UpdateProgressControls==='function')v738UpdateProgressControls();
   }
-  state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';
   clearTokenExportEncounter();
   renderQuest();renderQuestEvents();renderEventRewardPanel('event');renderEventRewardPanel('quest');updateTreasureCopyButtons();
   saveState(false);
