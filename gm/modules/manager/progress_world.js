@@ -326,6 +326,7 @@ function renderBaseEventControls(){
   const btn=$('rollBaseEventBtn');if(btn)btn.textContent=state.lastBaseEventText?'拠点内イベント再抽選':'拠点内イベント抽選';
 }
 function rollBaseEvent(){
+  state.lastBaseEventKey='';
   const rows=baseEventRows();
   if(!rows.length){state.lastBaseEventText='解放済みエリアに対応する拠点内イベント候補がありません。';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';state.lastBaseRewardText='';state.lastBaseRewardCopyText='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;renderBaseEventControls();return;}
   const picked=pickRandomEvent(rows,state.lastBaseEventKey);state.lastBaseEventKey=eventUniqueKey(picked);state.lastBaseOutcomeKey=eventUniqueKey(picked);state.lastBaseCheckCopyText=eventCheckCopyText(picked);
