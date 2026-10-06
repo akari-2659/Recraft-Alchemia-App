@@ -1,4 +1,4 @@
-function listItems() {
+async function listItems() {
   if (!currentCloudPlayerKey) throw new Error('作成リストの表示にはプレイヤーキーが必要です。プレイヤーキー入力画面で入力してください。');
   const res = await cloudRequest('list', { playerKey: currentCloudPlayerKey });
   return { items: res.items || [] };
