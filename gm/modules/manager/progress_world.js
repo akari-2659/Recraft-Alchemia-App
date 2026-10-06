@@ -500,6 +500,7 @@ function applyRumorIndex(raw, fromInn=false){
   const r=value==='' ? null : rows[Number(value)];
   renderRumorResult(r, value==='' ? 'clear' : 'apply');
   renderArea();
+  saveState(false);
   return r || null;
 }
 function renderRumorResult(row=null, mode=''){
