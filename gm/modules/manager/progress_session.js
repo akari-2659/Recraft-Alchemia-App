@@ -167,7 +167,7 @@ function startAreaProgressSession(){
   if(!consumeDailyAction(baseSelected?'開拓拠点リクラフトの探索':`${selectedArea.name||'エリア'}の探索`))return;
   if(baseSelected){
     v738ToggleAreaRuntime('base');v738ResetAreaSessionState(BASE_EXPLORATION_ID,'base');v738OpenAreaModal('開拓拠点リクラフト：探索');
-    $('areaBar').style.width='0%';$('areaLabel').textContent='0%';$('areaStepInfo').innerHTML='<div class="kv"><b>現在</b><span>0%</span><b>1回の進行</b><span>+25%</span><b>イベント</b><span>毎回ランダム</span></div>';v738PrepareBaseSlot();addLog('探索開始：開拓拠点リクラフト');return;
+    $('areaBar').style.width='0%';$('areaLabel').textContent='0%';$('areaStepInfo').innerHTML='<div class="kv"><b>現在</b><span>0%</span><b>1回の進行</b><span>+25%</span><b>イベント</b><span>毎回ランダム</span></div>';v738PrepareBaseSlot();saveState(false);addLog('探索開始：開拓拠点リクラフト');return;
   }
   const a=selectedArea;v738ToggleAreaRuntime('normal');v738ResetAreaSessionState(a.id||a.name,'event');v738OpenAreaModal(`${a.name||a.id}：探索`);renderArea();v738PrepareAreaSlot(a);saveState(false);addLog(`探索開始：${a.name||a.id}`);
 }
@@ -192,9 +192,16 @@ function v738CloseAreaSession(){
   const scope=progressUiV738.areaMode==='base'?'base':'event';
   const a=scope==='base'?null:selectedExplorationArea();
   const key=scope==='base'?BASE_EXPLORATION_ID:String(a?.id||a?.name||'');
-  if(key){const p=progressObj('areas',key);p.value=0;}
+  const p=key?progressObj('areas',key):null,value=clamp(p?.value||0),resolved=!!progressUiV738.slotResolved[scope];
+  if(value<100||!resolved){
+    const msg=value>=100&&!resolved
+      ?'100%地点のイベントがまだ未処理です。探索を終了すると、この探索進行度は破棄されます。終了しますか？'
+      :'探索を途中で終了しますか？\n現在の探索進行度は破棄され、次回は0%から開始します。';
+    if(!confirm(msg))return;
+  }
+  if(p)p.value=0;
   progressUiV738.areaActive=false;progressUiV738.slotResolved[scope]=false;v738SetModalOpen('areaProgressModal',false);
-  saveState(false);addLog('探索を終了しました。探索進行度は次回へ持ち越しません。');
+  saveState(false);addLog(value>=100&&resolved?'探索完了。次回の探索は0%から開始します。':'探索撤退：進行度を破棄しました。');
 }
 function v738CurrentProgressValue(scope){if(scope==='quest'){const q=selected($('questSelect'),state.quests);return q?clamp(progressObj('quests',q.id||q.name).value):0;}if(scope==='base')return clamp(progressObj('areas',BASE_EXPLORATION_ID).value);const a=selectedExplorationArea();return a?clamp(progressObj('areas',a.id||a.name).value):0;}
 function v738UpdateProgressControls(){
