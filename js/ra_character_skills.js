@@ -94,29 +94,6 @@ function renderSkillSlots(state){
   box.innerHTML=Array.from({length:state.crystalSlots},(_,i)=>`<div class="skill-slot-row"><b>枠${i+1}</b><select data-skill-crystal-slot="${i}" data-skill-crystal-input="1">${options}</select></div>`).join('');
   box.querySelectorAll('[data-skill-crystal-slot]').forEach((el,i)=>el.value=state.equippedSkillIds[i]||'');
 }
-function renderSkillFilterTabs(){
-  const state=normalizeSkillGachaState(skillGachaState||{});const owned=state.acquiredSkillIds.map(characterSkillById).filter(Boolean);
-  const cats=SKILL_CATEGORY_ORDER.filter(c=>c==='全て'||owned.some(s=>String(s.category||'')===c));
-  if($('skillCategoryTabs'))$('skillCategoryTabs').innerHTML=cats.map(c=>`<button type="button" class="skill-chip ${skillWarehouseFilter.category===c?'active':''}" data-skill-category="${esc(c)}">${esc(c)}</button>`).join('');
-  const weapons=['全て',...new Set(owned.filter(s=>String(s.category||'')==='武器専用').map(s=>String(s.weaponType||'').trim()).filter(Boolean))];
-  if(!weapons.includes(skillWarehouseFilter.weaponType))skillWarehouseFilter.weaponType='全て';
-  if($('skillWeaponTabs'))$('skillWeaponTabs').innerHTML=weapons.map(w=>`<button type="button" class="skill-chip ${skillWarehouseFilter.weaponType===w?'active':''}" data-skill-weapon="${esc(w)}">${esc(w)}</button>`).join('');
-  if($('skillWeaponFilterRow'))$('skillWeaponFilterRow').hidden=skillWarehouseFilter.category!=='全て'&&skillWarehouseFilter.category!=='武器専用';
-}
-function filteredOwnedSkills(){
-  const state=normalizeSkillGachaState(skillGachaState||{}),q=String(skillWarehouseFilter.search||'').trim().toLowerCase();
-  return state.acquiredSkillIds.map(characterSkillById).filter(Boolean).filter(s=>{
-    if(skillWarehouseFilter.category!=='全て'&&String(s.category||'')!==skillWarehouseFilter.category)return false;
-    if((skillWarehouseFilter.category==='全て'||skillWarehouseFilter.category==='武器専用')&&skillWarehouseFilter.weaponType!=='全て'&&String(s.weaponType||'')!==skillWarehouseFilter.weaponType)return false;
-    if(q&&!String([s.name,s.category,s.weaponType,s.description,s.balanceReason,s.effect,s.publicId].join(' ')).toLowerCase().includes(q))return false;
-    return true;
-  }).sort((a,b)=>String(a.category||'').localeCompare(String(b.category||''),'ja')||String(a.weaponType||'').localeCompare(String(b.weaponType||''),'ja')||String(a.name||'').localeCompare(String(b.name||''),'ja'));
-}
-function renderSkillWarehouse(){
-  renderSkillFilterTabs();const rows=filteredOwnedSkills(),area=$('skillWarehouseArea'),empty=$('skillWarehouseEmpty'),state=normalizeSkillGachaState(skillGachaState||{});if(!area)return;
-  area.innerHTML=rows.map(s=>`<article class="skill-warehouse-card"><h4>${esc(s.name)} <span class="skill-badge">★${esc(s.rank||1)}</span></h4><div class="skill-meta"><span class="skill-badge">${esc(s.category||'')}</span>${s.weaponType?`<span class="skill-badge">${esc(s.weaponType)}</span>`:''}</div><div class="skill-public-id">登録ID：${esc(s.publicId||'未設定')}</div><div class="skill-detail-lines">${s.timing?`<div><b>タイミング：</b>${esc(s.timing)}</div>`:''}${s.cost?`<div><b>消費：</b>${esc(s.cost)}</div>`:''}${s.ct?`<div><b>CT：</b>${esc(s.ct)}</div>`:''}${s.effect?`<div><b>効果：</b>${esc(s.effect)}</div>`:(s.description?`<div><b>概要：</b>${esc(s.description)}</div>`:'')}</div><div class="button-row" style="margin-top:8px"><button type="button" class="ghost" data-skill-remove="${esc(s.id)}" ${state.equippedSkillIds.includes(s.id)?'disabled':''}>倉庫から削除</button></div></article>`).join('');
-  if(empty)empty.style.display=rows.length?'none':'';if($('skillWarehouseStatus'))$('skillWarehouseStatus').textContent=`スキル倉庫 ${state.acquiredSkillIds.length}件 / 表示 ${rows.length}件`;
-}
 function renderEquippedSkillView(state){
   const area=$('equippedSkillView');if(!area)return;
   const rows=state.equippedSkillIds.map((id,index)=>({index,skill:characterSkillById(id)})).filter(row=>row.skill);
@@ -131,32 +108,6 @@ function renderSkillCrystalPanel(){
   // スキル変更だけで巨大な倉庫一覧を再描画しない。
   if(inventoryDisplayMode==='learned'&&learnedContentType==='skill')renderInventory({refreshLinked:false});
   else if(inventoryDisplayMode==='learned')renderLearnedKindTabs();
-}
-async function ensureCharacterSkillMasterForRegistration(){
-  if(skillMasterRows().length)return true;
-  let master=lastCharacterSheetMasterResult;
-  if(!master){
-    try{master=await loadCharacterSheetMasterFromDbForInitial();}
-    catch(_){return false;}
-  }
-  // fetchだけ済んで lastCharacterSheetMasterResult に入っていても、
-  // DB_SKILL_MASTER へまだ適用されていない経路があるため明示的に同期する。
-  if(lastAppliedCharacterSheetMasterRef!==master || !DB_SKILL_MASTER.length){
-    setDbCharacterSheetMaster(master||{}, {refreshUi:false});
-  }
-  return skillMasterRows().length>0;
-}
-async function addSkillByPublicIds(){
-  const input=$('skillPublicIdInput'),status=$('skillPublicIdStatus');if(!input)return;
-  const ids=String(input.value||'').split(/[\s,，、]+/).map(v=>canonicalRegistrationId(v)||String(v||'').trim().toUpperCase()).filter(Boolean);
-  if(!ids.length){if(status){status.className='status-box error';status.textContent='登録IDを入力してください。';}return;}
-  const ready=await ensureCharacterSkillMasterForRegistration();
-  if(!ready){if(status){status.className='status-box error';status.textContent='スキルマスターを読み込めませんでした。DB同期状態を確認してください。';}return;}
-  const state=normalizeSkillGachaState(skillGachaState||{}),owned=new Set(state.acquiredSkillIds);let added=0,duplicate=0;const missing=[],fragmentAwards={};
-  ids.forEach(id=>{const skill=characterSkillByPublicId(id);if(!skill){missing.push(id);return;}if(owned.has(skill.id)){const rank=Math.max(1,Math.floor(Number(skill.rank)||1));duplicate++;fragmentAwards[String(rank)]=(fragmentAwards[String(rank)]||0)+1;return;}owned.add(skill.id);added++;});
-  Object.entries(fragmentAwards).forEach(([rank,count])=>addSkillDuplicateFragments(state,rank,count));
-  state.acquiredSkillIds=[...owned];skillGachaState=state;renderSkillCrystalPanel();updateAll();if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon('skillGacha');
-  if(status){const awardText=resonanceFragmentAwardText(fragmentAwards);status.className='status-box '+(missing.length?'warn':'ok');status.textContent=`追加 ${added}件 / 重複 ${duplicate}件${awardText?` / 獲得：${awardText}`:''}${missing.length?` / 該当なし：${missing.join(', ')}`:''}`;}
 }
 function removeSkillFromWarehouse(id=''){
   const state=normalizeSkillGachaState(skillGachaState||{});if(state.equippedSkillIds.includes(id))return;state.acquiredSkillIds=state.acquiredSkillIds.filter(v=>v!==id);skillGachaState=state;renderSkillCrystalPanel();updateAll();if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon('skillGacha');
