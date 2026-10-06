@@ -856,7 +856,7 @@ function rollEvent(){
   state.lastEventCheckCopyText='';
   state.lastEventOutcomeKey='';
   resetAreaEventItemCopyState();clearRecipeMerchantOffers();
-  if(!rows.length){state.lastEventOutcomeKey='';$('eventResult').textContent='このエリアに登録されたランダムイベント候補がありません。前提条件付きイベントは、今日の噂が一致した時だけ候補に入ります。';renderEventRewardPanel('event');updateAreaEventItemCopyButton();return;}
+  if(!rows.length){state.lastEventOutcomeKey='';state.lastEventText='このエリアに登録されたランダムイベント候補がありません。前提条件付きイベントは、今日の噂が一致した時だけ候補に入ります。';$('eventResult').textContent=state.lastEventText;renderEventRewardPanel('event');updateAreaEventItemCopyButton();return;}
   const picked=pickAreaEvent(rows,state.lastEventKey,area,{rumor});
   state.lastEventKey=eventUniqueKey(picked);
   state.lastEventOutcomeKey=eventUniqueKey(picked);
