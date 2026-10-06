@@ -695,7 +695,9 @@ function treasureTableForAreaKind(areaName='',kind='common'){
 function eventTreasurePlans(row={},areaName=''){
   if(!eventHasTreasure(row))return [];
   const plans=[];
-  const add=(tableId,label='')=>{const id=String(tableId||'').trim();if(!id)return;const found=plans.find(p=>p.tableId===id);if(found){if(label&&!found.labels.includes(label))found.labels.push(label);}else plans.push({tableId:id,labels:label?[label]:[]});};
+  // 同じ宝箱表でも、成功時と目標値+○以上で「もう1回」なら別抽選として残す。
+  // 同一条件内の重複記述だけをまとめる。
+  const add=(tableId,label='')=>{const id=String(tableId||'').trim(),key=String(label||'');if(!id)return;const found=plans.find(p=>p.tableId===id&&String(p.labels?.[0]||'')===key);if(found)return;plans.push({tableId:id,labels:key?[key]:[]});};
   const sentences=String(row.result||'').split('。').map(v=>v.trim()).filter(Boolean);
   sentences.forEach(sentence=>{
     const label=treasureConditionLabel(sentence);
@@ -704,7 +706,8 @@ function eventTreasurePlans(row={},areaName=''){
     if(sentence.includes('通常宝箱表'))add(treasureTableForAreaKind(areaName,'common'),label);
     if(sentence.includes('希少宝箱表'))add(treasureTableForAreaKind(areaName,'rare'),label);
   });
-  add(row.treasureTableId,isBossEvent(row)?'勝利後':'');
+  const configured=String(row.treasureTableId||'').trim();
+  if(configured&&!plans.some(p=>p.tableId===configured))add(configured,isBossEvent(row)?'勝利後':'');
   return plans;
 }
 function eventTreasureConditionKind(label=''){
