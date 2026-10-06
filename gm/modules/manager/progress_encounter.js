@@ -499,7 +499,7 @@ function encounterCountText(row={},resolution=null){
   const count=encounterCountForEvent(row);return count?`出現数：${count}体（パーティー${selectedPartySize()}人 / ${row.encounterCountRule||'指定なし'}）`:'';
 }
 
-function eventHasTreasure(row={}){return !!String(row.treasureTableId||'').trim();}
+function eventHasTreasure(row={}){const result=String(row.result||'');return !!String(row.treasureTableId||'').trim()||/宝箱表「[^」]+」|通常宝箱表|希少宝箱表/.test(result);}
 function eventResultTextForDisplay(row={},partySize=selectedPartySize()){
   let text=resolveEncounterTokensInText(row.result||'',partySize);
   const inline=inlineEventCheckInfo(text);
