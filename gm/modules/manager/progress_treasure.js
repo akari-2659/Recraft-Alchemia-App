@@ -148,6 +148,7 @@ function rolledTrapDisarmDifficulty(row,profile){return rolledTreasureDifficulty
 function normalizeTreasureSetup(setup){
   if(!setup)return setup;
   if(setup.bossReward){setup.hasLock=false;setup.hasTrap=false;setup.unlockDifficulty='';setup.trapDetectDifficulty='';setup.trapDisarmDifficulty='';setup.trapName='';setup.trapEffect='';setup.emptyChance=0;return setup;}
+  if(setup.questFixed){setup.hasLock=false;setup.hasTrap=false;setup.unlockDifficulty='';setup.trapDetectDifficulty='';setup.trapDisarmDifficulty='';setup.trapName='';setup.trapEffect='';setup.emptyChance=0;return setup;}
   const row=treasureRows(setup.tableId||'')[0]||{};
   const profile=treasureProfile(setup.areaName||row.areaName||'');
   if(setup.hasLock) setup.unlockDifficulty=positiveTreasureDifficulty(setup.unlockDifficulty,configuredUnlockDifficulty(row,profile));
@@ -184,7 +185,7 @@ function buildTreasureSetup(tableId, areaName='', questFixed=false){
     return normalizeTreasureSetup({
       tableId:String(tableId||''),areaName:area,chestName:row.chestName||row.tableId||'クエスト固有宝箱',
       questFixed:true,hasLock:false,hasTrap:false,emptyChance:0,
-      trapDetectDifficulty:rolledTrapDetectDifficulty(row,profile)
+      trapDetectDifficulty:''
     });
   }
   const hasLock=Math.random()*100<profile.lockChance;
@@ -233,7 +234,7 @@ function treasureSetupLines(setup={}){
     `鍵：${setup.hasLock?'あり':'なし'}`,
     `解錠難易度（細工）：${setup.hasLock?setup.unlockDifficulty:'—'}`,
     `罠：${setup.hasTrap?'あり':'なし'}`,
-    `罠感知難易度（感知）：${setup.trapDetectDifficulty}`,
+    `罠感知難易度（感知）：${setup.questFixed?'—':setup.trapDetectDifficulty}`,
     `罠解除難易度（細工）：${setup.hasTrap?setup.trapDisarmDifficulty:'—'}`,
     `空箱率：${Number(setup.emptyChance||0)}%${isRecipeCacheTable(setup.tableId)?'（レシピ箱）':''}`
   ];
