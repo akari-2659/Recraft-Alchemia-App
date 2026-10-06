@@ -257,11 +257,11 @@ advanceAreaProgress=function(){
 };
 
 const v737RollQuestEvent=rollQuestEvent;
-rollQuestEvent=function(){progressUiV738.importantApplied.quest=null;v737RollQuestEvent();if(state.lastQuestEventKey){v738MarkSeen('quest',state.lastQuestEventKey);progressUiV738.slotResolved.quest=true;}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
+rollQuestEvent=function(){progressUiV738.importantApplied.quest=null;progressUiV738.slotResolved.quest=false;v737RollQuestEvent();if(state.lastQuestEventKey){v738MarkSeen('quest',state.lastQuestEventKey);progressUiV738.slotResolved.quest=true;}v738UpdateProgressControls();v738RefreshCombatDropButtons();saveState(false);};
 const v737RollEvent=rollEvent;
-rollEvent=function(){progressUiV738.importantApplied.event=null;kohakuDiscardCurrentEventMaterials();v737RollEvent();if(state.lastEventKey){v738MarkSeen('event',state.lastEventKey);progressUiV738.slotResolved.event=true;const ledger=kohakuLedger();ledger.seq=(Number(ledger.seq)||0)+1;ledger.currentEventToken=`${ledger.seq}:${state.lastEventKey}`;progressUiV738.kohakuMaterials=ledger;}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
+rollEvent=function(){progressUiV738.importantApplied.event=null;progressUiV738.slotResolved.event=false;kohakuDiscardCurrentEventMaterials();v737RollEvent();if(state.lastEventKey){v738MarkSeen('event',state.lastEventKey);progressUiV738.slotResolved.event=true;const ledger=kohakuLedger();ledger.seq=(Number(ledger.seq)||0)+1;ledger.currentEventToken=`${ledger.seq}:${state.lastEventKey}`;progressUiV738.kohakuMaterials=ledger;}v738UpdateProgressControls();v738RefreshCombatDropButtons();saveState(false);};
 const v737RollBaseEvent=rollBaseEvent;
-rollBaseEvent=function(){progressUiV738.importantApplied.base=null;v737RollBaseEvent();if(state.lastBaseEventKey){v738MarkSeen('base',state.lastBaseEventKey);progressUiV738.slotResolved.base=true;}if(progressUiV738.areaMode==='base'){const p=progressObj('areas',BASE_EXPLORATION_ID);$('areaBar').style.width=clamp(p.value)+'%';$('areaLabel').textContent=clamp(p.value)+'%';}v738UpdateProgressControls();v738RefreshCombatDropButtons();};
+rollBaseEvent=function(){progressUiV738.importantApplied.base=null;progressUiV738.slotResolved.base=false;v737RollBaseEvent();if(state.lastBaseEventKey){v738MarkSeen('base',state.lastBaseEventKey);progressUiV738.slotResolved.base=true;}if(progressUiV738.areaMode==='base'){const p=progressObj('areas',BASE_EXPLORATION_ID);$('areaBar').style.width=clamp(p.value)+'%';$('areaLabel').textContent=clamp(p.value)+'%';}v738UpdateProgressControls();v738RefreshCombatDropButtons();saveState(false);};
 
 function v738CurrentEventRow(scope='event'){
   const key=scope==='quest'?state.lastQuestEventKey:scope==='base'?state.lastBaseEventKey:state.lastEventKey;if(!key)return null;return (state.events||[]).find(e=>eventUniqueKey(e)===String(key))||null;
