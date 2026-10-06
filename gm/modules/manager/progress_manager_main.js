@@ -455,9 +455,9 @@ function restoreSavedState(){
     state.lastRecipeMerchantContext=savedObject('lastRecipeMerchantContext',state.lastRecipeMerchantContext||{scope:'',areaName:'',eventName:''});
     state.lastRecipeMerchantTrades=savedArray('lastRecipeMerchantTrades',state.lastRecipeMerchantTrades||[]);
     setPartySize(hasSaved('partySize')?data.partySize:(state.partySize||4));
+    if(typeof v738RestoreSavedSessionUi==='function')v738RestoreSavedSessionUi(data.progressUiState||{});
     renderAll();
     if(typeof restoreRumorSelectionByEventKey==='function')restoreRumorSelectionByEventKey(savedRumorEventKey);
-    if(typeof v738RestoreSavedSessionUi==='function')v738RestoreSavedSessionUi(data.progressUiState||{});
     addLog('保存済み進行状態を復元しました。');
   }catch(e){addLog('保存済み進行状態の復元に失敗しました：'+e.message);}
 }
