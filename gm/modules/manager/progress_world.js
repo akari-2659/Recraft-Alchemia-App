@@ -23,7 +23,19 @@ function selectedTimeSlot(){return normalizeTimeSlot(state.timeSlot||$('areaTime
 function setTimeSlot(value,options={}){
   const slot=normalizeTimeSlot(value);state.timeSlot=slot;
   ['areaTimeSlotSelect','questTimeSlotSelect'].forEach(id=>{const el=$(id);if(el)el.value=slot;});
-  if(options.reset!==false){state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastQuestEventText='';state.lastQuestEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';clearTokenExportEncounter();}
+  if(options.reset!==false){
+    // 時間帯が変わると候補イベント・遭遇傾向・噂の有効性が変わるため、
+    // 直前イベントの本文だけでなく報酬・宝箱・越境使用・ドロップ状態もまとめて破棄する。
+    if(typeof clearAreaRandomEventHistory==='function')clearAreaRandomEventHistory();
+    else{state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventOutcomeKey='';}
+    if(typeof clearQuestRandomEventHistory==='function')clearQuestRandomEventHistory();
+    else{state.lastQuestEventText='';state.lastQuestEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';state.lastQuestOutcomeKey='';}
+    if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied){
+      progressUiV738.importantApplied.event=null;
+      progressUiV738.importantApplied.quest=null;
+    }
+    clearTokenExportEncounter();
+  }
   renderTimeControls();
   if(options.render!==false){renderArea();renderQuest();}
   if(options.save!==false)saveState(false);
