@@ -347,6 +347,76 @@ function rerollDailyQuestsInProgress(kind=''){
 }
 function toggleSelectedImportantQuestVisibility(){const q=selected($('questSelect'),state.quests);if(!q||questCategoryFor(q)!=='重要')return;const key=String(q.id||q.name||'');progressUiV738.importantVisibility[key]=!questEnabled(q);v738SaveImportantVisibility();const keep=key;fillQuestSelect(keep);renderQuest();v738RefreshMainSelectionUi();addLog(`重要クエスト「${q.name||q.id}」を${questEnabled(q)?'表示':'非表示'}にしました。`);}
 
+function v738SerializableUiState(){
+  return {
+    questActive:!!progressUiV738.questActive,
+    areaActive:!!progressUiV738.areaActive,
+    areaMode:String(progressUiV738.areaMode||'normal'),
+    questCategory:String(currentQuestCategory||'重要'),
+    questId:String($('questSelect')?.value||''),
+    areaId:String($('areaSelect')?.value||''),
+    slotResolved:{quest:!!progressUiV738.slotResolved.quest,event:!!progressUiV738.slotResolved.event,base:!!progressUiV738.slotResolved.base},
+    seen:{
+      quest:[...v738CurrentSeenSet('quest')],
+      event:[...v738CurrentSeenSet('event')],
+      base:[...v738CurrentSeenSet('base')]
+    },
+    hidden:v738DeepClone(progressUiV738.hidden||{active:false,snapshot:null,originScope:'',areaId:''})
+  };
+}
+function v738RestoreSavedSessionUi(saved={}){
+  const ui=(saved&&typeof saved==='object')?saved:{};
+  progressUiV738.questActive=!!ui.questActive;
+  progressUiV738.areaActive=!!ui.areaActive;
+  progressUiV738.areaMode=ui.areaMode==='base'?'base':'normal';
+  progressUiV738.slotResolved={
+    quest:!!ui.slotResolved?.quest,
+    event:!!ui.slotResolved?.event,
+    base:!!ui.slotResolved?.base
+  };
+  progressUiV738.seen={
+    quest:new Set(Array.isArray(ui.seen?.quest)?ui.seen.quest:[]),
+    event:new Set(Array.isArray(ui.seen?.event)?ui.seen.event:[]),
+    base:new Set(Array.isArray(ui.seen?.base)?ui.seen.base:[])
+  };
+  progressUiV738.hidden=(ui.hidden&&typeof ui.hidden==='object')?v738DeepClone(ui.hidden):{active:false,snapshot:null,originScope:'',areaId:''};
+
+  setQuestCategory(ui.questCategory==='デイリー'?'デイリー':'重要');
+  if(ui.questId&&[...($('questSelect')?.options||[])].some(o=>o.value===String(ui.questId)))$('questSelect').value=String(ui.questId);
+
+  const savedAreaId=String(ui.areaId||'');
+  fillExplorationAreaSelect(savedAreaId||BASE_EXPLORATION_ID);
+  const areaSel=$('areaSelect');
+  if(areaSel&&savedAreaId&&[...areaSel.options].some(o=>o.value===savedAreaId))areaSel.value=savedAreaId;
+
+  if(progressUiV738.hidden.active){
+    const hiddenId=String(progressUiV738.hidden.areaId||savedAreaId||'');
+    const hidden=hiddenAreaById(hiddenId);
+    const runtime=$('areaProgressRuntime'),hiddenBody=$('hiddenProgressModal')?.querySelector('.progress-modal-body');
+    if(hidden&&areaSel&&runtime&&hiddenBody){
+      let opt=[...areaSel.options].find(o=>o.value===hiddenId);
+      if(!opt){opt=document.createElement('option');opt.value=hiddenId;opt.textContent=String(hidden.name||hiddenId);opt.dataset.hiddenTemp='1';areaSel.appendChild(opt);}
+      areaSel.value=hiddenId;
+      hiddenBody.appendChild(runtime);
+      progressUiV738.areaActive=true;progressUiV738.areaMode='normal';
+      v738ToggleAreaRuntime('normal');
+      $('hiddenProgressModalTitle').textContent=`${hidden.name||'隠しエリア'}：探索`;
+      v738SetModalOpen('hiddenProgressModal',true);
+    }else{
+      progressUiV738.hidden={active:false,snapshot:null,originScope:'',areaId:''};
+    }
+  }else if(progressUiV738.areaActive){
+    v738ToggleAreaRuntime(progressUiV738.areaMode);
+    const title=progressUiV738.areaMode==='base'?'開拓拠点リクラフト：探索':`${selectedExplorationArea()?.name||'エリア'}：探索`;
+    v738OpenAreaModal(title);
+  }
+  if(progressUiV738.questActive)v738OpenQuestModal();
+
+  renderQuest();renderArea();renderBaseEventControls();
+  resetImportantUsePanel('quest');resetImportantUsePanel('event');resetImportantUsePanel('base');
+  v738UpdateProgressControls();v738RefreshCombatDropButtons();
+}
+
 const v737RenderArea=renderArea;
 renderArea=function(){
   if(isBaseExplorationSelected()&&!progressUiV738.hidden.active){
