@@ -391,7 +391,16 @@ function v738SerializableUiState(){
     kohakuMaterials:v738DeepClone(progressUiV738.kohakuMaterials||{areaId:'',seq:0,currentEventToken:'',sources:{}})
   };
 }
+function v738ResetProgressModalDomBeforeRestore(){
+  if(!$('dropProgressModal')?.classList.contains('hidden'))closeCombatDropModal();
+  ['questProgressModal','areaProgressModal','hiddenProgressModal','bossRumorChoiceModal'].forEach(id=>v738SetModalOpen(id,false));
+  const areaRuntime=$('areaProgressRuntime'),areaBody=$('areaProgressModal')?.querySelector('.progress-modal-body');
+  if(areaRuntime&&areaBody&&areaRuntime.parentNode!==areaBody)areaBody.insertBefore(areaRuntime,$('baseProgressRuntime')||null);
+  const areaSel=$('areaSelect');
+  if(areaSel)[...areaSel.options].filter(o=>o.dataset.hiddenTemp==='1').forEach(o=>o.remove());
+}
 function v738RestoreSavedSessionUi(saved={}){
+  v738ResetProgressModalDomBeforeRestore();
   const ui=(saved&&typeof saved==='object')?saved:{};
   progressUiV738.questActive=!!ui.questActive;
   progressUiV738.areaActive=!!ui.areaActive;
