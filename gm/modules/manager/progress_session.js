@@ -423,7 +423,7 @@ function v738RestoreSavedSessionUi(saved={}){
   const savedQuestId=String(ui.questId||'');
   const savedQuest=(state.quests||[]).find(q=>String(q.id||q.name||'')===savedQuestId)||null;
   const savedQuestCategory=savedQuest?questCategoryFor(savedQuest):(ui.questCategory==='デイリー'?'デイリー':'重要');
-  setQuestCategory(savedQuestCategory);
+  setQuestCategory(savedQuestCategory,{resetContext:false,save:false,render:false});
   const questSel=$('questSelect');
   if(savedQuestId&&questSel){
     let opt=[...questSel.options].find(o=>o.value===savedQuestId);
