@@ -97,8 +97,6 @@ function setReadOnly(readOnly) {
   for (const el of document.querySelectorAll('[data-skill-crystal-input]')) el.disabled = readOnly;
   for (const el of document.querySelectorAll('[data-loadout-preset-input],[data-loadout-preset-action]')) el.disabled = readOnly;
   for (const el of document.querySelectorAll('[data-craft-goal-runs],[data-craft-goal-make],[data-craft-goal-reduce],[data-craft-favorite-remove]')) el.disabled = readOnly;
-  for (const btn of document.querySelectorAll('[data-skill-remove],#addSkillByPublicIdBtn,#clearSkillPublicIdBtn')) btn.disabled = readOnly || (btn.dataset.skillRemove && normalizeSkillGachaState(skillGachaState||{}).equippedSkillIds.includes(btn.dataset.skillRemove));
-  if ($('addInventoryItemBtn')) $('addInventoryItemBtn').disabled = readOnly;
   if ($('sortInventoryItemBtn')) $('sortInventoryItemBtn').disabled = readOnly;
   if ($('addInitialWeaponSetBtn')) $('addInitialWeaponSetBtn').disabled = readOnly;
   const editOnly = ['saveBtn','rollBtn'];
@@ -281,11 +279,6 @@ $('historyList')?.addEventListener('click',e=>{const countBtn=e.target.closest('
     }
   }, true);
 
-  if ($('addSkillByPublicIdBtn')) $('addSkillByPublicIdBtn').addEventListener('click', addSkillByPublicIds);
-  if ($('clearSkillPublicIdBtn')) $('clearSkillPublicIdBtn').addEventListener('click',()=>{if($('skillPublicIdInput'))$('skillPublicIdInput').value='';if($('skillPublicIdStatus')){$('skillPublicIdStatus').className='status-box';$('skillPublicIdStatus').textContent='登録IDを入力してください。';}});
-  if ($('skillWarehouseSearch')) $('skillWarehouseSearch').addEventListener('input',e=>{skillWarehouseFilter.search=e.target.value||'';renderSkillWarehouse();});
-  if ($('skillCategoryTabs')) $('skillCategoryTabs').addEventListener('click',e=>{const b=e.target.closest('[data-skill-category]');if(!b)return;skillWarehouseFilter.category=b.dataset.skillCategory||'全て';if(skillWarehouseFilter.category!=='全て'&&skillWarehouseFilter.category!=='武器専用')skillWarehouseFilter.weaponType='全て';renderSkillWarehouse();});
-  if ($('skillWeaponTabs')) $('skillWeaponTabs').addEventListener('click',e=>{const b=e.target.closest('[data-skill-weapon]');if(!b)return;skillWarehouseFilter.weaponType=b.dataset.skillWeapon||'全て';renderSkillWarehouse();});
   if ($('skillCrystalStageSelect')) $('skillCrystalStageSelect').addEventListener('change',e=>{
     const state=normalizeSkillGachaState(skillGachaState||{}),oldSlots=state.crystalSlots,nextSlots=crystalSlotNumber(e.target.value,oldSlots);
     if(nextSlots===oldSlots)return;
@@ -298,12 +291,10 @@ $('historyList')?.addEventListener('click',e=>{const countBtn=e.target.closest('
     if($('editorStatus')){$('editorStatus').className='status-box ok';$('editorStatus').textContent=`スキルクリスタルを${nextSlots}枠へ変更しました。${removed?`外れたスキル${removed}件はスキル倉庫に残っています。`:''}`;}
   });
   if ($('skillCrystalSlots')) $('skillCrystalSlots').addEventListener('change',e=>{const sel=e.target.closest('[data-skill-crystal-slot]');if(!sel)return;const state=normalizeSkillGachaState(skillGachaState||{}),i=Number(sel.dataset.skillCrystalSlot),old=state.equippedSkillIds[i]||'',next=sel.value||'';if(next&&state.equippedSkillIds.some((v,j)=>j!==i&&v===next)){sel.value=old;if($('editorStatus')){$('editorStatus').className='status-box error';$('editorStatus').textContent='同じスキルを複数枠へ装着できません。';}return;}state.equippedSkillIds[i]=next;skillGachaState=state;renderSkillCrystalPanel();updateAll();if(typeof autoSaveDraftSoon==='function')autoSaveDraftSoon('skillGacha');});
-  if ($('skillWarehouseArea')) $('skillWarehouseArea').addEventListener('click',e=>{const b=e.target.closest('[data-skill-remove]');if(!b)return;removeSkillFromWarehouse(b.dataset.skillRemove||'');});
 
   $('makeTokenOutputBtn').addEventListener('click', () => copyOutput('token'));
   $('makePaletteOutputBtn').addEventListener('click', () => copyOutput('palette'));
   $('closeOutputDialogBtn').addEventListener('click', () => $('outputDialog').close());
-  if ($('addInventoryItemBtn')) $('addInventoryItemBtn').addEventListener('click', () => addInventoryItem());
   if ($('addByPublicIdPasteBtn')) $('addByPublicIdPasteBtn').addEventListener('click', addInventoryByPublicIdPaste);
   if ($('publicIdInput')) $('publicIdInput').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); addInventoryByPublicIdPaste(); } });
   if ($('clearPublicIdPasteBtn')) $('clearPublicIdPasteBtn').addEventListener('click', () => { if($('publicIdInput')) $('publicIdInput').value=''; if($('publicIdCountInput')) $('publicIdCountInput').value='1'; if($('publicIdPasteStatus')) { $('publicIdPasteStatus').className='status-box'; $('publicIdPasteStatus').textContent='登録IDを入力してください。'; } });
