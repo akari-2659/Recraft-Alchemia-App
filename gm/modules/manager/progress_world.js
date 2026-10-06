@@ -388,7 +388,13 @@ function renderMonster(){
   const m=selectedDropMonster(); if(!m){$('monsterDetail').textContent=dropAreaMonsterRows().length?'候補から魔物を選択してください。':'このエリアで選択できる魔物がありません。'; return;}
   $('monsterDetail').innerHTML=`<div class="kv"><b>HP</b><span>${esc(m.hp||'')}</span><b>回避</b><span>${esc(m.evasionValue||'')}</span><b>抵抗</b><span>${esc(m.resistValue||'')}</span><b>防御</b><span>${esc(m.defenseValue||'')}</span><b>先制</b><span>${esc(m.initiative||'')}</span><b>解体難易度</b><span>${esc(m.dismantleDifficulty||'未設定')}</span><b>解体判定</b><span>採取技能 &gt;= ${esc(m.dismantleDifficulty||'解体難易度')}</span></div>${m.habit?`<p class="muted"><b>習性：</b>${esc(m.habit)}</p>`:''}`;
 }
-function renderAll(){updateEventCheckCopyButtons();updateEventContentCopyButtons();renderDayStatus();renderTimeControls(); ensureWeatherForUnlockedAreas(false); syncDailyQuestSelectionFromFacility(); ensureDailyQuestSelection(); fillQuestSelect($('questSelect')?.value || ''); fillEventTables(); fillRumorSelect(); fillRumorAreas(); fillInnRumorSelect(); fillTreasureTables(); fillAppraisalRules(); renderQuest(); renderArea(); renderBaseEventControls(); renderDropMode(); renderEncounterDropList(); renderEventRewardPanel('event'); renderEventRewardPanel('quest'); renderEventRewardPanel('base'); renderRecipeMerchantPanel(); updateAreaEventItemCopyButton(); renderRumorResult(); renderDailyQuestResult(); renderWeatherManager(); renderTokenExportPanels(); renderLog();}
+function renderPersistedStandaloneResults(){
+  if($('treasureResult'))$('treasureResult').textContent=state.lastTreasureText||'宝箱結果がありません。';
+  if($('appraisalResult'))$('appraisalResult').textContent=state.lastAppraisalText||'鑑定結果がここに表示されます。';
+  if($('dropResult'))$('dropResult').textContent=state.lastDropText||'ドロップ結果がここに表示されます。';
+  updateTreasureCopyButtons();updateAppraisalCopyButton();
+}
+function renderAll(){updateEventCheckCopyButtons();updateEventContentCopyButtons();renderDayStatus();renderTimeControls(); ensureWeatherForUnlockedAreas(false); syncDailyQuestSelectionFromFacility(); ensureDailyQuestSelection(); fillQuestSelect($('questSelect')?.value || ''); fillEventTables(); fillRumorSelect(); fillRumorAreas(); fillInnRumorSelect(); fillTreasureTables(); fillAppraisalRules(); renderQuest(); renderArea(); renderBaseEventControls(); renderDropMode(); renderEncounterDropList(); renderPersistedStandaloneResults(); renderEventRewardPanel('event'); renderEventRewardPanel('quest'); renderEventRewardPanel('base'); renderRecipeMerchantPanel(); updateAreaEventItemCopyButton(); renderRumorResult(); renderDailyQuestResult(); renderWeatherManager(); renderTokenExportPanels(); renderLog();}
 function getNumFromText(s, fallback=0){const m=String(s||'').match(/[+-]?\d+/); return m?Number(m[0]):fallback;}
 function advanceQuestProgress(){
   const q=selected($('questSelect'),state.quests); if(!q)return;
