@@ -361,7 +361,8 @@ function v738SerializableUiState(){
       event:[...v738CurrentSeenSet('event')],
       base:[...v738CurrentSeenSet('base')]
     },
-    hidden:v738DeepClone(progressUiV738.hidden||{active:false,snapshot:null,originScope:'',areaId:''})
+    hidden:v738DeepClone(progressUiV738.hidden||{active:false,snapshot:null,originScope:'',areaId:''}),
+    kohakuMaterials:v738DeepClone(progressUiV738.kohakuMaterials||{areaId:'',seq:0,currentEventToken:'',sources:{}})
   };
 }
 function v738RestoreSavedSessionUi(saved={}){
@@ -380,6 +381,9 @@ function v738RestoreSavedSessionUi(saved={}){
     base:new Set(Array.isArray(ui.seen?.base)?ui.seen.base:[])
   };
   progressUiV738.hidden=(ui.hidden&&typeof ui.hidden==='object')?v738DeepClone(ui.hidden):{active:false,snapshot:null,originScope:'',areaId:''};
+  progressUiV738.kohakuMaterials=(ui.kohakuMaterials&&typeof ui.kohakuMaterials==='object')
+    ?v738DeepClone(ui.kohakuMaterials)
+    :{areaId:'',seq:0,currentEventToken:'',sources:{}};
 
   setQuestCategory(ui.questCategory==='デイリー'?'デイリー':'重要');
   if(ui.questId&&[...($('questSelect')?.options||[])].some(o=>o.value===String(ui.questId)))$('questSelect').value=String(ui.questId);
