@@ -340,7 +340,7 @@ function renderArea(){
   const p=progressObj('areas',a.id||a.name);
   $('areaNote').value=p.note||''; renderTimeControls(); renderWeatherManager();$('areaBar').style.width=clamp(p.value)+'%';$('areaLabel').textContent=clamp(p.value)+'%';
   $('areaDetail').innerHTML=`<div class="kv"><b>種別</b><span>${esc(a.areaType||'')}</span><b>難度</b><span>${esc(a.difficulty||'')}</span><b>イベント表</b><span>${esc(a.eventTableId||'')}</span><b>探索進行上昇</b><span>+${areaStepAmount(a)}%</span><b>主な素材</b><span>${esc(a.mainMaterials||'')}</span><b>主な魔物</b><span>${esc(a.mainMonsters||'')}</span><b>フィールド効果</b><span>${esc(a.fieldEffect||'なし')}</span>${areaUsesWorldCycle(a)?`<b>時間帯</b><span>${esc(selectedTimeSlot())}</span>`:''}</div>${a.description?`<p class="muted">${esc(a.description)}</p>`:''}`;
-  const step=areaStepAmount(a),current=clamp(p.value),rumor=selectedRumor();
+  const step=areaStepAmount(a),current=clamp(p.value),rumor=areaUsesWorldCycle(a)?selectedRumor():null;
   const rumorText=rumor?(isBossRumor(rumor)?'100%到達時にボス追跡を選択可能':(rumorActiveForTime(rumor,a)?'選択中の噂に対応するイベントの抽選重みが上昇':'選択中の噂は現在の時間帯では無効')):'噂補正なし';
   $('areaStepInfo').innerHTML=`<div class="kv"><b>現在</b><span>${current}%</span><b>1回の進行</b><span>+${step}%</span><b>進行後</b><span>${clamp(current+step)}%</span><b>噂補正</b><span>${esc(rumorText)}</span></div><p class="muted small">ボス噂は100%到達時に「噂を追う／通常イベント」を選択します。その他の噂は対応イベントの抽選重みを上げます。ランダムイベント結果では進行度を自動変更しません。</p>`;
   fillEventTables();
