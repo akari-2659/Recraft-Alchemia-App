@@ -624,11 +624,19 @@ function questPartyAdjustmentNote(q={}){
 }
 function handlePartySizeChange(value){
   setPartySize(value);
-  state.lastEventText=''; state.lastEventKey=''; state.lastEventCheckCopyText='';
-  state.lastQuestEventText=''; state.lastQuestEventKey=''; state.lastQuestCheckCopyText=''; state.lastQuestBattleCheckCopyText=''; state.lastQuestTreasureCopyText=''; state.lastQuestTreasureResults=[]; state.lastQuestEventTableRewardText=''; state.lastQuestEventTableRewardCopyText=''; state.lastQuestEventRewardState=null;
-  state.lastQuestFixedEventText=''; state.lastQuestFixedEventKey='';
+  // 人数変更で遭遇構成が変わるため、現在のランダムイベント結果は
+  // 本文・報酬・宝箱・越境使用・ドロップまでまとめて無効化する。
+  if(typeof clearAreaRandomEventHistory==='function')clearAreaRandomEventHistory();
+  else{state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventOutcomeKey='';}
+  if(typeof clearQuestRandomEventHistory==='function')clearQuestRandomEventHistory();
+  else{state.lastQuestEventText='';state.lastQuestEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';state.lastQuestOutcomeKey='';}
+  if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied){
+    progressUiV738.importantApplied.event=null;
+    progressUiV738.importantApplied.quest=null;
+  }
+  state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';
   clearTokenExportEncounter();
-  renderQuest(); renderQuestEvents();
+  renderQuest();renderQuestEvents();renderEventRewardPanel('event');renderEventRewardPanel('quest');updateTreasureCopyButtons();
   saveState(false);
 }
 const ENCOUNTER_RULE_VERSION='v90.8.735-fixed-action-loadout-1';
