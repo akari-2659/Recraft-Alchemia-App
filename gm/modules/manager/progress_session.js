@@ -34,6 +34,14 @@ applyProgressMaster=function(master){
   const result=v737ApplyProgressMaster(master);
   fillQuestSelect(questBefore);
   fillExplorationAreaSelect(areaBefore);
+  if(progressUiV738.hidden.active&&areaBefore){
+    const hidden=hiddenAreaById(areaBefore),sel=$('areaSelect');
+    if(hidden&&sel){
+      let opt=[...sel.options].find(o=>o.value===areaBefore);
+      if(!opt){opt=document.createElement('option');opt.value=areaBefore;opt.textContent=String(hidden.name||areaBefore);opt.dataset.hiddenTemp='1';sel.appendChild(opt);}
+      sel.value=areaBefore;
+    }
+  }
   normalizeBaseUnlockedAreaIds();renderBaseEventControls();renderDailyUnlockedAreaControl();renderArea();renderQuest();
   return result;
 };
