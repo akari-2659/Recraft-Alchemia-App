@@ -322,8 +322,16 @@ function eventRewardTableSlotsFromClause(clause=''){
 }
 function eventRewardMaxTableSlots(row={}){
   const clauses=String(row.result||'').split(/[。\n]+/).map(x=>x.trim()).filter(Boolean);
-  const parsed=clauses.map(eventRewardTableSlotsFromClause);
-  return Math.max(0,Number(row.rewardDrawCount)||0,...parsed);
+  let currentBranchKey='',lastSuccessBranchKey='';
+  const groups=clauses.map(clause=>{
+    let trigger=typeof eventRewardTrigger==='function'?eventRewardTrigger(clause,currentBranchKey):{kind:'always',value:0,branchKey:''};
+    if(trigger.kind==='threshold'&&!String(trigger.branchKey||''))trigger={...trigger,branchKey:lastSuccessBranchKey||'判定'};
+    if(trigger.kind==='success'){currentBranchKey=String(trigger.branchKey||'判定');lastSuccessBranchKey=currentBranchKey;}
+    else if(trigger.kind==='failure'||trigger.kind==='victory')currentBranchKey='';
+    return {trigger,clause,tableSlots:eventRewardTableSlotsFromClause(clause)};
+  }).filter(g=>g.tableSlots>0);
+  const inferred=typeof eventRewardTableSlotCountForGroups==='function'?eventRewardTableSlotCountForGroups(groups):Math.max(0,...groups.map(g=>Number(g.tableSlots)||0));
+  return Math.max(0,Number(row.rewardDrawCount)||0,inferred);
 }
 function eventRewardTableSpec(row={},areaName=''){
   const result=String(row.result||'');
@@ -375,7 +383,8 @@ function setEventTableRewardState(scope='event',value=null){
 function eventRewardSelectedTableSlots(scope='event'){
   const reward=eventRewardState(scope),table=eventTableRewardState(scope);
   if(!reward)return Math.max(0,Number(table?.slots?.length)||0);
-  return Math.max(0,...reward.groups.filter(g=>g.selected||g.trigger.kind==='always').map(g=>Number(g.tableSlots)||0));
+  const groups=reward.groups.filter(g=>g.selected||g.trigger.kind==='always');
+  return typeof eventRewardTableSlotCountForGroups==='function'?eventRewardTableSlotCountForGroups(groups):Math.max(0,...groups.map(g=>Number(g.tableSlots)||0));
 }
 function eventTableRewardSelectedItems(scope='event'){
   const table=eventTableRewardState(scope),limit=eventRewardSelectedTableSlots(scope);if(!table?.slots?.length||!limit)return[];
@@ -671,7 +680,8 @@ function applyTreasureResultToStandalone(result){
 function treasureConditionLabel(sentence=''){
   const text=String(sentence||'');
   if(text.includes('失敗'))return '失敗時';
-  if(text.includes('目標値+3以上')||text.includes('目標値＋3以上'))return '目標値+3以上';
+  const threshold=text.match(/目標値\s*[+＋]\s*(\d+)\s*以上/);
+  if(threshold)return `目標値+${Number(threshold[1])}以上`;
   if(text.includes('勝利後'))return '勝利後';
   if(text.includes('判定成功')||/^成功/.test(text))return '成功時';
   return '';
@@ -700,41 +710,49 @@ function eventTreasurePlans(row={},areaName=''){
 function eventTreasureConditionKind(label=''){
   const text=String(label||'');
   if(text.includes('失敗'))return'failure';
-  if(text.includes('成功')||text.includes('目標値+'))return'success';
+  if(/目標値\s*[+＋]\s*\d+\s*以上/.test(text))return'threshold';
+  if(text.includes('成功'))return'success';
   if(text.includes('勝利後'))return'victory';
   return'other';
 }
+function eventTreasureThresholdValue(label=''){
+  const m=String(label||'').match(/目標値\s*[+＋]\s*(\d+)\s*以上/);
+  return m?Math.max(0,Number(m[1])||0):0;
+}
 function eventTreasureHasOutcomeSplit(results=[]){
   const kinds=new Set((results||[]).map(r=>eventTreasureConditionKind(r.conditionLabel)));
-  return kinds.has('success')&&kinds.has('failure');
+  return (kinds.has('success')||kinds.has('threshold'))&&kinds.has('failure');
 }
 function eventTreasureHasConditionalOutcome(results=[]){
-  return (results||[]).some(r=>['success','failure','victory'].includes(eventTreasureConditionKind(r.conditionLabel)));
+  return (results||[]).some(r=>['success','failure','threshold','victory'].includes(eventTreasureConditionKind(r.conditionLabel)));
 }
 function eventTreasureResults(scope='event'){
   if(scope==='base')return[];
   return scope==='quest'?(state.lastQuestTreasureResults||[]):(state.lastEventTreasureResults||[]);
 }
-function eventSelectedOutcomeKind(scope='event'){
-  const reward=eventRewardState(scope);if(!reward)return'';
-  const selected=(reward.groups||[]).filter(g=>g.selected||g.trigger?.kind==='always').map(g=>String(g.trigger?.kind||''));
-  if(selected.includes('failure'))return'failure';
-  if(selected.includes('threshold')||selected.includes('success'))return'success';
-  if(selected.includes('victory'))return'victory';
-  return'';
+function eventSelectedOutcomeState(scope='event'){
+  const reward=eventRewardState(scope);if(!reward)return{kind:'',threshold:0};
+  const selected=(reward.groups||[]).filter(g=>g.selected||g.trigger?.kind==='always');
+  if(selected.some(g=>g.trigger?.kind==='failure'))return{kind:'failure',threshold:0};
+  const thresholds=selected.filter(g=>g.trigger?.kind==='threshold').map(g=>Number(g.trigger?.value)||0);
+  if(thresholds.length)return{kind:'threshold',threshold:Math.max(...thresholds)};
+  if(selected.some(g=>g.trigger?.kind==='success'))return{kind:'success',threshold:0};
+  if(selected.some(g=>g.trigger?.kind==='victory'))return{kind:'victory',threshold:0};
+  return{kind:'',threshold:0};
 }
+function eventSelectedOutcomeKind(scope='event'){return eventSelectedOutcomeState(scope).kind;}
 function eventTreasureAllowedBySelectedOutcome(scope='event',result={}){
-  if(result.selected===false)return false;
-  const kind=eventTreasureConditionKind(result.conditionLabel),outcome=eventSelectedOutcomeKind(scope);
-  if(!outcome||kind==='other')return true;
-  if(kind==='success')return outcome==='success';
-  if(kind==='failure')return outcome==='failure';
-  if(kind==='victory')return outcome==='victory';
+  const kind=eventTreasureConditionKind(result.conditionLabel),outcome=eventSelectedOutcomeState(scope);
+  if(!outcome.kind||kind==='other')return true;
+  if(kind==='success')return outcome.kind==='success'||outcome.kind==='threshold';
+  if(kind==='threshold')return outcome.kind==='threshold'&&outcome.threshold>=eventTreasureThresholdValue(result.conditionLabel);
+  if(kind==='failure')return outcome.kind==='failure';
+  if(kind==='victory')return outcome.kind==='victory';
   return true;
 }
 function selectedEventTreasureCopyText(scope='event'){
   return eventTreasureResults(scope)
-    .filter(r=>eventTreasureAllowedBySelectedOutcome(scope,r))
+    .filter(r=>r.selected!==false&&eventTreasureAllowedBySelectedOutcome(scope,r))
     .map(r=>treasureResultCopyText(r))
     .filter(Boolean)
     .join('\n\n');
@@ -747,16 +765,23 @@ function syncEventTreasureCopyState(scope='event'){
   }else state.lastEventTreasureCopyText=text;
   return text;
 }
+function syncEventTreasureSelectionForOutcome(scope='event'){
+  const rows=eventTreasureResults(scope),outcome=eventSelectedOutcomeState(scope);if(!rows.length||!outcome.kind)return rows;
+  rows.forEach(r=>{const kind=eventTreasureConditionKind(r.conditionLabel);if(kind!=='other')r.selected=eventTreasureAllowedBySelectedOutcome(scope,{...r,selected:true});});
+  return rows;
+}
 function setEventTreasureResults(scope='event',results=[]){
-  const rows=(results||[]).map(r=>({...r})),split=eventTreasureHasOutcomeSplit(rows);
-  if(split){
+  const rows=(results||[]).map(r=>({...r})),outcome=eventSelectedOutcomeState(scope),split=eventTreasureHasOutcomeSplit(rows);
+  if(outcome.kind){
+    rows.forEach(r=>{const kind=eventTreasureConditionKind(r.conditionLabel);r.selected=kind==='other'||eventTreasureAllowedBySelectedOutcome(scope,{...r,selected:true});});
+  }else if(split){
     let picked=false;
     rows.forEach(r=>{
       const kind=eventTreasureConditionKind(r.conditionLabel);
       r.selected=!picked&&kind==='success';
       if(r.selected)picked=true;
     });
-  }else rows.forEach(r=>r.selected=true);
+  }else rows.forEach(r=>r.selected=eventTreasureConditionKind(r.conditionLabel)!=='threshold');
   if(scope==='quest')state.lastQuestTreasureResults=rows;
   else state.lastEventTreasureResults=rows;
   syncEventTreasureCopyState(scope);
@@ -764,9 +789,10 @@ function setEventTreasureResults(scope='event',results=[]){
 }
 function updateEventTreasureSelection(scope='event',index=0,checked=false){
   const rows=eventTreasureResults(scope),target=rows[Number(index)];if(!target)return;
-  const split=eventTreasureHasOutcomeSplit(rows);
-  if(split&&checked)rows.forEach((r,i)=>{r.selected=i===Number(index);});
-  else target.selected=!!checked;
+  const kind=eventTreasureConditionKind(target.conditionLabel);
+  target.selected=!!checked;
+  if(checked&&kind==='failure')rows.forEach((r,i)=>{if(i!==Number(index)&&['success','threshold'].includes(eventTreasureConditionKind(r.conditionLabel)))r.selected=false;});
+  if(checked&&['success','threshold'].includes(kind))rows.forEach(r=>{if(eventTreasureConditionKind(r.conditionLabel)==='failure')r.selected=false;});
   if(checked)applyTreasureResultToStandalone(target);
   syncEventTreasureCopyState(scope);
   renderEventRewardPanel(scope);
@@ -783,17 +809,17 @@ function eventTreasureSelectionHtml(scope='event'){
     const outcomeBlocked=!eventTreasureAllowedBySelectedOutcome(scope,{...r,selected:true});
     return `<article class="event-reward-row"><label class="event-reward-check"><input type="checkbox" data-event-treasure-check="${i}" ${r.selected&&!outcomeBlocked?'checked':''} ${outcomeBlocked?'disabled':''}><span><b>${esc(label)}</b><br><span class="muted small">${esc(chest)} / ${esc(content)}${outcomeBlocked?' / 現在の成否では入手不可':''}</span></span></label></article>`;
   }).join('');
-  const note=split?'成功・失敗で宝箱が分かれるイベントです。実際に成立した側だけをチェックしてください。':'成否によって宝箱を開けられるかが変わるイベントです。宝箱を開けられなかった場合はチェックを外してください。';
+  const note=split?'成功・失敗で宝箱が分かれるイベントです。目標値+○以上の宝箱は、その達成時だけ成功側へ追加されます。':'成否によって宝箱を開けられるかが変わるイベントです。宝箱を開けられなかった場合はチェックを外してください。';
   return `<section class="card event-reward-card"><h3>宝箱の成立結果</h3><p class="muted small">${note} 「内容コピー」には、実際に成立した宝箱の中身だけを反映します。</p><div class="event-reward-list">${body}</div></section>`;
 }
 function resolveEventTreasures(row={},areaName='',questFixed=false){
   const plans=eventTreasurePlans(row,areaName),results=[];
-  const hasSuccess=plans.some(p=>p.labels.some(label=>eventTreasureConditionKind(label)==='success'));
+  const hasSuccess=plans.some(p=>p.labels.some(label=>['success','threshold'].includes(eventTreasureConditionKind(label))));
   const hasFailure=plans.some(p=>p.labels.some(label=>eventTreasureConditionKind(label)==='failure'));
   const outcomeSplit=hasSuccess&&hasFailure;
   plans.forEach(plan=>{
     const conditionLabel=plan.labels.join('／');
-    const forceNonEmpty=outcomeSplit&&eventTreasureConditionKind(conditionLabel)==='success';
+    const forceNonEmpty=outcomeSplit&&['success','threshold'].includes(eventTreasureConditionKind(conditionLabel));
     const result=resolveTreasureTable(plan.tableId,areaName,{questFixed,forceNonEmpty});
     result.conditionLabel=conditionLabel;
     results.push(result);
