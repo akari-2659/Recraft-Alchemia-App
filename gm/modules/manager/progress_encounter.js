@@ -826,6 +826,7 @@ function resolveBossRumorChoice(chase){
   rollEvent();
 }
 function triggerAreaClearRumorEvent(area){
+  if(!areaUsesWorldCycle(area))return false;
   const rumor=selectedRumor();
   const boss=bossEventForRumor(area,rumor);
   if(!boss)return false;
@@ -849,7 +850,7 @@ function rollEvent(){
   clearTokenExportEncounter('event');
   const area=selected($('areaSelect'),state.areas);
   const tableId=String((area&&area.eventTableId)||$('eventTableSelect').value||'').trim();
-  const rumor=selectedRumor();
+  const rumor=areaUsesWorldCycle(area)?selectedRumor():null;
   let rows=eventRowsForArea(area,{rumor});
   state.lastEventCheckCopyText='';
   state.lastEventOutcomeKey='';
