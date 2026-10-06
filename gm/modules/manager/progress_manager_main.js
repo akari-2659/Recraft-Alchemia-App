@@ -974,6 +974,7 @@ function progressImmediatePatchedQuests(rows=[]){
   return (rows||[]).map(row=>String(row?.id||'')==='quest_daily_return_route'?{...row,fixedEvents:'100%\t帰路の歪み\t判定：知識>=11または細工>=11。成功：歪みの状態を確認して安全に帰還し、クエストクリア。失敗：帰還時に消耗し、味方全員の疲労度+1。'}:row);
 }
 function applyProgressMaster(master){
+  const rumorKeyBeforeMaster=(typeof rumorSelectionEventKey==='function'?rumorSelectionEventKey():'')||String(state.savedRumorEventKey||'');
   const data=master.data||master;
   const quests=progressImmediatePatchedQuests(data.quests||[]);
   const areas=data.exploration_areas||[];
@@ -991,6 +992,8 @@ function applyProgressMaster(master){
   renderBaseEventControls();
   fillEventTables(); fillRumorSelect(); fillRumorAreas(); fillInnRumorSelect(); fillTreasureTables(); fillAppraisalRules();
   renderAll();
+  if(typeof restoreRumorSelectionByEventKey==='function')restoreRumorSelectionByEventKey(rumorKeyBeforeMaster);
+  state.savedRumorEventKey=rumorKeyBeforeMaster;
   return {quests,areas,events,monsters,items,treasures,appraisalRules};
 }
 let progressDbLoadSerial=0;
