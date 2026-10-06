@@ -29,7 +29,7 @@
 .ra-su-overlay{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(92,70,56,.20),transparent 31rem),#09090c;overflow:hidden;opacity:1;visibility:visible}
 .ra-su-overlay.done{animation:ra-su-overlay-out .42s ease forwards}
 @keyframes ra-su-overlay-out{to{opacity:0;visibility:hidden}}
-.ra-su-stage{width:min(calc(100vw - 16px),920px);height:100vh;height:100dvh;min-height:0;max-height:100vh;max-height:100dvh;padding:clamp(10px,4dvh,34px) clamp(8px,3vw,16px);display:grid;place-items:center;overflow:hidden}
+.ra-su-stage{width:min(calc(100vw - 16px),920px);height:var(--ra-su-viewport-height,100vh);height:var(--ra-su-viewport-height,100dvh);min-height:0;max-height:var(--ra-su-viewport-height,100vh);padding:clamp(6px,3dvh,34px) clamp(6px,3vw,16px);display:grid;place-items:center;overflow:hidden;box-sizing:border-box}
 .ra-su-core{width:100%;text-align:center;position:relative;transform:scale(var(--ra-su-fit-scale,1));transform-origin:center center;will-change:transform}
 .ra-su-content-stack{position:relative;height:340px;min-height:340px}
 .ra-su-decode-area,.ra-su-translation-area{position:absolute;inset:0;display:grid;align-content:center;gap:26px}
@@ -247,8 +247,8 @@ body.ra-su-armed #playerApp{visibility:hidden!important}
       stack ? stack.scrollHeight : 0
     );
     const horizontalPadding = vw <= 520 ? 20 : 36;
-    const verticalPadding = vh <= 520 ? 18 : 40;
-    const scale = Math.min(1, Math.max(.46, Math.min((vw-horizontalPadding)/naturalWidth,(vh-verticalPadding)/naturalHeight)));
+    const verticalPadding = vh <= 420 ? 10 : (vh <= 520 ? 16 : 40);
+    const scale = Math.min(1, Math.max(.30, Math.min((vw-horizontalPadding)/naturalWidth,(vh-verticalPadding)/naturalHeight)));
     core.style.setProperty('--ra-su-fit-scale',String(scale));
     if (stage) stage.style.setProperty('--ra-su-viewport-height',vh+'px');
   }
