@@ -1,10 +1,10 @@
 {
-  "app": "v1.0.139",
-  "version": "1.0.139",
+  "app": "v1.0.140",
+  "version": "1.0.140",
   "raVersion": "v90.8.834",
   "updateUnit": "app",
-  "publishedAt": "2026-10-06T17:40:00+09:00",
-  "releasedAt": "2026-10-06T17:40:00+09:00",
+  "publishedAt": "2026-10-06T17:45:00+09:00",
+  "releasedAt": "2026-10-06T17:45:00+09:00",
   "updatedAt": "2026-10-06",
   "characterSaveApiVersion": 1,
   "characterSaveApiMinSupported": 1
