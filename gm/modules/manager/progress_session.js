@@ -224,9 +224,20 @@ function v738CloseAreaSession(){
       :'探索を途中で終了しますか？\n現在の探索進行度は破棄され、次回は0%から開始します。';
     if(!confirm(msg))return;
   }
+  const completed=value>=100&&resolved;
   if(p)p.value=0;
+  if(!completed){
+    if(scope==='base'){
+      state.lastBaseEventText='';state.lastBaseEventKey='';state.lastBaseCheckCopyText='';state.lastBaseOutcomeKey='';
+      state.lastBaseRewardText='';state.lastBaseRewardCopyText='';state.lastBaseEventRewardState=null;state.lastBaseEventTableRewardState=null;
+      progressUiV738.importantApplied.base=null;
+    }else{
+      clearAreaRandomEventHistory();progressUiV738.importantApplied.event=null;
+      if(a)kohakuResetLedger(a);
+    }
+  }
   progressUiV738.areaActive=false;progressUiV738.slotResolved[scope]=false;v738SetModalOpen('areaProgressModal',false);
-  saveState(false);addLog(value>=100&&resolved?'探索完了。次回の探索は0%から開始します。':'探索撤退：進行度を破棄しました。');
+  renderEventRewardPanel(scope);updateTreasureCopyButtons();saveState(false);addLog(completed?'探索完了。次回の探索は0%から開始します。':'探索撤退：進行度と探索中の一時状態を破棄しました。');
 }
 function v738CurrentProgressValue(scope){if(scope==='quest'){const q=selected($('questSelect'),state.quests);return q?clamp(progressObj('quests',q.id||q.name).value):0;}if(scope==='base')return clamp(progressObj('areas',BASE_EXPLORATION_ID).value);const a=selectedExplorationArea();return a?clamp(progressObj('areas',a.id||a.name).value):0;}
 function v738UpdateProgressControls(){
