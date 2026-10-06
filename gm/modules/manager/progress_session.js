@@ -223,6 +223,10 @@ advanceQuestProgress=function(){
   if(!progressUiV738.slotResolved.quest){alert('先に現在の進行度のイベントを処理してください。');return;}
   if(isDeliveryQuest(q)){p.value=100;renderQuest();v738UpdateProgressControls();saveState(false);addLog(`${q.name||q.id} の納品を完了しました。`);return;}
   if(before>=100)return;
+  if(!questMatchesTime(q)){
+    const msg=`${q.name||q.id} は ${questTimeRestrictionText(q)} の時間帯のみ進行できます。現在は ${selectedTimeSlot()} です。`;
+    addLog(msg);alert(msg);renderQuest();return;
+  }
   if(!consumeDailyAction(`${q.name||q.id} のクエスト進行`))return;
   const add=questStepAmount(q);p.value=clamp(before+add);clearQuestRandomEventHistory();progressUiV738.importantApplied.quest=null;
   const fired=triggerQuestSpecificEvents(q,before,p.value);progressUiV738.slotResolved.quest=fired.length>0;renderQuest();v738UpdateProgressControls();saveState(false);addLog(`${q.name||q.id} の進行度を +${add}% しました。${before}% → ${p.value}%`);
