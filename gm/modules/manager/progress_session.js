@@ -35,7 +35,14 @@ applyProgressMaster=function(master){
   return result;
 };
 function v738CurrentSeenSet(scope='event'){return progressUiV738.seen[scope]||(progressUiV738.seen[scope]=new Set());}
-function v738FilterUnseen(scope,rows=[]){const seen=v738CurrentSeenSet(scope);return (rows||[]).filter(row=>!seen.has(eventUniqueKey(row)));}
+function v738FilterUnseen(scope,rows=[]){
+  const list=(rows||[]).filter(Boolean),seen=v738CurrentSeenSet(scope);
+  if(!list.length)return [];
+  const unseen=list.filter(row=>!seen.has(eventUniqueKey(row)));
+  // 同一進行中は可能な限り重複を避けるが、候補を一巡したら全候補へ戻す。
+  // 「未出のみ」を厳守して候補0件となり、進行不能になる状態を防ぐ。
+  return unseen.length?unseen:list;
+}
 function v738MarkSeen(scope,key=''){if(key)v738CurrentSeenSet(scope).add(String(key));}
 const v737QuestRandomEvents=questRandomEvents;
 questRandomEvents=function(q){const rows=v737QuestRandomEvents(q);return progressUiV738.questActive?v738FilterUnseen('quest',rows):rows;};
