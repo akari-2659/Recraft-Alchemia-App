@@ -56,7 +56,7 @@ function undoDailyAction(){
   addLog(`行動消費を1回戻しました。残り${dailyActionsRemaining()}回。`);
 }
 function clearDailyRumor(){
-  state.lastRumorText=''; state.lastRumorKey='';
+  state.lastRumorText=''; state.lastRumorKey=''; state.savedRumorEventKey='';
   if($('rumorSelect')) $('rumorSelect').value='';
   if($('rumorSelectForInn')) $('rumorSelectForInn').value='';
   renderRumorDetail(); renderRumorResult();
