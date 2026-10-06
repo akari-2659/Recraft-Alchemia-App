@@ -65,7 +65,7 @@ async function cloudNoCorsPost(action, payload={}) {
   await fetch(url, { method: 'POST', mode: 'no-cors', body });
   return { ok: true, sentNoCors: true };
 }
-function cloudPostMessageRequest(action, payload={}, timeoutMs=60000) {
+function cloudPostMessageRequest(action, payload={}, timeoutMs=18000) {
   return new Promise((resolve,reject)=>{
     const url=gasUrl();
     if(!url){reject(new Error('GAS WebアプリURLが未設定です。'));return;}
@@ -115,11 +115,14 @@ function cloudPostMessageRequest(action, payload={}, timeoutMs=60000) {
         if(attemptNo===1)finishReject(error);
       }
     }
+    // 同じ保存要求を応答待ち中に何度も再送しない。
+    // 応答が取れない場合は短時間で互換経路へ切り替え、上位の保存確認で実データを検証する。
     window.addEventListener('message',onMessage);submitAttempt();
     if(settled)return;
-    const retryMs=Math.max(8000,Math.min(15000,Math.floor((Number(timeoutMs)||60000)/4)));
-    retryTimer=setInterval(submitAttempt,retryMs);
-    timeoutTimer=setTimeout(()=>finishReject(new Error('クラウド保存の応答確認がタイムアウトしました。')),Math.max(15000,Number(timeoutMs)||60000));
+    timeoutTimer=setTimeout(
+      ()=>finishReject(new Error('クラウド保存の応答を確認できなかったため、互換経路へ切り替えます。')),
+      Math.max(8000,Number(timeoutMs)||18000)
+    );
   });
 }
 async function cloudRequest(action, payload={}) {
