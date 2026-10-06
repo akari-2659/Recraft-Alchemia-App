@@ -848,6 +848,7 @@ function fillEventTables(){
 }
 function rollEvent(){
   clearTokenExportEncounter('event');
+  state.lastEventKey='';
   const area=selected($('areaSelect'),state.areas);
   const tableId=String((area&&area.eventTableId)||$('eventTableSelect').value||'').trim();
   const rumor=areaUsesWorldCycle(area)?selectedRumor():null;
