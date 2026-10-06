@@ -148,12 +148,24 @@ function unlockedWeatherAreas(){
 function ensureWeatherForUnlockedAreas(force=false){unlockedWeatherAreas().forEach(a=>ensureAreaWeather(a,force));}
 function rerollAreaWeather(area={}){
   const row=ensureAreaWeather(area,true);if(!row)return;
-  state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventRewardState=null;
+  const current=typeof selectedExplorationArea==='function'?selectedExplorationArea():selected($('areaSelect'),state.areas);
+  const affectsCurrent=!!current&&weatherAreaKey(current)===weatherAreaKey(area);
+  if(affectsCurrent){
+    const hadRandom=!!state.lastEventKey;
+    if(typeof clearAreaRandomEventHistory==='function')clearAreaRandomEventHistory();
+    else{state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventRewardState=null;}
+    if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied){
+      progressUiV738.importantApplied.event=null;
+      if(progressUiV738.areaActive&&progressUiV738.areaMode==='normal'&&hadRandom&&clamp(progressObj('areas',current.id||current.name).value)<100)progressUiV738.slotResolved.event=false;
+    }
+  }
   saveState(false);renderArea();renderWeatherManager();addLog(`${area.name||area.id} の天気を再抽選：${row.weatherName}`);
 }
 function rerollUnlockedWeatherForNewDay(){
   ensureWeatherForUnlockedAreas(true);
-  state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventRewardState=null;
+  if(typeof clearAreaRandomEventHistory==='function')clearAreaRandomEventHistory();
+  else{state.lastEventText='';state.lastEventKey='';state.lastEventCheckCopyText='';state.lastEventRewardState=null;}
+  if(typeof progressUiV738!=='undefined'&&progressUiV738.importantApplied)progressUiV738.importantApplied.event=null;
 }
 function weatherCopyText(){
   ensureWeatherForUnlockedAreas(false);
