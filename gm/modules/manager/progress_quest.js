@@ -640,6 +640,7 @@ function pickRandomEvent(rows, lastKey=''){
 function rollQuestEvent(){
   const q=selected($('questSelect'),state.quests);
   clearTokenExportEncounter('quest');
+  state.lastQuestEventKey='';
   state.lastQuestCheckCopyText='';
   state.lastQuestBattleCheckCopyText='';
   state.lastQuestOutcomeKey='';
