@@ -735,6 +735,7 @@ function triggerQuestSpecificEvents(q,before,after){
       updateTreasureCopyButtons();
     }
     state.lastQuestEventRewardState=buildEventRewardState(e);
+    if(typeof syncEventTreasureSelectionForOutcome==='function')syncEventTreasureSelectionForOutcome('quest');
     syncEventTreasureCopyState('quest');
     const fixedRewardSpec=eventRewardTableSpec(e,area?.name||e.areaName||'');
     if(fixedRewardSpec.tableId){const fixedTableReward=rollRewardItemTable(fixedRewardSpec.tableId,Math.max(fixedRewardSpec.drawCount,eventRewardMaxTableSlots(e)),area?.name||e.areaName||'',e.eventName||'イベント');setEventTableRewardState('quest',fixedTableReward);syncEventTableRewardCopyState('quest');state.lastQuestFixedEventText=[state.lastQuestFixedEventText,fixedTableReward.displayText].filter(Boolean).join('\n\n');}
