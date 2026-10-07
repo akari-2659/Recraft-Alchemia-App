@@ -483,6 +483,13 @@ function restoreSavedState(){
     // deferred 保存中の現在世界状態は currentWorld に分離して保持する。
     // 「保存済み進行を復元」では、セッションが成立していた保存時点の世界条件ごと戻す。
     const data=JSON.parse(raw);
+    const persistentWorld=(data.currentWorld&&typeof data.currentWorld==='object')?data.currentWorld:data;
+    const persistentNotes=(persistentWorld.progressNotes&&typeof persistentWorld.progressNotes==='object')
+      ?persistentWorld.progressNotes
+      :progressNotesSnapshot(data.progress||{});
+    const persistentCompleted=(persistentWorld.completedImportantQuests&&typeof persistentWorld.completedImportantQuests==='object')
+      ?persistentWorld.completedImportantQuests
+      :completedImportantQuestProgressSnapshot(data.progress||{});
     const hasSaved=key=>Object.prototype.hasOwnProperty.call(data,key);
     const savedText=(key,fallback='')=>hasSaved(key)?String(data[key]??''):fallback;
     const savedNullable=(key,fallback=null)=>hasSaved(key)?(data[key]??null):fallback;
@@ -490,6 +497,8 @@ function restoreSavedState(){
     const savedArray=(key,fallback=[])=>hasSaved(key)&&Array.isArray(data[key])?data[key]:fallback;
 
     state.progress=hasSaved('progress')&&data.progress&&typeof data.progress==='object'?data.progress:{quests:{},areas:{}};
+    applyProgressNotesSnapshot(persistentNotes);
+    applyCompletedImportantQuestProgress(persistentCompleted);
     state.log=savedArray('log',state.log||[]);
     state.questEncounterCache=savedObject('questEncounterCache',state.questEncounterCache||{});
     state.areaBossEncountered=savedObject('areaBossEncountered',state.areaBossEncountered||{});
