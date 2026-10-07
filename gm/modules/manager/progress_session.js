@@ -148,10 +148,27 @@ function v738ToggleAreaRuntime(mode='normal'){
   const note=$('areaNote'),noteLabel=note?.previousElementSibling;if(note)note.classList.toggle('hidden',mode==='base');if(noteLabel&&noteLabel.tagName==='LABEL')noteLabel.classList.toggle('hidden',mode==='base');
   $('baseProgressRuntime')?.classList.toggle('hidden',mode!=='base');
 }
+function v738ClearQuestChallengeState(q,{keepActive=false}={}){
+  const key=String(q?.id||q?.name||'');
+  if(key){
+    const p=progressObj('quests',key);p.value=0;p.note='';
+    Object.keys(state.triggeredQuestEvents||{}).filter(k=>k.startsWith(key+':')).forEach(k=>delete state.triggeredQuestEvents[k]);
+    if(state.questWorkReinforcementCounts)delete state.questWorkReinforcementCounts[key];
+    Object.keys(state.questEncounterCache||{}).filter(k=>String(k).includes(`::${key}::`)).forEach(k=>delete state.questEncounterCache[k]);
+  }
+  progressUiV738.seen.quest=new Set();
+  progressUiV738.slotResolved.quest=false;
+  progressUiV738.importantApplied.quest=null;
+  progressUiV738.questActive=!!keepActive;
+  state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';
+  state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';
+  state.lastQuestTreasureCopyText='';state.lastQuestTreasureResults=[];
+  state.lastQuestEventTableRewardText='';state.lastQuestEventTableRewardCopyText='';
+  state.lastQuestEventRewardState=null;state.lastQuestReinforcementText='';
+  clearQuestRandomEventHistory();
+}
 function v738ResetQuestSessionState(q){
-  const key=String(q.id||q.name||'');const p=progressObj('quests',key);p.value=0;progressUiV738.seen.quest=new Set();progressUiV738.slotResolved.quest=false;progressUiV738.questActive=true;
-  Object.keys(state.triggeredQuestEvents||{}).filter(k=>k.startsWith(key+':')).forEach(k=>delete state.triggeredQuestEvents[k]);
-  state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';clearQuestRandomEventHistory();progressUiV738.importantApplied.quest=null;
+  v738ClearQuestChallengeState(q,{keepActive:true});
 }
 function v738ResetAreaSessionState(areaKey,scope='event'){
   const p=progressObj('areas',areaKey);p.value=0;progressUiV738.seen[scope]=new Set();progressUiV738.slotResolved[scope]=false;progressUiV738.areaActive=true;
@@ -202,22 +219,18 @@ function startAreaProgressSession(){
 function v738CloseQuestSession(){
   const q=selected($('questSelect'),state.quests);
   if(!q){progressUiV738.questActive=false;v738SetModalOpen('questProgressModal',false);return;}
-  const key=String(q.id||q.name||''),p=progressObj('quests',key),value=clamp(p.value),completed=value>=100&&!!progressUiV738.slotResolved.quest;
+  const p=progressObj('quests',q.id||q.name),value=clamp(p.value),completed=value>=100&&!!progressUiV738.slotResolved.quest;
   if(!completed){
     const msg=value>=100&&!progressUiV738.slotResolved.quest
-      ?'100%地点のイベントがまだ未処理です。クエストを終了すると進行度は破棄されます。撤退しますか？'
-      :'未完了のクエストから撤退しますか？\n現在のクエスト進行度は破棄され、次回は0%から開始します。';
+      ?'100%地点のイベントがまだ未処理です。クエストを終了しますか？\n報酬は発生せず、この挑戦の進行状態は破棄されます。'
+      :'クエストを終了しますか？\n報酬は発生せず、この挑戦の進行状態は破棄されます。';
     if(!confirm(msg))return;
-    p.value=0;
-    Object.keys(state.triggeredQuestEvents||{}).filter(k=>k.startsWith(key+':')).forEach(k=>delete state.triggeredQuestEvents[k]);
-    state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';
-    state.lastQuestTreasureCopyText='';state.lastQuestTreasureResults=[];state.lastQuestEventTableRewardText='';state.lastQuestEventTableRewardCopyText='';
-    state.lastQuestEventRewardState=null;state.lastQuestReinforcementText='';if(state.questWorkReinforcementCounts)delete state.questWorkReinforcementCounts[key];
-    clearQuestRandomEventHistory();progressUiV738.slotResolved.quest=false;progressUiV738.importantApplied.quest=null;
-    addLog(`クエスト撤退：${q.name||q.id}（進行度を破棄）`);
-  }else addLog(`クエスト完了：${q.name||q.id}`);
-  progressUiV738.questActive=false;progressUiV738.slotResolved.quest=false;v738SetModalOpen('questProgressModal',false);
-  if(completed)fillQuestSelect();
+  }
+  const name=q.name||q.id;
+  v738ClearQuestChallengeState(q);
+  v738SetModalOpen('questProgressModal',false);
+  addLog(completed?`クエスト達成・終了：${name}`:`クエスト終了：${name}（報酬なし）`);
+  fillQuestSelect();
   saveState(false);renderQuest();v738UpdateProgressControls();
 }
 function v738CloseAreaSession(){
