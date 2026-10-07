@@ -512,7 +512,12 @@ function questRowsForCurrentCategory(){
   return (state.quests || []).filter(q=>{
     const cat = questCategoryFor(q);
     if(cat !== currentQuestCategory) return false;
-    if(cat === '重要' && !showOff && !questEnabled(q)) return false;
+    if(cat === '重要'){
+      const key=String(q.id||q.name||''),selectedKey=String($('questSelect')?.value||'');
+      const isCurrentActive=!!progressUiV738.questActive&&selectedKey===key;
+      if(questIsCleared(q)&&!isCurrentActive)return false;
+      if(!showOff&&!questEnabled(q))return false;
+    }
     if(cat === 'デイリー'){
       if(!questEnabled(q)) return false;
       const selectedKeys=new Set(state.lastDailyQuestKeys||[]);
