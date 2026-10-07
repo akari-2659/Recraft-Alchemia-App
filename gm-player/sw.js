@@ -1,10 +1,13 @@
-const APP_VERSION='1.0.171';
+const APP_VERSION='1.0.172';
 const CACHE=`ra-gm-player-app-v${APP_VERSION}`;
 const PREFIX='ra-gm-player-app-v';
 const APP_FILES=[
   './','./index.html','./app.css','./app.js','./ra_startup_overlay.js','./manifest.webmanifest',
   '../assets/common.css','../assets/account.js','../assets/ra_magic_loader.js','../icons/player-app-v4-180.png','../icons/player-app-v4-192.png','../icons/player-app-v4-512.png','../icons/player-app-v4.ico',
-  './modules/character/character.html','./modules/facility/facility.html'
+  './modules/character/character.html','./modules/character/character_main.css',
+  './modules/character/character_core.js','./modules/character/character_data.js','./modules/character/character_inventory.js','./modules/character/character_save.js','./modules/character/character_main.js',
+  '../js/ra_character_master.js','../js/ra_character_output_ui.js','../js/ra_character_equipment.js','../js/ra_character_crafting.js','../js/ra_character_skills.js','../js/ra_character_craft_ui.js','../js/ra_character_history.js','../js/ra_character_cloud_transport.js','../js/ra_character_cloud.js','../js/ra_character_export.js',
+  './modules/facility/facility.html'
 ];
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
