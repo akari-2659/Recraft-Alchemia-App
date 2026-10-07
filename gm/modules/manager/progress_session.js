@@ -255,9 +255,16 @@ function v738UpdateProgressControls(){
   if($('rollQuestEventBtn'))$('rollQuestEventBtn').disabled=!progressUiV738.questActive||progressUiV738.slotResolved.quest||qFixed||isDeliveryQuest(selected($('questSelect'),state.quests)||{});
   if($('rollEventBtn'))$('rollEventBtn').disabled=!(progressUiV738.areaActive&&aScope==='event')||progressUiV738.slotResolved.event;
   if($('rollBaseEventBtn'))$('rollBaseEventBtn').disabled=!(progressUiV738.areaActive&&aScope==='base')||progressUiV738.slotResolved.base;
-  $('rerollQuestEventBtn')?.classList.toggle('hidden',!progressUiV738.questActive||!state.lastQuestEventKey||qFixed);
-  $('rerollEventBtn')?.classList.toggle('hidden',!(progressUiV738.areaActive&&aScope==='event'&&state.lastEventKey));
-  $('rerollBaseEventBtn')?.classList.toggle('hidden',!(progressUiV738.areaActive&&aScope==='base'&&state.lastBaseEventKey));
+  const qRerollRows=progressUiV738.questActive&&!qFixed&&!isDeliveryQuest(selectedQuest)?questRandomEvents(selectedQuest):[];
+  const currentArea=aScope==='event'?selectedExplorationArea():null;
+  const eventRerollRows=(progressUiV738.areaActive&&aScope==='event'&&currentArea&&aVal<100)
+    ?eventRowsForArea(currentArea,{rumor:areaUsesWorldCycle(currentArea)?selectedRumor():null})
+    :[];
+  const baseRerollRows=(progressUiV738.areaActive&&aScope==='base'&&aVal<100)?baseEventRows():[];
+  $('rerollQuestEventBtn')?.classList.toggle('hidden',!progressUiV738.questActive||!state.lastQuestEventKey||qFixed||qVal>=100||!qRerollRows.length);
+  // 100%地点はボス噂／通常イベントの選択後に最終結果として固定する。
+  $('rerollEventBtn')?.classList.toggle('hidden',!(progressUiV738.areaActive&&aScope==='event'&&state.lastEventKey&&aVal<100&&eventRerollRows.length));
+  $('rerollBaseEventBtn')?.classList.toggle('hidden',!(progressUiV738.areaActive&&aScope==='base'&&state.lastBaseEventKey&&aVal<100&&baseRerollRows.length));
   v738RefreshCombatDropButtons();v738RefreshHiddenEntryAction('quest');v738RefreshHiddenEntryAction('event');v738RefreshHiddenEntryAction('base');
 }
 const v737AdvanceQuestProgress=advanceQuestProgress;
