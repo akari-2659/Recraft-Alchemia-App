@@ -406,7 +406,10 @@ function restoreSavedState(){
   try{
     const raw=localStorage.getItem(STORE_KEY);
     if(!raw){addLog('復元できる保存済み進行状態がありません。'); return;}
-    const data=deferredSavedProgressState||JSON.parse(raw);
+    // saveState(false) は deferred のセッション部分を保護しつつ、
+    // 日付・時間帯・天候・噂など現在の世界状態だけ localStorage 側へ反映する。
+    // 復元時は必ずその最新の保護済みスナップショットを読む。
+    const data=JSON.parse(raw);
     const hasSaved=key=>Object.prototype.hasOwnProperty.call(data,key);
     const savedText=(key,fallback='')=>hasSaved(key)?String(data[key]??''):fallback;
     const savedNullable=(key,fallback=null)=>hasSaved(key)?(data[key]??null):fallback;
