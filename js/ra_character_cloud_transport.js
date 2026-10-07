@@ -133,7 +133,7 @@ async function cloudRequest(action, payload={}) {
   // CORS制限で POST の返答を取得できず Failed to fetch になることがあります。
   // 読み込み系はJSONP、保存/削除系は no-cors POST に寄せて回避します。
   if (CLOUD_JSONP_ACTIONS.has(action)) {
-    const attempts=(action==='list'||action==='load')?3:1;
+    const attempts=action==='list'?3:(action==='load'?2:1);
     let lastError=null;
     for(let i=0;i<attempts;i++){
       try{
