@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.168';
+  const APP_VERSION='1.0.169';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const app=document.querySelector('#playerApp'),authError=document.querySelector('#authError');
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
@@ -243,7 +243,7 @@
       frameTimers.set(name,setTimeout(()=>{if(wrap.classList.contains('loaded'))return;wrap.classList.add('load-error');window.RAMagicLoader?.errorWrap(wrap);if(label)label.textContent='読み込みに失敗しました。再読み込みできます。';},45000));
     }
   }
-  function setFrameReady(name){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;if(moduleState[name])moduleState[name].ready=true;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('load-error');const reveal=()=>{wrap.classList.add('loaded');applyThemeToFrame(frame,THEMES[currentTheme()]);};if(window.RAMagicLoader?.completeWrap)window.RAMagicLoader.completeWrap(wrap).then(reveal);else reveal();}
+  function setFrameReady(name){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;if(moduleState[name])moduleState[name].ready=true;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('load-error');const reveal=()=>{wrap.classList.add('loaded');applyThemeToFrame(frame,THEMES[currentTheme()]);};if(name==='character'){reveal();try{window.RAMagicLoader?.completeWrap?.(wrap)?.catch?.(()=>{});}catch(_){}return;}if(window.RAMagicLoader?.completeWrap)window.RAMagicLoader.completeWrap(wrap).then(reveal);else reveal();}
   function setFrameError(name,text='読み込みに失敗しました'){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('loaded');wrap.classList.add('load-error');window.RAMagicLoader?.errorWrap(wrap);const label=wrap.querySelector('.frame-loading-text');if(label)label.textContent=text;}
   function reloadFrame(name){const frame=frames[name];if(!frame)return;const base=frame.dataset.src||frame.getAttribute('src')||'';if(!base)return;frame.dataset.loaded='1';if(moduleState[name])moduleState[name].ready=false;if(name==='character')moduleState.character.lastCharacterId='';setFrameLoading(name,'再読み込み中');try{const u=new URL(base,location.href);u.searchParams.set('retry',String(Date.now()));frame.src=u.toString();}catch(_){frame.src=base+(base.includes('?')?'&':'?')+'retry='+Date.now();}}
   function ensureFrame(name){const frame=frames[name];if(!frame||frame.dataset.loaded==='1')return;frame.dataset.loaded='1';setFrameLoading(name);frame.addEventListener('load',()=>{applyThemeToFrame(frame,THEMES[currentTheme()]);const wrap=frame.closest('.module-frame-wrap');if(!wrap?.classList.contains('loaded')){const label=wrap?.querySelector('.frame-loading-text');if(label)label.textContent='データを読み込み中';window.RAMagicLoader?.phaseWrap(wrap,'Sync',82);}});frame.src=frame.dataset.src;}
