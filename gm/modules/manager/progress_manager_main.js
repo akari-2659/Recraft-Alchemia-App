@@ -104,7 +104,7 @@ function updateRestoreStateButton(){
   const btn=$('restoreStateBtn');if(!btn)return;
   const has=!!deferredSavedProgressState&&savedProgressSnapshotIsRestorable(deferredSavedProgressState);
   btn.disabled=!has;
-  btn.title=has?'保存された進行状態を復元します。':'復元できる保存済み進行状態はありません。';
+  btn.title=has?'保存された探索状態を復元します。':'復元できる保存済み探索状態はありません。';
 }
 function discardDeferredSavedProgressState(){deferredSavedProgressState=null;updateRestoreStateButton();}
 const $=id=>document.getElementById(id);
@@ -450,7 +450,7 @@ function loadState(){
 function restoreSavedState(){
   try{
     const raw=localStorage.getItem(STORE_KEY);
-    if(!raw){addLog('復元できる保存済み進行状態がありません。'); return;}
+    if(!raw){addLog('復元できる保存済み探索状態がありません。'); return;}
     // deferred 保存中の現在世界状態は currentWorld に分離して保持する。
     // 「保存済み進行を復元」では、セッションが成立していた保存時点の世界条件ごと戻す。
     const data=JSON.parse(raw);
@@ -535,8 +535,8 @@ function restoreSavedState(){
     state.questEncounterCache={};
     if(typeof v738RestoreSavedSessionUi==='function')v738RestoreSavedSessionUi(data.progressUiState||{});
     discardDeferredSavedProgressState();
-    addLog('保存済み進行状態を復元しました。');
-  }catch(e){addLog('保存済み進行状態の復元に失敗しました：'+e.message);}
+    addLog('保存済み探索状態を復元しました。');
+  }catch(e){addLog('保存済み探索状態の復元に失敗しました：'+e.message);}
 }
 function optText(row){return row ? `${row.name||row.eventName||row.id||'名称未設定'}` : '未選択';}
 function fillSelect(sel, rows, labelFn){ sel.innerHTML=''; rows.forEach((r,i)=>{const o=document.createElement('option'); o.value=String(i); o.textContent=labelFn?labelFn(r):optText(r); sel.appendChild(o);}); if(!rows.length){const o=document.createElement('option'); o.value=''; o.textContent='データなし'; sel.appendChild(o);} }
