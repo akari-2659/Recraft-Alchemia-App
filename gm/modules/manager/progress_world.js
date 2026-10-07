@@ -660,6 +660,9 @@ function eventRowsForArea(area, options={}){
   return state.events.filter(e=>{
     if(String(e.tableId||'').trim()!==tableId) return false;
     if(isRumorEvent(e) || isQuestSpecificEvent(e)) return false;
+    // エリアボスは通常ランダム抽選へ混ぜない。
+    // ボス噂を追う場合のみ、探索100%地点の専用経路から確定遭遇させる。
+    if(isBossEvent(e) && !options.includeBossEvent) return false;
     if(isBossEvent(e) && encountered && !includeEncounteredBoss) return false;
     if(!eventMatchesWeather(e,area)) return false;
     if(!eventMatchesTime(e,area)) return false;
