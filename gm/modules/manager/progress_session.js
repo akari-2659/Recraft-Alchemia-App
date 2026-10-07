@@ -85,10 +85,7 @@ function setupProgressModalUi(){
   aModal.querySelector('.progress-modal-head').insertAdjacentHTML('beforeend','<div class="progress-modal-subtabs"><button id="areaOpenDropBtn" class="secondary hidden" type="button">アイテムドロップ</button></div>');
   hModal.querySelector('.progress-modal-head').insertAdjacentHTML('beforeend','<span class="hidden-area-badge">隠しエリア</span><div class="progress-modal-subtabs"><button id="hiddenOpenDropBtn" class="secondary hidden" type="button">アイテムドロップ</button></div>');
   dModal.querySelector('.progress-modal-head h2').textContent='アイテムドロップ';
-  qModal.querySelector('.progress-modal-foot').append(
-  v738Button('questCompleteBtn','達成して終了'),
-  v738Button('questEndBtn','報酬なしで終了','ghost')
-);
+  qModal.querySelector('.progress-modal-foot').append(v738Button('questEndBtn','クエストを終了','ghost'));
   aModal.querySelector('.progress-modal-foot').append(v738Button('areaEndBtn','探索を終了','ghost'));
   hModal.querySelector('.progress-modal-foot').append(v738Button('hiddenEndBtn','探索を終了','ghost'));
   dModal.querySelector('.progress-modal-foot').append(v738Button('dropModalCloseBtn','閉じる','ghost'));
@@ -218,23 +215,14 @@ function startAreaProgressSession(){
   }
   const a=selectedArea;v738ToggleAreaRuntime('normal');v738ResetAreaSessionState(a.id||a.name,'event');v738OpenAreaModal(`${a.name||a.id}：探索`);renderArea();v738PrepareAreaSlot(a);saveState(false);addLog(`探索開始：${a.name||a.id}`);
 }
-function v738CloseQuestSession(result='noReward'){
+function v738CloseQuestSession(){
   const q=selected($('questSelect'),state.quests);
   if(!q){progressUiV738.questActive=false;v738SetModalOpen('questProgressModal',false);return;}
-  const p=progressObj('quests',q.id||q.name),value=clamp(p.value),canComplete=value>=100&&!!progressUiV738.slotResolved.quest;
-  const completed=result==='complete'&&canComplete;
-  if(result==='complete'&&!canComplete){
-    alert('クエスト達成として終了するには、100%地点のイベント処理まで完了してください。');
-    return;
-  }
-  const msg=completed
-    ?'クエストを達成として終了しますか？\nクエスト報酬ありとして処理し、この挑戦の進行状態を破棄します。'
-    :'クエストを報酬なしで終了しますか？\nこの挑戦の進行状態を破棄し、次回は0%から開始します。';
-  if(!confirm(msg))return;
+  if(!confirm('クエストを終了しますか？\nこの挑戦の進行状態は破棄され、次回は0%から開始します。'))return;
   const name=q.name||q.id;
   v738ClearQuestChallengeState(q);
   v738SetModalOpen('questProgressModal',false);
-  addLog(completed?`クエスト達成・終了：${name}（報酬あり）`:`クエスト終了：${name}（報酬なし）`);
+  addLog(`クエスト終了：${name}`);
   fillQuestSelect();
   saveState(false);renderQuest();v738UpdateProgressControls();
 }
@@ -273,7 +261,6 @@ function v738UpdateProgressControls(){
   const noQuestActions=questNeedsAction&&(state.dayState?.awaitingEnd||dailyActionsRemaining()<=0);
   if($('questAdvanceBtn'))$('questAdvanceBtn').disabled=!progressUiV738.slotResolved.quest||qVal>=100||noQuestActions;
   if($('areaAdvanceBtn'))$('areaAdvanceBtn').disabled=!progressUiV738.slotResolved[aScope]||aVal>=100;
-  if($('questCompleteBtn'))$('questCompleteBtn').disabled=!progressUiV738.questActive||qVal<100||!progressUiV738.slotResolved.quest;
   if($('questEndBtn'))$('questEndBtn').disabled=!progressUiV738.questActive;
   if($('areaEndBtn'))$('areaEndBtn').textContent=aVal>=100&&progressUiV738.slotResolved[aScope]?'探索完了':'探索を終了';
   if($('hiddenEndBtn'))$('hiddenEndBtn').textContent='元の探索へ戻る';
@@ -547,7 +534,7 @@ const v737RenderTokenExportPanels=renderTokenExportPanels;
 renderTokenExportPanels=function(){v737RenderTokenExportPanels();v738RefreshCombatDropButtons();};
 
 function bindV738ProgressUi(){
-  $('questStartBtn')?.addEventListener('click',startQuestProgressSession);$('areaStartBtn')?.addEventListener('click',startAreaProgressSession);$('questCompleteBtn')?.addEventListener('click',()=>v738CloseQuestSession('complete'));$('questEndBtn')?.addEventListener('click',()=>v738CloseQuestSession('noReward'));$('areaEndBtn')?.addEventListener('click',v738CloseAreaSession);$('hiddenEndBtn')?.addEventListener('click',endHiddenExploration);$('dropModalCloseBtn')?.addEventListener('click',closeCombatDropModal);$('questOpenDropBtn')?.addEventListener('click',openCombatDropModal);$('areaOpenDropBtn')?.addEventListener('click',openCombatDropModal);$('hiddenOpenDropBtn')?.addEventListener('click',openCombatDropModal);$('rerollQuestEventBtn')?.addEventListener('click',rollQuestEvent);$('rerollEventBtn')?.addEventListener('click',rollEvent);$('rerollBaseEventBtn')?.addEventListener('click',rollBaseEvent);$('toggleImportantQuestVisibilityBtn')?.addEventListener('click',toggleSelectedImportantQuestVisibility);$('openDailyAreaModalBtn')?.addEventListener('click',openBaseAreaModal);
+  $('questStartBtn')?.addEventListener('click',startQuestProgressSession);$('areaStartBtn')?.addEventListener('click',startAreaProgressSession);$('questEndBtn')?.addEventListener('click',v738CloseQuestSession);$('areaEndBtn')?.addEventListener('click',v738CloseAreaSession);$('hiddenEndBtn')?.addEventListener('click',endHiddenExploration);$('dropModalCloseBtn')?.addEventListener('click',closeCombatDropModal);$('questOpenDropBtn')?.addEventListener('click',openCombatDropModal);$('areaOpenDropBtn')?.addEventListener('click',openCombatDropModal);$('hiddenOpenDropBtn')?.addEventListener('click',openCombatDropModal);$('rerollQuestEventBtn')?.addEventListener('click',rollQuestEvent);$('rerollEventBtn')?.addEventListener('click',rollEvent);$('rerollBaseEventBtn')?.addEventListener('click',rollBaseEvent);$('toggleImportantQuestVisibilityBtn')?.addEventListener('click',toggleSelectedImportantQuestVisibility);$('openDailyAreaModalBtn')?.addEventListener('click',openBaseAreaModal);
   $('areaSelect')?.addEventListener('change',()=>{v738RefreshMainSelectionUi();renderArea();});$('questSelect')?.addEventListener('change',v738RefreshMainSelectionUi);
   document.addEventListener('click',e=>{const daily=e.target.closest('[data-progress-daily-reroll]');if(daily){rerollDailyQuestsInProgress(String(daily.dataset.progressDailyReroll||''));return;}const hidden=e.target.closest('[data-hidden-area-start]');if(hidden){startHiddenExploration(hidden.dataset.hiddenAreaStart||'',hidden.dataset.hiddenOrigin||'event');return;}});
   document.addEventListener('change',e=>{const sel=e.target?.closest?.('[data-progress-daily-count]');if(!sel)return;const kind=String(sel.dataset.progressDailyCount||'').trim();if(!GUILD_DAILY_REQUEST_KINDS.includes(kind))return;progressUiV738.dailyCounts[kind]=v740NormalizeDailyCount(sel.value,GUILD_DAILY_DEFAULT_COUNTS_V738[kind]);state.lastDailyQuestKeysByKind=state.lastDailyQuestKeysByKind||emptyDailyQuestKeysByKind();state.lastDailyQuestKeysByKind[kind]=[];rerollDailyQuestsInProgress(kind);v740SyncDailyCountControls();addLog(`${kind}の抽選件数を${v740DailyCount(kind)}件に変更しました。`);});
