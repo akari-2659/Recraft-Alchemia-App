@@ -1458,7 +1458,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   function notify(type,text='',extra={}){try{window.parent.postMessage({type,text,...(extra||{})},location.origin)}catch(_){}}
   function applyKey(){const c=ctx();const key=String(c.charKey||'').trim();if(!key)return'';currentCloudPlayerKey=key;if($('cloudPlayerKeyInput'))$('cloudPlayerKeyInput').value=key;if($('playerKey'))$('playerKey').value=key;if($('newPlayerKey'))$('newPlayerKey').value='';return key}
   let embeddedOpenCharacterId='',openingPromise=null;
-  async function resilientLoad(id,options={}){let last;for(let i=0;i<3;i++){try{return await loadItem(id,{...options,force:options.force===true&&i===0})}catch(e){last=e;if(i<2){notify('RA_MODULE_LOADING',`通信を再試行しています（${i+2}/3）`);await sleepMs([800,2000][i]||2500);}}}throw last||new Error('キャラクターデータを読み込めませんでした。')}
+  async function resilientLoad(id,options={}){return await loadItem(id,options)}
   async function openId(id,{force=false,revision=0,storageRow=0}={}){
     const cleanId=String(id||''),key=applyKey();
     if(!key){const msg='ログイン時のキャラクターシート用プレイヤーキー紐づけが見つかりません。';const st=$('editorStatus')||$('homeStatus');if(st){st.className='status-box error';st.textContent=msg;}notify('RA_MODULE_ERROR',msg);return;}
