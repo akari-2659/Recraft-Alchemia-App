@@ -385,6 +385,29 @@ function setStatus(type,msg){const el=$('dbStatus'); el.className='status '+(typ
 function saveState(show=true){
   if(show)discardDeferredSavedProgressState();
   const currentPayload={progress:state.progress, log:state.log, questEncounterCache:state.questEncounterCache||{}, areaBossEncountered:state.areaBossEncountered||{}, partySize:selectedPartySize(), lastQuestFixedEventText:state.lastQuestFixedEventText||'', lastQuestFixedEventKey:state.lastQuestFixedEventKey||'', lastQuestCheckCopyText:state.lastQuestCheckCopyText||'', lastQuestBattleCheckCopyText:state.lastQuestBattleCheckCopyText||'', lastEventCheckCopyText:state.lastEventCheckCopyText||'', lastEventText:state.lastEventText||'', lastEventKey:state.lastEventKey||'', lastEventOutcomeKey:state.lastEventOutcomeKey||'', lastEventRewardState:state.lastEventRewardState||null, lastEventTableRewardText:state.lastEventTableRewardText||'', lastEventTableRewardCopyText:state.lastEventTableRewardCopyText||'', lastEventTableRewardState:state.lastEventTableRewardState||null, lastEventTreasureCopyText:state.lastEventTreasureCopyText||'', lastEventTreasureResults:state.lastEventTreasureResults||[], lastQuestEventText:state.lastQuestEventText||'', lastQuestEventKey:state.lastQuestEventKey||'', lastQuestOutcomeKey:state.lastQuestOutcomeKey||'', lastQuestEventRewardState:state.lastQuestEventRewardState||null, lastQuestEventTableRewardText:state.lastQuestEventTableRewardText||'', lastQuestEventTableRewardCopyText:state.lastQuestEventTableRewardCopyText||'', lastQuestEventTableRewardState:state.lastQuestEventTableRewardState||null, lastQuestTreasureCopyText:state.lastQuestTreasureCopyText||'', lastQuestTreasureResults:state.lastQuestTreasureResults||[], lastBaseCheckCopyText:state.lastBaseCheckCopyText||'', lastBaseOutcomeKey:state.lastBaseOutcomeKey||'', triggeredQuestEvents:state.triggeredQuestEvents||{}, baseUnlockedAreaIds:state.baseUnlockedAreaIds||[], lastBaseEventText:state.lastBaseEventText||'', lastBaseEventKey:state.lastBaseEventKey||'', lastBaseRewardText:state.lastBaseRewardText||'', lastBaseRewardCopyText:state.lastBaseRewardCopyText||'', lastBaseEventRewardState:state.lastBaseEventRewardState||null, lastBaseEventTableRewardState:state.lastBaseEventTableRewardState||null, questRewardCache:state.questRewardCache||{}, treasureSetup:state.treasureSetup||null, treasureContext:state.treasureContext||null, dayState:state.dayState||{day:1,fatigue:0,usedActions:0,awaitingEnd:false}, lastEncounter:state.lastEncounter||null, dropEncounterInstances:state.dropEncounterInstances||[], dropMode:state.dropMode||'single', lastQuestReinforcementText:state.lastQuestReinforcementText||'', questWorkReinforcementCounts:state.questWorkReinforcementCounts||{}, tokenExportEncounter:state.tokenExportEncounter||null, areaWeatherById:state.areaWeatherById||{}, lastRumorText:state.lastRumorText||'', lastRumorKey:state.lastRumorKey||'', selectedRumorEventKey:typeof rumorSelectionEventKey==='function'?rumorSelectionEventKey():'', importantApplied:progressUiV738.importantApplied||{quest:null,event:null,base:null}, progressUiState:typeof v738SerializableUiState==='function'?v738SerializableUiState():null, timeSlot:selectedTimeSlot(), lastTreasureText:state.lastTreasureText||'', lastTreasureCopyText:state.lastTreasureCopyText||'', lastAppraisalText:state.lastAppraisalText||'', lastAppraisalCopyText:state.lastAppraisalCopyText||'', lastDropText:state.lastDropText||'', lastDropSuccessText:state.lastDropSuccessText||'', lastQuestHasTreasure:!!state.lastQuestHasTreasure, lastRecipeMerchantOffers:state.lastRecipeMerchantOffers||[], selectedRecipeMerchantId:state.selectedRecipeMerchantId||'', lastRecipeMerchantContext:state.lastRecipeMerchantContext||{scope:'',areaName:'',eventName:''}, lastRecipeMerchantTrades:state.lastRecipeMerchantTrades||[]};
+  // クエスト挑戦は1回の挑戦内だけで完結し、再起動を跨ぐ保存対象にしない。
+  const persistedPayload={
+    ...currentPayload,
+    progress:{quests:{},areas:{...(currentPayload.progress?.areas||{})}},
+    questEncounterCache:{},
+    lastQuestFixedEventText:'',lastQuestFixedEventKey:'',
+    lastQuestCheckCopyText:'',lastQuestBattleCheckCopyText:'',
+    lastQuestEventText:'',lastQuestEventKey:'',lastQuestOutcomeKey:'',
+    lastQuestEventRewardState:null,lastQuestEventTableRewardText:'',lastQuestEventTableRewardCopyText:'',lastQuestEventTableRewardState:null,
+    lastQuestTreasureCopyText:'',lastQuestTreasureResults:[],lastQuestHasTreasure:false,
+    triggeredQuestEvents:{},questRewardCache:{},lastQuestReinforcementText:'',questWorkReinforcementCounts:{},
+    importantApplied:{quest:null,event:currentPayload.importantApplied?.event||null,base:currentPayload.importantApplied?.base||null}
+  };
+  if(progressUiV738.questActive){
+    persistedPayload.treasureSetup=null;persistedPayload.treasureContext=null;
+    persistedPayload.lastEncounter=null;persistedPayload.dropEncounterInstances=[];
+    persistedPayload.tokenExportEncounter=null;
+    if(String(persistedPayload.lastRecipeMerchantContext?.scope||'')==='quest'){
+      persistedPayload.lastRecipeMerchantOffers=[];persistedPayload.lastRecipeMerchantTrades=[];
+      persistedPayload.selectedRecipeMerchantId='';
+      persistedPayload.lastRecipeMerchantContext={scope:'',areaName:'',eventName:''};
+    }
+  }
   // 起動直後は進行度を自動復元しないが、「保存済み進行を復元」用の
   // セッションスナップショットは、明示保存・新規開始・初期化まで保護する。
   const currentWorld={
@@ -399,14 +422,14 @@ function saveState(show=true){
   };
   const payload=deferredSavedProgressState
     ?{...deferredSavedProgressState,log:currentPayload.log,currentWorld}
-    :currentPayload;
+    :persistedPayload;
   localStorage.setItem(STORE_KEY,JSON.stringify(payload));
   if(show) addLog('現在の状態で保存データを上書きしました。');
 }
 function loadState(){
   // 起動時は「日付・時間帯・天候・噂・解放範囲」など世界側の継続情報だけ自動復元する。
-  // クエスト/探索の進行度、イベント結果、戦闘編成、宝箱、商人などのセッション途中状態は
-  // deferredSavedProgressState に保持し、「保存済み進行を復元」を押した時だけ展開する。
+  // 探索の進行度・イベント結果など、復元対象の探索セッションだけ deferredSavedProgressState に保持する。
+  // クエスト挑戦は途中保存せず、再起動後は常に新規挑戦として扱う。
   try{
     const raw=localStorage.getItem(STORE_KEY);if(!raw)return;
     const data=JSON.parse(raw);deferredSavedProgressState=savedProgressSnapshotIsRestorable(data)?data:null;
