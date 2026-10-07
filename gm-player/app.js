@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.173';
+  const APP_VERSION='1.0.174';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const app=document.querySelector('#playerApp'),authError=document.querySelector('#authError');
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
@@ -246,7 +246,43 @@
   function setFrameReady(name){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;if(moduleState[name])moduleState[name].ready=true;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('load-error');const reveal=()=>{wrap.classList.add('loaded');applyThemeToFrame(frame,THEMES[currentTheme()]);};if(name==='character'){reveal();try{window.RAMagicLoader?.completeWrap?.(wrap)?.catch?.(()=>{});}catch(_){}return;}if(window.RAMagicLoader?.completeWrap)window.RAMagicLoader.completeWrap(wrap).then(reveal);else reveal();}
   function setFrameError(name,text='読み込みに失敗しました'){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('loaded');wrap.classList.add('load-error');window.RAMagicLoader?.errorWrap(wrap);const label=wrap.querySelector('.frame-loading-text');if(label)label.textContent=text;}
   function reloadFrame(name){const frame=frames[name];if(!frame)return;const base=frame.dataset.src||frame.getAttribute('src')||'';if(!base)return;frame.dataset.loaded='1';if(moduleState[name])moduleState[name].ready=false;if(name==='character')moduleState.character.lastCharacterId='';setFrameLoading(name,'再読み込み中');try{const u=new URL(base,location.href);u.searchParams.set('retry',String(Date.now()));frame.src=u.toString();}catch(_){frame.src=base+(base.includes('?')?'&':'?')+'retry='+Date.now();}}
-  function ensureFrame(name){const frame=frames[name];if(!frame||frame.dataset.loaded==='1')return;frame.dataset.loaded='1';setFrameLoading(name);if(name==='character'){const timing=document.querySelector('#characterLoadTiming');if(timing)timing.textContent='キャラシ本体を読み込み中';}frame.addEventListener('load',()=>{applyThemeToFrame(frame,THEMES[currentTheme()]);const wrap=frame.closest('.module-frame-wrap');if(name==='character'){const timing=document.querySelector('#characterLoadTiming');if(timing&&!moduleState.character.ready){const elapsed=characterOpenStartedAt?performance.now()-characterOpenStartedAt:0;timing.textContent=`キャラシ本体読込完了 / 初期化通知待ち / 経過 ${(elapsed/1000).toFixed(1)}秒`;}}if(!wrap?.classList.contains('loaded')){const label=wrap?.querySelector('.frame-loading-text');if(label)label.textContent='データを読み込み中';window.RAMagicLoader?.phaseWrap(wrap,'Sync',82);}});frame.src=frame.dataset.src;}
+  function ensureFrame(name){
+    const frame=frames[name];
+    if(!frame||frame.dataset.loaded==='1')return;
+    frame.dataset.loaded='1';
+    setFrameLoading(name);
+    if(name==='character'){
+      const timing=document.querySelector('#characterLoadTiming');
+      if(timing)timing.textContent='キャラシ本体を読み込み中';
+    }
+    frame.addEventListener('load',()=>{
+      let href='';
+      try{href=String(frame.contentWindow?.location?.href||'');}catch(_){}
+      if(name==='character'){
+        // Ignore the iframe's initial about:blank load. Only the real character document counts.
+        if(!href || href==='about:blank' || !href.includes('/gm-player/modules/character/character.html'))return;
+      }
+      applyThemeToFrame(frame,THEMES[currentTheme()]);
+      const wrap=frame.closest('.module-frame-wrap');
+      if(name==='character'){
+        const timing=document.querySelector('#characterLoadTiming');
+        if(timing&&!moduleState.character.ready){
+          const elapsed=characterOpenStartedAt?performance.now()-characterOpenStartedAt:0;
+          timing.textContent=`キャラシ本体読込完了 / キャラ初期化開始 / 経過 ${(elapsed/1000).toFixed(1)}秒`;
+        }
+        // Re-send after the child has fully loaded so the message listener definitely exists.
+        const id=String(window.RA_PLAYER_CONTEXT.characterId||selectedCharacterId||'');
+        if(id==='__new__')postCharacter({type:'RA_NEW_CHARACTER'});
+        else if(id)postCharacter({type:'RA_OPEN_CHARACTER',characterId:id,revision:Number(window.RA_PLAYER_CONTEXT.characterMeta?.revision||0)||0,storageRow:Number(window.RA_PLAYER_CONTEXT.characterMeta?.storageRow||0)||0,force:false});
+      }
+      if(!wrap?.classList.contains('loaded')){
+        const label=wrap?.querySelector('.frame-loading-text');
+        if(label)label.textContent='データを読み込み中';
+        window.RAMagicLoader?.phaseWrap(wrap,'Sync',82);
+      }
+    });
+    frame.src=frame.dataset.src;
+  }
   function show(name,{writeHash=true}={}){if(!document.querySelector('#view-'+name))name='home';views.forEach(v=>v.classList.toggle('active',v.id==='view-'+name));nav.forEach(b=>b.classList.toggle('active',b.dataset.view===name));if(name!=='character')characterButtons().forEach(b=>b.classList.remove('active'));const active=document.querySelector('#view-'+name);mobileTitle.textContent=active?.dataset.title||'Recraft Alchemia';ensureFrame(name);closeDrawer();if(writeHash&&location.hash!=='#'+name)history.pushState(null,'','#'+name);}
   function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
   function jsonpOnce(action,payload={},timeoutMs=24000){return new Promise((resolve,reject)=>{const cb='raPlayerProtoCb_'+Date.now()+'_'+Math.random().toString(36).slice(2),script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('キャラクター一覧の取得に時間がかかっています。'));},timeoutMs);function cleanup(){clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}script.remove()}window[cb]=json=>{cleanup();if(!json||json.ok===false)reject(new Error(json?.error||'キャラクター一覧を取得できませんでした。'));else resolve(json)};try{const u=new URL(GAS_URL);u.searchParams.set('api','1');u.searchParams.set('action',action);u.searchParams.set('callback',cb);u.searchParams.set('_t',Date.now());Object.entries(payload).forEach(([k,v])=>{if(v!==undefined&&v!==null)u.searchParams.set(k,typeof v==='object'?JSON.stringify(v):String(v))});script.onerror=()=>{cleanup();reject(new Error('キャラクター一覧の通信に失敗しました。'));};script.src=u.toString();document.head.appendChild(script);}catch(e){cleanup();reject(e)}})}
