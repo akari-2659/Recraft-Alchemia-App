@@ -442,7 +442,7 @@ function saveState(show=true){
     ?{...deferredSavedProgressState,log:currentPayload.log,currentWorld}
     :currentPayload;
   localStorage.setItem(STORE_KEY,JSON.stringify(payload));
-  if(show) addLog('進行状態を保存しました。');
+  if(show) addLog('現在の状態で保存データを上書きしました。');
 }
 function loadState(){
   // 起動時は「日付・時間帯・天候・噂・解放範囲」など世界側の継続情報だけ自動復元する。
