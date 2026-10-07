@@ -89,6 +89,7 @@ const GUILD_DAILY_CHANNEL_NAME='recraft_alchemia_guild_daily_channel';
 const GUILD_DAILY_REQUEST_KINDS=['拠点内依頼','エリア依頼','納品依頼'];
 const MASTER_CACHE_KEY=STORE_KEY+'_master_cache_v1';
 let deferredSavedProgressState=null;
+let legacyCompletedQuestProgressForMigration={};
 function savedProgressSnapshotHasActiveSession(data={}){
   const ui=data&&typeof data.progressUiState==='object'&&data.progressUiState?data.progressUiState:{};
   return !!(ui.questActive||ui.areaActive||ui.hidden?.active);
@@ -126,6 +127,14 @@ function applyCompletedImportantQuestProgress(rows={}){
   Object.entries(rows||{}).forEach(([key,value])=>{
     if(Number(value)>=100)progressObj('quests',key).value=100;
   });
+}
+function migrateLegacyCompletedImportantQuestProgress(){
+  const rows=legacyCompletedQuestProgressForMigration||{};
+  (state.quests||[]).filter(q=>questCategoryFor(q)==='重要').forEach(q=>{
+    const key=String(q.id||q.name||'');
+    if(key&&Number(rows[key])>=100)progressObj('quests',key).value=100;
+  });
+  legacyCompletedQuestProgressForMigration={};
 }
 function savedProgressSnapshotIsRestorable(data={}){
   return savedProgressSnapshotHasActiveSession(data)||savedProgressSnapshotHasProgress(data);
@@ -452,6 +461,19 @@ function loadState(){
     state.savedRumorEventKey=String(world.selectedRumorEventKey||'');
     state.timeSlot=normalizeTimeSlot(world.timeSlot||'朝');
     state.dayState=normalizeDayState(world.dayState);
+    state.progress={quests:{},areas:{}};
+    const notes=(world.progressNotes&&typeof world.progressNotes==='object')
+      ?world.progressNotes
+      :progressNotesSnapshot(data.progress||{});
+    applyProgressNotesSnapshot(notes);
+    if(world.completedImportantQuests&&typeof world.completedImportantQuests==='object'){
+      applyCompletedImportantQuestProgress(world.completedImportantQuests);
+      legacyCompletedQuestProgressForMigration={};
+    }else{
+      legacyCompletedQuestProgressForMigration=Object.fromEntries(
+        Object.entries(data.progress?.quests||{}).filter(([,row])=>clamp(row?.value)>=100).map(([key])=>[key,100])
+      );
+    }
   }catch(e){}
 }
 function restoreSavedState(){
