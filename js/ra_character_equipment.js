@@ -1836,8 +1836,9 @@ function showEditorTab(tab) {
   const map = { ability:'tabAbility', skills:'tabSkills', skillCrystal:'tabSkillCrystal', equipment:'tabEquipment', carry:'tabCarry', inventory:'tabInventory', craftList:'tabCraftList',dataMaintenance:'tabDataMaintenance' };
   const target = $(map[tab] || 'tabAbility');
   if (!target) return;
-  // 倉庫は初回表示時だけDOMを構築する。キャラを開く瞬間の数百件カード生成を避ける。
+  // 重い補助UIは対応タブの初回表示時だけDOMを構築する。
   if (tab === 'inventory' && inventoryUiDirty) renderInventory({refreshLinked:false});
+  if (typeof hydrateDeferredCharacterUi==='function') hydrateDeferredCharacterUi(tab);
   if (tab === 'craftList') renderCraftLists();
   if (target.classList.contains('active')) return;
   for (const page of document.querySelectorAll('.editor-tab-page')) page.classList.toggle('active', page === target);
