@@ -93,11 +93,21 @@ function savedProgressSnapshotHasActiveSession(data={}){
   const ui=data&&typeof data.progressUiState==='object'&&data.progressUiState?data.progressUiState:{};
   return !!(ui.questActive||ui.areaActive||ui.hidden?.active);
 }
+function savedProgressSnapshotHasProgress(data={}){
+  const boxes=data&&typeof data.progress==='object'&&data.progress?data.progress:{};
+  return ['quests','areas'].some(type=>Object.values(boxes[type]||{}).some(row=>{
+    const value=Number(row?.value)||0,note=String(row?.note||'').trim();
+    return value!==0||!!note;
+  }));
+}
+function savedProgressSnapshotIsRestorable(data={}){
+  return savedProgressSnapshotHasActiveSession(data)||savedProgressSnapshotHasProgress(data);
+}
 function updateRestoreStateButton(){
   const btn=$('restoreStateBtn');if(!btn)return;
-  const has=!!deferredSavedProgressState&&savedProgressSnapshotHasActiveSession(deferredSavedProgressState);
+  const has=!!deferredSavedProgressState&&savedProgressSnapshotIsRestorable(deferredSavedProgressState);
   btn.disabled=!has;
-  btn.title=has?'保存された進行中セッションを復元します。':'復元できる進行中セッションはありません。';
+  btn.title=has?'保存された進行状態を復元します。':'復元できる保存済み進行状態はありません。';
 }
 function discardDeferredSavedProgressState(){deferredSavedProgressState=null;updateRestoreStateButton();}
 const $=id=>document.getElementById(id);
@@ -400,7 +410,7 @@ function loadState(){
   // deferredSavedProgressState に保持し、「保存済み進行を復元」を押した時だけ展開する。
   try{
     const raw=localStorage.getItem(STORE_KEY);if(!raw)return;
-    const data=JSON.parse(raw);deferredSavedProgressState=savedProgressSnapshotHasActiveSession(data)?data:null;
+    const data=JSON.parse(raw);deferredSavedProgressState=savedProgressSnapshotIsRestorable(data)?data:null;
     state.log=Array.isArray(data.log)?data.log:[];
     state.baseUnlockedAreaIds=Array.isArray(data.baseUnlockedAreaIds)?data.baseUnlockedAreaIds:[];
     setPartySize(data.partySize||4);
