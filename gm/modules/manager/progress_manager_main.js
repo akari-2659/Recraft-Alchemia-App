@@ -489,6 +489,10 @@ function restoreSavedState(){
     // 100%地点のボス噂再開では、セッション復元時点で選択中の噂が必要。
     renderAll();
     if(typeof restoreRumorSelectionByEventKey==='function')restoreRumorSelectionByEventKey(savedRumorEventKey);
+    // renderAll() 内のデイリー同期は、まだ active セッション復元前なので
+    // 保存済みデイリーの戦闘編成キャッシュを整理対象と誤認し得る。
+    // セッションUIを戻す直前に、保存スナップショットの編成キャッシュを再投入する。
+    state.questEncounterCache=savedObject('questEncounterCache',state.questEncounterCache||{});
     if(typeof v738RestoreSavedSessionUi==='function')v738RestoreSavedSessionUi(data.progressUiState||{});
     discardDeferredSavedProgressState();
     addLog('保存済み進行状態を復元しました。');
