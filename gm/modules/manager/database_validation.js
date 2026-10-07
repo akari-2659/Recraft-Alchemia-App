@@ -486,7 +486,9 @@ function monsterLegalLoadouts(row={}){
     if(!combo.some(monsterLoadoutActionIsDirectDamage))return false;
     for(const action of combo){
       const refs=monsterLoadoutReferencedNames(action.effect||'',actionNames);
-      if(refs.some(name=>!selected.has(name)))return false;
+      // パッシブ専用技は通常の所持技抽選から外れるため、効果文から参照されていても
+      // そのロードアウト内へ同時選出されている必要はない。
+      if(refs.some(name=>!passiveOnly.has(name)&&!selected.has(name)))return false;
     }
     return true;
   });
