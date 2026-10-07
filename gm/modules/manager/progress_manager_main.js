@@ -573,9 +573,13 @@ function setQuestCategory(cat='重要',options={}){
 }
 function questIsCleared(q={}){
   if(questCategoryFor(q)!=='重要') return false;
-  const key=q.id||q.name||'';
+  const key=String(q.id||q.name||'');
   const p=(state.progress&&state.progress.quests&&state.progress.quests[key])||{};
-  return clamp(p.value)>=100;
+  if(clamp(p.value)<100)return false;
+  // 進行中の100%地点は、最終イベント解決前ならまだ未クリア。
+  const selectedKey=String($('questSelect')?.value||'');
+  if(progressUiV738.questActive&&selectedKey===key)return !!progressUiV738.slotResolved.quest;
+  return true;
 }
 function questListMemoForCategory(category='重要'){
   const cat=category==='デイリー'?'デイリー':'重要';
