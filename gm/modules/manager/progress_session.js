@@ -32,7 +32,6 @@ applyProgressMaster=function(master){
   const questBefore=String($('questSelect')?.value||'');
   const areaBefore=String($('areaSelect')?.value||BASE_EXPLORATION_ID);
   const result=v737ApplyProgressMaster(master);
-  if(typeof migrateLegacyCompletedImportantQuestProgress==='function')migrateLegacyCompletedImportantQuestProgress();
   fillQuestSelect(questBefore);
   fillExplorationAreaSelect(areaBefore);
   if(progressUiV738.hidden.active&&areaBefore){
@@ -423,15 +422,13 @@ function toggleSelectedImportantQuestVisibility(){const q=selected($('questSelec
 
 function v738SerializableUiState(){
   return {
-    questActive:!!progressUiV738.questActive,
     areaActive:!!progressUiV738.areaActive,
     areaMode:String(progressUiV738.areaMode||'normal'),
     questCategory:String(currentQuestCategory||'重要'),
     questId:String($('questSelect')?.value||''),
     areaId:String($('areaSelect')?.value||''),
-    slotResolved:{quest:!!progressUiV738.slotResolved.quest,event:!!progressUiV738.slotResolved.event,base:!!progressUiV738.slotResolved.base},
+    slotResolved:{event:!!progressUiV738.slotResolved.event,base:!!progressUiV738.slotResolved.base},
     seen:{
-      quest:[...v738CurrentSeenSet('quest')],
       event:[...v738CurrentSeenSet('event')],
       base:[...v738CurrentSeenSet('base')]
     },
@@ -450,16 +447,16 @@ function v738ResetProgressModalDomBeforeRestore(){
 function v738RestoreSavedSessionUi(saved={}){
   v738ResetProgressModalDomBeforeRestore();
   const ui=(saved&&typeof saved==='object')?saved:{};
-  progressUiV738.questActive=!!ui.questActive;
+  progressUiV738.questActive=false;
   progressUiV738.areaActive=!!ui.areaActive;
   progressUiV738.areaMode=ui.areaMode==='base'?'base':'normal';
   progressUiV738.slotResolved={
-    quest:!!ui.slotResolved?.quest,
+    quest:false,
     event:!!ui.slotResolved?.event,
     base:!!ui.slotResolved?.base
   };
   progressUiV738.seen={
-    quest:new Set(Array.isArray(ui.seen?.quest)?ui.seen.quest:[]),
+    quest:new Set(),
     event:new Set(Array.isArray(ui.seen?.event)?ui.seen.event:[]),
     base:new Set(Array.isArray(ui.seen?.base)?ui.seen.base:[])
   };
@@ -473,24 +470,7 @@ function v738RestoreSavedSessionUi(saved={}){
   const savedQuestCategory=savedQuest?questCategoryFor(savedQuest):(ui.questCategory==='デイリー'?'デイリー':'重要');
   setQuestCategory(savedQuestCategory,{resetContext:false,save:false,render:false});
   const questSel=$('questSelect');
-  if(savedQuestId&&questSel){
-    let opt=[...questSel.options].find(o=>o.value===savedQuestId);
-    if(!opt&&savedQuest&&progressUiV738.questActive){
-      opt=document.createElement('option');
-      opt.value=savedQuestId;
-      opt.textContent=`${savedQuest.name||savedQuestId} / 保存済み進行`;
-      opt.dataset.restoredSession='1';
-      questSel.appendChild(opt);
-    }
-    if(opt)questSel.value=savedQuestId;
-    else if(progressUiV738.questActive){
-      progressUiV738.questActive=false;
-      progressUiV738.slotResolved.quest=false;
-    }
-  }else if(progressUiV738.questActive){
-    progressUiV738.questActive=false;
-    progressUiV738.slotResolved.quest=false;
-  }
+  if(savedQuestId&&questSel&&[...questSel.options].some(o=>o.value===savedQuestId))questSel.value=savedQuestId;
 
   const savedAreaId=String(ui.areaId||'');
   fillExplorationAreaSelect(savedAreaId||BASE_EXPLORATION_ID);
@@ -539,7 +519,6 @@ function v738RestoreSavedSessionUi(saved={}){
       if(area&&clamp(progressObj('areas',area.id||area.name).value)>=100)triggerAreaClearRumorEvent(area);
     }
   }
-  if(progressUiV738.questActive)v738OpenQuestModal();
 
   renderQuest();renderArea();renderBaseEventControls();
   resetImportantUsePanel('quest');resetImportantUsePanel('event');resetImportantUsePanel('base');
