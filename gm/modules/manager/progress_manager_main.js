@@ -520,9 +520,11 @@ function questRowsForCurrentCategory(){
       if(!showOff&&!questEnabled(q)&&!isCurrentActive)return false;
     }
     if(cat === 'デイリー'){
-      if(!questEnabled(q)) return false;
+      const key=String(q.id||q.name||''),selectedKey=String($('questSelect')?.value||'');
+      const isCurrentActive=!!progressUiV738.questActive&&selectedKey===key;
+      if(!questEnabled(q)&&!isCurrentActive)return false;
       const selectedKeys=new Set(state.lastDailyQuestKeys||[]);
-      return selectedKeys.has(String(q.id||q.name||''));
+      return isCurrentActive||selectedKeys.has(key);
     }
     return true;
   });
