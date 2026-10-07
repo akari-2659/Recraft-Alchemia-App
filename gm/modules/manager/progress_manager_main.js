@@ -408,6 +408,21 @@ function saveState(show=true){
       persistedPayload.lastRecipeMerchantContext={scope:'',areaName:'',eventName:''};
     }
   }
+  // クエストから入った隠しエリアは親クエストと同じ挑戦内状態。
+  // クエスト自体を再起動後に復元しないため、隠しエリアだけを孤立して復元しない。
+  if(progressUiV738.hidden?.active&&String(progressUiV738.hidden.originScope||'')==='quest'){
+    const hiddenId=String(progressUiV738.hidden.areaId||'');
+    if(hiddenId&&persistedPayload.progress?.areas)delete persistedPayload.progress.areas[hiddenId];
+    persistedPayload.progressUiState={
+      ...(persistedPayload.progressUiState||{}),
+      areaActive:false,
+      areaMode:'normal',
+      areaId:'',
+      hidden:{active:false,snapshot:null,originScope:'',areaId:''},
+      slotResolved:{event:false,base:false},
+      seen:{event:[],base:[]}
+    };
+  }
   // 起動直後は進行度を自動復元しないが、「保存済み進行を復元」用の
   // セッションスナップショットは、明示保存・新規開始・初期化まで保護する。
   const currentWorld={
