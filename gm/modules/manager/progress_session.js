@@ -179,9 +179,10 @@ function v738PrepareAreaSlot(a){
 }
 function v738PrepareBaseSlot(){progressUiV738.slotResolved.base=false;v738UpdateProgressControls();renderBaseEventControls();}
 function startQuestProgressSession(){
-  const q=selected($('questSelect'),state.quests);if(!q)return;v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
+  const q=selected($('questSelect'),state.quests);if(!q)return;if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
 }
 function startAreaProgressSession(){
+  if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();
   const baseSelected=isBaseExplorationSelected();
   const selectedArea=baseSelected?null:selectedExplorationArea();
   if(!baseSelected&&(!selectedArea||isHiddenAreaRow(selectedArea)))return;
