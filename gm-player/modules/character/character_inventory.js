@@ -44,8 +44,24 @@ let inventoryItemsState = [];
 let learnedRecipesState = [];
 let inventoryDisplayMode = 'warehouse';
 let inventoryUiDirty = true;
+let deferredCharacterUi={equipment:true,carry:true};
 function inventoryTabIsActive(){ const el=$('tabInventory'); return !!el && el.classList.contains('active'); }
 function markInventoryUiDirty(){ inventoryUiDirty=true; }
+function resetDeferredCharacterUi(){deferredCharacterUi={equipment:true,carry:true};}
+function hydrateDeferredCharacterUi(tab){
+  if(tab==='equipment'&&deferredCharacterUi.equipment){
+    deferredCharacterUi.equipment=false;
+    renderLoadoutPresetList('equipment');
+  }
+  if(tab==='carry'&&deferredCharacterUi.carry){
+    deferredCharacterUi.carry=false;
+    // UI-only hydration. Inventory/material counts and allocation state are not rewritten here.
+    renderBagSelect();
+    renderQuiverControls();
+    applyBagCapacityToEquipmentSlots();
+    renderLoadoutPresetList('carry');
+  }
+}
 let learnedContentType = 'spell';
 const inventoryCardOpenState = new Map();
 let selectedBagId = '';
