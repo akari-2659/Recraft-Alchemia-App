@@ -1074,45 +1074,12 @@ async function acquireProgressMaster(){
     }
   }
 }
-const PROGRESS_IMMEDIATE_EVENT_RESULT_PATCHES={
-  evt_wetland_09:'感知成功：水面の反射に紛れた採取物を見つけ、入手アイテム表の抽選結果1枠を入手。目標値+3以上：澄んだ水×1を追加で入手。失敗：入手なし。',
-  evt_wetland_38:'判定成功：浅い場所を見分けて安全に通過する。失敗：足場を読み違え、PC全員は1D3の物属性ダメージ。',
-  evt_otherworld_19:'判定成功：歪みの境界を見分けて安全に通過する。失敗：境界の揺らぎに巻き込まれ、PC全員は1D3の無属性ダメージ。',
-  evt_otherworld_21:'集中成功：遅れて返る音を分離し、反響が集まる地点から入手アイテム表の抽選結果1枠を入手。感知で代用可能（判定-2）。感知成功：同じ抽選結果1枠を入手。失敗：反響に感覚を乱され、PC全員はMPを1点失う。',
-  evt_otherworld_23:'魔法成功：揺らぐ魔力を打ち消し、偽の足場の下に残った素材から入手アイテム表の抽選結果1枠を入手。探索で代用可能（判定-2）。探索成功：同じ抽選結果1枠を入手。失敗：偽の足場を踏み抜き、PC全員は1D3の無属性・防御無視ダメージ。',
-  evt_otherworld_29:'判定成功：観測杭の印を読み取り、虚ろ雫×1を入手。失敗：印を読み取れない。',
-  evt_mine_01:'成功：安全な足場を見つけ、その周辺から鉄鉱石×1を入手。失敗：味方全員は1D3ダメージ。',
-  evt_mine_15:'操作成功：制御盤を復旧して下層の整備足場へ移動し、残された資材から入手アイテム表の抽選結果1枠を入手。目標値+3以上：鉄鉱石×1を追加で入手。失敗：復旧に手間取り、判定したPCの疲労度+1。',
-  evt_mine_18:'成功：反響から先の地形を読み、空洞に残った魔晶石×1を入手。失敗：反響に感覚を乱され、判定したPCはMPを1点失う。',
-  evt_mine_29:'成功：対岸へ渡り、崩れた橋桁の周辺から鉄鉱石×1を入手。失敗：味方1人は2D6ダメージ。',
-  evt_mine_30:'鑑定成功：旧測量刻印のうち有効な印を見抜き、銀鉱石×1を入手。設計で代用可能（判定-2）。設計成功：刻印の構造を読み解き、鉄鉱石×1を入手。失敗：入手なし。',
-  evt_mine_39:'成功：坑奥の穿王の移動経路を特定し、穿王ドルガンの行動傾向を1つ開示する。失敗：追加情報なし。',
-  evt_highland_18:'探索成功：崖陰の補給箱から使える物を選び、入手アイテム表の抽選結果2枠を入手。目標値+3以上：風紋草×1を追加で入手。失敗：入手なし。',
-  evt_highland_21:'探索成功：風穴の奥に吹き寄せられた素材から入手アイテム表の抽選結果1枠と風紋草×1を入手。失敗：入手なし。',
-  evt_highland_22:'両方成功：風道と地形の対応を把握し、天空露×1を入手。どちらか一方のみ成功：安全な進路を把握する。両方失敗：地形を読み切れず、入手なし。',
-  evt_highland_26:'射撃成功：遠くの損傷した留め具だけを撃ち外し、安全な索道を確保する。細工で代用可能（判定-2）。細工成功：風に耐えながら索を補修し、安全な索道を確保する。失敗：味方1人が1D6ダメージ。',
-  evt_highland_28:'集中成功：風の乱れに姿勢を合わせ、安全に通過する。感知で代用可能（判定-2）。感知成功：風向きの変化を見切り、安全に通過する。失敗：風に振り回され、判定したPCの疲労度+1。防風香油使用中は、この疲労度+1を無効化する。',
-  evt_highland_30:'集中成功：共鳴に影響されず、風紋草×1を入手。祈祷で代用可能（判定-2）。祈祷成功：共鳴を鎮め、風紋草×2を入手。失敗：共鳴に感覚を乱され、判定したPCの疲労度+1。',
-  evt_highland_31:'両方成功：風向きと地形を照合して迷わず抜ける。どちらか一方のみ成功：遠回りせず抜ける。両方失敗：方向を見失い、味方1人の疲労度+1。',
-  evt_highland_35:'成功：ヴェルグラートの飛行経路を特定し、嵐翼獣ヴェルグラートの行動傾向を1つ開示する。失敗：追加情報なし。',
-  evt_ashcrown_12:'両方成功：灰煙の流れを読み、吸い込まず短時間で谷間を抜ける。どちらか一方のみ成功：灰煙を少し吸い込み、判定したPCの疲労度+1。両方失敗：灰煙をまともに吸い込み、判定したPCの疲労度+1に加えて1D3の無属性ダメージ。防灰濾布使用中は、灰煙を原因とするこの疲労度増加とダメージを無効化する。',
-  evt_ashcrown_18:'成功：ウルガナの移動経路を特定し、灰嶺の大蛇ウルガナの行動傾向を1つ開示する。失敗：追加情報なし。',
-  evt_weather_mine_wind_01:'感知成功：風音の反響から安全な坑道を見つけ、周辺から鉄鉱石×1を入手。失敗：効果なし。',
-  evt_weather_highland_fog_01:'探索成功：霧越しに風標の並びを読み、風紋草×1を入手。失敗：入手なし。',
-  evt_weather_ashcrown_ashrain_01:'両方成功：灰雨の弱まる場所を見極め、灰冠苔×1D2を入手し、黒曜片×1を追加で入手。どちらか一方のみ成功：灰冠苔×1を入手。両方失敗：採取を断念し、判定したPCの疲労度+1。防灰濾布使用中は、灰雨を原因とするこの疲労度+1を無効化する。'
-};
-function progressImmediatePatchedEvents(rows=[]){
-  return (rows||[]).map(row=>Object.prototype.hasOwnProperty.call(PROGRESS_IMMEDIATE_EVENT_RESULT_PATCHES,String(row?.id||''))?{...row,result:PROGRESS_IMMEDIATE_EVENT_RESULT_PATCHES[String(row.id)]}:row);
-}
-function progressImmediatePatchedQuests(rows=[]){
-  return (rows||[]).map(row=>String(row?.id||'')==='quest_daily_return_route'?{...row,fixedEvents:'100%\t帰路の歪み\t判定：知識>=11または細工>=11。成功：歪みの状態を確認して安全に帰還し、クエストクリア。失敗：帰還時に消耗し、味方全員の疲労度+1。'}:row);
-}
 function applyProgressMaster(master){
   const rumorKeyBeforeMaster=(typeof rumorSelectionEventKey==='function'?rumorSelectionEventKey():'')||String(state.savedRumorEventKey||'');
   const data=master.data||master;
-  const quests=progressImmediatePatchedQuests(data.quests||[]);
+  const quests=data.quests||[];
   const areas=data.exploration_areas||[];
-  const events=progressImmediatePatchedEvents(data.event_tables||[]);
+  const events=data.event_tables||[];
   const monsters=data.monsters||[];
   const items=data.items||[];
   const treasures=data.treasure_tables||[];
