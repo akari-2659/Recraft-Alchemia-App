@@ -209,7 +209,9 @@ function v738CloseQuestSession(){
     clearQuestRandomEventHistory();progressUiV738.slotResolved.quest=false;progressUiV738.importantApplied.quest=null;
     addLog(`クエスト撤退：${q.name||q.id}（進行度を破棄）`);
   }else addLog(`クエスト完了：${q.name||q.id}`);
-  progressUiV738.questActive=false;progressUiV738.slotResolved.quest=false;v738SetModalOpen('questProgressModal',false);saveState(false);renderQuest();v738UpdateProgressControls();
+  progressUiV738.questActive=false;progressUiV738.slotResolved.quest=false;v738SetModalOpen('questProgressModal',false);
+  if(completed)fillQuestSelect();
+  saveState(false);renderQuest();v738UpdateProgressControls();
 }
 function v738CloseAreaSession(){
   if(progressUiV738.hidden.active){endHiddenExploration();return;}
