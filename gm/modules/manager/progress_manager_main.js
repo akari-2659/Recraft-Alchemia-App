@@ -567,7 +567,6 @@ function questRowsForCurrentCategory(){
     if(cat === '重要'){
       const key=String(q.id||q.name||''),selectedKey=String($('questSelect')?.value||'');
       const isCurrentActive=!!progressUiV738.questActive&&selectedKey===key;
-      if(questIsCleared(q)&&!isCurrentActive)return false;
       // 進行中の重要クエストは表示OFFにしてもセッション終了までは選択を維持する。
       if(!showOff&&!questEnabled(q)&&!isCurrentActive)return false;
     }
@@ -632,14 +631,10 @@ function setQuestCategory(cat='重要',options={}){
   if(options.render!==false)renderQuest();
 }
 function questIsCleared(q={}){
-  if(questCategoryFor(q)!=='重要') return false;
-  const key=String(q.id||q.name||'');
-  const p=(state.progress&&state.progress.quests&&state.progress.quests[key])||{};
-  if(clamp(p.value)<100)return false;
-  // 進行中の100%地点は、最終イベント解決前ならまだ未クリア。
-  const selectedKey=String($('questSelect')?.value||'');
-  if(progressUiV738.questActive&&selectedKey===key)return !!progressUiV738.slotResolved.quest;
-  return true;
+  if(questCategoryFor(q)!=='重要'||!progressUiV738.questActive)return false;
+  const key=String(q.id||q.name||''),selectedKey=String($('questSelect')?.value||'');
+  if(selectedKey!==key)return false;
+  return clamp(progressObj('quests',key).value)>=100&&!!progressUiV738.slotResolved.quest;
 }
 function questListMemoForCategory(category='重要'){
   const cat=category==='デイリー'?'デイリー':'重要';
@@ -647,13 +642,12 @@ function questListMemoForCategory(category='重要'){
   const rows=(state.quests||[]).filter(q=>{
     if(questCategoryFor(q)!==cat) return false;
     if(cat==='重要'){
-      if(questIsCleared(q)) return false;
       if(!showOff && !questEnabled(q)) return false;
       return true;
     }
     return questEnabled(q) && new Set(state.lastDailyQuestKeys||[]).has(String(q.id||q.name||''));
   });
-  const title=cat==='重要' ? '【未クリア重要クエスト一覧】' : '【現在のデイリークエスト一覧】';
+  const title=cat==='重要' ? '【重要クエスト一覧】' : '【現在のデイリークエスト一覧】';
   if(!rows.length)return `${title}\n表示できるクエストはありません。`;
   return [title, rows.map(q=>questPublicInfoLines(q).join('\n')).join('\n\n')].join('\n');
 }
