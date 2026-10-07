@@ -19,13 +19,16 @@ async function prefetchCharacterData(id,{expectedRevision=0,rowHint=0}={}){
   try{const res=await cloudRequest('load',{id,playerKey:currentCloudPlayerKey,rowHint:Number(rowHint||cached?.storageRow||0)||0});if(res?.data){await characterDataCachePut(currentCloudPlayerKey,res.data,res.revision,res.storageRow);return true;}}catch(_){}return false;
 }
 async function loadItem(id,{expectedRevision=0,rowHint=0,force=false}={}) {
+  const raLoadStarted=performance.now();
+  window.raLastCharacterLoadTiming={source:'',fetchMs:0};
   if (!currentCloudPlayerKey) throw new Error('クラウド読み込みにはプレイヤーキーが必要です。');
   const cached=force?null:await characterDataCacheGet(currentCloudPlayerKey,id);
   const wantedRevision=Number(expectedRevision||0)||0;
   if(cached?.data&&wantedRevision>0&&Number(cached.revision||0)===wantedRevision){
-    cloudCharacterRevision=Number(cached.revision||0)||0;cloudCharacterRowHint=Number(cached.storageRow||rowHint||0)||0;return cached.data;
+    cloudCharacterRevision=Number(cached.revision||0)||0;cloudCharacterRowHint=Number(cached.storageRow||rowHint||0)||0;window.raLastCharacterLoadTiming={source:'cache',fetchMs:performance.now()-raLoadStarted};return cached.data;
   }
   const res = await cloudRequest('load', { id, playerKey: currentCloudPlayerKey, rowHint:Number(rowHint||cached?.storageRow||0)||0 });
+  window.raLastCharacterLoadTiming={source:'network',fetchMs:performance.now()-raLoadStarted};
   cloudCharacterRevision=Number(res.revision||0)||0;
   cloudCharacterRowHint=Number(res.storageRow||0)||0;
   cloudCharacterFolderReady=!!res.folderReady;
