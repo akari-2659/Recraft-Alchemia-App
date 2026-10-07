@@ -516,7 +516,8 @@ function questRowsForCurrentCategory(){
       const key=String(q.id||q.name||''),selectedKey=String($('questSelect')?.value||'');
       const isCurrentActive=!!progressUiV738.questActive&&selectedKey===key;
       if(questIsCleared(q)&&!isCurrentActive)return false;
-      if(!showOff&&!questEnabled(q))return false;
+      // 進行中の重要クエストは表示OFFにしてもセッション終了までは選択を維持する。
+      if(!showOff&&!questEnabled(q)&&!isCurrentActive)return false;
     }
     if(cat === 'デイリー'){
       if(!questEnabled(q)) return false;
