@@ -119,7 +119,7 @@ function updateSupportSettingsSummary(){
   summary.textContent=`${settings.eligible?'選出対象 / ':'選出対象外 / '}戦闘技能 ${battle}件 / 探索技能 ${exploration}件`;
 }
 
-let currentCloudPlayerKey = '';
+var currentCloudPlayerKey = '';
 let currentMode = 'edit'; // new/edit/view
 let currentCharacter = null;
 let outputTargetData = null;
