@@ -1171,6 +1171,23 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 </dialog>
 
 
+<script id="raCharacterBootProbe">
+(()=>{
+  if(new URLSearchParams(location.search).get('embedded')!=='1')return;
+  const notify=(text,extra={})=>{try{window.parent.postMessage({type:'RA_MODULE_LOADING',text,phase:text,...extra},location.origin)}catch(_){}};
+  notify('キャラシHTML解析完了 / JS読込開始');
+  window.addEventListener('error',event=>{
+    const message=String(event?.error?.message||event?.message||'不明なJavaScriptエラー');
+    try{window.parent.postMessage({type:'RA_MODULE_ERROR',text:'キャラシ起動エラー：'+message,phase:'JavaScriptエラー'},location.origin)}catch(_){}
+  });
+  window.addEventListener('unhandledrejection',event=>{
+    const reason=event?.reason;
+    const message=String(reason?.message||reason||'不明なPromiseエラー');
+    try{window.parent.postMessage({type:'RA_MODULE_ERROR',text:'キャラシ起動エラー：'+message,phase:'Promiseエラー'},location.origin)}catch(_){}
+  });
+})();
+</script>
+
 <script src="./character_core.js"></script>
 <script src="./character_data.js"></script>
 <script src="../../../js/ra_character_master.js"></script>
@@ -1186,6 +1203,12 @@ button:active,.tab:active,.subtab:active,.tab-btn:active,.editor-tab-btn:active{
 <script src="../../../js/ra_character_export.js"></script>
 <script src="./character_save.js"></script>
 <script src="./character_main.js"></script>
+<script id="raCharacterScriptsReadyProbe">
+(()=>{
+  if(new URLSearchParams(location.search).get('embedded')!=='1')return;
+  try{window.parent.postMessage({type:'RA_MODULE_LOADING',text:'キャラシJS読込完了 / 初期化開始',phase:'キャラシJS読込完了 / 初期化開始'},location.origin)}catch(_){}
+})();
+</script>
 <script>
 
 function isPublicViewMode(){
