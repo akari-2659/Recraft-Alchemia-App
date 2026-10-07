@@ -182,11 +182,11 @@ function startQuestProgressSession(){
   const q=selected($('questSelect'),state.quests);if(!q)return;if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
 }
 function startAreaProgressSession(){
-  if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();
   const baseSelected=isBaseExplorationSelected();
   const selectedArea=baseSelected?null:selectedExplorationArea();
   if(!baseSelected&&(!selectedArea||isHiddenAreaRow(selectedArea)))return;
   if(!consumeDailyAction(baseSelected?'開拓拠点リクラフトの探索':`${selectedArea.name||'エリア'}の探索`))return;
+  if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();
   if(baseSelected){
     v738ToggleAreaRuntime('base');v738ResetAreaSessionState(BASE_EXPLORATION_ID,'base');v738OpenAreaModal('開拓拠点リクラフト：探索');
     $('areaBar').style.width='0%';$('areaLabel').textContent='0%';$('areaStepInfo').innerHTML='<div class="kv"><b>現在</b><span>0%</span><b>1回の進行</b><span>+25%</span><b>イベント</b><span>毎回ランダム</span></div>';v738PrepareBaseSlot();saveState(false);addLog('探索開始：開拓拠点リクラフト');return;
