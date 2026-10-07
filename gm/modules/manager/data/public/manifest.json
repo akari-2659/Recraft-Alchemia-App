@@ -1,12 +1,12 @@
 {
   "format": "recraft-alchemia-public-manifest",
-  "version": "90.8.834",
-  "updatedAt": "2026-10-05T12:03:00+09:00",
+  "version": "90.8.835",
+  "updatedAt": "2026-10-07T13:49:00+09:00",
   "files": {
     "master": {
       "file": "recraft_alchemia_master.json",
-      "sha256": "6ec99a838004a1f854fade071dc4688aaa1c910d6b768319856d6f2493e4ff02",
-      "bytes": 6187192,
+      "sha256": "52988208ef22dd106beb0fd65bfa7d10f7db464ebe00f0dc336c2e55b2defb10",
+      "bytes": 6187419,
       "recordCount": 3904,
       "dataKeys": [
         "item_types",
@@ -30,8 +30,8 @@
     },
     "character": {
       "file": "recraft_alchemia_character_master.json",
-      "sha256": "94e2872c51a75c5c16104933339b091697a418ff4f73fbac45ae6f08947b3f57",
-      "bytes": 3440367,
+      "sha256": "28ffeebe23431968c39650160a517d173d678d2dd1fd6ea2176b600dad4532b3",
+      "bytes": 3440547,
       "recordCount": 1863,
       "dataKeys": [
         "item_types",
@@ -48,8 +48,8 @@
     },
     "facility": {
       "file": "recraft_alchemia_facility_master.json",
-      "sha256": "f94dfbd43af373e9c21ca883613767af59cf047ea6210e79b77027e8c2b6e67c",
-      "bytes": 4466144,
+      "sha256": "4ef57cc98efb00daf6a6dafb7138432cd100fe04b272ebffb3e80e060c2f55e8",
+      "bytes": 4466053,
       "recordCount": 2324,
       "dataKeys": [
         "items",
@@ -62,7 +62,7 @@
       ]
     }
   },
-  "sha256": "6ec99a838004a1f854fade071dc4688aaa1c910d6b768319856d6f2493e4ff02",
-  "bytes": 6187192,
+  "sha256": "52988208ef22dd106beb0fd65bfa7d10f7db464ebe00f0dc336c2e55b2defb10",
+  "bytes": 6187419,
   "recordCount": 3904
 }
