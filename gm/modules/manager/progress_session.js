@@ -179,12 +179,17 @@ function v738PrepareAreaSlot(a){
 }
 function v738PrepareBaseSlot(){progressUiV738.slotResolved.base=false;v738UpdateProgressControls();renderBaseEventControls();}
 function startQuestProgressSession(){
-  const q=selected($('questSelect'),state.quests);if(!q)return;if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
+  const q=selected($('questSelect'),state.quests);if(!q)return;
+  if(progressUiV738.questActive){v738OpenQuestModal();v738UpdateProgressControls();return;}
+  if(progressUiV738.areaActive||progressUiV738.hidden.active){alert('探索中は新しいクエストを開始できません。先に現在の探索を終了してください。');return;}
+  if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();v738ResetQuestSessionState(q);v738OpenQuestModal();v738PrepareQuestSlot(q);renderQuest();saveState(false);addLog(`クエスト開始：${q.name||q.id}`);
 }
 function startAreaProgressSession(){
   const baseSelected=isBaseExplorationSelected();
   const selectedArea=baseSelected?null:selectedExplorationArea();
   if(!baseSelected&&(!selectedArea||isHiddenAreaRow(selectedArea)))return;
+  if(progressUiV738.areaActive||progressUiV738.hidden.active){v738OpenAreaModal();v738UpdateProgressControls();return;}
+  if(progressUiV738.questActive){alert('クエスト進行中は新しい探索を開始できません。先に現在のクエストを終了してください。');return;}
   if(!consumeDailyAction(baseSelected?'開拓拠点リクラフトの探索':`${selectedArea.name||'エリア'}の探索`))return;
   if(typeof discardDeferredSavedProgressState==='function')discardDeferredSavedProgressState();
   if(baseSelected){
@@ -252,6 +257,8 @@ function v738UpdateProgressControls(){
   if($('questEndBtn'))$('questEndBtn').textContent=qVal>=100&&progressUiV738.slotResolved.quest?'クエスト完了':'撤退';
   if($('areaEndBtn'))$('areaEndBtn').textContent=aVal>=100&&progressUiV738.slotResolved[aScope]?'探索完了':'探索を終了';
   if($('hiddenEndBtn'))$('hiddenEndBtn').textContent='元の探索へ戻る';
+  if($('questStartBtn'))$('questStartBtn').disabled=!!(progressUiV738.questActive||progressUiV738.areaActive||progressUiV738.hidden.active);
+  if($('areaStartBtn'))$('areaStartBtn').disabled=!!(progressUiV738.areaActive||progressUiV738.hidden.active||progressUiV738.questActive);
   if($('questSelect'))$('questSelect').disabled=!!progressUiV738.questActive;
   document.querySelectorAll('[data-quest-category]').forEach(btn=>{btn.disabled=!!progressUiV738.questActive;});
   if($('questShowDisabledImportant'))$('questShowDisabledImportant').disabled=!!progressUiV738.questActive;
