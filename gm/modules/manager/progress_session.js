@@ -49,10 +49,9 @@ function v738CurrentSeenSet(scope='event'){return progressUiV738.seen[scope]||(p
 function v738FilterUnseen(scope,rows=[]){
   const list=(rows||[]).filter(Boolean),seen=v738CurrentSeenSet(scope);
   if(!list.length)return [];
-  const unseen=list.filter(row=>!seen.has(eventUniqueKey(row)));
-  // 同一進行中は可能な限り重複を避けるが、候補を一巡したら全候補へ戻す。
-  // 「未出のみ」を厳守して候補0件となり、進行不能になる状態を防ぐ。
-  return unseen.length?unseen:list;
+  // 通常の探索・クエスト・拠点では、同一進行中に一度出たイベントは再登場させない。
+  // 隠しエリアの二つ名遭遇だけは eventRowsForArea() 側で別扱いにしている。
+  return list.filter(row=>!seen.has(eventUniqueKey(row)));
 }
 function v738MarkSeen(scope,key=''){if(key)v738CurrentSeenSet(scope).add(String(key));}
 const v737QuestRandomEvents=questRandomEvents;
