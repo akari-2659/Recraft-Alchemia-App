@@ -138,6 +138,9 @@ async function cloudRequest(action, payload={}) {
     let lastError=null,attempt=0;
     while(isCharacterLoad || attempt<attempts){
       attempt++;
+      if(isCharacterLoad){
+        try{window.parent?.postMessage?.({type:'RA_MODULE_LOADING',text:'キャラデータ通信中',phase:'キャラデータ通信中',attempt},location.origin);}catch(_){}
+      }
       try{
         const json = await cloudJsonpRequest(action, payload);
         if (!json.ok) {
@@ -151,8 +154,10 @@ async function cloudRequest(action, payload={}) {
         // A server response that explicitly rejects the request is not a timeout/network retry case.
         if(error?.cloudLogical)throw error;
         if(!isCharacterLoad && attempt>=attempts)break;
-        // Character load keeps reconnecting until one request completes successfully.
         const delay=Math.min(8000,700*Math.pow(1.7,Math.min(attempt-1,6)));
+        if(isCharacterLoad){
+          try{window.parent?.postMessage?.({type:'RA_MODULE_LOADING',text:`通信再接続待ち（${Math.ceil(delay/1000)}秒）`,phase:'通信再接続待ち',attempt},location.origin);}catch(_){}
+        }
         await sleepMs(delay);
       }
     }
