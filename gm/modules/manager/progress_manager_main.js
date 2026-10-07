@@ -96,9 +96,36 @@ function savedProgressSnapshotHasActiveSession(data={}){
 function savedProgressSnapshotHasProgress(data={}){
   const boxes=data&&typeof data.progress==='object'&&data.progress?data.progress:{};
   return ['quests','areas'].some(type=>Object.values(boxes[type]||{}).some(row=>{
-    const value=Number(row?.value)||0,note=String(row?.note||'').trim();
-    return value!==0||!!note;
+    const value=Number(row?.value)||0;
+    return value!==0;
   }));
+}
+function progressNotesSnapshot(progress={}){
+  const out={quests:{},areas:{}};
+  ['quests','areas'].forEach(type=>Object.entries(progress?.[type]||{}).forEach(([key,row])=>{
+    const note=String(row?.note||'');
+    if(note.trim())out[type][key]=note;
+  }));
+  return out;
+}
+function applyProgressNotesSnapshot(notes={}){
+  ['quests','areas'].forEach(type=>Object.entries(notes?.[type]||{}).forEach(([key,note])=>{
+    progressObj(type,key).note=String(note||'');
+  }));
+}
+function completedImportantQuestProgressSnapshot(progress={}){
+  const out={};
+  (state.quests||[]).filter(q=>questCategoryFor(q)==='重要').forEach(q=>{
+    const key=String(q.id||q.name||'');if(!key)return;
+    const row=progress?.quests?.[key];
+    if(clamp(row?.value)>=100)out[key]=100;
+  });
+  return out;
+}
+function applyCompletedImportantQuestProgress(rows={}){
+  Object.entries(rows||{}).forEach(([key,value])=>{
+    if(Number(value)>=100)progressObj('quests',key).value=100;
+  });
 }
 function savedProgressSnapshotIsRestorable(data={}){
   return savedProgressSnapshotHasActiveSession(data)||savedProgressSnapshotHasProgress(data);
@@ -398,7 +425,9 @@ function saveState(show=true){
     lastRumorText:currentPayload.lastRumorText,
     lastRumorKey:currentPayload.lastRumorKey,
     selectedRumorEventKey:currentPayload.selectedRumorEventKey,
-    baseUnlockedAreaIds:currentPayload.baseUnlockedAreaIds
+    baseUnlockedAreaIds:currentPayload.baseUnlockedAreaIds,
+    progressNotes:progressNotesSnapshot(currentPayload.progress),
+    completedImportantQuests:completedImportantQuestProgressSnapshot(currentPayload.progress)
   };
   const payload=deferredSavedProgressState
     ?{...deferredSavedProgressState,log:currentPayload.log,currentWorld}
