@@ -1,6 +1,6 @@
 (()=>{
   'use strict';
-  const APP_VERSION='1.0.167';
+  const APP_VERSION='1.0.168';
   const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
   const app=document.querySelector('#playerApp'),authError=document.querySelector('#authError');
   const sidebar=document.querySelector('#sidebar'),backdrop=document.querySelector('#backdrop');
@@ -236,8 +236,12 @@
   function setFrameLoading(name,text='読み込み中'){
     const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;if(moduleState[name])moduleState[name].ready=false;wrap.classList.remove('loaded','load-error');
     const label=wrap.querySelector('.frame-loading-text');if(label)label.textContent=text||'読み込み中';window.RAMagicLoader?.startWrap(wrap);clearTimeout(frameTimers.get(name));
-    const timeout=name==='character'?120000:45000;
-    frameTimers.set(name,setTimeout(()=>{if(wrap.classList.contains('loaded'))return;wrap.classList.add('load-error');window.RAMagicLoader?.errorWrap(wrap);if(label)label.textContent='読み込みがタイムアウトしました。再読み込みできます。';},timeout));
+    if(name==='character'){
+      // Character loading must not terminate merely because the network is slow.
+      frameTimers.set(name,setTimeout(()=>{if(wrap.classList.contains('loaded'))return;if(label)label.textContent='通信を再接続しています…';window.RAMagicLoader?.phaseWrap(wrap,'Reconnect',86);},30000));
+    }else{
+      frameTimers.set(name,setTimeout(()=>{if(wrap.classList.contains('loaded'))return;wrap.classList.add('load-error');window.RAMagicLoader?.errorWrap(wrap);if(label)label.textContent='読み込みに失敗しました。再読み込みできます。';},45000));
+    }
   }
   function setFrameReady(name){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;if(moduleState[name])moduleState[name].ready=true;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('load-error');const reveal=()=>{wrap.classList.add('loaded');applyThemeToFrame(frame,THEMES[currentTheme()]);};if(window.RAMagicLoader?.completeWrap)window.RAMagicLoader.completeWrap(wrap).then(reveal);else reveal();}
   function setFrameError(name,text='読み込みに失敗しました'){const frame=frames[name],wrap=frame?.closest('.module-frame-wrap');if(!wrap)return;clearTimeout(frameTimers.get(name));frameTimers.delete(name);wrap.classList.remove('loaded');wrap.classList.add('load-error');window.RAMagicLoader?.errorWrap(wrap);const label=wrap.querySelector('.frame-loading-text');if(label)label.textContent=text;}
