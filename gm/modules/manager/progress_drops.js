@@ -221,7 +221,7 @@ function eventRewardCopyText(scope='event'){
   if(!rows.length)return'';
   return rows.map(item=>{const count=String(item.count||1);return item.row?acquisitionItemCopyBlock(item.row,count):dropPlayerInfoBlock({name:item.name,id:item.row?.id||'',publicId:item.row?.publicId||'',count:`${count}個`});}).join('\n\n');
 }
-function eventRewardGroupText(group={}){const parts=[];const itemText=(group.items||[]).map(item=>`${item.selectedName||item.name}×${item.count}${/D/i.test(item.expr||'')?`（${item.expr}）`:''}`).join('、');if(itemText)parts.push(itemText);if(Number(group.tableSlots)>0)parts.push(`入手アイテム表：${Number(group.tableSlots)}枠`);if(parts.length)return parts.join(' / ');return String(group.clause||'').replace(/^目標値\\s*[+＋]\\s*\\d+\\s*以上\s*[：:]\s*/,'').replace(/^勝利後\s*[：:]?\s*/,'').replace(/^失敗\s*[：:]\s*/,'').replace(/^判定失敗\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?失敗\s*[：:]\s*/,'').replace(/^判定成功\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?成功\s*[：:]\s*/,'')||'結果を選択';}
+function eventRewardGroupText(group={}){const parts=[];const itemText=(group.items||[]).map(item=>`${item.selectedName||item.name}×${item.count}${/D/i.test(item.expr||'')?`（${item.expr}）`:''}`).join('、');if(itemText)parts.push(itemText);if(Number(group.tableSlots)>0)parts.push(`入手アイテム表：${Number(group.tableSlots)}枠`);if(parts.length)return parts.join(' / ');return String(group.clause||'').replace(/^目標値\s*[+＋]\s*\d+\s*以上\s*[：:]\s*/,'').replace(/^勝利後\s*[：:]?\s*/,'').replace(/^失敗\s*[：:]\s*/,'').replace(/^判定失敗\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?失敗\s*[：:]\s*/,'').replace(/^判定成功\s*[：:]\s*/,'').replace(/^[^：:。]{1,24}?成功\s*[：:]\s*/,'')||'結果を選択';}
 function eventOutcomeKey(scope='event'){
   if(scope==='quest')return String(state.lastQuestOutcomeKey||'');
   if(scope==='base')return String(state.lastBaseOutcomeKey||'');
@@ -305,7 +305,7 @@ function eventOutcomeCleanClause(row={},clause='',partySize=selectedPartySize())
   let text=resolveEncounterTokensInText(String(clause||''),partySize).trim();
   // 代用可能技能の注記は判定情報側だけに残し、「内容コピー」には混ぜない。
   text=text.replace(/[^\s、。：「」()（）]+?で代用可能（判定\s*[+\-−－]?\d+）[。]?\s*/g,'');
-  text=text.replace(/^目標値\\s*[+＋]\\s*\\d+\\s*以上\s*[：:]\s*/,'');
+  text=text.replace(/^目標値\s*[+＋]\s*\d+\s*以上\s*[：:]\s*/,'');
   text=text.replace(/^勝利後\s*[、,:：]?\s*/,'');
   // ドロップ判定そのものはGM処理。後ろに続く「運搬を続ける」「クエストクリア」等だけを内容へ残す。
   text=text.replace(/^(?:出現した)?各魔物のドロップ判定(?:を)?(?:1回ずつ)?行(?:い|って)\s*[、,]?\s*/,'');
