@@ -431,29 +431,19 @@ function restoreSavedState(){
     // deferred 保存中の現在世界状態は currentWorld に分離して保持する。
     // 「保存済み進行を復元」では、セッションが成立していた保存時点の世界条件ごと戻す。
     const data=JSON.parse(raw);
-    const persistentWorld=(data.currentWorld&&typeof data.currentWorld==='object')?data.currentWorld:data;
-    const persistentNotes=(persistentWorld.progressNotes&&typeof persistentWorld.progressNotes==='object')
-      ?persistentWorld.progressNotes
-      :progressNotesSnapshot(data.progress||{});
-    const persistentCompleted=(persistentWorld.completedImportantQuests&&typeof persistentWorld.completedImportantQuests==='object')
-      ?persistentWorld.completedImportantQuests
-      :completedImportantQuestProgressSnapshot(data.progress||{});
     const hasSaved=key=>Object.prototype.hasOwnProperty.call(data,key);
     const savedText=(key,fallback='')=>hasSaved(key)?String(data[key]??''):fallback;
     const savedNullable=(key,fallback=null)=>hasSaved(key)?(data[key]??null):fallback;
     const savedObject=(key,fallback={})=>(hasSaved(key)&&data[key]&&typeof data[key]==='object'&&!Array.isArray(data[key]))?data[key]:fallback;
     const savedArray=(key,fallback=[])=>hasSaved(key)&&Array.isArray(data[key])?data[key]:fallback;
 
-    state.progress=hasSaved('progress')&&data.progress&&typeof data.progress==='object'?data.progress:{quests:{},areas:{}};
-    applyProgressNotesSnapshot(persistentNotes);
-    applyCompletedImportantQuestProgress(persistentCompleted);
+    const savedProgress=hasSaved('progress')&&data.progress&&typeof data.progress==='object'?data.progress:{};
+    state.progress={quests:{},areas:(savedProgress.areas&&typeof savedProgress.areas==='object')?savedProgress.areas:{}};
     state.log=savedArray('log',state.log||[]);
-    state.questEncounterCache=savedObject('questEncounterCache',state.questEncounterCache||{});
+    state.questEncounterCache={};
     state.areaBossEncountered=savedObject('areaBossEncountered',state.areaBossEncountered||{});
-    state.lastQuestFixedEventText=savedText('lastQuestFixedEventText',state.lastQuestFixedEventText||'');
-    state.lastQuestFixedEventKey=savedText('lastQuestFixedEventKey',state.lastQuestFixedEventKey||'');
-    state.lastQuestCheckCopyText=savedText('lastQuestCheckCopyText',state.lastQuestCheckCopyText||'');
-    state.lastQuestBattleCheckCopyText=savedText('lastQuestBattleCheckCopyText',state.lastQuestBattleCheckCopyText||'');
+    state.lastQuestFixedEventText='';state.lastQuestFixedEventKey='';
+    state.lastQuestCheckCopyText='';state.lastQuestBattleCheckCopyText='';
     state.lastEventCheckCopyText=savedText('lastEventCheckCopyText',state.lastEventCheckCopyText||'');
 
     state.lastEventText=savedText('lastEventText',state.lastEventText||'');
@@ -466,25 +456,21 @@ function restoreSavedState(){
     state.lastEventTreasureCopyText=savedText('lastEventTreasureCopyText',state.lastEventTreasureCopyText||'');
     state.lastEventTreasureResults=savedArray('lastEventTreasureResults',state.lastEventTreasureResults||[]);
 
-    state.lastQuestEventText=savedText('lastQuestEventText',state.lastQuestEventText||'');
-    state.lastQuestEventKey=savedText('lastQuestEventKey',state.lastQuestEventKey||'');
-    state.lastQuestOutcomeKey=savedText('lastQuestOutcomeKey',state.lastQuestOutcomeKey||'');
-    state.lastQuestEventRewardState=savedNullable('lastQuestEventRewardState',state.lastQuestEventRewardState||null);
-    state.lastQuestEventTableRewardText=savedText('lastQuestEventTableRewardText',state.lastQuestEventTableRewardText||'');
-    state.lastQuestEventTableRewardCopyText=savedText('lastQuestEventTableRewardCopyText',state.lastQuestEventTableRewardCopyText||'');
-    state.lastQuestEventTableRewardState=savedNullable('lastQuestEventTableRewardState',state.lastQuestEventTableRewardState||null);
-    state.lastQuestTreasureCopyText=savedText('lastQuestTreasureCopyText',state.lastQuestTreasureCopyText||'');
-    state.lastQuestTreasureResults=savedArray('lastQuestTreasureResults',state.lastQuestTreasureResults||[]);
+    state.lastQuestEventText='';state.lastQuestEventKey='';state.lastQuestOutcomeKey='';
+    state.lastQuestEventRewardState=null;
+    state.lastQuestEventTableRewardText='';state.lastQuestEventTableRewardCopyText='';
+    state.lastQuestEventTableRewardState=null;
+    state.lastQuestTreasureCopyText='';state.lastQuestTreasureResults=[];
 
     state.lastBaseCheckCopyText=savedText('lastBaseCheckCopyText',state.lastBaseCheckCopyText||'');
     state.lastBaseOutcomeKey=savedText('lastBaseOutcomeKey',state.lastBaseOutcomeKey||'');
-    state.triggeredQuestEvents=savedObject('triggeredQuestEvents',state.triggeredQuestEvents||{});
+    state.triggeredQuestEvents={};
     state.baseUnlockedAreaIds=savedArray('baseUnlockedAreaIds',state.baseUnlockedAreaIds||[]);
     state.lastBaseRewardText=savedText('lastBaseRewardText',state.lastBaseRewardText||'');
     state.lastBaseRewardCopyText=savedText('lastBaseRewardCopyText',state.lastBaseRewardCopyText||'');
     state.lastBaseEventRewardState=savedNullable('lastBaseEventRewardState',state.lastBaseEventRewardState||null);
     state.lastBaseEventTableRewardState=savedNullable('lastBaseEventTableRewardState',state.lastBaseEventTableRewardState||null);
-    state.questRewardCache=savedObject('questRewardCache',state.questRewardCache||{});
+    state.questRewardCache={};
     state.lastBaseEventText=savedText('lastBaseEventText',state.lastBaseEventText||'');
     state.lastBaseEventKey=savedText('lastBaseEventKey',state.lastBaseEventKey||'');
 
@@ -493,8 +479,8 @@ function restoreSavedState(){
     state.lastEncounter=savedNullable('lastEncounter',state.lastEncounter||null);
     state.dropEncounterInstances=savedArray('dropEncounterInstances',state.dropEncounterInstances||[]);
     state.dropMode=hasSaved('dropMode')?(data.dropMode==='encounter'?'encounter':'single'):(state.dropMode||'single');
-    state.lastQuestReinforcementText=savedText('lastQuestReinforcementText',state.lastQuestReinforcementText||'');
-    state.questWorkReinforcementCounts=savedObject('questWorkReinforcementCounts',state.questWorkReinforcementCounts||{});
+    state.lastQuestReinforcementText='';
+    state.questWorkReinforcementCounts={};
     state.tokenExportEncounter=savedNullable('tokenExportEncounter',state.tokenExportEncounter||null);
     state.areaWeatherById=savedObject('areaWeatherById',state.areaWeatherById||{});
     state.lastRumorText=savedText('lastRumorText',state.lastRumorText||'');
@@ -512,7 +498,7 @@ function restoreSavedState(){
     state.lastAppraisalCopyText=savedText('lastAppraisalCopyText',state.lastAppraisalCopyText||'');
     state.lastDropText=savedText('lastDropText',state.lastDropText||'');
     state.lastDropSuccessText=savedText('lastDropSuccessText',state.lastDropSuccessText||'');
-    state.lastQuestHasTreasure=hasSaved('lastQuestHasTreasure')?!!data.lastQuestHasTreasure:!!state.lastQuestHasTreasure;
+    state.lastQuestHasTreasure=false;
     state.lastRecipeMerchantOffers=savedArray('lastRecipeMerchantOffers',state.lastRecipeMerchantOffers||[]);
     state.selectedRecipeMerchantId=savedText('selectedRecipeMerchantId',state.selectedRecipeMerchantId||'');
     state.lastRecipeMerchantContext=savedObject('lastRecipeMerchantContext',state.lastRecipeMerchantContext||{scope:'',areaName:'',eventName:''});
@@ -522,10 +508,8 @@ function restoreSavedState(){
     // 100%地点のボス噂再開では、セッション復元時点で選択中の噂が必要。
     renderAll();
     if(typeof restoreRumorSelectionByEventKey==='function')restoreRumorSelectionByEventKey(savedRumorEventKey);
-    // renderAll() 内のデイリー同期は、まだ active セッション復元前なので
-    // 保存済みデイリーの戦闘編成キャッシュを整理対象と誤認し得る。
-    // セッションUIを戻す直前に、保存スナップショットの編成キャッシュを再投入する。
-    state.questEncounterCache=savedObject('questEncounterCache',state.questEncounterCache||{});
+    // クエスト挑戦は再起動を跨いで復元しない。探索セッションUIだけを復元する。
+    state.questEncounterCache={};
     if(typeof v738RestoreSavedSessionUi==='function')v738RestoreSavedSessionUi(data.progressUiState||{});
     discardDeferredSavedProgressState();
     addLog('保存済み進行状態を復元しました。');
