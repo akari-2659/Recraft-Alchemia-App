@@ -32,6 +32,7 @@ applyProgressMaster=function(master){
   const questBefore=String($('questSelect')?.value||'');
   const areaBefore=String($('areaSelect')?.value||BASE_EXPLORATION_ID);
   const result=v737ApplyProgressMaster(master);
+  if(typeof migrateLegacyCompletedImportantQuestProgress==='function')migrateLegacyCompletedImportantQuestProgress();
   fillQuestSelect(questBefore);
   fillExplorationAreaSelect(areaBefore);
   if(progressUiV738.hidden.active&&areaBefore){
