@@ -7,6 +7,7 @@ function normalizeDayState(value={}){
 }
 function dailyActionLimit(){return Math.max(1,BASE_DAILY_ACTIONS-(Number(state.dayState?.fatigue)||0));}
 function dailyActionsRemaining(){return Math.max(0,dailyActionLimit()-(Number(state.dayState?.usedActions)||0));}
+function progressSessionActive(){return typeof progressUiV738!=='undefined'&&!!(progressUiV738.questActive||progressUiV738.areaActive||progressUiV738.hidden?.active);}
 function fatigueCheckPenalty(){return -2*(Number(state.dayState?.fatigue)||0);}
 function renderDayStatus(){
   state.dayState=normalizeDayState(state.dayState);
@@ -29,7 +30,11 @@ function renderDayStatus(){
     }
   }
   const blocked=state.dayState.awaitingEnd || remaining<=0;
-  ['manualActionBtn','innRestBtn'].forEach(id=>{if($(id))$(id).disabled=blocked;});
+  const sessionActive=progressSessionActive();
+  if($('manualActionBtn'))$('manualActionBtn').disabled=blocked||sessionActive;
+  if($('innRestBtn'))$('innRestBtn').disabled=blocked||sessionActive;
+  if($('innStayBtn'))$('innStayBtn').disabled=sessionActive;
+  if($('endDayWithoutInnBtn'))$('endDayWithoutInnBtn').disabled=sessionActive;
   if($('undoActionBtn')) $('undoActionBtn').disabled=state.dayState.usedActions<=0;
   if(typeof v738UpdateProgressControls==='function')v738UpdateProgressControls();
 }
@@ -62,6 +67,7 @@ function clearDailyRumor(){
   renderRumorDetail(); renderRumorResult();
 }
 function advanceToNextDay(stayAtInn=false){
+  if(progressSessionActive()){alert('進行中のクエストまたは探索を先に終了してください。');return false;}
   state.dayState=normalizeDayState(state.dayState);
   const previousDay=state.dayState.day;
   if(stayAtInn){
@@ -76,6 +82,7 @@ function advanceToNextDay(stayAtInn=false){
   }
 }
 function restAtInn(){
+  if(progressSessionActive()){alert('進行中のクエストまたは探索を先に終了してください。');return;}
   if(!consumeDailyAction('宿屋での休息'))return;
   addLog('休息代30Gを支払い、HP・MPを全回復しました。日付と疲労度は変化しません。');
 }
