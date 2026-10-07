@@ -373,8 +373,22 @@ function v738DailyCandidates(kind){
   const unlocked=v738DailyUnlockedIds(),areaByName=new Map(visibleExplorationAreas().map(a=>[String(a.name||'').trim(),a]));return (state.quests||[]).filter(q=>questCategoryFor(q)==='デイリー'&&questEnabled(q)&&String(q.requestKind||'').trim()===kind).filter(q=>{const a=areaByName.get(String(q.areaName||'').trim());return !a||unlocked.has(String(a.id||a.name||''));});
 }
 function v738WriteDailySelection(){
+  const activeQuest=progressUiV738.questActive?selected($('questSelect'),state.quests):null;
+  const activeDailyId=activeQuest&&questCategoryFor(activeQuest)==='デイリー'?String(activeQuest.id||activeQuest.name||''):'';
   const data={keysByKind:state.lastDailyQuestKeysByKind,keys:GUILD_DAILY_REQUEST_KINDS.flatMap(k=>state.lastDailyQuestKeysByKind[k]||[]),countsByKind:Object.fromEntries(GUILD_DAILY_REQUEST_KINDS.map(k=>[k,v740DailyCount(k)])),areaId:'',unlockedAreaIds:[...v738DailyUnlockedIds()],updatedAt:new Date().toISOString()};try{localStorage.setItem(GUILD_DAILY_STORAGE_KEY,JSON.stringify(data));}catch(_e){}try{const ch=new BroadcastChannel(GUILD_DAILY_CHANNEL_NAME);ch.postMessage({type:'updated',updatedAt:data.updatedAt});ch.close();}catch(_e){}
-  state.lastDailyQuestKeys=data.keys;state.dailyQuestUnlockedAreaIds=data.unlockedAreaIds;state.lastDailyQuestText=dailyQuestTextFor(selectedFacilityDailyQuestRowsByKind());saveState(false);renderDailyQuestResult();if(currentQuestCategory==='デイリー'){fillQuestSelect(state.lastDailyQuestKeys[0]||'');renderQuest();}
+  state.lastDailyQuestKeys=data.keys;state.dailyQuestUnlockedAreaIds=data.unlockedAreaIds;state.lastDailyQuestText=dailyQuestTextFor(selectedFacilityDailyQuestRowsByKind());saveState(false);renderDailyQuestResult();
+  if(currentQuestCategory==='デイリー'){
+    fillQuestSelect(activeDailyId||state.lastDailyQuestKeys[0]||'');
+    if(activeDailyId){
+      const sel=$('questSelect');
+      let opt=[...(sel?.options||[])].find(o=>o.value===activeDailyId);
+      if(!opt&&activeQuest&&sel){
+        opt=document.createElement('option');opt.value=activeDailyId;opt.textContent=`${activeQuest.name||activeDailyId} / 進行中`;opt.dataset.activeDailySession='1';sel.appendChild(opt);
+      }
+      if(opt)sel.value=activeDailyId;
+    }
+    renderQuest();
+  }
 }
 function rerollDailyQuestsInProgress(kind=''){
   const kinds=GUILD_DAILY_REQUEST_KINDS.includes(kind)?[kind]:GUILD_DAILY_REQUEST_KINDS;state.lastDailyQuestKeysByKind=state.lastDailyQuestKeysByKind||emptyDailyQuestKeysByKind();kinds.forEach(k=>{const rows=v738DailyCandidates(k),current=new Set((state.lastDailyQuestKeysByKind[k]||[]).map(String)),fresh=v738Shuffle(rows.filter(q=>!current.has(String(q.id||q.name||'')))),old=v738Shuffle(rows.filter(q=>current.has(String(q.id||q.name||'')))),count=Math.min(v740DailyCount(k),rows.length);state.lastDailyQuestKeysByKind[k]=v738DailyUnique(fresh.concat(old)).slice(0,count).map(q=>String(q.id||q.name||''));});v738WriteDailySelection();addLog(kind?`${kind}を抽選しました。`:'デイリークエストを全体抽選しました。');
