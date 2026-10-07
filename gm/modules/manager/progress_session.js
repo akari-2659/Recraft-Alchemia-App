@@ -45,49 +45,6 @@ applyProgressMaster=function(master){
   normalizeBaseUnlockedAreaIds();renderBaseEventControls();renderDailyUnlockedAreaControl();renderArea();renderQuest();
   return result;
 };
-function v738SerializableUiState(){
-  return {
-    questActive:!!progressUiV738.questActive,
-    areaActive:!!progressUiV738.areaActive,
-    areaMode:String(progressUiV738.areaMode||'normal'),
-    slotResolved:{...progressUiV738.slotResolved},
-    seen:{
-      quest:[...v738CurrentSeenSet('quest')],
-      event:[...v738CurrentSeenSet('event')],
-      base:[...v738CurrentSeenSet('base')]
-    },
-    selectedQuestId:String($('questSelect')?.value||''),
-    selectedAreaId:String($('areaSelect')?.value||''),
-    questCategory:String(currentQuestCategory||'重要')
-  };
-}
-function v738RestoreUiState(saved={}){
-  const ui=saved&&typeof saved==='object'?saved:{};
-  progressUiV738.questActive=!!ui.questActive;
-  progressUiV738.areaActive=!!ui.areaActive;
-  progressUiV738.areaMode=ui.areaMode==='base'?'base':'normal';
-  progressUiV738.slotResolved={
-    quest:!!ui.slotResolved?.quest,
-    event:!!ui.slotResolved?.event,
-    base:!!ui.slotResolved?.base
-  };
-  progressUiV738.seen={
-    quest:new Set(Array.isArray(ui.seen?.quest)?ui.seen.quest:[]),
-    event:new Set(Array.isArray(ui.seen?.event)?ui.seen.event:[]),
-    base:new Set(Array.isArray(ui.seen?.base)?ui.seen.base:[])
-  };
-  currentQuestCategory=ui.questCategory==='デイリー'?'デイリー':'重要';
-  fillQuestSelect(String(ui.selectedQuestId||''));
-  const areaSel=$('areaSelect');
-  if(areaSel&&[...areaSel.options].some(o=>o.value===String(ui.selectedAreaId||'')))areaSel.value=String(ui.selectedAreaId||'');
-  v738ToggleAreaRuntime(progressUiV738.areaMode);
-  renderQuest();renderArea();renderBaseEventControls();v738UpdateProgressControls();
-  if(progressUiV738.questActive&&$('questSelect')?.value)v738OpenQuestModal();
-  if(progressUiV738.areaActive){
-    const title=progressUiV738.areaMode==='base'?'開拓拠点リクラフト：探索':`${selectedExplorationArea()?.name||selectedExplorationArea()?.id||'}：探索`;
-    v738OpenAreaModal(title);
-  }
-}
 function v738CurrentSeenSet(scope='event'){return progressUiV738.seen[scope]||(progressUiV738.seen[scope]=new Set());}
 function v738FilterUnseen(scope,rows=[]){
   const list=(rows||[]).filter(Boolean),seen=v738CurrentSeenSet(scope);
