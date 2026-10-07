@@ -58,16 +58,14 @@ function applyData(data) {
   markInventoryUiDirty();
   loadoutPresetsState = normalizeLoadoutPresets(currentCharacter.loadoutPresets || {});
   setEquipmentState(currentCharacter.equipment || {});
-  // 倉庫カードは「倉庫」タブを開くまで生成しない。編集画面への遷移を倉庫件数から切り離す。
-  renderQuiverControls();
+  // 倉庫カードと所持品補助UIは対応タブを初めて開くまでDOMを作らない。
+  // inventoryItemsState / count / 装備・所持割当など保存データそのものはここまでで完全復元済み。
+  resetDeferredCharacterUi();
   setSkillGachaState(currentCharacter.skillGacha || {});
   setCraftListsState(currentCharacter.craftLists || {});
   if(legacyEquipmentUpgradeMigrationCount>0){
     setTimeout(()=>showToast(`旧形式の装備強化${legacyEquipmentUpgradeMigrationCount}件を新形式へ引き継ぎました。次回保存時に確定します。`,'ok'),0);
   }
-  renderBagSelect();
-  applyBagCapacityToEquipmentSlots();
-  renderLoadoutPresets();
   $('charMemo').value = currentCharacter.memo || '';
   updateAll();
 }
