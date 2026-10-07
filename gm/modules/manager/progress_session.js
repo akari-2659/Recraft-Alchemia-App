@@ -455,6 +455,14 @@ function v738RestoreSavedSessionUi(saved={}){
     base:new Set(Array.isArray(ui.seen?.base)?ui.seen.base:[])
   };
   progressUiV738.hidden=(ui.hidden&&typeof ui.hidden==='object')?v738DeepClone(ui.hidden):{active:false,snapshot:null,originScope:'',areaId:''};
+  // 旧保存データ互換：クエスト由来の隠し探索は親クエストを復元しないため再開しない。
+  if(progressUiV738.hidden.active&&String(progressUiV738.hidden.originScope||'')==='quest'){
+    progressUiV738.hidden={active:false,snapshot:null,originScope:'',areaId:''};
+    progressUiV738.areaActive=false;
+    progressUiV738.areaMode='normal';
+    progressUiV738.slotResolved.event=false;
+    progressUiV738.seen.event=new Set();
+  }
   progressUiV738.kohakuMaterials=(ui.kohakuMaterials&&typeof ui.kohakuMaterials==='object')
     ?v738DeepClone(ui.kohakuMaterials)
     :{areaId:'',seq:0,currentEventToken:'',sources:{}};
