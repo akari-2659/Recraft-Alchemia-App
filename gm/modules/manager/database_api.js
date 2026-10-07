@@ -1142,7 +1142,7 @@ function assertMonsterActionRangeRows(rows){
 
 function assertMonsterSelfMoveConditionRows(rows){
   const bad=[];
-  const movePerf=/(?:この|自身の)?手番[^\n]{0,30}移動[^\n]{0,50}(?:判定|命中|ダメージ|回避値|防御値|抵抗値|最終ダメージ)|移動してから使用した場合|移動していない場合|この手番に移動した場合/;
+  const movePerf=/(?:この|自身の)?手番(?:中|に)[^\n]{0,30}(?:通常)?移動[^\n]{0,50}(?:判定|命中|ダメージ|回避値|防御値|抵抗値|最終ダメージ)|移動してから使用した場合|移動していない場合|この手番に移動した場合/;
   (rows||[]).forEach(row=>{
     const actions=String(row?.actions||'').split(/\r?\n/).filter(Boolean);
     actions.forEach(line=>{const c=line.split('\t');const effect=String(c[6]||'');if(movePerf.test(effect))bad.push(`${row.name||row.id||'魔物'} / ${c[0]||'行動'}：${effect}`);});
