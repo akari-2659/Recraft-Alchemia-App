@@ -133,16 +133,27 @@ async function cloudRequest(action, payload={}) {
   // CORS制限で POST の返答を取得できず Failed to fetch になることがあります。
   // 読み込み系はJSONP、保存/削除系は no-cors POST に寄せて回避します。
   if (CLOUD_JSONP_ACTIONS.has(action)) {
-    const attempts=action==='list'?3:(action==='load'?2:1);
-    let lastError=null;
-    for(let i=0;i<attempts;i++){
+    const isCharacterLoad=action==='load';
+    const attempts=action==='list'?3:1;
+    let lastError=null,attempt=0;
+    while(isCharacterLoad || attempt<attempts){
+      attempt++;
       try{
         const json = await cloudJsonpRequest(action, payload);
-        if (!json.ok) throw new Error(json.error || 'DB読み込みに失敗しました。');
+        if (!json.ok) {
+          const error=new Error(json.error || 'DB読み込みに失敗しました。');
+          error.cloudLogical=true;
+          throw error;
+        }
         return json;
       }catch(error){
         lastError=error;
-        if(i+1<attempts)await sleepMs([700,1800][i]||2500);
+        // A server response that explicitly rejects the request is not a timeout/network retry case.
+        if(error?.cloudLogical)throw error;
+        if(!isCharacterLoad && attempt>=attempts)break;
+        // Character load keeps reconnecting until one request completes successfully.
+        const delay=Math.min(8000,700*Math.pow(1.7,Math.min(attempt-1,6)));
+        await sleepMs(delay);
       }
     }
     throw lastError||new Error('DB読み込みに失敗しました。');
