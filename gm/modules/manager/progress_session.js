@@ -251,6 +251,10 @@ function v738UpdateProgressControls(){
   if($('questEndBtn'))$('questEndBtn').textContent=qVal>=100&&progressUiV738.slotResolved.quest?'クエスト完了':'撤退';
   if($('areaEndBtn'))$('areaEndBtn').textContent=aVal>=100&&progressUiV738.slotResolved[aScope]?'探索完了':'探索を終了';
   if($('hiddenEndBtn'))$('hiddenEndBtn').textContent='元の探索へ戻る';
+  if($('questSelect'))$('questSelect').disabled=!!progressUiV738.questActive;
+  document.querySelectorAll('[data-quest-category]').forEach(btn=>{btn.disabled=!!progressUiV738.questActive;});
+  if($('questShowDisabledImportant'))$('questShowDisabledImportant').disabled=!!progressUiV738.questActive;
+  if($('areaSelect'))$('areaSelect').disabled=!!(progressUiV738.areaActive||progressUiV738.hidden.active);
   const qFixed=progressUiV738.questActive&&!!v738QuestFixedAt(selected($('questSelect'),state.quests)||{},qVal).length;
   if($('rollQuestEventBtn'))$('rollQuestEventBtn').disabled=!progressUiV738.questActive||progressUiV738.slotResolved.quest||qFixed||isDeliveryQuest(selected($('questSelect'),state.quests)||{});
   if($('rollEventBtn'))$('rollEventBtn').disabled=!(progressUiV738.areaActive&&aScope==='event')||progressUiV738.slotResolved.event;
