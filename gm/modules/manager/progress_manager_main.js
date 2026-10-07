@@ -668,12 +668,6 @@ function setQuestCategory(cat='重要',options={}){
   if(options.resetContext!==false&&before&&after!==before){clearQuestSelectionContext();if(options.save!==false)saveState(false);}
   if(options.render!==false)renderQuest();
 }
-function questIsCleared(q={}){
-  if(questCategoryFor(q)!=='重要'||!progressUiV738.questActive)return false;
-  const key=String(q.id||q.name||''),selectedKey=String($('questSelect')?.value||'');
-  if(selectedKey!==key)return false;
-  return clamp(progressObj('quests',key).value)>=100&&!!progressUiV738.slotResolved.quest;
-}
 function questListMemoForCategory(category='重要'){
   const cat=category==='デイリー'?'デイリー':'重要';
   const showOff=!!$('questShowDisabledImportant')?.checked;
