@@ -390,16 +390,18 @@ function saveState(show=true){
   const currentPayload={progress:state.progress, log:state.log, questEncounterCache:state.questEncounterCache||{}, areaBossEncountered:state.areaBossEncountered||{}, partySize:selectedPartySize(), lastQuestFixedEventText:state.lastQuestFixedEventText||'', lastQuestFixedEventKey:state.lastQuestFixedEventKey||'', lastQuestCheckCopyText:state.lastQuestCheckCopyText||'', lastQuestBattleCheckCopyText:state.lastQuestBattleCheckCopyText||'', lastEventCheckCopyText:state.lastEventCheckCopyText||'', lastEventText:state.lastEventText||'', lastEventKey:state.lastEventKey||'', lastEventOutcomeKey:state.lastEventOutcomeKey||'', lastEventRewardState:state.lastEventRewardState||null, lastEventTableRewardText:state.lastEventTableRewardText||'', lastEventTableRewardCopyText:state.lastEventTableRewardCopyText||'', lastEventTableRewardState:state.lastEventTableRewardState||null, lastEventTreasureCopyText:state.lastEventTreasureCopyText||'', lastEventTreasureResults:state.lastEventTreasureResults||[], lastQuestEventText:state.lastQuestEventText||'', lastQuestEventKey:state.lastQuestEventKey||'', lastQuestOutcomeKey:state.lastQuestOutcomeKey||'', lastQuestEventRewardState:state.lastQuestEventRewardState||null, lastQuestEventTableRewardText:state.lastQuestEventTableRewardText||'', lastQuestEventTableRewardCopyText:state.lastQuestEventTableRewardCopyText||'', lastQuestEventTableRewardState:state.lastQuestEventTableRewardState||null, lastQuestTreasureCopyText:state.lastQuestTreasureCopyText||'', lastQuestTreasureResults:state.lastQuestTreasureResults||[], lastBaseCheckCopyText:state.lastBaseCheckCopyText||'', lastBaseOutcomeKey:state.lastBaseOutcomeKey||'', triggeredQuestEvents:state.triggeredQuestEvents||{}, baseUnlockedAreaIds:state.baseUnlockedAreaIds||[], lastBaseEventText:state.lastBaseEventText||'', lastBaseEventKey:state.lastBaseEventKey||'', lastBaseRewardText:state.lastBaseRewardText||'', lastBaseRewardCopyText:state.lastBaseRewardCopyText||'', lastBaseEventRewardState:state.lastBaseEventRewardState||null, lastBaseEventTableRewardState:state.lastBaseEventTableRewardState||null, questRewardCache:state.questRewardCache||{}, treasureSetup:state.treasureSetup||null, treasureContext:state.treasureContext||null, dayState:state.dayState||{day:1,fatigue:0,usedActions:0,awaitingEnd:false}, lastEncounter:state.lastEncounter||null, dropEncounterInstances:state.dropEncounterInstances||[], dropMode:state.dropMode||'single', lastQuestReinforcementText:state.lastQuestReinforcementText||'', questWorkReinforcementCounts:state.questWorkReinforcementCounts||{}, tokenExportEncounter:state.tokenExportEncounter||null, areaWeatherById:state.areaWeatherById||{}, lastRumorText:state.lastRumorText||'', lastRumorKey:state.lastRumorKey||'', selectedRumorEventKey:typeof rumorSelectionEventKey==='function'?rumorSelectionEventKey():'', importantApplied:progressUiV738.importantApplied||{quest:null,event:null,base:null}, progressUiState:typeof v738SerializableUiState==='function'?v738SerializableUiState():null, timeSlot:selectedTimeSlot(), lastTreasureText:state.lastTreasureText||'', lastTreasureCopyText:state.lastTreasureCopyText||'', lastAppraisalText:state.lastAppraisalText||'', lastAppraisalCopyText:state.lastAppraisalCopyText||'', lastDropText:state.lastDropText||'', lastDropSuccessText:state.lastDropSuccessText||'', lastQuestHasTreasure:!!state.lastQuestHasTreasure, lastRecipeMerchantOffers:state.lastRecipeMerchantOffers||[], selectedRecipeMerchantId:state.selectedRecipeMerchantId||'', lastRecipeMerchantContext:state.lastRecipeMerchantContext||{scope:'',areaName:'',eventName:''}, lastRecipeMerchantTrades:state.lastRecipeMerchantTrades||[]};
   // 起動直後は進行度を自動復元しないが、「保存済み進行を復元」用の
   // セッションスナップショットは、明示保存・新規開始・初期化まで保護する。
+  const currentWorld={
+    dayState:currentPayload.dayState,
+    timeSlot:currentPayload.timeSlot,
+    partySize:currentPayload.partySize,
+    areaWeatherById:currentPayload.areaWeatherById,
+    lastRumorText:currentPayload.lastRumorText,
+    lastRumorKey:currentPayload.lastRumorKey,
+    selectedRumorEventKey:currentPayload.selectedRumorEventKey,
+    baseUnlockedAreaIds:currentPayload.baseUnlockedAreaIds
+  };
   const payload=deferredSavedProgressState
-    ?{...deferredSavedProgressState,
-      log:currentPayload.log,
-      dayState:currentPayload.dayState,
-      timeSlot:currentPayload.timeSlot,
-      partySize:currentPayload.partySize,
-      areaWeatherById:currentPayload.areaWeatherById,
-      lastRumorText:currentPayload.lastRumorText,
-      lastRumorKey:currentPayload.lastRumorKey,
-      selectedRumorEventKey:currentPayload.selectedRumorEventKey}
+    ?{...deferredSavedProgressState,log:currentPayload.log,currentWorld}
     :currentPayload;
   localStorage.setItem(STORE_KEY,JSON.stringify(payload));
   if(show) addLog('進行状態を保存しました。');
@@ -411,24 +413,24 @@ function loadState(){
   try{
     const raw=localStorage.getItem(STORE_KEY);if(!raw)return;
     const data=JSON.parse(raw);deferredSavedProgressState=savedProgressSnapshotIsRestorable(data)?data:null;
+    const world=(data.currentWorld&&typeof data.currentWorld==='object')?data.currentWorld:data;
     state.log=Array.isArray(data.log)?data.log:[];
-    state.baseUnlockedAreaIds=Array.isArray(data.baseUnlockedAreaIds)?data.baseUnlockedAreaIds:[];
-    setPartySize(data.partySize||4);
-    state.areaWeatherById=(data.areaWeatherById&&typeof data.areaWeatherById==='object')?data.areaWeatherById:{};
-    state.lastRumorText=String(data.lastRumorText||'');
-    state.lastRumorKey=String(data.lastRumorKey||'');
-    state.savedRumorEventKey=String(data.selectedRumorEventKey||'');
-    state.timeSlot=normalizeTimeSlot(data.timeSlot||'朝');
-    state.dayState=normalizeDayState(data.dayState);
+    state.baseUnlockedAreaIds=Array.isArray(world.baseUnlockedAreaIds)?world.baseUnlockedAreaIds:[];
+    setPartySize(world.partySize||4);
+    state.areaWeatherById=(world.areaWeatherById&&typeof world.areaWeatherById==='object')?world.areaWeatherById:{};
+    state.lastRumorText=String(world.lastRumorText||'');
+    state.lastRumorKey=String(world.lastRumorKey||'');
+    state.savedRumorEventKey=String(world.selectedRumorEventKey||'');
+    state.timeSlot=normalizeTimeSlot(world.timeSlot||'朝');
+    state.dayState=normalizeDayState(world.dayState);
   }catch(e){}
 }
 function restoreSavedState(){
   try{
     const raw=localStorage.getItem(STORE_KEY);
     if(!raw){addLog('復元できる保存済み進行状態がありません。'); return;}
-    // saveState(false) は deferred のセッション部分を保護しつつ、
-    // 日付・時間帯・天候・噂など現在の世界状態だけ localStorage 側へ反映する。
-    // 復元時は必ずその最新の保護済みスナップショットを読む。
+    // deferred 保存中の現在世界状態は currentWorld に分離して保持する。
+    // 「保存済み進行を復元」では、セッションが成立していた保存時点の世界条件ごと戻す。
     const data=JSON.parse(raw);
     const hasSaved=key=>Object.prototype.hasOwnProperty.call(data,key);
     const savedText=(key,fallback='')=>hasSaved(key)?String(data[key]??''):fallback;
