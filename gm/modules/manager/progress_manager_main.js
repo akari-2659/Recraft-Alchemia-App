@@ -89,52 +89,13 @@ const GUILD_DAILY_CHANNEL_NAME='recraft_alchemia_guild_daily_channel';
 const GUILD_DAILY_REQUEST_KINDS=['拠点内依頼','エリア依頼','納品依頼'];
 const MASTER_CACHE_KEY=STORE_KEY+'_master_cache_v1';
 let deferredSavedProgressState=null;
-let legacyCompletedQuestProgressForMigration={};
 function savedProgressSnapshotHasActiveSession(data={}){
   const ui=data&&typeof data.progressUiState==='object'&&data.progressUiState?data.progressUiState:{};
-  return !!(ui.questActive||ui.areaActive||ui.hidden?.active);
+  return !!(ui.areaActive||ui.hidden?.active);
 }
 function savedProgressSnapshotHasProgress(data={}){
-  const boxes=data&&typeof data.progress==='object'&&data.progress?data.progress:{};
-  return ['quests','areas'].some(type=>Object.values(boxes[type]||{}).some(row=>{
-    const value=Number(row?.value)||0;
-    return value!==0;
-  }));
-}
-function progressNotesSnapshot(progress={}){
-  const out={quests:{},areas:{}};
-  ['quests','areas'].forEach(type=>Object.entries(progress?.[type]||{}).forEach(([key,row])=>{
-    const note=String(row?.note||'');
-    if(note.trim())out[type][key]=note;
-  }));
-  return out;
-}
-function applyProgressNotesSnapshot(notes={}){
-  ['quests','areas'].forEach(type=>Object.entries(notes?.[type]||{}).forEach(([key,note])=>{
-    progressObj(type,key).note=String(note||'');
-  }));
-}
-function completedImportantQuestProgressSnapshot(progress={}){
-  const out={};
-  (state.quests||[]).filter(q=>questCategoryFor(q)==='重要').forEach(q=>{
-    const key=String(q.id||q.name||'');if(!key)return;
-    const row=progress?.quests?.[key];
-    if(clamp(row?.value)>=100)out[key]=100;
-  });
-  return out;
-}
-function applyCompletedImportantQuestProgress(rows={}){
-  Object.entries(rows||{}).forEach(([key,value])=>{
-    if(Number(value)>=100)progressObj('quests',key).value=100;
-  });
-}
-function migrateLegacyCompletedImportantQuestProgress(){
-  const rows=legacyCompletedQuestProgressForMigration||{};
-  (state.quests||[]).filter(q=>questCategoryFor(q)==='重要').forEach(q=>{
-    const key=String(q.id||q.name||'');
-    if(key&&Number(rows[key])>=100)progressObj('quests',key).value=100;
-  });
-  legacyCompletedQuestProgressForMigration={};
+  const areas=data&&typeof data.progress==='object'&&data.progress?data.progress.areas:{};
+  return Object.values(areas||{}).some(row=>(Number(row?.value)||0)!==0);
 }
 function savedProgressSnapshotIsRestorable(data={}){
   return savedProgressSnapshotHasActiveSession(data)||savedProgressSnapshotHasProgress(data);
@@ -434,9 +395,7 @@ function saveState(show=true){
     lastRumorText:currentPayload.lastRumorText,
     lastRumorKey:currentPayload.lastRumorKey,
     selectedRumorEventKey:currentPayload.selectedRumorEventKey,
-    baseUnlockedAreaIds:currentPayload.baseUnlockedAreaIds,
-    progressNotes:progressNotesSnapshot(currentPayload.progress),
-    completedImportantQuests:completedImportantQuestProgressSnapshot(currentPayload.progress)
+    baseUnlockedAreaIds:currentPayload.baseUnlockedAreaIds
   };
   const payload=deferredSavedProgressState
     ?{...deferredSavedProgressState,log:currentPayload.log,currentWorld}
@@ -461,19 +420,8 @@ function loadState(){
     state.savedRumorEventKey=String(world.selectedRumorEventKey||'');
     state.timeSlot=normalizeTimeSlot(world.timeSlot||'朝');
     state.dayState=normalizeDayState(world.dayState);
+    // クエスト挑戦は再起動を跨いで復元しない。進行度・メモ・イベント状態は常に新規挑戦扱い。
     state.progress={quests:{},areas:{}};
-    const notes=(world.progressNotes&&typeof world.progressNotes==='object')
-      ?world.progressNotes
-      :progressNotesSnapshot(data.progress||{});
-    applyProgressNotesSnapshot(notes);
-    if(world.completedImportantQuests&&typeof world.completedImportantQuests==='object'){
-      applyCompletedImportantQuestProgress(world.completedImportantQuests);
-      legacyCompletedQuestProgressForMigration={};
-    }else{
-      legacyCompletedQuestProgressForMigration=Object.fromEntries(
-        Object.entries(data.progress?.quests||{}).filter(([,row])=>clamp(row?.value)>=100).map(([key])=>[key,100])
-      );
-    }
   }catch(e){}
 }
 function restoreSavedState(){
