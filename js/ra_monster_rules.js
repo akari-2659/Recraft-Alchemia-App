@@ -1,4 +1,4 @@
-/* Recraft-Alchemia v90.8.833 — 管理画面・進行管理で共用する状態定義 */
+/* Recraft-Alchemia v90.8.837 — 管理画面・進行管理で共用する状態定義 */
 (function(root){
 'use strict';
 const definitions = {
@@ -143,11 +143,7 @@ const fields = {
     "damageKind": "防御無視"
   }
 };
-const areaVariantOverrides = Object.freeze({
-  "mon_glide_scale": Object.freeze({
-    "灰冠の火山峡谷": Object.freeze({hp:50,defenseValue:3})
-  })
-});
+const areaVariantOverrides = Object.freeze({});
 function areaVariantOverride(monster={},areaName=''){
   const key=String(monster?.id||'').trim(),name=String(areaName||'').trim();
   if(!key||!name)return null;
