@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Recraft Alchemia Firebase Test</title>
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><h1>RA Firebase Test</h1><p>キャラクター切替 + リアルタイムチャット検証</p></div>
+    <a class="ccfolia-link" href="https://ccfolia.com/rooms/cYzLw9j74" target="_blank" rel="noopener noreferrer">ココフォリアを開く</a>
+  </header>
+  <main class="layout">
+    <section class="panel settings">
+      <h2>1. Firebase接続</h2>
+      <p class="hint">Firebase Console の「プロジェクトの設定 → マイアプリ → SDK の設定と構成」に表示される値を入力します。</p>
+      <div class="grid">
+        <label>apiKey<input id="fbApiKey" autocomplete="off"></label>
+        <label>authDomain<input id="fbAuthDomain" autocomplete="off"></label>
+        <label>databaseURL<input id="fbDatabaseUrl" autocomplete="off"></label>
+        <label>projectId<input id="fbProjectId" autocomplete="off"></label>
+        <label>appId<input id="fbAppId" autocomplete="off"></label>
+      </div>
+      <div class="row"><button id="connectFirebaseBtn">Firebaseへ接続</button><button id="clearFirebaseBtn" class="ghost">保存設定を削除</button></div>
+      <div id="firebaseStatus" class="status">未接続</div>
+      <h2>2. セッション</h2>
+      <label>テストルームID<input id="roomId" value="ra-test-room-1" autocomplete="off"></label>
+      <h2>3. キャラクター</h2>
+      <label>キャラシ用プレイヤーキー<input id="playerKey" autocomplete="off"></label>
+      <div class="row"><button id="loadCharactersBtn">登録キャラを読み込む</button></div>
+      <label>発言キャラクター<select id="characterSelect"><option value="">未選択</option></select></label>
+      <div id="characterStatus" class="status">未読込</div>
+    </section>
+    <section class="panel chat-panel">
+      <div class="chat-head"><div><h2>リアルタイムチャット</h2><div id="roomStatus" class="room-status">Firebase未接続</div></div><button id="reconnectRoomBtn" class="ghost">ルーム再接続</button></div>
+      <div id="chatLog" class="chat-log" aria-live="polite"></div>
+      <form id="chatForm" class="composer"><textarea id="chatText" rows="3" maxlength="1000" placeholder="メッセージを入力"></textarea><button type="submit">送信</button></form>
+    </section>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
