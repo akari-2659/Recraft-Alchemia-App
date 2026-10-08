@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "raTest": {
+      "rooms": {
+        "$roomId": {
+          "messages": {
+            ".read": "auth != null",
+            "$messageId": {
+              ".write": "auth != null",
+              ".validate": "newData.hasChildren(['speakerId','speakerName','text','senderUid','createdAt']) && newData.child('speakerId').isString() && newData.child('speakerId').val().length <= 120 && newData.child('speakerName').isString() && newData.child('speakerName').val().length <= 120 && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 1000 && newData.child('senderUid').val() == auth.uid"
+            }
+          }
+        }
+      }
+    }
+  }
+}
