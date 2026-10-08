@@ -1,6 +1,6 @@
 
 'use strict';
-const VERSION='v90.8.834';
+const VERSION='v90.8.837';
 const GAS_URL='https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec';
 const GITHUB_COMMON_DB_BASE=new URL('../../../data/public/',window.location.href).toString();
 function progressGithubBaseCandidates(){
