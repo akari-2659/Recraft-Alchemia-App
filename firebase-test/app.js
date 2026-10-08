@@ -1,6 +1,6 @@
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getDatabase, ref, push, onChildAdded, query, orderByChild, limitToLast, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, onValue, query, orderByChild, limitToLast, serverTimestamp, set, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec";
 const CONFIG_KEY = "ra-firebase-test-config-v1";
@@ -20,6 +20,9 @@ let firebaseApp = null;
 let auth = null;
 let db = null;
 let roomUnsubscribe = null;
+let hpUnsubscribe = null;
+let hpWriteTimer = null;
+let selectedCharacterData = null;
 let currentUid = "";
 const renderedKeys = new Set();
 
@@ -54,10 +57,8 @@ async function connectFirebase() {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
   setStatus($("firebaseStatus"), "Firebaseへ接続中…");
 
-  if (roomUnsubscribe) {
-    roomUnsubscribe();
-    roomUnsubscribe = null;
-  }
+  if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
+  if (hpUnsubscribe) { hpUnsubscribe(); hpUnsubscribe = null; }
   if (firebaseApp) {
     try { await deleteApp(firebaseApp); } catch (_) {}
   }
@@ -70,6 +71,7 @@ async function connectFirebase() {
 
   setStatus($("firebaseStatus"), "接続済み / 匿名UID: " + currentUid.slice(0, 10) + "…", "ok");
   connectRoom();
+  if ($("characterSelect").value && selectedCharacterData) connectHp(String($("characterSelect").value), normalizedInitialHp(selectedCharacterData));
 }
 
 function connectRoom() {
@@ -215,6 +217,119 @@ function jsonp(action, payload = {}, timeoutMs = 30000) {
   });
 }
 
+
+function normalizedInitialHp(character) {
+  const raw = character?.resources?.currentHp;
+  if (raw === "" || raw === null || raw === undefined) return 0;
+  const value = Number(raw);
+  return Number.isFinite(value) ? Math.trunc(value) : 0;
+}
+
+async function loadSelectedCharacterAndConnectHp() {
+  if (hpUnsubscribe) {
+    hpUnsubscribe();
+    hpUnsubscribe = null;
+  }
+  if (hpWriteTimer) {
+    clearTimeout(hpWriteTimer);
+    hpWriteTimer = null;
+  }
+
+  selectedCharacterData = null;
+  $("liveHp").disabled = true;
+  $("liveCharacterId").textContent = "未選択";
+
+  const characterId = String($("characterSelect").value || "").trim();
+  const playerKey = String($("playerKey").value || "").trim();
+
+  if (!characterId) {
+    setStatus($("hpStatus"), "キャラクターを選択してください。");
+    return;
+  }
+  if (!playerKey) {
+    setStatus($("hpStatus"), "プレイヤーキーが必要です。", "error");
+    return;
+  }
+
+  $("liveCharacterId").textContent = characterId;
+  setStatus($("hpStatus"), "キャラクターデータを読み込み中…");
+
+  try {
+    const response = await jsonp("load", { id: characterId, playerKey });
+    const character = response?.data || response;
+    if (!character || String(character.id || "") !== characterId) {
+      throw new Error("キャラクターデータを取得できませんでした。");
+    }
+    selectedCharacterData = character;
+
+    if (!db) {
+      $("liveHp").value = normalizedInitialHp(character);
+      setStatus($("hpStatus"), "Firebase未接続。保存済みHPのみ表示しています。");
+      return;
+    }
+
+    connectHp(characterId, normalizedInitialHp(character));
+  } catch (error) {
+    setStatus($("hpStatus"), error.message || String(error), "error");
+  }
+}
+
+async function connectHp(characterId, initialHp) {
+  if (!db) return;
+
+  const roomId = String($("roomId").value || "").trim();
+  if (!roomId) {
+    setStatus($("hpStatus"), "ルームIDを入力してください。", "error");
+    return;
+  }
+
+  if (hpUnsubscribe) {
+    hpUnsubscribe();
+    hpUnsubscribe = null;
+  }
+
+  const hpRef = ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp");
+
+  await runTransaction(hpRef, current => current === null ? initialHp : current);
+
+  hpUnsubscribe = onValue(
+    hpRef,
+    snapshot => {
+      const value = snapshot.val();
+      if (value === null || value === undefined) return;
+      $("liveHp").value = String(value);
+      $("liveHp").disabled = false;
+      setStatus($("hpStatus"), "リアルタイム同期中 / characterId単位", "ok");
+    },
+    error => {
+      $("liveHp").disabled = true;
+      setStatus($("hpStatus"), "HP受信エラー: " + (error.message || error), "error");
+    }
+  );
+}
+
+function queueHpWrite() {
+  if (!db || !$("characterSelect").value) return;
+  const value = Number($("liveHp").value);
+  if (!Number.isFinite(value)) return;
+
+  if (hpWriteTimer) clearTimeout(hpWriteTimer);
+  hpWriteTimer = setTimeout(async () => {
+    hpWriteTimer = null;
+    const characterId = String($("characterSelect").value || "").trim();
+    const roomId = String($("roomId").value || "").trim();
+    if (!characterId || !roomId) return;
+    try {
+      await set(
+        ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp"),
+        Math.trunc(value)
+      );
+    } catch (error) {
+      setStatus($("hpStatus"), "HP送信エラー: " + (error.message || error), "error");
+    }
+  }, 120);
+}
+
 async function loadCharacters() {
   const playerKey = String($("playerKey").value || "").trim();
   if (!playerKey) {
@@ -257,7 +372,9 @@ $("clearFirebaseBtn").addEventListener("click", () => {
 });
 $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
-$("roomId").addEventListener("change", connectRoom);
+$("roomId").addEventListener("change", () => { connectRoom(); loadSelectedCharacterAndConnectHp(); });
+$("characterSelect").addEventListener("change", loadSelectedCharacterAndConnectHp);
+$("liveHp").addEventListener("input", queueHpWrite);
 $("chatForm").addEventListener("submit", event => {
   sendMessage(event).catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
 });
