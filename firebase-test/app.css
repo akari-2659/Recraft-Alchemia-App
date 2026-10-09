@@ -256,3 +256,36 @@
 
 .ccfolia-transform-layer .ccfolia-frame{min-height:0!important}
 .ccfolia-frame-wrap{display:block}
+
+/* Cocofolia viewport follows the same 1140x860 base as the embedded foreground. */
+.ccfolia-panel{
+  align-self:start;
+  justify-self:center;
+  width:min(1140px,100%);
+  max-width:1140px;
+}
+.ccfolia-frame-wrap{
+  width:100%;
+  aspect-ratio:1140 / 860;
+  height:auto;
+  min-height:0;
+}
+.ccfolia-frame{
+  min-height:0!important;
+}
+@media(max-width:1350px){
+  .ccfolia-panel{
+    width:min(1140px,100%);
+  }
+  .ccfolia-frame-wrap{
+    aspect-ratio:1140 / 860;
+  }
+}
+@media(max-width:800px){
+  .ccfolia-panel{
+    width:100%;
+  }
+  .ccfolia-frame-wrap{
+    aspect-ratio:1140 / 860;
+  }
+}
