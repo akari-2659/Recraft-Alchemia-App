@@ -253,3 +253,6 @@
 #toggleCcfoliaInteractionBtn.active .lock-closed{display:none}
 #toggleCcfoliaInteractionBtn.active .lock-open{display:block}
 #toggleCcfoliaInteractionBtn.active{background:#d9eadb;color:#2f6734}
+
+.ccfolia-transform-layer .ccfolia-frame{min-height:0!important}
+.ccfolia-frame-wrap{display:block}
