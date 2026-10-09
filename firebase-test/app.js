@@ -37,6 +37,13 @@ function setStatus(el, text, state = "") {
   el.textContent = text;
   el.className = "status" + (state ? " " + state : "");
 }
+function setResourceStatus(text, state = "") {
+  const el = $("hpStatus");
+  if (!el) return;
+  el.textContent = text;
+  el.className = "resource-strip-status" + (state ? " " + state : "");
+}
+
 
 function loadSavedConfig() {
   try {
@@ -277,6 +284,7 @@ function setChatColorUi(color, save = false) {
   const normalized = normalizeHexColor(color) || DEFAULT_CHAT_COLOR;
   $("chatColorPicker").value = normalized;
   $("chatColorCode").value = normalized;
+  if ($("chatColorSwatch")) $("chatColorSwatch").style.background = normalized;
   if (save) saveCurrentSpeakerColor(normalized);
 }
 
@@ -616,16 +624,16 @@ async function loadSelectedCharacterAndConnectHp() {
 
   if (!characterId) {
     $("resourcePanel").hidden = true;
-    setStatus($("hpStatus"), "登録キャラクターを選択してください。");
+    setResourceStatus("登録キャラクターを選択してください。");
     return;
   }
   if (!playerKey) {
-    setStatus($("hpStatus"), "プレイヤーキーが必要です。", "error");
+    setResourceStatus("プレイヤーキーが必要です。", "error");
     return;
   }
 
   $("liveCharacterId").textContent = characterId;
-  setStatus($("hpStatus"), "キャラクターデータを読み込み中…");
+  setResourceStatus("キャラクターデータを読み込み中…");
 
   try {
     const response = await jsonp("load", { id: characterId, playerKey });
@@ -642,13 +650,13 @@ async function loadSelectedCharacterAndConnectHp() {
     if (!db) {
       $("liveHp").value = resource.hp;
       $("liveMp").value = resource.mp;
-      setStatus($("hpStatus"), "Firebase未接続。保存済みHP/MPのみ表示しています。");
+      setResourceStatus("Firebase未接続。保存済みHP/MPのみ表示しています。");
       return;
     }
 
     connectResources(characterId, resource);
   } catch (error) {
-    setStatus($("hpStatus"), error.message || String(error), "error");
+    setResourceStatus(error.message || String(error), "error");
   }
 }
 
@@ -657,7 +665,7 @@ async function connectResources(characterId, initialResource) {
 
   const roomId = String($("roomId").value || "").trim();
   if (!roomId) {
-    setStatus($("hpStatus"), "ルームIDを入力してください。", "error");
+    setResourceStatus("ルームIDを入力してください。", "error");
     return;
   }
 
@@ -689,12 +697,12 @@ async function connectResources(characterId, initialResource) {
       $("liveMaxMp").textContent = value.maxMp === null || value.maxMp === undefined ? "—" : String(value.maxMp);
       $("liveHp").disabled = false;
       $("liveMp").disabled = false;
-      setStatus($("hpStatus"), "リアルタイム同期中 / characterId単位", "ok");
+      setResourceStatus("リアルタイム同期中 / characterId単位", "ok");
     },
     error => {
       $("liveHp").disabled = true;
       $("liveMp").disabled = true;
-      setStatus($("hpStatus"), "HP/MP受信エラー: " + (error.message || error), "error");
+      setResourceStatus("HP/MP受信エラー: " + (error.message || error), "error");
     }
   );
 }
@@ -730,7 +738,7 @@ function queueHpWrite() {
         await postResourceSystemMessage(characterId, characterName, "HP", previousHp, nextHp);
       }
     } catch (error) {
-      setStatus($("hpStatus"), "HP送信エラー: " + (error.message || error), "error");
+      setResourceStatus("HP送信エラー: " + (error.message || error), "error");
     }
   }, 120);
 }
@@ -767,7 +775,7 @@ function queueMpWrite() {
         await postResourceSystemMessage(characterId, characterName, "MP", previousMp, nextMp);
       }
     } catch (error) {
-      setStatus($("hpStatus"), "MP送信エラー: " + (error.message || error), "error");
+      setResourceStatus("MP送信エラー: " + (error.message || error), "error");
     }
   }, 120);
 }
@@ -818,6 +826,12 @@ $("chatColorPicker").addEventListener("input", handleColorPickerInput);
 $("chatColorCode").addEventListener("input", () => handleColorCodeInput(false));
 $("chatColorCode").addEventListener("change", () => handleColorCodeInput(true));
 $("chatColorCode").addEventListener("blur", () => handleColorCodeInput(true));
+$("toggleColorPanelBtn").addEventListener("click", event => {
+  event.stopPropagation();
+  $("colorPanel").hidden = !$("colorPanel").hidden;
+});
+$("colorPanel").addEventListener("click", event => event.stopPropagation());
+document.addEventListener("click", () => { $("colorPanel").hidden = true; });
 $("openPartyAddBtn").addEventListener("click", openPartyAddDialog);
 $("liveHp").addEventListener("input", queueHpWrite);
 $("liveMp").addEventListener("input", queueMpWrite);
