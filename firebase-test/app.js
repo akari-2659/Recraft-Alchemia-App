@@ -9,8 +9,8 @@ const ROOM_STORAGE = "ra-firebase-test-room";
 const CHAT_COLORS_STORAGE = "ra-firebase-test-chat-colors-v1";
 const DEFAULT_CHAT_COLOR = "#6B4933";
 const RESOURCE_WRITE_IDLE_MS = 800;
-const CCFOLIA_CROP_STORAGE = "ra-firebase-test-ccfolia-crop-v3";
-const DEFAULT_CCFOLIA_CROP = Object.freeze({ x:0, y:0, scale:1.2, width:1140, height:860 });
+const CCFOLIA_CROP_STORAGE = "ra-firebase-test-ccfolia-crop-v4";
+const DEFAULT_CCFOLIA_CROP = Object.freeze({ x:0, y:0, scale:1, width:1140, height:860 });
 const BCDICE_SERVERS = [
   "https://bcdice.onlinesession.app",
   "https://bcdice.trpg.net"
