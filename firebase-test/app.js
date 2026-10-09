@@ -1,6 +1,6 @@
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getDatabase, ref, push, onChildAdded, onValue, query, orderByChild, limitToLast, serverTimestamp, set, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, onValue, query, orderByChild, limitToLast, serverTimestamp, set, remove, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze18xHh-q45P1qpBgwCCg0dYgxd1b8A-R63eGjzMtgOxMT/exec";
 const CONFIG_KEY = "ra-firebase-test-config-v1";
@@ -20,6 +20,8 @@ let firebaseApp = null;
 let auth = null;
 let db = null;
 let roomUnsubscribe = null;
+let partyUnsubscribe = null;
+const partyHpUnsubscribes = new Map();
 let hpUnsubscribe = null;
 let hpWriteTimer = null;
 let selectedCharacterData = null;
@@ -58,6 +60,8 @@ async function connectFirebase() {
   setStatus($("firebaseStatus"), "Firebaseへ接続中…");
 
   if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
+  if (partyUnsubscribe) { partyUnsubscribe(); partyUnsubscribe = null; }
+  clearPartyHpSubscriptions();
   if (hpUnsubscribe) { hpUnsubscribe(); hpUnsubscribe = null; }
   if (firebaseApp) {
     try { await deleteApp(firebaseApp); } catch (_) {}
@@ -115,11 +119,12 @@ function connectRoom() {
   );
 
   $("roomStatus").textContent = "ルーム接続中: " + roomId;
+  connectParty(roomId);
 }
 
 function renderMessage(key, message) {
   const article = document.createElement("article");
-  article.className = "message";
+  article.className = "message" + (message.type === "system" ? " system" : "");
   article.dataset.key = key;
 
   const head = document.createElement("div");
@@ -127,7 +132,7 @@ function renderMessage(key, message) {
 
   const name = document.createElement("div");
   name.className = "message-name";
-  name.textContent = message.speakerName || "名称未設定";
+  name.textContent = message.type === "system" ? "SYSTEM" : (message.speakerName || "名称未設定");
 
   const time = document.createElement("div");
   time.className = "message-time";
@@ -217,6 +222,153 @@ function jsonp(action, payload = {}, timeoutMs = 30000) {
   });
 }
 
+
+
+function clearPartyHpSubscriptions() {
+  for (const unsubscribe of partyHpUnsubscribes.values()) {
+    try { unsubscribe(); } catch (_) {}
+  }
+  partyHpUnsubscribes.clear();
+}
+
+function connectParty(roomId) {
+  if (!db || !roomId) return;
+
+  if (partyUnsubscribe) {
+    partyUnsubscribe();
+    partyUnsubscribe = null;
+  }
+  clearPartyHpSubscriptions();
+  $("partyList").innerHTML = '<div class="empty">パーティーを読み込み中…</div>';
+
+  partyUnsubscribe = onValue(
+    ref(db, "raTest/rooms/" + roomId + "/party"),
+    snapshot => renderParty(snapshot.val() || {}, roomId),
+    error => {
+      $("partyList").innerHTML = "";
+      const el = document.createElement("div");
+      el.className = "status error";
+      el.textContent = "パーティー受信エラー: " + (error.message || error);
+      $("partyList").append(el);
+    }
+  );
+}
+
+function renderParty(party, roomId) {
+  clearPartyHpSubscriptions();
+  const entries = Object.entries(party || {}).filter(([, member]) => member && typeof member === "object");
+  $("partyList").innerHTML = "";
+
+  if (!entries.length) {
+    $("partyList").innerHTML = '<div class="empty">パーティー未登録</div>';
+    return;
+  }
+
+  entries.sort((a, b) => Number(a[1]?.addedAt || 0) - Number(b[1]?.addedAt || 0));
+
+  for (const [characterId, member] of entries) {
+    const card = document.createElement("article");
+    card.className = "party-member";
+
+    const main = document.createElement("div");
+    main.className = "party-member-main";
+
+    const name = document.createElement("div");
+    name.className = "party-member-name";
+    name.textContent = member.name || "無名のキャラクター";
+
+    const id = document.createElement("div");
+    id.className = "party-member-id";
+    id.textContent = characterId;
+
+    const hp = document.createElement("div");
+    hp.className = "party-member-hp";
+    hp.innerHTML = "<small>HP</small>—";
+
+    const actions = document.createElement("div");
+    actions.className = "party-member-actions";
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "ghost";
+    removeBtn.type = "button";
+    removeBtn.textContent = "パーティーから外す";
+    removeBtn.addEventListener("click", () => removePartyMember(characterId));
+
+    main.append(name, id);
+    actions.append(removeBtn);
+    card.append(main, hp, actions);
+    $("partyList").append(card);
+
+    const hpRef = ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp");
+    const unsubscribe = onValue(
+      hpRef,
+      snapshot => {
+        const value = snapshot.val();
+        hp.innerHTML = "<small>HP</small>" + (value === null || value === undefined ? "—" : String(value));
+      },
+      () => { hp.innerHTML = "<small>HP</small>ERR"; }
+    );
+    partyHpUnsubscribes.set(characterId, unsubscribe);
+  }
+}
+
+async function addSelectedCharacterToParty() {
+  if (!db || !currentUid) {
+    setStatus($("characterStatus"), "先にFirebaseへ接続してください。", "error");
+    return;
+  }
+
+  const characterId = String($("characterSelect").value || "").trim();
+  const roomId = String($("roomId").value || "").trim();
+  const option = $("characterSelect").selectedOptions[0];
+
+  if (!characterId || !roomId || !option) {
+    setStatus($("characterStatus"), "追加するキャラクターを選択してください。", "error");
+    return;
+  }
+
+  if (!selectedCharacterData || String(selectedCharacterData.id || "") !== characterId) {
+    await loadSelectedCharacterAndConnectHp();
+  }
+
+  const name = String(option.dataset.name || option.textContent || "無名のキャラクター").trim();
+  const initialHp = normalizedInitialHp(selectedCharacterData);
+
+  await runTransaction(
+    ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp"),
+    current => current === null ? initialHp : current
+  );
+
+  await set(ref(db, "raTest/rooms/" + roomId + "/party/" + characterId), {
+    name,
+    addedBy: currentUid,
+    addedAt: serverTimestamp()
+  });
+
+  setStatus($("characterStatus"), name + " をパーティーに追加しました。", "ok");
+}
+
+async function removePartyMember(characterId) {
+  if (!db) return;
+  const roomId = String($("roomId").value || "").trim();
+  if (!roomId || !characterId) return;
+  await remove(ref(db, "raTest/rooms/" + roomId + "/party/" + characterId));
+}
+
+async function postHpSystemMessage(characterId, characterName, beforeHp, afterHp) {
+  if (!db || !currentUid || beforeHp === afterHp) return;
+  const roomId = String($("roomId").value || "").trim();
+  if (!roomId) return;
+
+  await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
+    type: "system",
+    speakerId: characterId,
+    speakerName: characterName,
+    text: characterName + "　HP " + beforeHp + " → " + afterHp,
+    senderUid: currentUid,
+    createdAt: serverTimestamp()
+  });
+}
 
 function normalizedInitialHp(character) {
   const raw = character?.resources?.currentHp;
@@ -318,12 +470,25 @@ function queueHpWrite() {
     hpWriteTimer = null;
     const characterId = String($("characterSelect").value || "").trim();
     const roomId = String($("roomId").value || "").trim();
+    const option = $("characterSelect").selectedOptions[0];
+    const characterName = String(option?.dataset?.name || option?.textContent || "無名のキャラクター").trim();
     if (!characterId || !roomId) return;
+
+    const nextHp = Math.trunc(value);
+    let previousHp = null;
+
     try {
-      await set(
+      const result = await runTransaction(
         ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp"),
-        Math.trunc(value)
+        current => {
+          previousHp = current === null || current === undefined ? nextHp : Number(current);
+          return nextHp;
+        }
       );
+
+      if (result.committed && Number.isFinite(previousHp) && previousHp !== nextHp) {
+        await postHpSystemMessage(characterId, characterName, previousHp, nextHp);
+      }
     } catch (error) {
       setStatus($("hpStatus"), "HP送信エラー: " + (error.message || error), "error");
     }
@@ -357,6 +522,7 @@ async function loadCharacters() {
     }
 
     setStatus($("characterStatus"), items.length + "人を読み込みました。", "ok");
+    $("addPartyBtn").disabled = true;
   } catch (error) {
     setStatus($("characterStatus"), error.message || String(error), "error");
   }
@@ -373,7 +539,8 @@ $("clearFirebaseBtn").addEventListener("click", () => {
 $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
 $("roomId").addEventListener("change", () => { connectRoom(); loadSelectedCharacterAndConnectHp(); });
-$("characterSelect").addEventListener("change", loadSelectedCharacterAndConnectHp);
+$("characterSelect").addEventListener("change", () => { $("addPartyBtn").disabled = !$("characterSelect").value; loadSelectedCharacterAndConnectHp(); });
+$("addPartyBtn").addEventListener("click", () => { addSelectedCharacterToParty().catch(error => setStatus($("characterStatus"), error.message || String(error), "error")); });
 $("liveHp").addEventListener("input", queueHpWrite);
 $("chatForm").addEventListener("submit", event => {
   sendMessage(event).catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
