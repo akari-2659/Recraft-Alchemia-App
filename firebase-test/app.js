@@ -228,19 +228,58 @@ async function rollBCDice(command) {
   throw lastError || new Error("BCDiceへ接続できませんでした。");
 }
 
+
+function classifyRa2D6Special(command, result) {
+  const raw = String(command || "").trim();
+  // RAの通常2D6判定のみ。KH/KL等の加工ダイスは対象外。
+  if (!/^(?:S)?2D6(?=$|[+\-*/<>=\s])/i.test(raw)) {
+    return { critical:false, fumble:false, label:"" };
+  }
+
+  const d6 = Array.isArray(result?.rands)
+    ? result.rands
+        .filter(row => Number(row?.sides) === 6 && Number.isFinite(Number(row?.value)))
+        .slice(0, 2)
+        .map(row => Number(row.value))
+    : [];
+
+  if (d6.length !== 2) {
+    return { critical:false, fumble:false, label:"" };
+  }
+
+  if (d6[0] === 1 && d6[1] === 1) {
+    return { critical:false, fumble:true, label:"ファンブル" };
+  }
+  if (d6[0] === 6 && d6[1] === 6) {
+    return { critical:true, fumble:false, label:"クリティカル" };
+  }
+  return { critical:false, fumble:false, label:"" };
+}
+
+function formatDiceResult(command, result) {
+  const base = String(result?.text || command);
+  const special = classifyRa2D6Special(command, result);
+  return {
+    text: special.label ? base + "\n【" + special.label + "】" : base,
+    critical: special.critical || result?.critical === true,
+    fumble: special.fumble || result?.fumble === true
+  };
+}
+
 function appendLocalSecretDiceResult(speakerName, color, originalText, command, result) {
   const key = "secret-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+  const formatted = formatDiceResult(command, result);
   renderMessage(key, {
     type:"secret-dice",
     speakerName,
     color,
     text: originalText,
     diceCommand: command,
-    diceResult: String(result?.text || command),
+    diceResult: formatted.text,
     diceSuccess: result?.success === true,
     diceFailure: result?.failure === true,
-    diceCritical: result?.critical === true,
-    diceFumble: result?.fumble === true,
+    diceCritical: formatted.critical,
+    diceFumble: formatted.fumble,
     createdAt: Date.now()
   });
 }
@@ -290,6 +329,7 @@ async function sendMessage() {
       return;
     }
 
+    const formatted = formatDiceResult(diceCommand, result);
     await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
       type:"dice",
       speakerId,
@@ -297,11 +337,11 @@ async function sendMessage() {
       color,
       text,
       diceCommand,
-      diceResult: String(result?.text || diceCommand),
+      diceResult: formatted.text,
       diceSuccess: result?.success === true,
       diceFailure: result?.failure === true,
-      diceCritical: result?.critical === true,
-      diceFumble: result?.fumble === true,
+      diceCritical: formatted.critical,
+      diceFumble: formatted.fumble,
       senderUid: currentUid,
       createdAt: serverTimestamp()
     });
