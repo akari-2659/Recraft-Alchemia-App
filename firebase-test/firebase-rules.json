@@ -18,6 +18,13 @@
                 ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999"
               }
             }
+          },
+          "party": {
+            ".read": "auth != null",
+            "$characterId": {
+              ".write": "auth != null",
+              ".validate": "!newData.exists() || (newData.hasChildren(['name','addedBy','addedAt']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 120 && newData.child('addedBy').val() == auth.uid)"
+            }
           }
         }
       }
