@@ -532,8 +532,8 @@ function computeResources(abilities=computeEffectiveAbilities(getAbilityValues()
   return {
     maxHp,
     maxMp,
-    currentHp: resources.currentHp || maxHp,
-    currentMp: resources.currentMp || maxMp,
+    currentHp: (resources.currentHp === '' || resources.currentHp === null || resources.currentHp === undefined) ? maxHp : Number(resources.currentHp),
+    currentMp: (resources.currentMp === '' || resources.currentMp === null || resources.currentMp === undefined) ? maxMp : Number(resources.currentMp),
     hpBonus: hpBonusPoints,
     mpBonus: mpBonusPoints,
     fatigue: Math.max(0, Number(resources.fatigue)||0),
