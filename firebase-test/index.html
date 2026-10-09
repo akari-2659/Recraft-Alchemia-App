@@ -44,40 +44,45 @@
     <section class="panel chat-panel">
       <div class="chat-head"><div><h2>リアルタイムチャット</h2><div id="roomStatus" class="room-status">Firebase未接続</div></div><button id="reconnectRoomBtn" class="ghost">ルーム再接続</button></div>
 
-      <div class="speaker-box">
-        <label>キャラクター選択
-          <select id="characterSelect"><option value="">キャラクターを選択</option></select>
-        </label>
-        <label>発言者名
-          <input id="speakerName" maxlength="120" placeholder="キャラクターを選択、または名前を直接入力">
-        </label>
-        <div class="chat-color-row">
-          <label>発言色
-            <input id="chatColorPicker" type="color" value="#6B4933">
-          </label>
-          <label>色コード
-            <input id="chatColorCode" type="text" value="#6B4933" maxlength="7" inputmode="text" spellcheck="false" placeholder="#RRGGBB">
-          </label>
-        </div>
-        <div class="hint">登録キャラを選ぶと名前が自動入力されます。キャラクター未選択でも、発言者名だけ入力して発言できます。</div>
-      </div>
 
-      <div id="resourcePanel" class="resource-panel" hidden>
-        <div class="resource-panel-title">
+      <div id="chatLog" class="chat-log" aria-live="polite"></div>
+
+      <div id="resourcePanel" class="resource-strip" hidden>
+        <div class="resource-strip-name">
           <strong id="resourceCharacterName">—</strong>
           <span id="liveCharacterId" class="mono compact">—</span>
         </div>
-        <div class="resource-sync-grid">
-          <label>現在HP<input id="liveHp" type="number" min="0" step="1" disabled></label>
-          <div class="resource-max-box"><div class="mini-label">最大HP</div><div id="liveMaxHp" class="resource-max-value">—</div></div>
-          <label>現在MP<input id="liveMp" type="number" min="0" step="1" disabled></label>
-          <div class="resource-max-box"><div class="mini-label">最大MP</div><div id="liveMaxMp" class="resource-max-value">—</div></div>
+        <div class="resource-strip-values">
+          <label>HP <input id="liveHp" type="number" min="0" step="1" disabled><span>/</span><strong id="liveMaxHp">—</strong></label>
+          <label>MP <input id="liveMp" type="number" min="0" step="1" disabled><span>/</span><strong id="liveMaxMp">—</strong></label>
         </div>
-        <div id="hpStatus" class="status">登録キャラクターを選択してください。</div>
+        <div id="hpStatus" class="resource-strip-status">登録キャラクターを選択してください。</div>
       </div>
 
-      <div id="chatLog" class="chat-log" aria-live="polite"></div>
-      <form id="chatForm" class="composer"><textarea id="chatText" rows="3" maxlength="1000" placeholder="メッセージを入力"></textarea><button type="submit">送信</button></form>
+      <div class="chat-controls">
+        <div class="chat-character-row">
+          <select id="characterSelect" aria-label="キャラクター選択">
+            <option value="">キャラクター選択</option>
+          </select>
+          <input id="speakerName" maxlength="120" aria-label="発言者名" placeholder="発言者名">
+          <div class="color-control">
+            <button id="toggleColorPanelBtn" type="button" class="icon-btn" aria-label="発言色" title="発言色">
+              <span id="chatColorSwatch" class="color-swatch"></span>
+            </button>
+            <div id="colorPanel" class="color-popover" hidden>
+              <div class="color-popover-title">名前の色</div>
+              <div class="color-popover-row">
+                <input id="chatColorPicker" type="color" value="#6B4933" aria-label="カラーピッカー">
+                <input id="chatColorCode" type="text" value="#6B4933" maxlength="7" spellcheck="false" aria-label="色コード" placeholder="#RRGGBB">
+              </div>
+            </div>
+          </div>
+        </div>
+        <form id="chatForm" class="composer">
+          <textarea id="chatText" rows="3" maxlength="1000" placeholder="メッセージを入力"></textarea>
+          <button type="submit">送信</button>
+        </form>
+      </div>
     </section>
   </main>
   <dialog id="partyAddDialog" class="party-dialog">
