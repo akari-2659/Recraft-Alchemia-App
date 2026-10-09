@@ -9,8 +9,8 @@ const ROOM_STORAGE = "ra-firebase-test-room";
 const CHAT_COLORS_STORAGE = "ra-firebase-test-chat-colors-v1";
 const DEFAULT_CHAT_COLOR = "#6B4933";
 const RESOURCE_WRITE_IDLE_MS = 800;
-const CCFOLIA_CROP_STORAGE = "ra-firebase-test-ccfolia-crop-v1";
-const DEFAULT_CCFOLIA_CROP = Object.freeze({ x:0, y:0, scale:1, width:1600, height:900 });
+const CCFOLIA_CROP_STORAGE = "ra-firebase-test-ccfolia-crop-v2";
+const DEFAULT_CCFOLIA_CROP = Object.freeze({ x:0, y:0, scale:1.2, width:1600, height:900 });
 const BCDICE_SERVERS = [
   "https://bcdice.onlinesession.app",
   "https://bcdice.trpg.net"
@@ -115,13 +115,22 @@ function applyCcfoliaCropSettings(settings = readCcfoliaCropSettings(), save = f
     const viewportHeight = Math.max(1, viewport.clientHeight);
     fitScale = Math.min(viewportWidth / width, viewportHeight / height);
 
-    const fittedWidth = width * fitScale;
-    const fittedHeight = height * fitScale;
-    baseX = (viewportWidth - fittedWidth) / 2;
-    baseY = (viewportHeight - fittedHeight) / 2;
   }
 
   const effectiveScale = fitScale * zoom;
+
+  if (viewport) {
+    const viewportWidth = Math.max(1, viewport.clientWidth);
+    const viewportHeight = Math.max(1, viewport.clientHeight);
+    const visibleWidth = width * effectiveScale;
+    const visibleHeight = height * effectiveScale;
+
+    // 拡大時も常に表示窓の中央を基準にクロップする。
+    // 以前はfitScale基準で中央寄せした後に拡大していたため、
+    // 右下方向へずれて前景と枠の位置関係が崩れていた。
+    baseX = (viewportWidth - visibleWidth) / 2;
+    baseY = (viewportHeight - visibleHeight) / 2;
+  }
 
   if (layer) {
     layer.style.width = width + "px";
@@ -143,7 +152,7 @@ function collectCcfoliaCropSettings() {
   return {
     x: Number($("ccfoliaCropX")?.value) || 0,
     y: Number($("ccfoliaCropY")?.value) || 0,
-    scale: Number($("ccfoliaCropScale")?.value) || 1,
+    scale: Number($("ccfoliaCropScale")?.value) || DEFAULT_CCFOLIA_CROP.scale,
     width: Number($("ccfoliaCropWidth")?.value) || 1600,
     height: Number($("ccfoliaCropHeight")?.value) || 900
   };
