@@ -93,27 +93,50 @@ function writeCcfoliaCropSettings(settings) {
 function applyCcfoliaCropSettings(settings = readCcfoliaCropSettings(), save = false) {
   const x = Number(settings.x) || 0;
   const y = Number(settings.y) || 0;
-  const scale = Math.max(0.5, Math.min(2.5, Number(settings.scale) || 1));
+  const zoom = Math.max(0.5, Math.min(2.5, Number(settings.scale) || 1));
   const width = Math.max(320, Math.trunc(Number(settings.width) || 1600));
   const height = Math.max(320, Math.trunc(Number(settings.height) || 900));
 
   const frame = $("ccfoliaFrame");
   const layer = $("ccfoliaTransformLayer");
+  const viewport = $("ccfoliaViewport");
+
   if (frame) {
     frame.style.width = width + "px";
     frame.style.height = height + "px";
   }
+
+  let fitScale = 1;
+  let baseX = 0;
+  let baseY = 0;
+
+  if (viewport) {
+    const viewportWidth = Math.max(1, viewport.clientWidth);
+    const viewportHeight = Math.max(1, viewport.clientHeight);
+    fitScale = Math.min(viewportWidth / width, viewportHeight / height);
+
+    const fittedWidth = width * fitScale;
+    const fittedHeight = height * fitScale;
+    baseX = (viewportWidth - fittedWidth) / 2;
+    baseY = (viewportHeight - fittedHeight) / 2;
+  }
+
+  const effectiveScale = fitScale * zoom;
+
   if (layer) {
-    layer.style.transform = "translate(" + x + "px," + y + "px) scale(" + scale + ")";
+    layer.style.width = width + "px";
+    layer.style.height = height + "px";
+    layer.style.transform =
+      "translate(" + (baseX + x) + "px," + (baseY + y) + "px) scale(" + effectiveScale + ")";
   }
 
   if ($("ccfoliaCropX")) $("ccfoliaCropX").value = String(x);
   if ($("ccfoliaCropY")) $("ccfoliaCropY").value = String(y);
-  if ($("ccfoliaCropScale")) $("ccfoliaCropScale").value = String(scale);
+  if ($("ccfoliaCropScale")) $("ccfoliaCropScale").value = String(zoom);
   if ($("ccfoliaCropWidth")) $("ccfoliaCropWidth").value = String(width);
   if ($("ccfoliaCropHeight")) $("ccfoliaCropHeight").value = String(height);
 
-  if (save) writeCcfoliaCropSettings({ x, y, scale, width, height });
+  if (save) writeCcfoliaCropSettings({ x, y, scale:zoom, width, height });
 }
 
 function collectCcfoliaCropSettings() {
@@ -1299,3 +1322,17 @@ $("chatText").addEventListener("keydown", event => {
 
 loadSavedConfig();
 handleSpeakerChange();
+
+if ("ResizeObserver" in window) {
+  const viewport = $("ccfoliaViewport");
+  if (viewport) {
+    const observer = new ResizeObserver(() => {
+      applyCcfoliaCropSettings(readCcfoliaCropSettings(), false);
+    });
+    observer.observe(viewport);
+  }
+} else {
+  window.addEventListener("resize", () => {
+    applyCcfoliaCropSettings(readCcfoliaCropSettings(), false);
+  });
+}
