@@ -6,6 +6,8 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze
 const CONFIG_KEY = "ra-firebase-test-config-v1";
 const PLAYER_KEY_STORAGE = "ra-firebase-test-player-key";
 const ROOM_STORAGE = "ra-firebase-test-room";
+const CHAT_COLORS_STORAGE = "ra-firebase-test-chat-colors-v1";
+const DEFAULT_CHAT_COLOR = "#6B4933";
 
 const $ = id => document.getElementById(id);
 const fields = {
@@ -27,6 +29,7 @@ let hpWriteTimer = null;
 let mpWriteTimer = null;
 let selectedCharacterData = null;
 let registeredCharacters = [];
+let chatColors = {};
 let currentUid = "";
 const renderedKeys = new Set();
 
@@ -44,7 +47,14 @@ function loadSavedConfig() {
   } catch (_) {}
   $("playerKey").value = localStorage.getItem(PLAYER_KEY_STORAGE) || "";
   $("roomId").value = localStorage.getItem(ROOM_STORAGE) || "ra-test-room-1";
+  try {
+    const savedColors = JSON.parse(localStorage.getItem(CHAT_COLORS_STORAGE) || "{}");
+    chatColors = savedColors && typeof savedColors === "object" ? savedColors : {};
+  } catch (_) {
+    chatColors = {};
+  }
   renderSpeakerOptions();
+  applyCurrentSpeakerColor();
 }
 
 function readConfig() {
@@ -148,6 +158,11 @@ function renderMessage(key, message) {
   text.className = "message-text";
   text.textContent = String(message.text || "");
 
+  if (message.type !== "system") {
+    const color = normalizeHexColor(message.color) || DEFAULT_CHAT_COLOR;
+    article.style.setProperty("--message-color", color);
+  }
+
   head.append(name, time);
   article.append(head, text);
   $("chatLog").append(article);
@@ -174,9 +189,12 @@ async function sendMessage(event) {
   }
   if (!text) return;
 
+  const color = currentChatColor();
+
   await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
     speakerId: selectedCharacter?.id || ("manual:" + currentUid),
     speakerName,
+    color,
     text,
     senderUid: currentUid,
     createdAt: serverTimestamp()
@@ -227,6 +245,63 @@ function jsonp(action, payload = {}, timeoutMs = 30000) {
 
 
 
+
+function normalizeHexColor(value) {
+  const raw = String(value || "").trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw.toUpperCase();
+  if (/^[0-9a-fA-F]{6}$/.test(raw)) return ("#" + raw).toUpperCase();
+  return "";
+}
+
+function speakerColorKey() {
+  const selected = getSelectedRegisteredCharacter();
+  if (selected?.id) return "character:" + selected.id;
+  const name = String($("speakerName")?.value || "").trim();
+  return name ? "manual:" + name : "manual:default";
+}
+
+function currentChatColor() {
+  return normalizeHexColor($("chatColorCode")?.value) ||
+    normalizeHexColor($("chatColorPicker")?.value) ||
+    DEFAULT_CHAT_COLOR;
+}
+
+function saveCurrentSpeakerColor(color) {
+  const normalized = normalizeHexColor(color);
+  if (!normalized) return;
+  chatColors[speakerColorKey()] = normalized;
+  try { localStorage.setItem(CHAT_COLORS_STORAGE, JSON.stringify(chatColors)); } catch (_) {}
+}
+
+function setChatColorUi(color, save = false) {
+  const normalized = normalizeHexColor(color) || DEFAULT_CHAT_COLOR;
+  $("chatColorPicker").value = normalized;
+  $("chatColorCode").value = normalized;
+  if (save) saveCurrentSpeakerColor(normalized);
+}
+
+function applyCurrentSpeakerColor() {
+  const color = normalizeHexColor(chatColors[speakerColorKey()]) || DEFAULT_CHAT_COLOR;
+  setChatColorUi(color, false);
+}
+
+function handleColorPickerInput() {
+  setChatColorUi($("chatColorPicker").value, true);
+}
+
+function handleColorCodeInput(commit = false) {
+  const normalized = normalizeHexColor($("chatColorCode").value);
+  if (!normalized) {
+    if (commit) {
+      $("chatColorCode").value = currentChatColor();
+    }
+    return;
+  }
+  $("chatColorPicker").value = normalized;
+  $("chatColorCode").value = normalized;
+  saveCurrentSpeakerColor(normalized);
+}
+
 function renderSpeakerOptions(selectedValue = "") {
   const select = $("characterSelect");
   if (!select) return;
@@ -265,10 +340,12 @@ async function handleSpeakerChange() {
     }
     selectedCharacterData = null;
     $("resourcePanel").hidden = true;
+    applyCurrentSpeakerColor();
     return;
   }
 
   $("speakerName").value = character.name;
+  applyCurrentSpeakerColor();
   $("resourcePanel").hidden = false;
   $("resourceCharacterName").textContent = character.name;
   await loadSelectedCharacterAndConnectHp();
@@ -325,23 +402,6 @@ function openPartyAddDialog() {
   if (dialog?.showModal) dialog.showModal();
 }
 
-async function handleSpeakerChange() {
-  const speaker = getSelectedSpeaker();
-
-  if (!speaker || speaker.source !== "registered") {
-    if (hpUnsubscribe) {
-      hpUnsubscribe();
-      hpUnsubscribe = null;
-    }
-    selectedCharacterData = null;
-    $("resourcePanel").hidden = true;
-    return;
-  }
-
-  $("resourcePanel").hidden = false;
-  $("resourceCharacterName").textContent = speaker.name;
-  await loadSelectedCharacterAndConnectHp();
-}
 
 function clearPartyHpSubscriptions() {
   for (const unsubscribe of partyHpUnsubscribes.values()) {
@@ -751,6 +811,13 @@ $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
 $("roomId").addEventListener("change", () => { connectRoom(); handleSpeakerChange(); });
 $("characterSelect").addEventListener("change", handleSpeakerChange);
+$("speakerName").addEventListener("change", () => {
+  if (!getSelectedRegisteredCharacter()) applyCurrentSpeakerColor();
+});
+$("chatColorPicker").addEventListener("input", handleColorPickerInput);
+$("chatColorCode").addEventListener("input", () => handleColorCodeInput(false));
+$("chatColorCode").addEventListener("change", () => handleColorCodeInput(true));
+$("chatColorCode").addEventListener("blur", () => handleColorCodeInput(true));
 $("openPartyAddBtn").addEventListener("click", openPartyAddDialog);
 $("liveHp").addEventListener("input", queueHpWrite);
 $("liveMp").addEventListener("input", queueMpWrite);
