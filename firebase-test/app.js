@@ -837,7 +837,7 @@ $("sendChatBtn").addEventListener("click", () => {
   sendMessage().catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
 });
 $("chatText").addEventListener("keydown", event => {
-  if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+  if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     sendMessage().catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
   }
