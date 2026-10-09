@@ -9,7 +9,7 @@
 <body>
   <header class="topbar">
     <div><h1>RA Firebase Test</h1><p>キャラクター切替 + リアルタイムチャット検証</p></div>
-    <a class="ccfolia-link" href="https://ccfolia.com/rooms/cYzLw9j74" target="_blank" rel="noopener noreferrer">ココフォリアを開く</a>
+    <div class="topbar-badge">SESSION TEST</div>
   </header>
   <main class="layout">
     <section class="panel settings">
@@ -40,6 +40,40 @@
         <button id="openPartyAddBtn" type="button">追加</button>
       </div>
       <div id="partyList" class="party-list"><div class="empty">Firebase接続後に表示されます。</div></div>
+    </section>
+    <section class="panel ccfolia-panel">
+      <div class="ccfolia-head">
+        <div>
+          <h2>ココフォリア</h2>
+          <div class="hint">盤面のみをRAと同じ画面で使用します。</div>
+        </div>
+        <div class="ccfolia-actions">
+          <button id="reloadCcfoliaBtn" type="button" class="icon-btn" aria-label="ココフォリアを再読み込み" title="再読み込み">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 7v5h-5"></path>
+              <path d="M18.1 12a7 7 0 1 0 .2 4"></path>
+            </svg>
+          </button>
+          <a class="icon-btn ccfolia-open-icon" href="https://ccfolia.com/rooms/cYzLw9j74" target="_blank" rel="noopener noreferrer" aria-label="ココフォリアを別タブで開く" title="別タブで開く">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 5h5v5"></path>
+              <path d="M11 13 19 5"></path>
+              <path d="M19 13v6H5V5h6"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="ccfolia-frame-wrap">
+        <iframe
+          id="ccfoliaFrame"
+          class="ccfolia-frame"
+          src="https://ccfolia.com/rooms/cYzLw9j74"
+          title="ココフォリア盤面"
+          allow="clipboard-read; clipboard-write; fullscreen"
+          allowfullscreen
+        ></iframe>
+        <div class="ccfolia-frame-note">表示されない場合は右上の外部表示アイコンから開けます。</div>
+      </div>
     </section>
     <section class="panel chat-panel">
       <div class="chat-head"><div><h2>リアルタイムチャット</h2><div id="roomStatus" class="room-status">Firebase未接続</div></div><button id="reconnectRoomBtn" class="ghost">ルーム再接続</button></div>
