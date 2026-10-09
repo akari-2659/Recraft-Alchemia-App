@@ -37,12 +37,15 @@
       <div class="hp-test">
         <h2>4. HPリアルタイム同期</h2>
         <p class="hint">同期単位はプレイヤーキーではなくキャラクターIDです。同じプレイヤーキーを別タブで使っても、別キャラなら別々に同期されます。</p>
-        <div class="hp-row">
-          <label>選択キャラのHP<input id="liveHp" type="number" step="1" disabled></label>
-          <div>
-            <div class="mini-label">キャラクターID</div>
-            <div id="liveCharacterId" class="mono">未選択</div>
-          </div>
+        <div class="resource-sync-grid">
+          <label>現在HP<input id="liveHp" type="number" min="0" step="1" disabled></label>
+          <div class="resource-max-box"><div class="mini-label">最大HP</div><div id="liveMaxHp" class="resource-max-value">—</div></div>
+          <label>現在MP<input id="liveMp" type="number" min="0" step="1" disabled></label>
+          <div class="resource-max-box"><div class="mini-label">最大MP</div><div id="liveMaxMp" class="resource-max-value">—</div></div>
+        </div>
+        <div>
+          <div class="mini-label">キャラクターID</div>
+          <div id="liveCharacterId" class="mono">未選択</div>
         </div>
         <div id="hpStatus" class="status">キャラクターを選択してください。</div>
       </div>
