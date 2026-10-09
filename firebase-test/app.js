@@ -176,9 +176,7 @@ function renderMessage(key, message) {
   $("chatLog").scrollTop = $("chatLog").scrollHeight;
 }
 
-async function sendMessage(event) {
-  event.preventDefault();
-
+async function sendMessage() {
   if (!db || !currentUid) {
     setStatus($("firebaseStatus"), "Firebase未接続です。", "error");
     return;
@@ -835,8 +833,14 @@ document.addEventListener("click", () => { $("colorPanel").hidden = true; });
 $("openPartyAddBtn").addEventListener("click", openPartyAddDialog);
 $("liveHp").addEventListener("input", queueHpWrite);
 $("liveMp").addEventListener("input", queueMpWrite);
-$("chatForm").addEventListener("submit", event => {
-  sendMessage(event).catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
+$("sendChatBtn").addEventListener("click", () => {
+  sendMessage().catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
+});
+$("chatText").addEventListener("keydown", event => {
+  if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+    event.preventDefault();
+    sendMessage().catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
+  }
 });
 
 loadSavedConfig();
