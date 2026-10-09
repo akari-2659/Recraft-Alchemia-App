@@ -259,8 +259,26 @@ function classifyRa2D6Special(command, result) {
 function formatDiceResult(command, result) {
   const base = String(result?.text || command);
   const special = classifyRa2D6Special(command, result);
+  let text = base;
+
+  if (special.label) {
+    // BCDiceの通常結果末尾「成功／失敗」をRAのクリティカル／ファンブル表示へ置き換える。
+    const replaced = text.replace(
+      /(→|＞)\s*(成功|失敗)\s*$/u,
+      (_, arrow) => arrow + " " + special.label
+    );
+    text = replaced === text
+      ? text.replace(/\s*(成功|失敗)\s*$/u, " " + special.label)
+      : replaced;
+
+    // 成否語がないコマンドでも、同じ結果行の末尾に収める。
+    if (text === base && !/(クリティカル|ファンブル)\s*$/u.test(text)) {
+      text += " → " + special.label;
+    }
+  }
+
   return {
-    text: special.label ? base + "\n【" + special.label + "】" : base,
+    text,
     critical: special.critical || result?.critical === true,
     fumble: special.fumble || result?.fumble === true
   };
