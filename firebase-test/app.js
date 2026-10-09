@@ -308,6 +308,109 @@ function handleColorCodeInput(commit = false) {
   saveCurrentSpeakerColor(normalized);
 }
 
+
+function fallbackPaletteLines(data = {}) {
+  const abilities = data.effectiveAbilities || data.abilities || {};
+  const skills = data.skills || {};
+  const categories = [
+    ["body","体力",[["athletics","運動"],["force","力業"],["melee","近接"],["guard","防御"]]],
+    ["dexterity","器用",[["gather","採取"],["craft","細工"],["shoot","射撃"],["operate","操作"]]],
+    ["sense","感覚",[["search","探索"],["detect","感知"],["evade","回避"],["track","追跡"]]],
+    ["intellect","知性",[["alchemy","調合"],["appraise","鑑定"],["knowledge","知識"],["design","設計"]]],
+    ["will","意志",[["resist","抵抗"],["focus","集中"],["magic","魔法"],["prayer","祈祷"]]],
+    ["charm","魅力",[["negotiate","交渉"],["service","共感"],["art","社交"],["leadership","鼓舞"]]]
+  ];
+  const lines = [];
+  for (const [abilityKey,, rows] of categories) {
+    const base = Number(abilities?.[abilityKey]) || 0;
+    for (const [key, name] of rows) {
+      const row = skills?.[key] || {};
+      const total = Number(row.total);
+      const value = Number.isFinite(total)
+        ? total
+        : base + (Number(row.cat) || 0) + (Number(row.free) || 0);
+      lines.push(`2D6+${value}>=目標値 【${name}】`);
+    }
+  }
+  return lines;
+}
+
+function paletteLinesForCharacter(data) {
+  try {
+    if (typeof window.generatePaletteExport === "function") {
+      const text = String(window.generatePaletteExport(data) || "");
+      if (text.trim()) return text.split(/\r?\n/);
+    }
+  } catch (error) {
+    console.warn("Existing palette generator failed; fallback palette is used.", error);
+  }
+  return fallbackPaletteLines(data);
+}
+
+function renderChatPalette(data) {
+  const list = $("paletteList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (!data) {
+    list.innerHTML = '<div class="empty compact-empty">登録キャラクターを選択してください。</div>';
+    return;
+  }
+
+  const lines = paletteLinesForCharacter(data);
+  let previousBlank = false;
+
+  for (const rawLine of lines) {
+    const line = String(rawLine || "").trim();
+
+    if (!line) {
+      if (!previousBlank && list.childElementCount) {
+        const separator = document.createElement("div");
+        separator.className = "palette-separator";
+        list.append(separator);
+      }
+      previousBlank = true;
+      continue;
+    }
+    previousBlank = false;
+
+    if (line.startsWith("//")) {
+      const note = document.createElement("div");
+      note.className = "palette-note";
+      note.textContent = line.replace(/^\/\/\s?/, "");
+      list.append(note);
+      continue;
+    }
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "palette-entry";
+    button.textContent = line;
+    button.addEventListener("click", () => {
+      const input = $("chatText");
+      const start = input.selectionStart ?? input.value.length;
+      const end = input.selectionEnd ?? input.value.length;
+      const before = input.value.slice(0, start);
+      const after = input.value.slice(end);
+      input.value = before + line + after;
+      const cursor = start + line.length;
+      input.focus();
+      input.setSelectionRange(cursor, cursor);
+      $("palettePanel").hidden = true;
+    });
+    list.append(button);
+  }
+
+  if (!list.childElementCount) {
+    list.innerHTML = '<div class="empty compact-empty">使用できる項目がありません。</div>';
+  }
+}
+
+function closeChatPopovers(except = "") {
+  if (except !== "palette" && $("palettePanel")) $("palettePanel").hidden = true;
+  if (except !== "color" && $("colorPanel")) $("colorPanel").hidden = true;
+}
+
 function renderSpeakerOptions(selectedValue = "") {
   const select = $("characterSelect");
   if (!select) return;
@@ -346,6 +449,9 @@ async function handleSpeakerChange() {
     }
     selectedCharacterData = null;
     $("resourcePanel").hidden = true;
+    $("togglePaletteBtn").disabled = true;
+    renderChatPalette(null);
+    closeChatPopovers();
     applyCurrentSpeakerColor();
     return;
   }
@@ -640,6 +746,8 @@ async function loadSelectedCharacterAndConnectHp() {
       throw new Error("キャラクターデータを取得できませんでした。");
     }
     selectedCharacterData = character;
+    $("togglePaletteBtn").disabled = false;
+    renderChatPalette(character);
 
     const resource = characterResourceSnapshot(character);
     $("liveMaxHp").textContent = String(resource.maxHp);
@@ -654,6 +762,8 @@ async function loadSelectedCharacterAndConnectHp() {
 
     connectResources(characterId, resource);
   } catch (error) {
+    $("togglePaletteBtn").disabled = true;
+    renderChatPalette(null);
     setResourceStatus(error.message || String(error), "error");
   }
 }
@@ -824,12 +934,22 @@ $("chatColorPicker").addEventListener("input", handleColorPickerInput);
 $("chatColorCode").addEventListener("input", () => handleColorCodeInput(false));
 $("chatColorCode").addEventListener("change", () => handleColorCodeInput(true));
 $("chatColorCode").addEventListener("blur", () => handleColorCodeInput(true));
+$("togglePaletteBtn").addEventListener("click", event => {
+  event.stopPropagation();
+  if ($("togglePaletteBtn").disabled) return;
+  const opening = $("palettePanel").hidden;
+  closeChatPopovers(opening ? "palette" : "");
+  $("palettePanel").hidden = !opening;
+});
+$("palettePanel").addEventListener("click", event => event.stopPropagation());
 $("toggleColorPanelBtn").addEventListener("click", event => {
   event.stopPropagation();
-  $("colorPanel").hidden = !$("colorPanel").hidden;
+  const opening = $("colorPanel").hidden;
+  closeChatPopovers(opening ? "color" : "");
+  $("colorPanel").hidden = !opening;
 });
 $("colorPanel").addEventListener("click", event => event.stopPropagation());
-document.addEventListener("click", () => { $("colorPanel").hidden = true; });
+document.addEventListener("click", () => closeChatPopovers());
 $("openPartyAddBtn").addEventListener("click", openPartyAddDialog);
 $("liveHp").addEventListener("input", queueHpWrite);
 $("liveMp").addEventListener("input", queueMpWrite);
