@@ -1147,6 +1147,13 @@ $("clearFirebaseBtn").addEventListener("click", () => {
 });
 $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
+$("reloadCcfoliaBtn").addEventListener("click", () => {
+  const frame = $("ccfoliaFrame");
+  if (!frame) return;
+  const src = frame.src;
+  frame.src = "about:blank";
+  requestAnimationFrame(() => { frame.src = src; });
+});
 $("roomId").addEventListener("change", () => { connectRoom(); handleSpeakerChange(); });
 $("characterSelect").addEventListener("change", handleSpeakerChange);
 $("speakerName").addEventListener("change", () => {
