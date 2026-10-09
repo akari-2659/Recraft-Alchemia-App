@@ -16,6 +16,18 @@
               "hp": {
                 ".write": "auth != null",
                 ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999"
+              },
+              "maxHp": {
+                ".write": "auth != null",
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999"
+              },
+              "mp": {
+                ".write": "auth != null",
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999"
+              },
+              "maxMp": {
+                ".write": "auth != null",
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999"
               }
             }
           },
