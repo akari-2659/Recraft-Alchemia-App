@@ -45,14 +45,13 @@
       <div class="chat-head"><div><h2>リアルタイムチャット</h2><div id="roomStatus" class="room-status">Firebase未接続</div></div><button id="reconnectRoomBtn" class="ghost">ルーム再接続</button></div>
 
       <div class="speaker-box">
-        <label>発言者
-          <select id="characterSelect"><option value="">発言者を選択</option></select>
+        <label>キャラクター選択
+          <select id="characterSelect"><option value="">キャラクターを選択</option></select>
         </label>
-        <div class="temp-speaker-row">
-          <input id="tempSpeakerName" maxlength="120" placeholder="名前だけのキャラクターを作成">
-          <button id="addTempSpeakerBtn" type="button" class="ghost">発言者に追加</button>
-        </div>
-        <div class="hint">登録キャラと、その場で作った名前だけのキャラを同じ一覧から選択できます。</div>
+        <label>発言者名
+          <input id="speakerName" maxlength="120" placeholder="キャラクターを選択、または名前を直接入力">
+        </label>
+        <div class="hint">登録キャラを選ぶと名前が自動入力されます。キャラクター未選択でも、発言者名だけ入力して発言できます。</div>
       </div>
 
       <div id="resourcePanel" class="resource-panel" hidden>
