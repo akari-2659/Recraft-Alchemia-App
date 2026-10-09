@@ -265,7 +265,7 @@ function formatDiceResult(command, result) {
   let text = base;
 
   if (special.label) {
-    // BCDiceの通常結果末尾「成功／失敗」をRAのクリティカル／ファンブル表示へ置き換える。
+    // RAでは2D6の特殊出目を通常の成功／失敗より常に優先する。
     const replaced = text.replace(
       /(→|＞)\s*(成功|失敗)\s*$/u,
       (_, arrow) => arrow + " " + special.label
@@ -274,16 +274,20 @@ function formatDiceResult(command, result) {
       ? text.replace(/\s*(成功|失敗)\s*$/u, " " + special.label)
       : replaced;
 
-    // 成否語がないコマンドでも、同じ結果行の末尾に収める。
     if (text === base && !/(クリティカル|ファンブル)\s*$/u.test(text)) {
       text += " → " + special.label;
     }
   }
 
+  const critical = special.critical || (!special.fumble && result?.critical === true);
+  const fumble = special.fumble || (!special.critical && result?.fumble === true);
+
   return {
     text,
-    critical: special.critical || result?.critical === true,
-    fumble: special.fumble || result?.fumble === true
+    critical,
+    fumble,
+    success: special.label ? false : result?.success === true,
+    failure: special.label ? false : result?.failure === true
   };
 }
 
@@ -297,8 +301,8 @@ function appendLocalSecretDiceResult(speakerName, color, originalText, command, 
     text: originalText,
     diceCommand: command,
     diceResult: formatted.text,
-    diceSuccess: result?.success === true,
-    diceFailure: result?.failure === true,
+    diceSuccess: formatted.success,
+    diceFailure: formatted.failure,
     diceCritical: formatted.critical,
     diceFumble: formatted.fumble,
     createdAt: Date.now()
