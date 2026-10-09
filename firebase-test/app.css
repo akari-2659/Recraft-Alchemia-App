@@ -18,3 +18,10 @@
 .message.system .message-text{font-weight:700}
 @media(max-width:1150px){.layout{grid-template-columns:minmax(280px,360px) minmax(0,1fr)}.party-panel{grid-column:2}.chat-panel{grid-column:1/-1}}
 @media(max-width:800px){.party-panel,.chat-panel{grid-column:auto}}
+
+.resource-sync-grid{display:grid;grid-template-columns:minmax(90px,1fr) minmax(76px,.7fr);gap:8px 10px;align-items:end}
+.resource-max-box{margin:8px 0}
+.resource-max-value{min-height:38px;display:flex;align-items:center;justify-content:center;border:1px solid #d8ccbf;border-radius:9px;background:#f6f1eb;font-size:18px;font-weight:900}
+.party-member-stats{display:grid;gap:3px;text-align:right;white-space:nowrap}
+.party-member-stat{font-size:15px;font-weight:900}
+.party-member-stat small{font-size:10px;color:#85786c;font-weight:700;margin-right:4px}
