@@ -89,3 +89,23 @@
   .resource-strip-values{justify-content:flex-start;flex-wrap:wrap}
   .color-popover{right:0}
 }
+
+.icon-btn:disabled{opacity:.38;cursor:default}
+.icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.chat-character-row{grid-template-columns:minmax(130px,190px) minmax(120px,1fr) 40px 40px}
+.palette-control{position:relative}
+.palette-popover{position:absolute;right:0;bottom:46px;z-index:22;width:min(430px,calc(100vw - 42px));max-height:360px;border:1px solid #d4c7b9;border-radius:10px;background:#fffaf4;box-shadow:0 10px 30px rgba(0,0,0,.18);overflow:hidden}
+.palette-popover[hidden]{display:none}
+.palette-list{max-height:358px;overflow:auto;padding:6px}
+.palette-entry{width:100%;border:0;border-radius:7px;background:transparent;color:#302923;padding:8px 9px;text-align:left;font-weight:500;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;line-height:1.4}
+.palette-entry:hover,.palette-entry:focus-visible{background:#eee5dc;outline:none}
+.palette-note{padding:6px 9px;color:#8a7d71;font-size:11px;line-height:1.4;white-space:pre-wrap}
+.palette-separator{height:1px;background:#e5d9cd;margin:5px 7px}
+.compact-empty{padding:20px 10px;font-size:12px}
+@media(max-width:800px){
+  .chat-character-row{grid-template-columns:minmax(0,1fr) 40px 40px}
+  .chat-character-row #speakerName{grid-column:1/-1;grid-row:2}
+  .chat-character-row .palette-control{grid-column:2;grid-row:1}
+  .chat-character-row .color-control{grid-column:3;grid-row:1}
+  .palette-popover{right:-47px}
+}
