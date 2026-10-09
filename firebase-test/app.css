@@ -116,3 +116,9 @@
 .message.secret-dice{background:#f4f0fa;border:1px dashed #c9bbdc}
 .message.secret-dice .message-name{color:#665777;font-size:11px}
 .message.secret-dice .message-text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#392f45}
+
+.message.dice,.message.secret-dice{background:#fff;border:1px solid #e3d8cc}
+.message.dice .message-name,.message.secret-dice .message-name{font-size:inherit;color:var(--message-color,#6b4933)}
+.message.dice .message-text,.message.secret-dice .message-text{font-family:inherit;color:#2f2924}
+.message-dice-result{margin-top:7px;padding-top:7px;border-top:1px solid #e7ddd3;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;line-height:1.5;color:#5d5147;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.secret-dice{border-style:dashed}
