@@ -6,6 +6,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxNQYC7-aBE23cliuD1Zdze
 const CONFIG_KEY = "ra-firebase-test-config-v1";
 const PLAYER_KEY_STORAGE = "ra-firebase-test-player-key";
 const ROOM_STORAGE = "ra-firebase-test-room";
+const TEMP_SPEAKERS_STORAGE = "ra-firebase-test-temp-speakers-v1";
 
 const $ = id => document.getElementById(id);
 const fields = {
@@ -26,6 +27,8 @@ let hpUnsubscribe = null;
 let hpWriteTimer = null;
 let mpWriteTimer = null;
 let selectedCharacterData = null;
+let registeredCharacters = [];
+let tempSpeakers = [];
 let currentUid = "";
 const renderedKeys = new Set();
 
@@ -43,6 +46,13 @@ function loadSavedConfig() {
   } catch (_) {}
   $("playerKey").value = localStorage.getItem(PLAYER_KEY_STORAGE) || "";
   $("roomId").value = localStorage.getItem(ROOM_STORAGE) || "ra-test-room-1";
+  try {
+    const savedTemp = JSON.parse(localStorage.getItem(TEMP_SPEAKERS_STORAGE) || "[]");
+    tempSpeakers = Array.isArray(savedTemp) ? savedTemp.filter(item => item && item.id && item.name) : [];
+  } catch (_) {
+    tempSpeakers = [];
+  }
+  renderSpeakerOptions();
 }
 
 function readConfig() {
@@ -76,7 +86,7 @@ async function connectFirebase() {
 
   setStatus($("firebaseStatus"), "接続済み / 匿名UID: " + currentUid.slice(0, 10) + "…", "ok");
   connectRoom();
-  if ($("characterSelect").value && selectedCharacterData) connectResources(String($("characterSelect").value), characterResourceSnapshot(selectedCharacterData));
+  handleSpeakerChange();
 }
 
 function connectRoom() {
@@ -162,20 +172,23 @@ async function sendMessage(event) {
 
   const roomId = String($("roomId").value || "").trim();
   const text = String($("chatText").value || "").trim();
-  const option = $("characterSelect").selectedOptions[0];
-  const characterId = String(option?.value || "");
-  const speakerName = String(option?.dataset?.name || option?.textContent || "").trim();
+  let speaker = getSelectedSpeaker();
+
+  if (!speaker) {
+    const typedName = String($("tempSpeakerName").value || "").trim();
+    if (typedName) speaker = addTemporarySpeaker(typedName, true);
+  }
 
   if (!roomId) return;
-  if (!characterId) {
-    setStatus($("characterStatus"), "発言キャラクターを選択してください。", "error");
+  if (!speaker) {
+    setStatus($("characterStatus"), "発言者を選ぶか、名前を入力してください。", "error");
     return;
   }
   if (!text) return;
 
   await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
-    speakerId: characterId,
-    speakerName,
+    speakerId: speaker.id,
+    speakerName: speaker.name,
     text,
     senderUid: currentUid,
     createdAt: serverTimestamp()
@@ -224,6 +237,160 @@ function jsonp(action, payload = {}, timeoutMs = 30000) {
 }
 
 
+
+
+function tempSpeakerId() {
+  return "temp:" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function saveTempSpeakers() {
+  localStorage.setItem(TEMP_SPEAKERS_STORAGE, JSON.stringify(tempSpeakers));
+}
+
+function renderSpeakerOptions(selectedValue = "") {
+  const select = $("characterSelect");
+  if (!select) return;
+
+  const previous = selectedValue || select.value || "";
+  select.replaceChildren(new Option("発言者を選択", ""));
+
+  if (registeredCharacters.length) {
+    const group = document.createElement("optgroup");
+    group.label = "登録キャラクター";
+    for (const character of registeredCharacters) {
+      const id = String(character.id || "").trim();
+      if (!id) continue;
+      const option = new Option(character.name || "無名のキャラクター", "registered:" + id);
+      option.dataset.source = "registered";
+      option.dataset.characterId = id;
+      option.dataset.name = character.name || "無名のキャラクター";
+      group.append(option);
+    }
+    select.append(group);
+  }
+
+  if (tempSpeakers.length) {
+    const group = document.createElement("optgroup");
+    group.label = "名前だけのキャラクター";
+    for (const speaker of tempSpeakers) {
+      const option = new Option(speaker.name, speaker.id);
+      option.dataset.source = "temporary";
+      option.dataset.name = speaker.name;
+      group.append(option);
+    }
+    select.append(group);
+  }
+
+  if ([...select.options].some(option => option.value === previous)) select.value = previous;
+}
+
+function getSelectedSpeaker() {
+  const option = $("characterSelect")?.selectedOptions?.[0];
+  if (!option || !option.value) return null;
+  if (option.dataset.source === "registered") {
+    return {
+      id: String(option.dataset.characterId || "").trim(),
+      name: String(option.dataset.name || option.textContent || "").trim(),
+      source: "registered"
+    };
+  }
+  if (option.dataset.source === "temporary") {
+    return {
+      id: String(option.value || "").trim(),
+      name: String(option.dataset.name || option.textContent || "").trim(),
+      source: "temporary"
+    };
+  }
+  return null;
+}
+
+function addTemporarySpeaker(name, selectAfter = true) {
+  const cleanName = String(name || "").trim();
+  if (!cleanName) return null;
+
+  let speaker = tempSpeakers.find(item => item.name === cleanName);
+  if (!speaker) {
+    speaker = { id: tempSpeakerId(), name: cleanName };
+    tempSpeakers.push(speaker);
+    saveTempSpeakers();
+  }
+
+  renderSpeakerOptions(selectAfter ? speaker.id : "");
+  if (selectAfter) {
+    $("characterSelect").value = speaker.id;
+    $("tempSpeakerName").value = "";
+    handleSpeakerChange();
+  }
+  return { ...speaker, source: "temporary" };
+}
+
+function renderPartyCandidates() {
+  const list = $("partyCandidateList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (!registeredCharacters.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "このプレイヤーキーの登録キャラクターが読み込まれていません。";
+    list.append(empty);
+    return;
+  }
+
+  for (const character of registeredCharacters) {
+    const characterId = String(character.id || "").trim();
+    if (!characterId) continue;
+
+    const row = document.createElement("div");
+    row.className = "party-candidate";
+
+    const name = document.createElement("div");
+    name.className = "party-candidate-name";
+    name.textContent = character.name || "無名のキャラクター";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "追加";
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await addCharacterToParty(characterId, character.name || "無名のキャラクター");
+        $("partyAddDialog").close();
+      } catch (error) {
+        setStatus($("characterStatus"), error.message || String(error), "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    row.append(name, button);
+    list.append(row);
+  }
+}
+
+function openPartyAddDialog() {
+  renderPartyCandidates();
+  const dialog = $("partyAddDialog");
+  if (dialog?.showModal) dialog.showModal();
+}
+
+async function handleSpeakerChange() {
+  const speaker = getSelectedSpeaker();
+
+  if (!speaker || speaker.source !== "registered") {
+    if (hpUnsubscribe) {
+      hpUnsubscribe();
+      hpUnsubscribe = null;
+    }
+    selectedCharacterData = null;
+    $("resourcePanel").hidden = true;
+    return;
+  }
+
+  $("resourcePanel").hidden = false;
+  $("resourceCharacterName").textContent = speaker.name;
+  await loadSelectedCharacterAndConnectHp();
+}
 
 function clearPartyHpSubscriptions() {
   for (const unsubscribe of partyHpUnsubscribes.values()) {
@@ -327,27 +494,24 @@ function renderParty(party, roomId) {
   }
 }
 
-async function addSelectedCharacterToParty() {
+async function addCharacterToParty(characterId, characterName) {
   if (!db || !currentUid) {
-    setStatus($("characterStatus"), "先にFirebaseへ接続してください。", "error");
-    return;
+    throw new Error("先にFirebaseへ接続してください。");
   }
 
-  const characterId = String($("characterSelect").value || "").trim();
   const roomId = String($("roomId").value || "").trim();
-  const option = $("characterSelect").selectedOptions[0];
+  const playerKey = String($("playerKey").value || "").trim();
 
-  if (!characterId || !roomId || !option) {
-    setStatus($("characterStatus"), "追加するキャラクターを選択してください。", "error");
-    return;
+  if (!characterId || !roomId) throw new Error("追加するキャラクターを選択してください。");
+  if (!playerKey) throw new Error("プレイヤーキーが必要です。");
+
+  const response = await jsonp("load", { id: characterId, playerKey });
+  const character = response?.data || response;
+  if (!character || String(character.id || "") !== characterId) {
+    throw new Error("キャラクターデータを取得できませんでした。");
   }
 
-  if (!selectedCharacterData || String(selectedCharacterData.id || "") !== characterId) {
-    await loadSelectedCharacterAndConnectHp();
-  }
-
-  const name = String(option.dataset.name || option.textContent || "無名のキャラクター").trim();
-  const resource = characterResourceSnapshot(selectedCharacterData);
+  const resource = characterResourceSnapshot(character);
 
   await runTransaction(
     ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId),
@@ -364,12 +528,12 @@ async function addSelectedCharacterToParty() {
   );
 
   await set(ref(db, "raTest/rooms/" + roomId + "/party/" + characterId), {
-    name,
+    name: characterName || character.name || "無名のキャラクター",
     addedBy: currentUid,
     addedAt: serverTimestamp()
   });
 
-  setStatus($("characterStatus"), name + " をパーティーに追加しました。", "ok");
+  setStatus($("characterStatus"), (characterName || character.name || "無名のキャラクター") + " をパーティーに追加しました。", "ok");
 }
 
 async function removePartyMember(characterId) {
@@ -435,11 +599,13 @@ async function loadSelectedCharacterAndConnectHp() {
   $("liveMaxMp").textContent = "—";
   $("liveCharacterId").textContent = "未選択";
 
-  const characterId = String($("characterSelect").value || "").trim();
+  const speaker = getSelectedSpeaker();
+  const characterId = speaker?.source === "registered" ? speaker.id : "";
   const playerKey = String($("playerKey").value || "").trim();
 
   if (!characterId) {
-    setStatus($("hpStatus"), "キャラクターを選択してください。");
+    $("resourcePanel").hidden = true;
+    setStatus($("hpStatus"), "登録キャラクターを選択してください。");
     return;
   }
   if (!playerKey) {
@@ -523,17 +689,18 @@ async function connectResources(characterId, initialResource) {
 }
 
 function queueHpWrite() {
-  if (!db || !$("characterSelect").value) return;
+  const speaker = getSelectedSpeaker();
+  if (!db || speaker?.source !== "registered") return;
   const value = Number($("liveHp").value);
   if (!Number.isFinite(value)) return;
 
   if (hpWriteTimer) clearTimeout(hpWriteTimer);
   hpWriteTimer = setTimeout(async () => {
     hpWriteTimer = null;
-    const characterId = String($("characterSelect").value || "").trim();
+    const activeSpeaker = getSelectedSpeaker();
+    const characterId = activeSpeaker?.source === "registered" ? activeSpeaker.id : "";
     const roomId = String($("roomId").value || "").trim();
-    const option = $("characterSelect").selectedOptions[0];
-    const characterName = String(option?.dataset?.name || option?.textContent || "無名のキャラクター").trim();
+    const characterName = activeSpeaker?.name || "無名のキャラクター";
     if (!characterId || !roomId) return;
 
     const nextHp = Math.trunc(value);
@@ -559,17 +726,18 @@ function queueHpWrite() {
 
 
 function queueMpWrite() {
-  if (!db || !$("characterSelect").value) return;
+  const speaker = getSelectedSpeaker();
+  if (!db || speaker?.source !== "registered") return;
   const value = Number($("liveMp").value);
   if (!Number.isFinite(value)) return;
 
   if (mpWriteTimer) clearTimeout(mpWriteTimer);
   mpWriteTimer = setTimeout(async () => {
     mpWriteTimer = null;
-    const characterId = String($("characterSelect").value || "").trim();
+    const activeSpeaker = getSelectedSpeaker();
+    const characterId = activeSpeaker?.source === "registered" ? activeSpeaker.id : "";
     const roomId = String($("roomId").value || "").trim();
-    const option = $("characterSelect").selectedOptions[0];
-    const characterName = String(option?.dataset?.name || option?.textContent || "無名のキャラクター").trim();
+    const characterName = activeSpeaker?.name || "無名のキャラクター";
     if (!characterId || !roomId) return;
 
     const nextMp = Math.max(0, Math.trunc(value));
@@ -611,16 +779,10 @@ async function loadCharacters() {
         ? response.items
         : (Array.isArray(response.data?.items) ? response.data.items : []));
 
-    $("characterSelect").replaceChildren(new Option("未選択", ""));
-
-    for (const character of items) {
-      const option = new Option(character.name || "無名のキャラクター", String(character.id || ""));
-      option.dataset.name = character.name || "無名のキャラクター";
-      $("characterSelect").append(option);
-    }
-
+    registeredCharacters = items;
+    renderSpeakerOptions();
+    renderPartyCandidates();
     setStatus($("characterStatus"), items.length + "人を読み込みました。", "ok");
-    $("addPartyBtn").disabled = true;
   } catch (error) {
     setStatus($("characterStatus"), error.message || String(error), "error");
   }
@@ -636,9 +798,16 @@ $("clearFirebaseBtn").addEventListener("click", () => {
 });
 $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
-$("roomId").addEventListener("change", () => { connectRoom(); loadSelectedCharacterAndConnectHp(); });
-$("characterSelect").addEventListener("change", () => { $("addPartyBtn").disabled = !$("characterSelect").value; loadSelectedCharacterAndConnectHp(); });
-$("addPartyBtn").addEventListener("click", () => { addSelectedCharacterToParty().catch(error => setStatus($("characterStatus"), error.message || String(error), "error")); });
+$("roomId").addEventListener("change", () => { connectRoom(); handleSpeakerChange(); });
+$("characterSelect").addEventListener("change", handleSpeakerChange);
+$("addTempSpeakerBtn").addEventListener("click", () => addTemporarySpeaker($("tempSpeakerName").value, true));
+$("tempSpeakerName").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    addTemporarySpeaker($("tempSpeakerName").value, true);
+  }
+});
+$("openPartyAddBtn").addEventListener("click", openPartyAddDialog);
 $("liveHp").addEventListener("input", queueHpWrite);
 $("liveMp").addEventListener("input", queueMpWrite);
 $("chatForm").addEventListener("submit", event => {
@@ -646,3 +815,4 @@ $("chatForm").addEventListener("submit", event => {
 });
 
 loadSavedConfig();
+handleSpeakerChange();
