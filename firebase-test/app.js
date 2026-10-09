@@ -53,6 +53,26 @@ function setResourceStatus(text, state = "") {
 
 
 
+
+let ccfoliaInteractionEnabled = false;
+
+function setCcfoliaInteractionEnabled(enabled) {
+  ccfoliaInteractionEnabled = !!enabled;
+  const shield = $("ccfoliaInteractionShield");
+  const button = $("toggleCcfoliaInteractionBtn");
+
+  if (shield) shield.hidden = ccfoliaInteractionEnabled;
+  if (button) {
+    button.classList.toggle("active", ccfoliaInteractionEnabled);
+    button.setAttribute("aria-pressed", ccfoliaInteractionEnabled ? "true" : "false");
+    button.setAttribute(
+      "aria-label",
+      ccfoliaInteractionEnabled ? "ココフォリア操作をロック" : "ココフォリア操作を有効化"
+    );
+    button.title = ccfoliaInteractionEnabled ? "盤面操作をロック" : "盤面操作を有効化";
+  }
+}
+
 function readCcfoliaCropSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(CCFOLIA_CROP_STORAGE) || "null");
@@ -128,6 +148,7 @@ function loadSavedConfig() {
   renderSpeakerOptions();
   applyCurrentSpeakerColor();
   applyCcfoliaCropSettings();
+  setCcfoliaInteractionEnabled(false);
 }
 
 function readConfig() {
@@ -1208,6 +1229,13 @@ $("clearFirebaseBtn").addEventListener("click", () => {
 });
 $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
+$("toggleCcfoliaInteractionBtn").addEventListener("click", event => {
+  event.stopPropagation();
+  setCcfoliaInteractionEnabled(!ccfoliaInteractionEnabled);
+});
+$("ccfoliaInteractionShield").addEventListener("dblclick", () => {
+  setCcfoliaInteractionEnabled(true);
+});
 $("toggleCcfoliaCropBtn").addEventListener("click", event => {
   event.stopPropagation();
   const panel = $("ccfoliaCropPanel");
