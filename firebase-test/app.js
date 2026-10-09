@@ -191,7 +191,30 @@ function renderMessage(key, message) {
   if (diceResultText) {
     const diceResult = document.createElement("div");
     diceResult.className = "message-dice-result";
-    diceResult.textContent = diceResultText;
+
+    const lines = diceResultText.split(/\r?\n/);
+    const multipleLines = lines.length > 1;
+
+    for (const lineText of lines) {
+      const line = document.createElement("div");
+      line.className = "message-dice-result-line";
+      line.textContent = lineText;
+
+      if (/ファンブル|失敗/u.test(lineText)) {
+        line.classList.add("dice-result-failure");
+      } else if (/クリティカル|成功/u.test(lineText)) {
+        line.classList.add("dice-result-success");
+      } else if (!multipleLines) {
+        if (message.diceFumble === true || message.diceFailure === true) {
+          line.classList.add("dice-result-failure");
+        } else if (message.diceCritical === true || message.diceSuccess === true) {
+          line.classList.add("dice-result-success");
+        }
+      }
+
+      diceResult.append(line);
+    }
+
     article.append(diceResult);
   }
   $("chatLog").append(article);
