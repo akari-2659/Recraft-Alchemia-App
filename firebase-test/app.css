@@ -122,3 +122,20 @@
 .message.dice .message-text,.message.secret-dice .message-text{font-family:inherit;color:#2f2924}
 .message-dice-result{margin-top:7px;padding-top:7px;border-top:1px solid #e7ddd3;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;line-height:1.5;color:#5d5147;white-space:pre-wrap;overflow-wrap:anywhere}
 .message.secret-dice{border-style:dashed}
+
+.message.dice .message-dice-command,
+.message.secret-dice .message-dice-command{
+  font-size:12px;
+  line-height:1.35;
+  color:#766b61;
+}
+.message.dice .message-dice-result,
+.message.secret-dice .message-dice-result{
+  margin-top:6px;
+  padding-top:8px;
+  border-top:1px solid #e7ddd3;
+  font-size:18px;
+  line-height:1.45;
+  font-weight:700;
+  color:#2f2924;
+}
