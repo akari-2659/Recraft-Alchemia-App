@@ -26,29 +26,10 @@
       <div id="firebaseStatus" class="status">未接続</div>
       <h2>2. セッション</h2>
       <label>テストルームID<input id="roomId" value="ra-test-room-1" autocomplete="off"></label>
-      <h2>3. キャラクター</h2>
+      <h2>3. プレイヤー</h2>
       <label>キャラシ用プレイヤーキー<input id="playerKey" autocomplete="off"></label>
       <div class="row"><button id="loadCharactersBtn">登録キャラを読み込む</button></div>
-      <label>発言キャラクター<select id="characterSelect"><option value="">未選択</option></select></label>
       <div id="characterStatus" class="status">未読込</div>
-      <div class="row">
-        <button id="addPartyBtn" disabled>選択キャラをパーティーに追加</button>
-      </div>
-      <div class="hp-test">
-        <h2>4. HPリアルタイム同期</h2>
-        <p class="hint">同期単位はプレイヤーキーではなくキャラクターIDです。同じプレイヤーキーを別タブで使っても、別キャラなら別々に同期されます。</p>
-        <div class="resource-sync-grid">
-          <label>現在HP<input id="liveHp" type="number" min="0" step="1" disabled></label>
-          <div class="resource-max-box"><div class="mini-label">最大HP</div><div id="liveMaxHp" class="resource-max-value">—</div></div>
-          <label>現在MP<input id="liveMp" type="number" min="0" step="1" disabled></label>
-          <div class="resource-max-box"><div class="mini-label">最大MP</div><div id="liveMaxMp" class="resource-max-value">—</div></div>
-        </div>
-        <div>
-          <div class="mini-label">キャラクターID</div>
-          <div id="liveCharacterId" class="mono">未選択</div>
-        </div>
-        <div id="hpStatus" class="status">キャラクターを選択してください。</div>
-      </div>
     </section>
     <section class="panel party-panel">
       <div class="party-head">
@@ -56,15 +37,55 @@
           <h2>パーティー</h2>
           <div class="hint">このルームに追加されたキャラクターだけを共有表示します。</div>
         </div>
+        <button id="openPartyAddBtn" type="button">追加</button>
       </div>
       <div id="partyList" class="party-list"><div class="empty">Firebase接続後に表示されます。</div></div>
     </section>
     <section class="panel chat-panel">
       <div class="chat-head"><div><h2>リアルタイムチャット</h2><div id="roomStatus" class="room-status">Firebase未接続</div></div><button id="reconnectRoomBtn" class="ghost">ルーム再接続</button></div>
+
+      <div class="speaker-box">
+        <label>発言者
+          <select id="characterSelect"><option value="">発言者を選択</option></select>
+        </label>
+        <div class="temp-speaker-row">
+          <input id="tempSpeakerName" maxlength="120" placeholder="名前だけのキャラクターを作成">
+          <button id="addTempSpeakerBtn" type="button" class="ghost">発言者に追加</button>
+        </div>
+        <div class="hint">登録キャラと、その場で作った名前だけのキャラを同じ一覧から選択できます。</div>
+      </div>
+
+      <div id="resourcePanel" class="resource-panel" hidden>
+        <div class="resource-panel-title">
+          <strong id="resourceCharacterName">—</strong>
+          <span id="liveCharacterId" class="mono compact">—</span>
+        </div>
+        <div class="resource-sync-grid">
+          <label>現在HP<input id="liveHp" type="number" min="0" step="1" disabled></label>
+          <div class="resource-max-box"><div class="mini-label">最大HP</div><div id="liveMaxHp" class="resource-max-value">—</div></div>
+          <label>現在MP<input id="liveMp" type="number" min="0" step="1" disabled></label>
+          <div class="resource-max-box"><div class="mini-label">最大MP</div><div id="liveMaxMp" class="resource-max-value">—</div></div>
+        </div>
+        <div id="hpStatus" class="status">登録キャラクターを選択してください。</div>
+      </div>
+
       <div id="chatLog" class="chat-log" aria-live="polite"></div>
       <form id="chatForm" class="composer"><textarea id="chatText" rows="3" maxlength="1000" placeholder="メッセージを入力"></textarea><button type="submit">送信</button></form>
     </section>
   </main>
+  <dialog id="partyAddDialog" class="party-dialog">
+    <form method="dialog" class="party-dialog-card">
+      <div class="party-dialog-head">
+        <div>
+          <h2>パーティーに追加</h2>
+          <div class="hint">現在のプレイヤーキーに登録されているキャラクターから選択します。</div>
+        </div>
+        <button value="cancel" class="ghost" aria-label="閉じる">×</button>
+      </div>
+      <div id="partyCandidateList" class="party-candidate-list"></div>
+    </form>
+  </dialog>
+
   <script type="module" src="./app.js"></script>
 </body>
 </html>
