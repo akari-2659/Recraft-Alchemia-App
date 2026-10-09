@@ -174,6 +174,9 @@ function renderMessage(key, message) {
 
   const text = document.createElement("div");
   text.className = "message-text";
+  if (messageType === "dice" || messageType === "secret-dice") {
+    text.classList.add("message-dice-command");
+  }
   text.textContent = String(message.text || "");
 
   if (messageType !== "system") {
