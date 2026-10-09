@@ -8,6 +8,11 @@ const PLAYER_KEY_STORAGE = "ra-firebase-test-player-key";
 const ROOM_STORAGE = "ra-firebase-test-room";
 const CHAT_COLORS_STORAGE = "ra-firebase-test-chat-colors-v1";
 const DEFAULT_CHAT_COLOR = "#6B4933";
+const BCDICE_SERVERS = [
+  "https://bcdice.onlinesession.app",
+  "https://bcdice.trpg.net"
+];
+const BCDICE_SYSTEM = "DiceBot";
 
 const $ = id => document.getElementById(id);
 const fields = {
@@ -144,7 +149,11 @@ function connectRoom() {
 
 function renderMessage(key, message) {
   const article = document.createElement("article");
-  article.className = "message" + (message.type === "system" ? " system" : "");
+  const messageType = String(message.type || "");
+  article.className = "message" +
+    (messageType === "system" ? " system" : "") +
+    (messageType === "dice" ? " dice" : "") +
+    (messageType === "secret-dice" ? " secret-dice" : "");
   article.dataset.key = key;
 
   const head = document.createElement("div");
@@ -152,7 +161,11 @@ function renderMessage(key, message) {
 
   const name = document.createElement("div");
   name.className = "message-name";
-  name.textContent = message.type === "system" ? "SYSTEM" : (message.speakerName || "名称未設定");
+  name.textContent = messageType === "system"
+    ? "SYSTEM"
+    : (messageType === "dice" || messageType === "secret-dice")
+      ? ((message.speakerName || "名称未設定") + " / DICE")
+      : (message.speakerName || "名称未設定");
 
   const time = document.createElement("div");
   time.className = "message-time";
@@ -165,7 +178,7 @@ function renderMessage(key, message) {
   text.className = "message-text";
   text.textContent = String(message.text || "");
 
-  if (message.type !== "system") {
+  if (!["system","dice","secret-dice"].includes(messageType)) {
     const color = normalizeHexColor(message.color) || DEFAULT_CHAT_COLOR;
     article.style.setProperty("--message-color", color);
   }
@@ -174,6 +187,65 @@ function renderMessage(key, message) {
   article.append(head, text);
   $("chatLog").append(article);
   $("chatLog").scrollTop = $("chatLog").scrollHeight;
+}
+
+
+function extractDiceCommand(messageText = "") {
+  const raw = String(messageText || "").trim();
+  if (!raw) return null;
+
+  // RA palette labels are display text; BCDice receives only the command part.
+  const withoutLabel = raw.replace(/\s*【[^】]*】\s*$/, "").trim();
+  const candidate = withoutLabel;
+
+  const commonPattern = /^(?:S)?(?:\d+[dD]\d+(?:(?:KH|KL|DH|DL)\d+|MAX|MIN)?|\d+[bB]\d+|\d+[rR]\d+|\d+[uU]\d+|\d+(?:TY|TZ)\d+|D66(?:A|D|N|S)?|C(?:\(|\s*)|CHOICE\d*(?:\[|\(|\s)|(?:X|REP|REPEAT)\d+\s|BCDICEVERSION)/i;
+  if (!commonPattern.test(candidate)) return null;
+  return candidate;
+}
+
+async function rollBCDice(command) {
+  let lastError = null;
+  for (const server of BCDICE_SERVERS) {
+    try {
+      const url = server + "/v2/game_system/" + encodeURIComponent(BCDICE_SYSTEM) +
+        "/roll?command=" + encodeURIComponent(command);
+      const response = await fetch(url, { method:"GET", mode:"cors", cache:"no-store" });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.reason || ("HTTP " + response.status));
+      }
+      return data;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("BCDiceへ接続できませんでした。");
+}
+
+function appendLocalSecretDiceResult(speakerName, command, result) {
+  const key = "secret-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+  renderMessage(key, {
+    type:"secret-dice",
+    speakerName,
+    text: String(result?.text || command),
+    createdAt: Date.now()
+  });
+}
+
+async function postSharedDiceResult(roomId, speakerId, speakerName, command, result) {
+  await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
+    type:"dice",
+    speakerId,
+    speakerName,
+    text: String(result?.text || command),
+    diceCommand: command,
+    diceSuccess: result?.success === true,
+    diceFailure: result?.failure === true,
+    diceCritical: result?.critical === true,
+    diceFumble: result?.fumble === true,
+    senderUid: currentUid,
+    createdAt: serverTimestamp()
+  });
 }
 
 async function sendMessage() {
@@ -195,17 +267,46 @@ async function sendMessage() {
   if (!text) return;
 
   const color = currentChatColor();
+  const speakerId = selectedCharacter?.id || ("manual:" + currentUid);
+  const diceCommand = extractDiceCommand(text);
+  const isSecretDice = !!diceCommand && /^S/i.test(diceCommand);
 
-  await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
-    speakerId: selectedCharacter?.id || ("manual:" + currentUid),
-    speakerName,
-    color,
-    text,
-    senderUid: currentUid,
-    createdAt: serverTimestamp()
-  });
+  if (!isSecretDice) {
+    await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
+      speakerId,
+      speakerName,
+      color,
+      text,
+      senderUid: currentUid,
+      createdAt: serverTimestamp()
+    });
+  }
 
   $("chatText").value = "";
+
+  if (diceCommand) {
+    try {
+      const result = await rollBCDice(diceCommand);
+      if (result?.secret || isSecretDice) {
+        appendLocalSecretDiceResult(speakerName, diceCommand, result);
+      } else {
+        await postSharedDiceResult(roomId, speakerId, speakerName, diceCommand, result);
+      }
+    } catch (error) {
+      if (isSecretDice) {
+        appendLocalSecretDiceResult(speakerName, diceCommand, { text:"ダイス実行エラー: " + (error.message || error) });
+      } else {
+        await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
+          type:"system",
+          speakerId,
+          speakerName,
+          text:"ダイス実行エラー: " + (error.message || error),
+          senderUid: currentUid,
+          createdAt: serverTimestamp()
+        });
+      }
+    }
+  }
 }
 
 function jsonp(action, payload = {}, timeoutMs = 30000) {
