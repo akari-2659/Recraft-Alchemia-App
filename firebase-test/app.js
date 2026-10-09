@@ -24,6 +24,7 @@ let partyUnsubscribe = null;
 const partyHpUnsubscribes = new Map();
 let hpUnsubscribe = null;
 let hpWriteTimer = null;
+let mpWriteTimer = null;
 let selectedCharacterData = null;
 let currentUid = "";
 const renderedKeys = new Set();
@@ -75,7 +76,7 @@ async function connectFirebase() {
 
   setStatus($("firebaseStatus"), "接続済み / 匿名UID: " + currentUid.slice(0, 10) + "…", "ok");
   connectRoom();
-  if ($("characterSelect").value && selectedCharacterData) connectHp(String($("characterSelect").value), normalizedInitialHp(selectedCharacterData));
+  if ($("characterSelect").value && selectedCharacterData) connectResources(String($("characterSelect").value), characterResourceSnapshot(selectedCharacterData));
 }
 
 function connectRoom() {
@@ -281,9 +282,15 @@ function renderParty(party, roomId) {
     id.className = "party-member-id";
     id.textContent = characterId;
 
+    const stats = document.createElement("div");
+    stats.className = "party-member-stats";
     const hp = document.createElement("div");
-    hp.className = "party-member-hp";
-    hp.innerHTML = "<small>HP</small>—";
+    hp.className = "party-member-stat";
+    hp.innerHTML = "<small>HP</small>— / —";
+    const mp = document.createElement("div");
+    mp.className = "party-member-stat";
+    mp.innerHTML = "<small>MP</small>— / —";
+    stats.append(hp, mp);
 
     const actions = document.createElement("div");
     actions.className = "party-member-actions";
@@ -296,17 +303,25 @@ function renderParty(party, roomId) {
 
     main.append(name, id);
     actions.append(removeBtn);
-    card.append(main, hp, actions);
+    card.append(main, stats, actions);
     $("partyList").append(card);
 
-    const hpRef = ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp");
+    const resourceRef = ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId);
     const unsubscribe = onValue(
-      hpRef,
+      resourceRef,
       snapshot => {
-        const value = snapshot.val();
-        hp.innerHTML = "<small>HP</small>" + (value === null || value === undefined ? "—" : String(value));
+        const value = snapshot.val() || {};
+        const hpCurrent = value.hp === null || value.hp === undefined ? "—" : String(value.hp);
+        const hpMax = value.maxHp === null || value.maxHp === undefined ? "—" : String(value.maxHp);
+        const mpCurrent = value.mp === null || value.mp === undefined ? "—" : String(value.mp);
+        const mpMax = value.maxMp === null || value.maxMp === undefined ? "—" : String(value.maxMp);
+        hp.innerHTML = "<small>HP</small>" + hpCurrent + " / " + hpMax;
+        mp.innerHTML = "<small>MP</small>" + mpCurrent + " / " + mpMax;
       },
-      () => { hp.innerHTML = "<small>HP</small>ERR"; }
+      () => {
+        hp.innerHTML = "<small>HP</small>ERR";
+        mp.innerHTML = "<small>MP</small>ERR";
+      }
     );
     partyHpUnsubscribes.set(characterId, unsubscribe);
   }
@@ -332,11 +347,20 @@ async function addSelectedCharacterToParty() {
   }
 
   const name = String(option.dataset.name || option.textContent || "無名のキャラクター").trim();
-  const initialHp = normalizedInitialHp(selectedCharacterData);
+  const resource = characterResourceSnapshot(selectedCharacterData);
 
   await runTransaction(
-    ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp"),
-    current => current === null ? initialHp : current
+    ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId),
+    current => {
+      const base = current && typeof current === "object" ? current : {};
+      return {
+        ...base,
+        hp: base.hp === null || base.hp === undefined ? resource.hp : base.hp,
+        mp: base.mp === null || base.mp === undefined ? resource.mp : base.mp,
+        maxHp: resource.maxHp,
+        maxMp: resource.maxMp
+      };
+    }
   );
 
   await set(ref(db, "raTest/rooms/" + roomId + "/party/" + characterId), {
@@ -355,8 +379,8 @@ async function removePartyMember(characterId) {
   await remove(ref(db, "raTest/rooms/" + roomId + "/party/" + characterId));
 }
 
-async function postHpSystemMessage(characterId, characterName, beforeHp, afterHp) {
-  if (!db || !currentUid || beforeHp === afterHp) return;
+async function postResourceSystemMessage(characterId, characterName, resourceLabel, beforeValue, afterValue) {
+  if (!db || !currentUid || beforeValue === afterValue) return;
   const roomId = String($("roomId").value || "").trim();
   if (!roomId) return;
 
@@ -364,17 +388,30 @@ async function postHpSystemMessage(characterId, characterName, beforeHp, afterHp
     type: "system",
     speakerId: characterId,
     speakerName: characterName,
-    text: characterName + "　HP " + beforeHp + " → " + afterHp,
+    text: characterName + "　" + resourceLabel + " " + beforeValue + " → " + afterValue,
     senderUid: currentUid,
     createdAt: serverTimestamp()
   });
 }
 
+function normalizedResourceValue(value, fallback = 0) {
+  if (value === "" || value === null || value === undefined) return Math.trunc(Number(fallback) || 0);
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(0, Math.trunc(number)) : Math.trunc(Number(fallback) || 0);
+}
+function characterResourceSnapshot(character) {
+  const resources = character?.resources || {};
+  const maxHp = normalizedResourceValue(resources.maxHp, 0);
+  const maxMp = normalizedResourceValue(resources.maxMp, 0);
+  return {
+    hp: normalizedResourceValue(resources.currentHp, maxHp),
+    mp: normalizedResourceValue(resources.currentMp, maxMp),
+    maxHp,
+    maxMp
+  };
+}
 function normalizedInitialHp(character) {
-  const raw = character?.resources?.currentHp;
-  if (raw === "" || raw === null || raw === undefined) return 0;
-  const value = Number(raw);
-  return Number.isFinite(value) ? Math.trunc(value) : 0;
+  return characterResourceSnapshot(character).hp;
 }
 
 async function loadSelectedCharacterAndConnectHp() {
@@ -386,9 +423,16 @@ async function loadSelectedCharacterAndConnectHp() {
     clearTimeout(hpWriteTimer);
     hpWriteTimer = null;
   }
+  if (mpWriteTimer) {
+    clearTimeout(mpWriteTimer);
+    mpWriteTimer = null;
+  }
 
   selectedCharacterData = null;
   $("liveHp").disabled = true;
+  $("liveMp").disabled = true;
+  $("liveMaxHp").textContent = "—";
+  $("liveMaxMp").textContent = "—";
   $("liveCharacterId").textContent = "未選択";
 
   const characterId = String($("characterSelect").value || "").trim();
@@ -414,19 +458,24 @@ async function loadSelectedCharacterAndConnectHp() {
     }
     selectedCharacterData = character;
 
+    const resource = characterResourceSnapshot(character);
+    $("liveMaxHp").textContent = String(resource.maxHp);
+    $("liveMaxMp").textContent = String(resource.maxMp);
+
     if (!db) {
-      $("liveHp").value = normalizedInitialHp(character);
-      setStatus($("hpStatus"), "Firebase未接続。保存済みHPのみ表示しています。");
+      $("liveHp").value = resource.hp;
+      $("liveMp").value = resource.mp;
+      setStatus($("hpStatus"), "Firebase未接続。保存済みHP/MPのみ表示しています。");
       return;
     }
 
-    connectHp(characterId, normalizedInitialHp(character));
+    connectResources(characterId, resource);
   } catch (error) {
     setStatus($("hpStatus"), error.message || String(error), "error");
   }
 }
 
-async function connectHp(characterId, initialHp) {
+async function connectResources(characterId, initialResource) {
   if (!db) return;
 
   const roomId = String($("roomId").value || "").trim();
@@ -440,22 +489,35 @@ async function connectHp(characterId, initialHp) {
     hpUnsubscribe = null;
   }
 
-  const hpRef = ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp");
+  const characterRef = ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId);
 
-  await runTransaction(hpRef, current => current === null ? initialHp : current);
+  await runTransaction(characterRef, current => {
+    const base = current && typeof current === "object" ? current : {};
+    return {
+      ...base,
+      hp: base.hp === null || base.hp === undefined ? initialResource.hp : base.hp,
+      mp: base.mp === null || base.mp === undefined ? initialResource.mp : base.mp,
+      maxHp: initialResource.maxHp,
+      maxMp: initialResource.maxMp
+    };
+  });
 
   hpUnsubscribe = onValue(
-    hpRef,
+    characterRef,
     snapshot => {
-      const value = snapshot.val();
-      if (value === null || value === undefined) return;
-      $("liveHp").value = String(value);
+      const value = snapshot.val() || {};
+      if (value.hp !== null && value.hp !== undefined) $("liveHp").value = String(value.hp);
+      if (value.mp !== null && value.mp !== undefined) $("liveMp").value = String(value.mp);
+      $("liveMaxHp").textContent = value.maxHp === null || value.maxHp === undefined ? "—" : String(value.maxHp);
+      $("liveMaxMp").textContent = value.maxMp === null || value.maxMp === undefined ? "—" : String(value.maxMp);
       $("liveHp").disabled = false;
+      $("liveMp").disabled = false;
       setStatus($("hpStatus"), "リアルタイム同期中 / characterId単位", "ok");
     },
     error => {
       $("liveHp").disabled = true;
-      setStatus($("hpStatus"), "HP受信エラー: " + (error.message || error), "error");
+      $("liveMp").disabled = true;
+      setStatus($("hpStatus"), "HP/MP受信エラー: " + (error.message || error), "error");
     }
   );
 }
@@ -487,10 +549,46 @@ function queueHpWrite() {
       );
 
       if (result.committed && Number.isFinite(previousHp) && previousHp !== nextHp) {
-        await postHpSystemMessage(characterId, characterName, previousHp, nextHp);
+        await postResourceSystemMessage(characterId, characterName, "HP", previousHp, nextHp);
       }
     } catch (error) {
       setStatus($("hpStatus"), "HP送信エラー: " + (error.message || error), "error");
+    }
+  }, 120);
+}
+
+
+function queueMpWrite() {
+  if (!db || !$("characterSelect").value) return;
+  const value = Number($("liveMp").value);
+  if (!Number.isFinite(value)) return;
+
+  if (mpWriteTimer) clearTimeout(mpWriteTimer);
+  mpWriteTimer = setTimeout(async () => {
+    mpWriteTimer = null;
+    const characterId = String($("characterSelect").value || "").trim();
+    const roomId = String($("roomId").value || "").trim();
+    const option = $("characterSelect").selectedOptions[0];
+    const characterName = String(option?.dataset?.name || option?.textContent || "無名のキャラクター").trim();
+    if (!characterId || !roomId) return;
+
+    const nextMp = Math.max(0, Math.trunc(value));
+    let previousMp = null;
+
+    try {
+      const result = await runTransaction(
+        ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/mp"),
+        current => {
+          previousMp = current === null || current === undefined ? nextMp : Number(current);
+          return nextMp;
+        }
+      );
+
+      if (result.committed && Number.isFinite(previousMp) && previousMp !== nextMp) {
+        await postResourceSystemMessage(characterId, characterName, "MP", previousMp, nextMp);
+      }
+    } catch (error) {
+      setStatus($("hpStatus"), "MP送信エラー: " + (error.message || error), "error");
     }
   }, 120);
 }
@@ -542,6 +640,7 @@ $("roomId").addEventListener("change", () => { connectRoom(); loadSelectedCharac
 $("characterSelect").addEventListener("change", () => { $("addPartyBtn").disabled = !$("characterSelect").value; loadSelectedCharacterAndConnectHp(); });
 $("addPartyBtn").addEventListener("click", () => { addSelectedCharacterToParty().catch(error => setStatus($("characterStatus"), error.message || String(error), "error")); });
 $("liveHp").addEventListener("input", queueHpWrite);
+$("liveMp").addEventListener("input", queueMpWrite);
 $("chatForm").addEventListener("submit", event => {
   sendMessage(event).catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
 });
