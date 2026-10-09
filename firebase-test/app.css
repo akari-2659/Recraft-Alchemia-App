@@ -109,3 +109,10 @@
   .chat-character-row .color-control{grid-column:3;grid-row:1}
   .palette-popover{right:-47px}
 }
+
+.message.dice{background:#f8f5f0;border:1px solid #ddd1c4}
+.message.dice .message-name{color:#6a5e54;font-size:11px}
+.message.dice .message-text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#2f2924}
+.message.secret-dice{background:#f4f0fa;border:1px dashed #c9bbdc}
+.message.secret-dice .message-name{color:#665777;font-size:11px}
+.message.secret-dice .message-text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#392f45}
