@@ -228,3 +228,28 @@
 @media(max-width:800px){
   .ccfolia-crop-popover{right:-92px}
 }
+
+.ccfolia-frame-wrap{position:relative}
+.ccfolia-interaction-shield{
+  position:absolute;
+  inset:0;
+  z-index:12;
+  background:transparent;
+  cursor:default;
+}
+.ccfolia-interaction-shield[hidden]{display:none}
+.ccfolia-interaction-hint{
+  position:absolute;
+  right:10px;
+  top:10px;
+  padding:5px 8px;
+  border-radius:7px;
+  background:rgba(0,0,0,.58);
+  color:rgba(255,255,255,.82);
+  font-size:10px;
+  pointer-events:none;
+}
+#toggleCcfoliaInteractionBtn .lock-open{display:none}
+#toggleCcfoliaInteractionBtn.active .lock-closed{display:none}
+#toggleCcfoliaInteractionBtn.active .lock-open{display:block}
+#toggleCcfoliaInteractionBtn.active{background:#d9eadb;color:#2f6734}
