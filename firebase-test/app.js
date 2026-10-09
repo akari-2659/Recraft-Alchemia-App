@@ -8,6 +8,7 @@ const PLAYER_KEY_STORAGE = "ra-firebase-test-player-key";
 const ROOM_STORAGE = "ra-firebase-test-room";
 const CHAT_COLORS_STORAGE = "ra-firebase-test-chat-colors-v1";
 const DEFAULT_CHAT_COLOR = "#6B4933";
+const RESOURCE_WRITE_IDLE_MS = 800;
 const BCDICE_SERVERS = [
   "https://bcdice.onlinesession.app",
   "https://bcdice.trpg.net"
@@ -30,8 +31,7 @@ let roomUnsubscribe = null;
 let partyUnsubscribe = null;
 const partyHpUnsubscribes = new Map();
 let hpUnsubscribe = null;
-let hpWriteTimer = null;
-let mpWriteTimer = null;
+const pendingResourceUpdates = new Map();
 let selectedCharacterData = null;
 let registeredCharacters = [];
 let chatColors = {};
@@ -852,16 +852,19 @@ async function removePartyMember(characterId) {
   await remove(ref(db, "raTest/rooms/" + roomId + "/party/" + characterId));
 }
 
-async function postResourceSystemMessage(characterId, characterName, resourceLabel, beforeValue, afterValue) {
-  if (!db || !currentUid || beforeValue === afterValue) return;
-  const roomId = String($("roomId").value || "").trim();
-  if (!roomId) return;
+async function postResourceSystemMessage(roomId, characterId, characterName, changes = []) {
+  if (!db || !currentUid || !roomId || !characterId || !changes.length) return;
+
+  const lines = [characterName || "無名のキャラクター"];
+  for (const change of changes) {
+    lines.push(change.label + " " + change.before + " → " + change.after);
+  }
 
   await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
     type: "system",
     speakerId: characterId,
-    speakerName: characterName,
-    text: characterName + "　" + resourceLabel + " " + beforeValue + " → " + afterValue,
+    speakerName: characterName || "無名のキャラクター",
+    text: lines.join("\n"),
     senderUid: currentUid,
     createdAt: serverTimestamp()
   });
@@ -892,15 +895,6 @@ async function loadSelectedCharacterAndConnectHp() {
     hpUnsubscribe();
     hpUnsubscribe = null;
   }
-  if (hpWriteTimer) {
-    clearTimeout(hpWriteTimer);
-    hpWriteTimer = null;
-  }
-  if (mpWriteTimer) {
-    clearTimeout(mpWriteTimer);
-    mpWriteTimer = null;
-  }
-
   selectedCharacterData = null;
   $("liveHp").disabled = true;
   $("liveMp").disabled = true;
@@ -1001,77 +995,92 @@ async function connectResources(characterId, initialResource) {
   );
 }
 
-function queueHpWrite() {
-  const selectedCharacter = getSelectedRegisteredCharacter();
-  if (!db || !selectedCharacter) return;
-  const value = Number($("liveHp").value);
-  if (!Number.isFinite(value)) return;
+function queueResourceWrite(resourceKey, label, inputId) {
+  const character = getSelectedRegisteredCharacter();
+  if (!db || !character?.id) return;
 
-  if (hpWriteTimer) clearTimeout(hpWriteTimer);
-  hpWriteTimer = setTimeout(async () => {
-    hpWriteTimer = null;
-    const activeCharacter = getSelectedRegisteredCharacter();
-    const characterId = activeCharacter?.id || "";
-    const roomId = String($("roomId").value || "").trim();
-    const characterName = String($("speakerName").value || activeCharacter?.name || "無名のキャラクター").trim();
-    if (!characterId || !roomId) return;
+  const roomId = String($("roomId").value || "").trim();
+  const rawValue = Number($(inputId)?.value);
+  if (!roomId || !Number.isFinite(rawValue)) return;
 
-    const nextHp = Math.trunc(value);
-    let previousHp = null;
+  const value = Math.max(0, Math.trunc(rawValue));
+  const characterId = character.id;
+  const characterName = String(character.name || $("speakerName").value || "無名のキャラクター").trim();
+  const batchKey = roomId + "::" + characterId;
 
-    try {
-      const result = await runTransaction(
-        ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/hp"),
-        current => {
-          previousHp = current === null || current === undefined ? nextHp : Number(current);
-          return nextHp;
-        }
-      );
+  let batch = pendingResourceUpdates.get(batchKey);
+  if (!batch) {
+    batch = {
+      roomId,
+      characterId,
+      characterName,
+      values: {},
+      labels: {},
+      timer: null
+    };
+    pendingResourceUpdates.set(batchKey, batch);
+  }
 
-      if (result.committed && Number.isFinite(previousHp) && previousHp !== nextHp) {
-        await postResourceSystemMessage(characterId, characterName, "HP", previousHp, nextHp);
-      }
-    } catch (error) {
-      setResourceStatus("HP送信エラー: " + (error.message || error), "error");
-    }
-  }, 120);
+  batch.characterName = characterName || batch.characterName;
+  batch.values[resourceKey] = value;
+  batch.labels[resourceKey] = label;
+
+  if (batch.timer) clearTimeout(batch.timer);
+  batch.timer = setTimeout(() => {
+    commitResourceBatch(batchKey).catch(error => {
+      setResourceStatus("値の送信エラー: " + (error.message || error), "error");
+    });
+  }, RESOURCE_WRITE_IDLE_MS);
 }
 
+async function commitResourceBatch(batchKey) {
+  const batch = pendingResourceUpdates.get(batchKey);
+  if (!batch || !db) return;
+
+  pendingResourceUpdates.delete(batchKey);
+  if (batch.timer) clearTimeout(batch.timer);
+
+  const changes = [];
+  for (const [resourceKey, nextValue] of Object.entries(batch.values)) {
+    let previousValue = null;
+    const result = await runTransaction(
+      ref(db, "raTest/rooms/" + batch.roomId + "/characters/" + batch.characterId + "/" + resourceKey),
+      current => {
+        previousValue = current === null || current === undefined ? nextValue : Number(current);
+        return nextValue;
+      }
+    );
+
+    if (
+      result.committed &&
+      Number.isFinite(previousValue) &&
+      previousValue !== nextValue
+    ) {
+      changes.push({
+        key: resourceKey,
+        label: batch.labels[resourceKey] || resourceKey,
+        before: previousValue,
+        after: nextValue
+      });
+    }
+  }
+
+  if (changes.length) {
+    await postResourceSystemMessage(
+      batch.roomId,
+      batch.characterId,
+      batch.characterName,
+      changes
+    );
+  }
+}
+
+function queueHpWrite() {
+  queueResourceWrite("hp", "HP", "liveHp");
+}
 
 function queueMpWrite() {
-  const selectedCharacter = getSelectedRegisteredCharacter();
-  if (!db || !selectedCharacter) return;
-  const value = Number($("liveMp").value);
-  if (!Number.isFinite(value)) return;
-
-  if (mpWriteTimer) clearTimeout(mpWriteTimer);
-  mpWriteTimer = setTimeout(async () => {
-    mpWriteTimer = null;
-    const activeCharacter = getSelectedRegisteredCharacter();
-    const characterId = activeCharacter?.id || "";
-    const roomId = String($("roomId").value || "").trim();
-    const characterName = String($("speakerName").value || activeCharacter?.name || "無名のキャラクター").trim();
-    if (!characterId || !roomId) return;
-
-    const nextMp = Math.max(0, Math.trunc(value));
-    let previousMp = null;
-
-    try {
-      const result = await runTransaction(
-        ref(db, "raTest/rooms/" + roomId + "/characters/" + characterId + "/mp"),
-        current => {
-          previousMp = current === null || current === undefined ? nextMp : Number(current);
-          return nextMp;
-        }
-      );
-
-      if (result.committed && Number.isFinite(previousMp) && previousMp !== nextMp) {
-        await postResourceSystemMessage(characterId, characterName, "MP", previousMp, nextMp);
-      }
-    } catch (error) {
-      setResourceStatus("MP送信エラー: " + (error.message || error), "error");
-    }
-  }, 120);
+  queueResourceWrite("mp", "MP", "liveMp");
 }
 
 async function loadCharacters() {
