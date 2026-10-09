@@ -163,9 +163,7 @@ function renderMessage(key, message) {
   name.className = "message-name";
   name.textContent = messageType === "system"
     ? "SYSTEM"
-    : (messageType === "dice" || messageType === "secret-dice")
-      ? ((message.speakerName || "名称未設定") + " / DICE")
-      : (message.speakerName || "名称未設定");
+    : (message.speakerName || "名称未設定");
 
   const time = document.createElement("div");
   time.className = "message-time";
@@ -178,13 +176,21 @@ function renderMessage(key, message) {
   text.className = "message-text";
   text.textContent = String(message.text || "");
 
-  if (!["system","dice","secret-dice"].includes(messageType)) {
+  if (messageType !== "system") {
     const color = normalizeHexColor(message.color) || DEFAULT_CHAT_COLOR;
     article.style.setProperty("--message-color", color);
   }
 
   head.append(name, time);
   article.append(head, text);
+
+  const diceResultText = String(message.diceResult || "").trim();
+  if (diceResultText) {
+    const diceResult = document.createElement("div");
+    diceResult.className = "message-dice-result";
+    diceResult.textContent = diceResultText;
+    article.append(diceResult);
+  }
   $("chatLog").append(article);
   $("chatLog").scrollTop = $("chatLog").scrollHeight;
 }
@@ -222,29 +228,20 @@ async function rollBCDice(command) {
   throw lastError || new Error("BCDiceへ接続できませんでした。");
 }
 
-function appendLocalSecretDiceResult(speakerName, command, result) {
+function appendLocalSecretDiceResult(speakerName, color, originalText, command, result) {
   const key = "secret-" + Date.now() + "-" + Math.random().toString(36).slice(2);
   renderMessage(key, {
     type:"secret-dice",
     speakerName,
-    text: String(result?.text || command),
-    createdAt: Date.now()
-  });
-}
-
-async function postSharedDiceResult(roomId, speakerId, speakerName, command, result) {
-  await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
-    type:"dice",
-    speakerId,
-    speakerName,
-    text: String(result?.text || command),
+    color,
+    text: originalText,
     diceCommand: command,
+    diceResult: String(result?.text || command),
     diceSuccess: result?.success === true,
     diceFailure: result?.failure === true,
     diceCritical: result?.critical === true,
     diceFumble: result?.fumble === true,
-    senderUid: currentUid,
-    createdAt: serverTimestamp()
+    createdAt: Date.now()
   });
 }
 
@@ -271,7 +268,9 @@ async function sendMessage() {
   const diceCommand = extractDiceCommand(text);
   const isSecretDice = !!diceCommand && /^S/i.test(diceCommand);
 
-  if (!isSecretDice) {
+  $("chatText").value = "";
+
+  if (!diceCommand) {
     await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
       speakerId,
       speakerName,
@@ -280,32 +279,57 @@ async function sendMessage() {
       senderUid: currentUid,
       createdAt: serverTimestamp()
     });
+    return;
   }
 
-  $("chatText").value = "";
+  try {
+    const result = await rollBCDice(diceCommand);
 
-  if (diceCommand) {
-    try {
-      const result = await rollBCDice(diceCommand);
-      if (result?.secret || isSecretDice) {
-        appendLocalSecretDiceResult(speakerName, diceCommand, result);
-      } else {
-        await postSharedDiceResult(roomId, speakerId, speakerName, diceCommand, result);
-      }
-    } catch (error) {
-      if (isSecretDice) {
-        appendLocalSecretDiceResult(speakerName, diceCommand, { text:"ダイス実行エラー: " + (error.message || error) });
-      } else {
-        await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
-          type:"system",
-          speakerId,
-          speakerName,
-          text:"ダイス実行エラー: " + (error.message || error),
-          senderUid: currentUid,
-          createdAt: serverTimestamp()
-        });
-      }
+    if (result?.secret || isSecretDice) {
+      appendLocalSecretDiceResult(speakerName, color, text, diceCommand, result);
+      return;
     }
+
+    await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
+      type:"dice",
+      speakerId,
+      speakerName,
+      color,
+      text,
+      diceCommand,
+      diceResult: String(result?.text || diceCommand),
+      diceSuccess: result?.success === true,
+      diceFailure: result?.failure === true,
+      diceCritical: result?.critical === true,
+      diceFumble: result?.fumble === true,
+      senderUid: currentUid,
+      createdAt: serverTimestamp()
+    });
+  } catch (error) {
+    const errorText = "ダイス実行エラー: " + (error.message || error);
+
+    if (isSecretDice) {
+      appendLocalSecretDiceResult(
+        speakerName,
+        color,
+        text,
+        diceCommand,
+        { text:errorText }
+      );
+      return;
+    }
+
+    await push(ref(db, "raTest/rooms/" + roomId + "/messages"), {
+      type:"dice",
+      speakerId,
+      speakerName,
+      color,
+      text,
+      diceCommand,
+      diceResult:errorText,
+      senderUid: currentUid,
+      createdAt: serverTimestamp()
+    });
   }
 }
 
