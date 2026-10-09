@@ -65,6 +65,21 @@
             <option value="">キャラクター選択</option>
           </select>
           <input id="speakerName" maxlength="120" aria-label="発言者名" placeholder="発言者名">
+          <div class="palette-control">
+            <button id="togglePaletteBtn" type="button" class="icon-btn" aria-label="チャットパレット" title="チャットパレット" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6.5h12M6 12h12M6 17.5h12"></path>
+                <circle cx="3.5" cy="6.5" r="1"></circle>
+                <circle cx="3.5" cy="12" r="1"></circle>
+                <circle cx="3.5" cy="17.5" r="1"></circle>
+              </svg>
+            </button>
+            <div id="palettePanel" class="palette-popover" hidden>
+              <div id="paletteList" class="palette-list">
+                <div class="empty compact-empty">登録キャラクターを選択してください。</div>
+              </div>
+            </div>
+          </div>
           <div class="color-control">
             <button id="toggleColorPanelBtn" type="button" class="icon-btn" aria-label="発言色" title="発言色">
               <span id="chatColorSwatch" class="color-swatch"></span>
@@ -98,6 +113,22 @@
     </form>
   </dialog>
 
+  <script>
+    var CS_ITEM_MASTER = [];
+    var DB_EQUIPMENT_CATEGORY_MASTER = [];
+    var DB_INITIAL_ITEM_MASTER = [];
+    var DB_INITIAL_ITEM_MASTER_INDEX = { byId:new Map(), byPublicId:new Map(), byName:new Map() };
+    var DB_INITIAL_SPELL_MASTER = [];
+    var DB_RECIPE_MASTER = [];
+    var DB_SKILL_MASTER = [];
+  </script>
+  <script src="../gm-player/modules/character/character_core.js"></script>
+  <script src="../js/ra_character_master.js"></script>
+  <script src="../js/ra_character_equipment.js"></script>
+  <script src="../js/ra_character_crafting.js"></script>
+  <script src="../gm-player/modules/character/character_inventory.js"></script>
+  <script src="../js/ra_character_skills.js"></script>
+  <script src="../js/ra_character_export.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
