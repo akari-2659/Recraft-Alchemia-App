@@ -9,6 +9,8 @@ const ROOM_STORAGE = "ra-firebase-test-room";
 const CHAT_COLORS_STORAGE = "ra-firebase-test-chat-colors-v1";
 const DEFAULT_CHAT_COLOR = "#6B4933";
 const RESOURCE_WRITE_IDLE_MS = 800;
+const CCFOLIA_CROP_STORAGE = "ra-firebase-test-ccfolia-crop-v1";
+const DEFAULT_CCFOLIA_CROP = Object.freeze({ x:0, y:0, scale:1, width:1600, height:900 });
 const BCDICE_SERVERS = [
   "https://bcdice.onlinesession.app",
   "https://bcdice.trpg.net"
@@ -50,6 +52,64 @@ function setResourceStatus(text, state = "") {
 }
 
 
+
+function readCcfoliaCropSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CCFOLIA_CROP_STORAGE) || "null");
+    return saved && typeof saved === "object"
+      ? { ...DEFAULT_CCFOLIA_CROP, ...saved }
+      : { ...DEFAULT_CCFOLIA_CROP };
+  } catch (_) {
+    return { ...DEFAULT_CCFOLIA_CROP };
+  }
+}
+
+function writeCcfoliaCropSettings(settings) {
+  try {
+    localStorage.setItem(CCFOLIA_CROP_STORAGE, JSON.stringify(settings));
+  } catch (_) {}
+}
+
+function applyCcfoliaCropSettings(settings = readCcfoliaCropSettings(), save = false) {
+  const x = Number(settings.x) || 0;
+  const y = Number(settings.y) || 0;
+  const scale = Math.max(0.5, Math.min(2.5, Number(settings.scale) || 1));
+  const width = Math.max(320, Math.trunc(Number(settings.width) || 1600));
+  const height = Math.max(320, Math.trunc(Number(settings.height) || 900));
+
+  const frame = $("ccfoliaFrame");
+  const layer = $("ccfoliaTransformLayer");
+  if (frame) {
+    frame.style.width = width + "px";
+    frame.style.height = height + "px";
+  }
+  if (layer) {
+    layer.style.transform = "translate(" + x + "px," + y + "px) scale(" + scale + ")";
+  }
+
+  if ($("ccfoliaCropX")) $("ccfoliaCropX").value = String(x);
+  if ($("ccfoliaCropY")) $("ccfoliaCropY").value = String(y);
+  if ($("ccfoliaCropScale")) $("ccfoliaCropScale").value = String(scale);
+  if ($("ccfoliaCropWidth")) $("ccfoliaCropWidth").value = String(width);
+  if ($("ccfoliaCropHeight")) $("ccfoliaCropHeight").value = String(height);
+
+  if (save) writeCcfoliaCropSettings({ x, y, scale, width, height });
+}
+
+function collectCcfoliaCropSettings() {
+  return {
+    x: Number($("ccfoliaCropX")?.value) || 0,
+    y: Number($("ccfoliaCropY")?.value) || 0,
+    scale: Number($("ccfoliaCropScale")?.value) || 1,
+    width: Number($("ccfoliaCropWidth")?.value) || 1600,
+    height: Number($("ccfoliaCropHeight")?.value) || 900
+  };
+}
+
+function queueCcfoliaCropApply() {
+  applyCcfoliaCropSettings(collectCcfoliaCropSettings(), true);
+}
+
 function loadSavedConfig() {
   try {
     const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || "null");
@@ -67,6 +127,7 @@ function loadSavedConfig() {
   }
   renderSpeakerOptions();
   applyCurrentSpeakerColor();
+  applyCcfoliaCropSettings();
 }
 
 function readConfig() {
@@ -1147,6 +1208,19 @@ $("clearFirebaseBtn").addEventListener("click", () => {
 });
 $("loadCharactersBtn").addEventListener("click", loadCharacters);
 $("reconnectRoomBtn").addEventListener("click", connectRoom);
+$("toggleCcfoliaCropBtn").addEventListener("click", event => {
+  event.stopPropagation();
+  const panel = $("ccfoliaCropPanel");
+  panel.hidden = !panel.hidden;
+});
+$("ccfoliaCropPanel").addEventListener("click", event => event.stopPropagation());
+for (const id of ["ccfoliaCropX","ccfoliaCropY","ccfoliaCropScale","ccfoliaCropWidth","ccfoliaCropHeight"]) {
+  $(id).addEventListener("input", queueCcfoliaCropApply);
+}
+$("resetCcfoliaCropBtn").addEventListener("click", () => {
+  localStorage.removeItem(CCFOLIA_CROP_STORAGE);
+  applyCcfoliaCropSettings({ ...DEFAULT_CCFOLIA_CROP }, false);
+});
 $("reloadCcfoliaBtn").addEventListener("click", () => {
   const frame = $("ccfoliaFrame");
   if (!frame) return;
@@ -1178,7 +1252,10 @@ $("toggleColorPanelBtn").addEventListener("click", event => {
   $("colorPanel").hidden = !opening;
 });
 $("colorPanel").addEventListener("click", event => event.stopPropagation());
-document.addEventListener("click", () => closeChatPopovers());
+document.addEventListener("click", () => {
+  closeChatPopovers();
+  if ($("ccfoliaCropPanel")) $("ccfoliaCropPanel").hidden = true;
+});
 $("openPartyAddBtn").addEventListener("click", openPartyAddDialog);
 $("liveHp").addEventListener("input", queueHpWrite);
 $("liveMp").addEventListener("input", queueMpWrite);
