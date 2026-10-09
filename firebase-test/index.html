@@ -48,6 +48,25 @@
           <div class="hint">盤面のみをRAと同じ画面で使用します。</div>
         </div>
         <div class="ccfolia-actions">
+          <div class="ccfolia-crop-control">
+            <button id="toggleCcfoliaCropBtn" type="button" class="icon-btn" aria-label="ココフォリア表示範囲を調整" title="表示範囲を調整">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 3v14a4 4 0 0 0 4 4h10"></path>
+                <path d="M3 7h14a4 4 0 0 1 4 4v10"></path>
+              </svg>
+            </button>
+            <div id="ccfoliaCropPanel" class="ccfolia-crop-popover" hidden>
+              <div class="ccfolia-crop-title">表示範囲</div>
+              <label>X<input id="ccfoliaCropX" type="number" step="10"></label>
+              <label>Y<input id="ccfoliaCropY" type="number" step="10"></label>
+              <label>拡大率<input id="ccfoliaCropScale" type="number" min="0.5" max="2.5" step="0.05"></label>
+              <label>幅<input id="ccfoliaCropWidth" type="number" min="320" step="20"></label>
+              <label>高さ<input id="ccfoliaCropHeight" type="number" min="320" step="20"></label>
+              <div class="ccfolia-crop-actions">
+                <button id="resetCcfoliaCropBtn" type="button" class="ghost">初期値</button>
+              </div>
+            </div>
+          </div>
           <button id="reloadCcfoliaBtn" type="button" class="icon-btn" aria-label="ココフォリアを再読み込み" title="再読み込み">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M19 7v5h-5"></path>
@@ -63,16 +82,18 @@
           </a>
         </div>
       </div>
-      <div class="ccfolia-frame-wrap">
-        <iframe
-          id="ccfoliaFrame"
-          class="ccfolia-frame"
-          src="https://ccfolia.com/rooms/cYzLw9j74"
-          title="ココフォリア盤面"
-          allow="clipboard-read; clipboard-write; fullscreen"
-          allowfullscreen
-        ></iframe>
-        <div class="ccfolia-frame-note">表示されない場合は右上の外部表示アイコンから開けます。</div>
+      <div id="ccfoliaViewport" class="ccfolia-frame-wrap">
+        <div id="ccfoliaTransformLayer" class="ccfolia-transform-layer">
+          <iframe
+            id="ccfoliaFrame"
+            class="ccfolia-frame"
+            src="https://ccfolia.com/rooms/cYzLw9j74"
+            title="ココフォリア盤面"
+            allow="clipboard-read; clipboard-write; fullscreen"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="ccfolia-frame-note">盤面をクロップ表示中。右上の調整アイコンから位置と倍率を変更できます。</div>
       </div>
     </section>
     <section class="panel chat-panel">
