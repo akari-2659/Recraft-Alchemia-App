@@ -31,6 +31,9 @@
       <div class="row"><button id="loadCharactersBtn">登録キャラを読み込む</button></div>
       <label>発言キャラクター<select id="characterSelect"><option value="">未選択</option></select></label>
       <div id="characterStatus" class="status">未読込</div>
+      <div class="row">
+        <button id="addPartyBtn" disabled>選択キャラをパーティーに追加</button>
+      </div>
       <div class="hp-test">
         <h2>4. HPリアルタイム同期</h2>
         <p class="hint">同期単位はプレイヤーキーではなくキャラクターIDです。同じプレイヤーキーを別タブで使っても、別キャラなら別々に同期されます。</p>
@@ -43,6 +46,15 @@
         </div>
         <div id="hpStatus" class="status">キャラクターを選択してください。</div>
       </div>
+    </section>
+    <section class="panel party-panel">
+      <div class="party-head">
+        <div>
+          <h2>パーティー</h2>
+          <div class="hint">このルームに追加されたキャラクターだけを共有表示します。</div>
+        </div>
+      </div>
+      <div id="partyList" class="party-list"><div class="empty">Firebase接続後に表示されます。</div></div>
     </section>
     <section class="panel chat-panel">
       <div class="chat-head"><div><h2>リアルタイムチャット</h2><div id="roomStatus" class="room-status">Firebase未接続</div></div><button id="reconnectRoomBtn" class="ghost">ルーム再接続</button></div>
