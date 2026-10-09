@@ -28,7 +28,7 @@
 
 .speaker-box{border-bottom:1px solid #e2d6c9;padding:12px 0}
 .speaker-box label{margin-top:0}
-.temp-speaker-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+
 .resource-panel{margin:10px 0;border:1px solid #ded2c5;border-radius:11px;background:#f8f3ed;padding:10px}
 .resource-panel[hidden]{display:none}
 .resource-panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
@@ -42,4 +42,4 @@
 .party-candidate-list{display:flex;flex-direction:column;gap:8px;padding-top:12px;max-height:60vh;overflow:auto}
 .party-candidate{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #e3d8cc;border-radius:10px;background:#fff;padding:10px}
 .party-candidate-name{font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(max-width:800px){.temp-speaker-row{grid-template-columns:1fr}.resource-panel-title{align-items:flex-start;flex-direction:column}.mono.compact{max-width:100%;width:100%}}
+@media(max-width:800px){.resource-panel-title{align-items:flex-start;flex-direction:column}.mono.compact{max-width:100%;width:100%}}
