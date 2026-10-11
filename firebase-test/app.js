@@ -1251,6 +1251,29 @@ async function loadCharacters() {
   }
 }
 
+function setAppView(view) {
+  const next = view === "settings" ? "settings" : "session";
+  const layout = document.querySelector(".layout");
+  if (!layout) return;
+  layout.dataset.appView = next;
+
+  const sessionButton = $("sessionTabBtn");
+  const settingsButton = $("settingsTabBtn");
+  const sessionActive = next === "session";
+
+  sessionButton?.classList.toggle("active", sessionActive);
+  settingsButton?.classList.toggle("active", !sessionActive);
+  sessionButton?.setAttribute("aria-selected", sessionActive ? "true" : "false");
+  settingsButton?.setAttribute("aria-selected", sessionActive ? "false" : "true");
+
+  if (sessionActive) {
+    requestAnimationFrame(() => applyCcfoliaCropSettings(readCcfoliaCropSettings(), false));
+  }
+}
+
+$("sessionTabBtn").addEventListener("click", () => setAppView("session"));
+$("settingsTabBtn").addEventListener("click", () => setAppView("settings"));
+
 $("connectFirebaseBtn").addEventListener("click", () => {
   connectFirebase().catch(error => setStatus($("firebaseStatus"), error.message || String(error), "error"));
 });
