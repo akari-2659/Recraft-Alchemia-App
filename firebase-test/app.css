@@ -289,3 +289,49 @@
     aspect-ratio:1140 / 860;
   }
 }
+
+/* Session-first desktop layout: Cocofolia board | RA chat */
+@media(min-width:1351px){
+  .layout{
+    grid-template-columns:minmax(0,1fr) minmax(360px,420px);
+    grid-template-rows:auto auto;
+    grid-template-areas:
+      "board chat"
+      "settings party";
+    align-items:start;
+    height:auto;
+    min-height:0;
+  }
+
+  .ccfolia-panel{
+    grid-area:board;
+    width:min(1140px,100%);
+    max-width:1140px;
+    justify-self:center;
+    align-self:start;
+  }
+
+  .chat-panel{
+    grid-area:chat;
+    align-self:stretch;
+    min-height:0;
+    height:100%;
+  }
+
+  .settings{
+    grid-area:settings;
+    max-height:none;
+    width:100%;
+  }
+
+  .party-panel{
+    grid-area:party;
+    min-height:0;
+    width:100%;
+  }
+
+  .chat-log{
+    min-height:0;
+    flex:1;
+  }
+}
