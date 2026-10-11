@@ -11,7 +11,11 @@
     <div><h1>RA Firebase Test</h1><p>キャラクター切替 + リアルタイムチャット検証</p></div>
     <div class="topbar-badge">SESSION TEST</div>
   </header>
-  <main class="layout">
+  <nav class="app-tabs" aria-label="画面切替">
+    <button id="sessionTabBtn" type="button" class="app-tab active" aria-selected="true">セッション</button>
+    <button id="settingsTabBtn" type="button" class="app-tab" aria-selected="false">設定</button>
+  </nav>
+  <main class="layout" data-app-view="session">
     <section class="panel settings">
       <h2>1. Firebase接続</h2>
       <p class="hint">Firebase Console の「プロジェクトの設定 → マイアプリ → SDK の設定と構成」に表示される値を入力します。</p>
