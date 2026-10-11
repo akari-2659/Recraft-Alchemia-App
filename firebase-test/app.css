@@ -335,3 +335,79 @@
     flex:1;
   }
 }
+
+/* App-level tabs: keep connection/player configuration out of the session screen. */
+.app-tabs{
+  display:flex;
+  gap:2px;
+  padding:0 16px;
+  border-bottom:1px solid #d8ccbf;
+  background:#f2ece5;
+}
+.app-tab{
+  appearance:none;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:#76695e;
+  padding:10px 16px 9px;
+  font-size:13px;
+  font-weight:800;
+  border-bottom:3px solid transparent;
+}
+.app-tab.active{
+  color:#4d3727;
+  border-bottom-color:#6b4933;
+  background:#fffaf4;
+}
+.layout[data-app-view="session"] .settings{display:none}
+.layout[data-app-view="settings"] .party-panel,
+.layout[data-app-view="settings"] .ccfolia-panel,
+.layout[data-app-view="settings"] .chat-panel{display:none}
+
+.layout[data-app-view="settings"]{
+  display:block;
+  height:auto;
+  min-height:0;
+}
+.layout[data-app-view="settings"] .settings{
+  display:block;
+  width:min(760px,100%);
+  max-height:none;
+  margin:0 auto;
+}
+
+@media(min-width:1351px){
+  .layout[data-app-view="session"]{
+    grid-template-columns:minmax(0,1fr) minmax(360px,420px);
+    grid-template-rows:auto auto;
+    grid-template-areas:
+      "board chat"
+      "party party";
+  }
+  .layout[data-app-view="session"] .party-panel{
+    grid-area:party;
+    width:100%;
+  }
+}
+@media(min-width:801px) and (max-width:1350px){
+  .layout[data-app-view="session"]{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    grid-template-areas:
+      "board"
+      "chat"
+      "party";
+  }
+}
+@media(max-width:800px){
+  .layout[data-app-view="session"]{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "board"
+      "chat"
+      "party";
+  }
+  .app-tabs{padding:0 10px}
+  .app-tab{flex:1}
+}
